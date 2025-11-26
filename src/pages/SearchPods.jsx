@@ -48,7 +48,8 @@ const cleanTextForSpeech = (text) => {
 };
 
 const QUICK_TOPICS = [
-    'AI trends', 'Morning motivation', 'Sleep story', 'Health tips', 'World news', 'Book summary'
+    'AI trends', 'Morning motivation', 'Sleep story', 'Health tips', 'World news', 'Book summary',
+    'Cryptocurrency', 'Climate change', 'Space exploration', 'Mental health', 'Productivity hacks', 'History facts'
 ];
 
 const TRENDING = [
@@ -58,6 +59,9 @@ const TRENDING = [
     { title: 'Startup Playbook', category: 'Business', plays: 2789, image: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=400&h=400&fit=crop' },
     { title: 'Investment Basics', category: 'Finance', plays: 2567, image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=400&fit=crop' },
     { title: 'Peak Performance', category: 'Sports', plays: 2567, image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&h=400&fit=crop' },
+    { title: 'Quantum Computing Explained', category: 'Science', plays: 2234, image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=400&fit=crop' },
+    { title: 'Future of Work', category: 'Business', plays: 2189, image: 'https://images.unsplash.com/photo-1497215842964-222b430dc094?w=400&h=400&fit=crop' },
+    { title: 'Nutrition Science', category: 'Health', plays: 1987, image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=400&fit=crop' },
 ];
 
 

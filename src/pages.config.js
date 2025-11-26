@@ -12,6 +12,7 @@ import Markets from './pages/Markets';
 import Learning from './pages/Learning';
 import Tasks from './pages/Tasks';
 import Intelligence from './pages/Intelligence';
+import Notes from './pages/Notes';
 
 
 export const PAGES = {
@@ -29,6 +30,7 @@ export const PAGES = {
     "Learning": Learning,
     "Tasks": Tasks,
     "Intelligence": Intelligence,
+    "Notes": Notes,
 }
 
 export const pagesConfig = {

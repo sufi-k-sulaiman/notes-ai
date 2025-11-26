@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Maximize2, Minimize2 } from 'lucide-react';
 import PageLayout from '../components/PageLayout';
 import { base44 } from '@/api/base44Client';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart as RechartsPC, Pie, Cell } from 'recharts';
@@ -37,6 +38,7 @@ export default function Intelligence() {
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState(null);
     const [showResultModal, setShowResultModal] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     const stats = [
         { label: 'AI Models Active', value: '12', icon: Brain },
@@ -301,21 +303,26 @@ export default function Intelligence() {
 
             {/* Results Modal */}
             <Dialog open={showResultModal} onOpenChange={setShowResultModal}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+                <DialogContent className={`${isFullscreen ? 'max-w-full w-full h-full max-h-full rounded-none' : 'max-w-3xl max-h-[90vh]'} overflow-y-auto p-0 transition-all`}>
                     {results && (
                         <div>
                             <div className="p-4 text-white" style={{ background: `linear-gradient(135deg, ${selectedAnalysis?.color || '#6B4EE6'}, #8B5CF6)` }}>
                                 <div className="flex items-center justify-between">
                                     <h2 className="text-lg font-bold">{selectedAnalysis?.name} Analysis - {selectedSector}</h2>
-                                    <Button variant="ghost" size="icon" onClick={() => setShowResultModal(false)} className="text-white hover:bg-white/20">
-                                        <ChevronRight className="w-5 h-5" />
-                                    </Button>
+                                    <div className="flex items-center gap-2">
+                                        <Button variant="ghost" size="icon" onClick={() => setIsFullscreen(!isFullscreen)} className="text-white hover:bg-white/20">
+                                            {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+                                        </Button>
+                                        <Button variant="ghost" size="icon" onClick={() => setShowResultModal(false)} className="text-white hover:bg-white/20">
+                                            <X className="w-6 h-6" />
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="p-6 space-y-6">
+                            <div className={`p-6 space-y-6 ${isFullscreen ? 'max-w-4xl mx-auto' : ''}`}>
                                 <div>
                                     <h3 className="font-semibold text-gray-900 mb-2">Executive Summary</h3>
-                                    <p className="text-gray-600">{results.summary}</p>
+                                    <p className="text-gray-700 leading-relaxed">{results.summary}</p>
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-gray-900 mb-2">Key Findings</h3>
