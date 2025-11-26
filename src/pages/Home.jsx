@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Sparkles, Radio, Settings, Brain, FileText } from "lucide-react";
+import { Sparkles, Radio, Settings, Brain, FileText, BarChart3 } from "lucide-react";
 import PageLayout from '../components/PageLayout';
 
 const pages = [
@@ -32,6 +32,13 @@ const pages = [
         icon: FileText, 
         description: 'AI-powered professional resume generator',
         color: 'from-green-600 to-emerald-600'
+    },
+    { 
+        name: 'Markets', 
+        href: createPageUrl('Markets'), 
+        icon: BarChart3, 
+        description: 'AI-powered stock market analysis and screening',
+        color: 'from-orange-600 to-amber-600'
     },
     { 
         name: 'Settings', 
