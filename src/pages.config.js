@@ -26,6 +26,6 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "TestFunctions",
+    mainPage: "Home",
     Pages: PAGES,
 };
