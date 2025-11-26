@@ -99,9 +99,23 @@ export default function PageLayout({ children, activePage, onSearch, searchPlace
                         </Button>
                         <Link to={createPageUrl('Home')} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                             {!hideIcons && <img src={LOGO_URL} alt="1cPublishing" className="h-10 w-10 object-contain" />}
-                            <div className="hidden sm:block">
+                            <div className="hidden md:block">
                                 <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>1cPublishing</span>
-                                <p className="text-xs font-medium text-purple-600">{activePage === 'Learning' ? 'Learning Archipelago' : activePage === 'Tasks' ? 'Task Management' : 'Ai Powered'}</p>
+                                <p className="text-xs font-medium text-purple-600">
+                                    {activePage === 'AI Hub' ? 'AI Assistant' :
+                                     activePage === 'SearchPods' ? 'Podcast Generator' :
+                                     activePage === 'MindMap' ? 'Knowledge Explorer' :
+                                     activePage === 'Intelligence' ? 'Predictive Analytics' :
+                                     activePage === 'Resume Builder' ? 'Career Tools' :
+                                     activePage === 'Markets' ? 'Stock Analysis' :
+                                     activePage === 'Learning' ? 'Learning Archipelago' :
+                                     activePage === 'Tasks' ? 'Task Management' :
+                                     activePage === 'Notes' ? 'Rich Text Notes' :
+                                     activePage === 'Comms' ? 'Communications Hub' :
+                                     activePage === 'Games' ? 'Game Arcade' :
+                                     activePage === 'Settings' ? 'Preferences' :
+                                     'Ai Powered'}
+                                </p>
                             </div>
                         </Link>
                     </div>
@@ -131,13 +145,13 @@ export default function PageLayout({ children, activePage, onSearch, searchPlace
 
                 {/* Sidebar */}
                 <aside className={`${sidebarOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-full md:translate-x-0'} transition-all duration-300 overflow-hidden border-r flex-shrink-0 fixed md:relative z-50 md:z-auto h-[calc(100vh-72px)] md:h-auto ${getSidebarClasses()}`}>
-                    <nav className="p-4 space-y-2">
+                    <nav className="p-4 space-y-1">
                         {menuItems.map((item, index) => (
                             <Link
                                 key={index}
                                 to={item.href}
                                 onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                                className={`flex items-center gap-4 px-3 py-3 rounded-lg transition-colors ${
                                     item.label === activePage
                                         ? 'bg-purple-100 text-purple-700'
                                         : theme === 'dark' 
@@ -145,7 +159,7 @@ export default function PageLayout({ children, activePage, onSearch, searchPlace
                                             : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
                                 }`}
                             >
-                                {!hideIcons && <item.icon className="w-5 h-5" style={{ color: '#6B4EE6' }} />}
+                                {!hideIcons && <item.icon className="w-5 h-5 flex-shrink-0" style={{ color: '#6B4EE6' }} />}
                                 <span className="font-medium">{item.label}</span>
                             </Link>
                         ))}
