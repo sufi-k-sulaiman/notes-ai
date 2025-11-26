@@ -33,7 +33,7 @@ const FILTER_OPTIONS = {
     aiIndex: { label: 'AI Index', options: ['Any', '90+', '80+', '70+', '60+'] },
 };
 
-// Stock universe - 200 stocks enriched with live AI data
+// Stock universe - 300 stocks enriched with live AI data
 const STOCK_UNIVERSE = [
     // Tech Giants
     'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA', 'AVGO', 'ORCL', 'ADBE',
@@ -64,13 +64,24 @@ const STOCK_UNIVERSE = [
     // Industrials
     'BA', 'CAT', 'GE', 'MMM', 'UPS', 'DE', 'LMT', 'GD', 'NOC', 'RTX',
     'HON', 'UNP', 'CSX', 'NSC', 'FDX', 'WM', 'RSG', 'EMR', 'ETN', 'ITW',
-    'PH', 'ROK', 'DOV', 'IR', 'XYL', 'SWK', 'FAST', 'GWW', 'CTAS', 'PAYX',
+    'PH', 'ROK', 'DOV', 'IR', 'XYL', 'SWK', 'FAST', 'GWW', 'CTAS',
     // Materials
     'LIN', 'APD', 'SHW', 'ECL', 'DD', 'NEM', 'FCX', 'NUE', 'VMC', 'MLM',
     // Real Estate
     'AMT', 'PLD', 'CCI', 'EQIX', 'SPG', 'PSA', 'DLR', 'O', 'WELL', 'AVB',
     // Utilities
-    'NEE', 'DUK', 'SO', 'D', 'AEP', 'EXC', 'SRE', 'XEL', 'ED', 'WEC'
+    'NEE', 'DUK', 'SO', 'D', 'AEP', 'EXC', 'SRE', 'XEL', 'ED', 'WEC',
+    // Additional 100 stocks
+    'ANET', 'ANSS', 'APH', 'ARE', 'ATO', 'AWK', 'AZN', 'BALL', 'BAX', 'BDX',
+    'BIO', 'BK', 'BKNG', 'BLL', 'BR', 'BRO', 'BSY', 'BWA', 'CAG', 'CAH',
+    'CARR', 'CBOE', 'CBRE', 'CDW', 'CE', 'CERN', 'CF', 'CFG', 'CHD', 'CHRW',
+    'CINF', 'CL', 'CLX', 'CMS', 'CNC', 'CNP', 'CPRT', 'CRL', 'CTLT', 'CTSH',
+    'CTVA', 'CZR', 'DFS', 'DGX', 'DLR', 'DLTR', 'DOW', 'DPZ', 'DRE', 'DRI',
+    'DTE', 'DVA', 'DXC', 'EBAY', 'ECL', 'ED', 'EFX', 'EIX', 'EL', 'EMN',
+    'ENPH', 'EOG', 'EPAM', 'EQR', 'ES', 'ESS', 'ETSY', 'EVRG', 'EXR', 'F',
+    'FANG', 'FAST', 'FBHS', 'FCX', 'FDS', 'FE', 'FFIV', 'FIS', 'FITB', 'FLT',
+    'FMC', 'FOX', 'FOXA', 'FRC', 'FRT', 'FTNT', 'FTV', 'GD', 'GE', 'GILD',
+    'GL', 'GLW', 'GM', 'GNRC', 'GOOG', 'GPC', 'GPN', 'GRMN', 'GWW', 'HAL'
 ];
 
 export default function Markets() {
@@ -95,6 +106,10 @@ export default function Markets() {
     const [selectedStock, setSelectedStock] = useState(null);
     const [showStockModal, setShowStockModal] = useState(false);
     const [loadingProgress, setLoadingProgress] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const STOCKS_PER_PAGE = 25;
 
     useEffect(() => {
         const handleResize = () => setSidebarOpen(window.innerWidth >= 768);
@@ -104,29 +119,32 @@ export default function Markets() {
     }, []);
 
     useEffect(() => {
-        loadStocks();
+        loadStocks(0);
     }, []);
 
-    const loadStocks = async () => {
-        setIsLoading(true);
+    const loadStocks = async (page) => {
+        const isFirstPage = page === 0;
+        if (isFirstPage) {
+            setIsLoading(true);
+            setStocks([]);
+        } else {
+            setIsLoadingMore(true);
+        }
         setLoadingProgress(0);
         
         try {
-            // Batch stocks into groups for parallel processing
-            const batchSize = 25;
-            const batches = [];
-            for (let i = 0; i < STOCK_UNIVERSE.length; i += batchSize) {
-                batches.push(STOCK_UNIVERSE.slice(i, i + batchSize));
+            const startIdx = page * STOCKS_PER_PAGE;
+            const batch = STOCK_UNIVERSE.slice(startIdx, startIdx + STOCKS_PER_PAGE);
+            
+            if (batch.length === 0) {
+                setHasMore(false);
+                return;
             }
 
-            const allStocks = [];
+            setLoadingProgress(50);
             
-            for (let i = 0; i < batches.length; i++) {
-                const batch = batches[i];
-                setLoadingProgress(Math.round(((i + 1) / batches.length) * 100));
-                
-                const response = await base44.integrations.Core.InvokeLLM({
-                    prompt: `You are a financial data API. Return CURRENT real market data for these stocks: ${batch.join(', ')}.
+            const response = await base44.integrations.Core.InvokeLLM({
+                prompt: `You are a financial data API. Return CURRENT real market data for these stocks: ${batch.join(', ')}.
                     
 For EACH stock provide accurate current data:
 - ticker: stock symbol
@@ -154,61 +172,77 @@ For EACH stock provide accurate current data:
 - history: array of 20 numbers showing 20-day price trend
 
 Return accurate, realistic financial data.`,
-                    add_context_from_internet: true,
-                    response_json_schema: {
-                        type: "object",
-                        properties: {
-                            stocks: {
-                                type: "array",
-                                items: {
-                                    type: "object",
-                                    properties: {
-                                        ticker: { type: "string" },
-                                        name: { type: "string" },
-                                        price: { type: "number" },
-                                        change: { type: "number" },
-                                        volume: { type: "string" },
-                                        marketCap: { type: "string" },
-                                        sector: { type: "string" },
-                                        industry: { type: "string" },
-                                        moat: { type: "number" },
-                                        sgr: { type: "number" },
-                                        roe: { type: "number" },
-                                        roic: { type: "number" },
-                                        roa: { type: "number" },
-                                        eps: { type: "number" },
-                                        pe: { type: "number" },
-                                        peg: { type: "number" },
-                                        fcf: { type: "number" },
-                                        eva: { type: "number" },
-                                        zscore: { type: "number" },
-                                        dividend: { type: "number" },
-                                        beta: { type: "number" },
-                                        aiRating: { type: "number" },
-                                        history: { type: "array", items: { type: "number" } }
-                                    }
+                add_context_from_internet: true,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        stocks: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    ticker: { type: "string" },
+                                    name: { type: "string" },
+                                    price: { type: "number" },
+                                    change: { type: "number" },
+                                    volume: { type: "string" },
+                                    marketCap: { type: "string" },
+                                    sector: { type: "string" },
+                                    industry: { type: "string" },
+                                    moat: { type: "number" },
+                                    sgr: { type: "number" },
+                                    roe: { type: "number" },
+                                    roic: { type: "number" },
+                                    roa: { type: "number" },
+                                    eps: { type: "number" },
+                                    pe: { type: "number" },
+                                    peg: { type: "number" },
+                                    fcf: { type: "number" },
+                                    eva: { type: "number" },
+                                    zscore: { type: "number" },
+                                    dividend: { type: "number" },
+                                    beta: { type: "number" },
+                                    aiRating: { type: "number" },
+                                    history: { type: "array", items: { type: "number" } }
                                 }
                             }
                         }
                     }
-                });
-
-                if (response?.stocks) {
-                    allStocks.push(...response.stocks);
                 }
-            }
+            });
 
-            setStocks(allStocks);
+            setLoadingProgress(100);
+
+            if (response?.stocks && response.stocks.length > 0) {
+                if (isFirstPage) {
+                    setStocks(response.stocks);
+                } else {
+                    setStocks(prev => [...prev, ...response.stocks]);
+                }
+                setCurrentPage(page);
+                setHasMore(startIdx + STOCKS_PER_PAGE < STOCK_UNIVERSE.length);
+            } else {
+                setHasMore(false);
+            }
         } catch (error) {
             console.error('Error loading stocks:', error);
         } finally {
             setIsLoading(false);
+            setIsLoadingMore(false);
+        }
+    };
+
+    const loadMoreStocks = () => {
+        if (!isLoadingMore && hasMore) {
+            loadStocks(currentPage + 1);
         }
     };
 
     const refreshData = async () => {
         setIsRefreshing(true);
-        await loadStocks();
+        setCurrentPage(0);
+        setHasMore(true);
+        await loadStocks(0);
         setIsRefreshing(false);
     };
 
@@ -405,6 +439,32 @@ Return accurate, realistic financial data.`,
                             >
                                 Clear All Filters
                             </Button>
+                        </div>
+                    )}
+
+                    {/* Load More Button */}
+                    {!isLoading && filteredStocks.length > 0 && hasMore && (
+                        <div className="flex justify-center mt-8">
+                            <Button
+                                onClick={loadMoreStocks}
+                                disabled={isLoadingMore}
+                                className="bg-purple-600 hover:bg-purple-700 text-white px-8"
+                            >
+                                {isLoadingMore ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                        Loading more stocks...
+                                    </>
+                                ) : (
+                                    <>Load More Stocks ({STOCK_UNIVERSE.length - stocks.length} remaining)</>
+                                )}
+                            </Button>
+                        </div>
+                    )}
+
+                    {!isLoading && !hasMore && stocks.length > 0 && (
+                        <div className="text-center mt-8 text-gray-500">
+                            All {stocks.length} stocks loaded
                         </div>
                     )}
                 </main>
