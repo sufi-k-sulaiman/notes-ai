@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
-import { Search, Globe, Paperclip, Mic, AudioLines, Sparkles, Bot, Lightbulb, FileText, Image, Loader2, X, ExternalLink, Download, Menu, ChevronLeft, Home, Users, Settings, HelpCircle, BookOpen, Shuffle, Key } from 'lucide-react';
+import { Search, Globe, Paperclip, Mic, AudioLines, Sparkles, Bot, Lightbulb, FileText, Image, Loader2, X, ExternalLink, Download, Menu, ChevronLeft, Home, Users, Settings, HelpCircle, BookOpen, Ban, Copy } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import ReactMarkdown from 'react-markdown';
@@ -283,26 +283,52 @@ export default function AIHub() {
                                             size="icon"
                                             className="rounded-lg"
                                             style={{ backgroundColor: '#E0E7FF' }}
+                                            title="Search mode"
                                         >
                                             <Search className="w-5 h-5" style={{ color: '#6B4EE6' }} />
                                         </Button>
-                                        <Button variant="ghost" size="icon" className="rounded-lg hover:bg-gray-100">
-                                            <Shuffle className="w-5 h-5 text-gray-500" />
+                                        <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className="rounded-lg hover:bg-gray-100"
+                                            title="Disable suggestions"
+                                        >
+                                            <Ban className="w-5 h-5 text-gray-500" />
                                         </Button>
                                         <div className="w-px h-6 bg-gray-200 mx-1" />
-                                        <Button variant="ghost" size="icon" className="rounded-lg hover:bg-gray-100">
-                                            <Key className="w-5 h-5 text-gray-500" />
+                                        <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className="rounded-lg hover:bg-gray-100"
+                                            title="Get ideas"
+                                        >
+                                            <Lightbulb className="w-5 h-5 text-gray-500" />
                                         </Button>
                                     </div>
                                     
                                     <div className="flex items-center gap-2">
-                                        <Button variant="ghost" size="icon" className="rounded-lg hover:bg-gray-100">
+                                        <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className="rounded-lg hover:bg-gray-100"
+                                            title="Search web"
+                                        >
                                             <Globe className="w-5 h-5 text-gray-500" />
                                         </Button>
-                                        <Button variant="ghost" size="icon" className="rounded-lg hover:bg-gray-100">
-                                            <FileText className="w-5 h-5 text-gray-500" />
+                                        <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className="rounded-lg hover:bg-gray-100"
+                                            title="Copy to clipboard"
+                                        >
+                                            <Copy className="w-5 h-5 text-gray-500" />
                                         </Button>
-                                        <Button variant="ghost" size="icon" className="rounded-lg hover:bg-gray-100">
+                                        <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className="rounded-lg hover:bg-gray-100"
+                                            title="Attach file"
+                                        >
                                             <Paperclip className="w-5 h-5 text-gray-500" />
                                         </Button>
                                         <Button 
@@ -310,6 +336,7 @@ export default function AIHub() {
                                             size="icon" 
                                             className={`rounded-lg ${isListening ? 'bg-red-100' : 'hover:bg-gray-100'}`}
                                             onClick={handleVoiceInput}
+                                            title="Voice input"
                                         >
                                             <Mic className={`w-5 h-5 ${isListening ? 'text-red-500 animate-pulse' : 'text-gray-500'}`} />
                                         </Button>
@@ -318,6 +345,7 @@ export default function AIHub() {
                                             disabled={!query.trim() || isLoading}
                                             className="rounded-lg text-white px-4"
                                             style={{ backgroundColor: '#6B4EE6' }}
+                                            title="Submit"
                                         >
                                             {isLoading ? (
                                                 <Loader2 className="w-5 h-5 animate-spin" />
