@@ -269,8 +269,8 @@ export default function MindMap() {
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
             {/* Header */}
-            <header className="bg-white sticky top-0 z-40 border-b border-gray-200 shadow-sm">
-                <div className="flex items-center justify-between px-4 py-3">
+            <header className="bg-white sticky top-0 z-40 border-b border-gray-200 shadow-sm h-[72px]">
+                <div className="flex items-center justify-between px-4 h-full">
                     <div className="flex items-center gap-4">
                         <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(!sidebarOpen)} className="hover:bg-gray-100">
                             {sidebarOpen ? <ChevronLeft className="w-5 h-5 text-purple-600" /> : <Menu className="w-5 h-5 text-purple-600" />}
@@ -279,7 +279,7 @@ export default function MindMap() {
                             <img src={LOGO_URL} alt="1cPublishing" className="h-10 w-10 object-contain" />
                             <div>
                                 <span className="text-xl font-bold text-gray-900">1cPublishing</span>
-                                <p className="text-xs font-medium text-purple-600">AI Powered</p>
+                                <p className="text-xs font-medium text-purple-600">Ai MindMap</p>
                             </div>
                         </Link>
                     </div>
