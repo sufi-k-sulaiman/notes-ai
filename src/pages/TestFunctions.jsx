@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, CheckCircle, XCircle, Send, FileText, Download, CreditCard, MessageSquare, Bot, Sparkles, Image, Upload, Mail } from "lucide-react";
+import { Loader2, CheckCircle, XCircle, Send, FileText, Download, CreditCard, MessageSquare, Bot, Sparkles, Image, Upload, Mail, Icons, Search } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 
 export default function TestFunctions() {
     const [loading, setLoading] = useState({});
@@ -94,6 +95,7 @@ export default function TestFunctions() {
     const [emailTo, setEmailTo] = useState("");
     const [emailSubject, setEmailSubject] = useState("Test Email");
     const [emailBody, setEmailBody] = useState("This is a test email from Base44.");
+    const [iconSearch, setIconSearch] = useState("");
     
     // InvokeLLM test function
     const testLLM = async (name, prompt, options = {}) => {
@@ -167,6 +169,7 @@ export default function TestFunctions() {
                         <TabsTrigger value="twilio"><MessageSquare className="w-4 h-4 mr-1" /> Twilio</TabsTrigger>
                         <TabsTrigger value="files"><FileText className="w-4 h-4 mr-1" /> Files</TabsTrigger>
                         <TabsTrigger value="webhooks"><Send className="w-4 h-4 mr-1" /> Webhooks</TabsTrigger>
+                            <TabsTrigger value="icons"><Icons className="w-4 h-4 mr-1" /> Icons</TabsTrigger>
                     </TabsList>
 
                     {/* LLM Tab */}
@@ -875,10 +878,63 @@ export default function TestFunctions() {
                                     Go to Dashboard → Code → Functions → stripeWebhook to get the URL.
                                 </p>
                             </CardContent>
-                        </Card>
-                    </TabsContent>
-                </Tabs>
-            </div>
-        </div>
-    );
+                            </Card>
+                            </TabsContent>
+
+                            {/* Icons Tab */}
+                            <TabsContent value="icons" className="space-y-4">
+                            <Card>
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-lg">Lucide Icons Library</CardTitle>
+                                <CardDescription>1400+ icons available - search and click to copy import</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                    <Input 
+                                        value={iconSearch}
+                                        onChange={(e) => setIconSearch(e.target.value)}
+                                        placeholder="Search icons..."
+                                        className="pl-10"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2 max-h-[500px] overflow-y-auto">
+                                    {Object.entries(LucideIcons)
+                                        .filter(([name]) => 
+                                            typeof LucideIcons[name] === 'function' && 
+                                            name !== 'createLucideIcon' &&
+                                            name !== 'default' &&
+                                            !name.startsWith('Lucide') &&
+                                            name.toLowerCase().includes(iconSearch.toLowerCase())
+                                        )
+                                        .slice(0, 200)
+                                        .map(([name, Icon]) => (
+                                            <button
+                                                key={name}
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(`import { ${name} } from "lucide-react";`);
+                                                    setResults(prev => ({ ...prev, iconCopy: `Copied: ${name}` }));
+                                                    setTimeout(() => setResults(prev => ({ ...prev, iconCopy: null })), 2000);
+                                                }}
+                                                className="p-2 rounded hover:bg-gray-100 flex flex-col items-center gap-1 group"
+                                                title={name}
+                                            >
+                                                <Icon className="w-5 h-5 text-gray-700 group-hover:text-blue-600" />
+                                                <span className="text-[10px] text-gray-500 truncate w-full text-center">{name}</span>
+                                            </button>
+                                        ))}
+                                </div>
+                                {results.iconCopy && (
+                                    <div className="p-2 bg-green-50 border border-green-200 rounded text-sm text-green-700 flex items-center gap-2">
+                                        <CheckCircle className="w-4 h-4" />
+                                        {results.iconCopy}
+                                    </div>
+                                )}
+                            </CardContent>
+                            </Card>
+                            </TabsContent>
+                            </Tabs>
+                            </div>
+                            </div>
+                            );
 }
