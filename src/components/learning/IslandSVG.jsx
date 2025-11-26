@@ -310,8 +310,14 @@ const ISLAND_TYPES = [
     'ForestIsland',
 ];
 
+// Mix islands more randomly based on index using simple hash
+function getIslandTypeIndex(index) {
+    const hash = (index * 7 + 3) % ISLAND_TYPES.length;
+    return hash;
+}
+
 export default function IslandSVG({ index, color, completed, progress = 0 }) {
-    const islandType = ISLAND_TYPES[index % ISLAND_TYPES.length];
+    const islandType = ISLAND_TYPES[getIslandTypeIndex(index)];
     const IslandComponent = IslandDesigns[islandType];
     
     return (
