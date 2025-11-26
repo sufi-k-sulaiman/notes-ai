@@ -1,4 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState } from 'react';
+import { Gamepad2, Rocket, Target } from 'lucide-react';
+import PageLayout from '../components/PageLayout';
+import SpaceBattleGame from '../components/games/SpaceBattleGame';
+import WordShooter from '../components/games/WordShooter';
+import { Button } from '@/components/ui/button';
 import { 
     Rocket, Target, Zap, Trophy, Star, Play, Pause, RotateCcw, 
     Award, Clock, Heart, Sparkles, Medal, Gamepad2, X

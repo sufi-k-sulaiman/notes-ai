@@ -231,7 +231,17 @@ export default function WordShooter({ onExit }) {
       ctx.shadowBlur = 15;
       ctx.shadowColor = ast.color;
       ctx.beginPath();
-      ctx.roundRect(-w/2, -h/2, w, h, [r]);
+            ctx.beginPath();
+      ctx.moveTo(-w/2 + r, -h/2);
+      ctx.lineTo(w/2 - r, -h/2);
+      ctx.quadraticCurveTo(w/2, -h/2, w/2, -h/2 + r);
+      ctx.lineTo(w/2, h/2 - r);
+      ctx.quadraticCurveTo(w/2, h/2, w/2 - r, h/2);
+      ctx.lineTo(-w/2 + r, h/2);
+      ctx.quadraticCurveTo(-w/2, h/2, -w/2, h/2 - r);
+      ctx.lineTo(-w/2, -h/2 + r);
+      ctx.quadraticCurveTo(-w/2, -h/2, -w/2 + r, -h/2);
+      ctx.closePath();
       ctx.fill();
       ctx.shadowBlur = 0;
       ctx.fillStyle = '#ffffff';
