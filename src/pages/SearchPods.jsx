@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { 
     Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
     Sparkles, Radio, Loader2, TrendingUp, Users, Search, Mic,
-    Home, Compass, Library, ChevronRight, X, Clock
+    Home, Compass, Library, ChevronRight, X, Clock, Menu, ChevronLeft, Settings
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
+
+const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692729a5f5180fbd43f297e9/868a98750_1cPublishing-logo.png";
 
 const CATEGORIES = [
     { id: 'technology', name: 'Technology', color: '#10B981', episodes: 16 },
@@ -32,7 +36,14 @@ const TRENDING = [
     { title: 'Peak Performance', category: 'Sports', plays: 2567, image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&h=400&fit=crop' },
 ];
 
+const menuItems = [
+    { icon: Sparkles, label: "AI Hub", href: createPageUrl('AIHub') },
+    { icon: Radio, label: "SearchPods", href: createPageUrl('SearchPods'), active: true },
+    { icon: Settings, label: "Settings", href: createPageUrl('Settings') },
+];
+
 export default function SearchPods() {
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [isListening, setIsListening] = useState(false);
     const [categoryEpisodes, setCategoryEpisodes] = useState({});
@@ -162,7 +173,6 @@ export default function SearchPods() {
             setIsGenerating(false);
             setCurrentCaption(sentences[0] || 'Ready to play');
             
-            // Auto-start
             setTimeout(() => startPlayback(), 300);
         } catch (error) {
             console.error('Error:', error);
@@ -244,7 +254,6 @@ export default function SearchPods() {
 
     const formatTime = (s) => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 
-    // Animated bars component
     const AnimatedBars = () => (
         <div className="flex items-end h-3 gap-0.5">
             {[1,2,3].map(i => (
@@ -255,196 +264,250 @@ export default function SearchPods() {
     );
 
     return (
-        <div className="min-h-screen bg-[#121318]">
-            <div className="pb-24">
-                {/* Header */}
-                <header className="sticky top-0 z-50 bg-[#121318]/95 backdrop-blur-sm border-b border-white/5">
-                    <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-4">
-                        <div className="flex items-center gap-2">
-                            <Radio className="w-8 h-8 text-emerald-400" />
-                            <span className="text-white font-bold text-xl">SearchPods</span>
-                        </div>
-                        
-                        <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-auto relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                            <Input
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search any topic..."
-                                className="w-full pl-12 pr-12 py-3 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-full"
-                            />
-                            <button
-                                type="button"
-                                onClick={handleVoiceSearch}
-                                className={`absolute right-4 top-1/2 -translate-y-1/2 ${isListening ? 'text-red-400 animate-pulse' : 'text-white/40 hover:text-white/60'}`}
-                            >
-                                <Mic className="w-5 h-5" />
-                            </button>
-                        </form>
-                    </div>
-                </header>
-
-                <main className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-                    {/* Trending Section */}
-                    <div className="bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 rounded-2xl border border-emerald-500/20 p-6">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                                <TrendingUp className="w-5 h-5 text-emerald-400" />
-                            </div>
+        <div className="min-h-screen flex flex-col bg-[#121318]">
+            {/* Header */}
+            <header className="bg-[#1a1b21] sticky top-0 z-50 border-b border-white/10">
+                <div className="flex items-center justify-between px-4 py-3">
+                    <div className="flex items-center gap-4">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setSidebarOpen(!sidebarOpen)}
+                            className="text-white/70 hover:text-white hover:bg-white/10"
+                        >
+                            {sidebarOpen ? <ChevronLeft className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                        </Button>
+                        <Link to={createPageUrl('Home')} className="flex items-center gap-3 hover:opacity-80">
+                            <img src={LOGO_URL} alt="1cPublishing" className="h-10 w-10 object-contain" />
                             <div>
-                                <h3 className="text-white font-bold text-lg">Trending Now</h3>
-                                <p className="text-white/50 text-sm">What others are listening to</p>
+                                <span className="text-xl font-bold text-white">1cPublishing</span>
+                                <p className="text-xs font-medium text-emerald-400">AI Powered</p>
+                            </div>
+                        </Link>
+                    </div>
+
+                    <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-8 relative">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                        <Input
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Search any topic..."
+                            className="w-full pl-12 pr-12 py-3 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-full focus:border-emerald-500"
+                        />
+                        <button
+                            type="button"
+                            onClick={handleVoiceSearch}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 ${isListening ? 'text-red-400 animate-pulse' : 'text-white/40 hover:text-white/60'}`}
+                        >
+                            <Mic className="w-5 h-5" />
+                        </button>
+                    </form>
+
+                    <div className="w-20" />
+                </div>
+            </header>
+
+            <div className="flex flex-1">
+                {/* Sidebar */}
+                <aside className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden bg-[#1a1b21] border-r border-white/10 flex-shrink-0`}>
+                    <nav className="p-4 space-y-2">
+                        {menuItems.map((item, index) => (
+                            <Link
+                                key={index}
+                                to={item.href}
+                                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                                    item.active
+                                        ? 'bg-emerald-500/20 text-emerald-400'
+                                        : 'text-white/70 hover:bg-white/5 hover:text-white'
+                                }`}
+                            >
+                                <item.icon className="w-5 h-5" />
+                                <span className="font-medium">{item.label}</span>
+                            </Link>
+                        ))}
+                    </nav>
+                </aside>
+
+                {/* Main Content */}
+                <main className="flex-1 overflow-auto pb-24">
+                    <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-8">
+                        {/* Trending Section */}
+                        <div className="bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 rounded-2xl border border-emerald-500/20 p-6">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                                    <TrendingUp className="w-5 h-5 text-emerald-400" />
+                                </div>
+                                <div>
+                                    <h3 className="text-white font-bold text-lg">Trending Now</h3>
+                                    <p className="text-white/50 text-sm">What others are listening to</p>
+                                </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {TRENDING.map((item, i) => (
+                                    <div
+                                        key={i}
+                                        onClick={() => playEpisode(item)}
+                                        className="relative flex items-center gap-3 p-4 rounded-xl cursor-pointer bg-white/5 hover:bg-white/10 border border-transparent group"
+                                    >
+                                        <div className={`absolute -top-2 -left-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${i < 3 ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white/70'}`}>
+                                            {i + 1}
+                                        </div>
+                                        <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
+                                            <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                <Play className="w-4 h-4 text-white" fill="white" />
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="text-white text-sm font-medium truncate">{item.title}</h4>
+                                            <p className="text-white/50 text-xs">{item.category}</p>
+                                            <div className="flex items-center gap-2 mt-1 text-emerald-400/70 text-xs">
+                                                <Users className="w-3 h-3" />
+                                                {item.plays.toLocaleString()} plays
+                                            </div>
+                                        </div>
+                                        <AnimatedBars />
+                                    </div>
+                                ))}
                             </div>
                         </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {TRENDING.map((item, i) => (
-                                <div
-                                    key={i}
-                                    onClick={() => playEpisode(item)}
-                                    className="relative flex items-center gap-3 p-4 rounded-xl cursor-pointer bg-white/5 hover:bg-white/10 border border-transparent group"
+
+                        {/* Quick Generate */}
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <span className="text-white/50 text-sm">Quick Generate:</span>
+                            {QUICK_TOPICS.map((topic) => (
+                                <button
+                                    key={topic}
+                                    onClick={() => playEpisode({ title: topic, category: 'Quick' })}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-emerald-500/20 text-white/80 hover:text-emerald-400 border border-white/10 hover:border-emerald-500/30 transition-all text-sm"
                                 >
-                                    <div className={`absolute -top-2 -left-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${i < 3 ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white/70'}`}>
-                                        {i + 1}
-                                    </div>
-                                    <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
-                                        <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                            <Play className="w-4 h-4 text-white" fill="white" />
+                                    <Sparkles className="w-4 h-4" />
+                                    {topic}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Categories */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {CATEGORIES.map((cat) => (
+                                <div key={cat.id} className="rounded-2xl border border-white/10 overflow-hidden bg-white/5">
+                                    <div 
+                                        className="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5"
+                                        onClick={() => loadCategoryEpisodes(cat.id)}
+                                        style={{ borderLeft: `4px solid ${cat.color}` }}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${cat.color}20` }}>
+                                                <Radio className="w-6 h-6" style={{ color: cat.color }} />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-white font-bold">{cat.name}</h3>
+                                                <p className="text-white/50 text-sm">{cat.episodes} episodes</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-white/50 hover:text-emerald-400">
+                                            {loadingCategory === cat.id ? (
+                                                <Loader2 className="w-5 h-5 animate-spin" />
+                                            ) : (
+                                                <>
+                                                    <span className="text-sm">View All</span>
+                                                    <ChevronRight className="w-4 h-4" />
+                                                </>
+                                            )}
                                         </div>
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h4 className="text-white text-sm font-medium truncate">{item.title}</h4>
-                                        <p className="text-white/50 text-xs">{item.category}</p>
-                                        <div className="flex items-center gap-2 mt-1 text-emerald-400/70 text-xs">
-                                            <Users className="w-3 h-3" />
-                                            {item.plays.toLocaleString()} plays
+
+                                    {categoryEpisodes[cat.id] && (
+                                        <div className="p-4 pt-0 space-y-2">
+                                            {categoryEpisodes[cat.id].subtopics?.length > 0 && (
+                                                <div className="flex flex-wrap gap-2 py-2">
+                                                    <span className="px-3 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-400">All</span>
+                                                    {categoryEpisodes[cat.id].subtopics.slice(0, 3).map((sub, i) => (
+                                                        <button
+                                                            key={i}
+                                                            onClick={() => playEpisode({ title: sub, category: cat.name })}
+                                                            className="px-3 py-1 rounded-full text-xs bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
+                                                        >
+                                                            {sub}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {categoryEpisodes[cat.id].episodes?.slice(0, 4).map((ep, i) => (
+                                                <div
+                                                    key={i}
+                                                    onClick={() => playEpisode({ ...ep, category: cat.name })}
+                                                    className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer group"
+                                                >
+                                                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+                                                        <Radio className="w-4 h-4 text-white/50 group-hover:hidden" />
+                                                        <Play className="w-4 h-4 text-emerald-400 hidden group-hover:block" fill="currentColor" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h4 className="text-white text-sm font-medium truncate">{ep.title}</h4>
+                                                        {ep.description && <p className="text-white/40 text-xs truncate">{ep.description}</p>}
+                                                    </div>
+                                                    <span className="text-white/30 text-xs flex items-center gap-1">
+                                                        <Clock className="w-3 h-3" /> 2m
+                                                    </span>
+                                                </div>
+                                            ))}
+
+                                            <button
+                                                onClick={() => playEpisode({ title: `Latest in ${cat.name}`, category: cat.name })}
+                                                className="w-full py-3 rounded-xl border border-dashed border-white/20 text-white/50 hover:border-emerald-500/50 hover:text-emerald-400 flex items-center justify-center gap-2 text-sm"
+                                            >
+                                                <Sparkles className="w-4 h-4" />
+                                                Generate New Episode
+                                            </button>
                                         </div>
-                                    </div>
-                                    <AnimatedBars />
+                                    )}
                                 </div>
                             ))}
                         </div>
                     </div>
-
-                    {/* Quick Generate */}
-                    <div className="flex items-center gap-3 flex-wrap">
-                        <span className="text-white/50 text-sm">Quick Generate:</span>
-                        {QUICK_TOPICS.map((topic) => (
-                            <button
-                                key={topic}
-                                onClick={() => playEpisode({ title: topic, category: 'Quick' })}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-emerald-500/20 text-white/80 hover:text-emerald-400 border border-white/10 hover:border-emerald-500/30 transition-all text-sm"
-                            >
-                                <Sparkles className="w-4 h-4" />
-                                {topic}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Categories */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {CATEGORIES.map((cat) => (
-                            <div key={cat.id} className="rounded-2xl border border-white/10 overflow-hidden bg-white/5">
-                                <div 
-                                    className="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5"
-                                    onClick={() => loadCategoryEpisodes(cat.id)}
-                                    style={{ borderLeft: `4px solid ${cat.color}` }}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${cat.color}20` }}>
-                                            <Radio className="w-6 h-6" style={{ color: cat.color }} />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-white font-bold">{cat.name}</h3>
-                                            <p className="text-white/50 text-sm">{cat.episodes} episodes</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-white/50 hover:text-emerald-400">
-                                        {loadingCategory === cat.id ? (
-                                            <Loader2 className="w-5 h-5 animate-spin" />
-                                        ) : (
-                                            <>
-                                                <span className="text-sm">View All</span>
-                                                <ChevronRight className="w-4 h-4" />
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {categoryEpisodes[cat.id] && (
-                                    <div className="p-4 pt-0 space-y-2">
-                                        {/* Subtopics */}
-                                        {categoryEpisodes[cat.id].subtopics?.length > 0 && (
-                                            <div className="flex flex-wrap gap-2 py-2">
-                                                <span className="px-3 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-400">All</span>
-                                                {categoryEpisodes[cat.id].subtopics.slice(0, 3).map((sub, i) => (
-                                                    <button
-                                                        key={i}
-                                                        onClick={() => playEpisode({ title: sub, category: cat.name })}
-                                                        className="px-3 py-1 rounded-full text-xs bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
-                                                    >
-                                                        {sub}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        )}
-
-                                        {/* Episodes */}
-                                        {categoryEpisodes[cat.id].episodes?.slice(0, 4).map((ep, i) => (
-                                            <div
-                                                key={i}
-                                                onClick={() => playEpisode({ ...ep, category: cat.name })}
-                                                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer group"
-                                            >
-                                                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                                                    <Radio className="w-4 h-4 text-white/50 group-hover:hidden" />
-                                                    <Play className="w-4 h-4 text-emerald-400 hidden group-hover:block" fill="currentColor" />
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <h4 className="text-white text-sm font-medium truncate">{ep.title}</h4>
-                                                    {ep.description && <p className="text-white/40 text-xs truncate">{ep.description}</p>}
-                                                </div>
-                                                <span className="text-white/30 text-xs flex items-center gap-1">
-                                                    <Clock className="w-3 h-3" /> 2m
-                                                </span>
-                                            </div>
-                                        ))}
-
-                                        <button
-                                            onClick={() => playEpisode({ title: `Latest in ${cat.name}`, category: cat.name })}
-                                            className="w-full py-3 rounded-xl border border-dashed border-white/20 text-white/50 hover:border-emerald-500/50 hover:text-emerald-400 flex items-center justify-center gap-2 text-sm"
-                                        >
-                                            <Sparkles className="w-4 h-4" />
-                                            Generate New Episode
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
                 </main>
-
-                {/* Bottom Navigation */}
-                <nav className="fixed bottom-0 left-0 right-0 bg-[#1a1b21] border-t border-white/10 py-4 px-6">
-                    <div className="max-w-md mx-auto flex justify-around">
-                        {[
-                            { id: 'home', icon: Home, label: 'Home' },
-                            { id: 'explore', icon: Compass, label: 'Explore' },
-                            { id: 'library', icon: Library, label: 'Library' },
-                        ].map((item) => (
-                            <button
-                                key={item.id}
-                                onClick={() => setActiveTab(item.id)}
-                                className={`flex flex-col items-center gap-1 ${activeTab === item.id ? 'text-emerald-400' : 'text-white/50'}`}
-                            >
-                                <item.icon className="w-6 h-6" />
-                                <span className="text-xs">{item.label}</span>
-                            </button>
-                        ))}
-                    </div>
-                </nav>
             </div>
+
+            {/* Bottom Navigation */}
+            <nav className="fixed bottom-0 left-0 right-0 bg-[#1a1b21] border-t border-white/10 py-4 px-6 z-40">
+                <div className="max-w-md mx-auto flex justify-around">
+                    {[
+                        { id: 'home', icon: Home, label: 'Home' },
+                        { id: 'explore', icon: Compass, label: 'Explore' },
+                        { id: 'library', icon: Library, label: 'Library' },
+                    ].map((item) => (
+                        <button
+                            key={item.id}
+                            onClick={() => setActiveTab(item.id)}
+                            className={`flex flex-col items-center gap-1 ${activeTab === item.id ? 'text-emerald-400' : 'text-white/50'}`}
+                        >
+                            <item.icon className="w-6 h-6" />
+                            <span className="text-xs">{item.label}</span>
+                        </button>
+                    ))}
+                </div>
+            </nav>
+
+            {/* Footer */}
+            <footer className="py-6 bg-[#1a1b21] border-t border-white/10 mb-20">
+                <div className="max-w-6xl mx-auto px-4">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <img src={LOGO_URL} alt="1cPublishing" className="h-8 w-8 object-contain opacity-50" />
+                        <nav className="flex flex-wrap justify-center gap-6 text-sm">
+                            <a href="#" className="text-white/40 hover:text-emerald-400 transition-colors">Contact Us</a>
+                            <a href="#" className="text-white/40 hover:text-emerald-400 transition-colors">Governance</a>
+                            <a href="#" className="text-white/40 hover:text-emerald-400 transition-colors">Cookie Policy</a>
+                            <a href="#" className="text-white/40 hover:text-emerald-400 transition-colors">Terms of Use</a>
+                        </nav>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-white/10 text-center text-sm text-white/30">
+                        © 2025 1cPublishing.com
+                    </div>
+                </div>
+            </footer>
 
             {/* Player Modal */}
             <Dialog open={showPlayer} onOpenChange={() => { stopPlayback(); setShowPlayer(false); }}>
@@ -458,7 +521,6 @@ export default function SearchPods() {
                             <div className="w-6" />
                         </div>
 
-                        {/* Cover */}
                         <div className="flex justify-center mb-6">
                             <div className="w-48 h-48 rounded-2xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center shadow-2xl">
                                 <Radio className="w-20 h-20 text-white/80" />
@@ -477,25 +539,17 @@ export default function SearchPods() {
                             </div>
                         )}
 
-                        {/* Caption */}
                         <div className="bg-white/5 rounded-xl p-4 mb-6 min-h-[80px] flex items-center justify-center border border-white/10">
                             <p className="text-center text-white/80 leading-relaxed text-sm">{currentCaption}</p>
                         </div>
 
-                        {/* Volume */}
                         <div className="flex items-center gap-3 mb-6">
                             <button onClick={() => setIsMuted(!isMuted)}>
                                 {isMuted ? <VolumeX className="w-5 h-5 text-white/50" /> : <Volume2 className="w-5 h-5 text-white/50" />}
                             </button>
-                            <Slider
-                                value={[isMuted ? 0 : volume]}
-                                max={100}
-                                onValueChange={([v]) => { setVolume(v); setIsMuted(false); }}
-                                className="flex-1"
-                            />
+                            <Slider value={[isMuted ? 0 : volume]} max={100} onValueChange={([v]) => { setVolume(v); setIsMuted(false); }} className="flex-1" />
                         </div>
 
-                        {/* Progress */}
                         <div className="mb-6">
                             <Slider value={[currentTime]} max={duration || 100} className="w-full" />
                             <div className="flex justify-between text-xs text-white/40 mt-2">
@@ -504,7 +558,6 @@ export default function SearchPods() {
                             </div>
                         </div>
 
-                        {/* Controls */}
                         <div className="flex items-center justify-center gap-8">
                             <button className="text-white/50 hover:text-white"><SkipBack className="w-6 h-6" /></button>
                             <button
@@ -517,7 +570,6 @@ export default function SearchPods() {
                             <button className="text-white/50 hover:text-white"><SkipForward className="w-6 h-6" /></button>
                         </div>
 
-                        {/* Speed */}
                         <div className="flex justify-center gap-2 mt-6">
                             {[0.5, 1, 1.5, 2].map((speed) => (
                                 <button
