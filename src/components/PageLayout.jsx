@@ -145,13 +145,13 @@ export default function PageLayout({ children, activePage, onSearch, searchPlace
 
                 {/* Sidebar */}
                 <aside className={`${sidebarOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-full md:translate-x-0'} transition-all duration-300 overflow-hidden border-r flex-shrink-0 fixed md:relative z-50 md:z-auto h-[calc(100vh-72px)] md:h-auto ${getSidebarClasses()}`}>
-                    <nav className="p-4 space-y-1">
+                    <nav className="px-4 py-6 space-y-1">
                         {menuItems.map((item, index) => (
                             <Link
                                 key={index}
                                 to={item.href}
                                 onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
-                                className={`flex items-center gap-4 px-3 py-3 rounded-lg transition-colors ${
+                                className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
                                     item.label === activePage
                                         ? 'bg-purple-100 text-purple-700'
                                         : theme === 'dark' 
