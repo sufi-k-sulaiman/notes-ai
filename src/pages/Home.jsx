@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Sparkles, Radio, Settings, Brain } from "lucide-react";
+import { Sparkles, Radio, Settings, Brain, FileText } from "lucide-react";
 import PageLayout from '../components/PageLayout';
 
 const pages = [
@@ -27,6 +27,13 @@ const pages = [
         color: 'from-pink-600 to-rose-600'
     },
     { 
+        name: 'Resume Builder', 
+        href: createPageUrl('ResumeBuilder'), 
+        icon: FileText, 
+        description: 'AI-powered professional resume generator',
+        color: 'from-green-600 to-emerald-600'
+    },
+    { 
         name: 'Settings', 
         href: createPageUrl('Settings'), 
         icon: Settings, 
@@ -37,13 +44,13 @@ const pages = [
 
 export default function Home() {
     return (
-        <PageLayout activePage="" searchPlaceholder="Search anything...">
-            <div className="p-8">
-                <div className="max-w-4xl mx-auto">
-                    <h1 className="text-3xl font-bold mb-2 text-gray-800">Welcome to 1cPublishing</h1>
-                    <p className="mb-8 text-gray-600">Your AI-powered publishing platform. Choose where to go:</p>
+        <PageLayout activePage="" searchPlaceholder="Search anything..." showSearch={true}>
+            <div className="p-4 md:p-8">
+                <div className="max-w-5xl mx-auto">
+                    <h1 className="text-2xl md:text-3xl font-bold mb-2 text-gray-800">Welcome to 1cPublishing</h1>
+                    <p className="mb-6 md:mb-8 text-gray-600">Your AI-powered publishing platform. Choose where to go:</p>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                         {pages.map((page) => (
                             <Link key={page.name} to={page.href} className="group">
                                 <div className={`bg-gradient-to-br ${page.color} rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all hover:-translate-y-1 text-white h-full`}>
