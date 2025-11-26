@@ -97,6 +97,39 @@ export default function TestFunctions() {
                             )}
                         </CardContent>
                     </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Twilio Connection</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <Button onClick={() => runTest('testTwilio')} disabled={loading}>
+                                {loading && activeTest === 'testTwilio' && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                                Test Twilio
+                            </Button>
+                            
+                            {activeTest === 'testTwilio' && result && (
+                                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                                    <div className="flex items-center gap-2 text-green-700 mb-2">
+                                        <CheckCircle className="w-5 h-5" />
+                                        <span className="font-medium">Success!</span>
+                                    </div>
+                                    <p className="text-gray-700">{result.message}</p>
+                                    <p className="text-sm text-gray-500 mt-2">Account: {result.account_name}</p>
+                                    <p className="text-sm text-gray-500">Status: {result.status}</p>
+                                </div>
+                            )}
+                            
+                            {activeTest === 'testTwilio' && error && (
+                                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                                    <div className="flex items-center gap-2 text-red-700">
+                                        <XCircle className="w-5 h-5" />
+                                        <span className="font-medium">Error: {error}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </div>
