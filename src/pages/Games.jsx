@@ -1,140 +1,218 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
     Rocket, Target, Zap, Trophy, Star, Play, Pause, RotateCcw, 
-    Volume2, VolumeX, ChevronRight, Lock, Check, Gamepad2, 
-    Flame, Award, Clock, Heart, Shield, Sparkles
+    Crosshair, Award, Clock, Heart, Shield, Sparkles, Medal, Compass,
+    Gamepad2, ChevronRight, Lock, Check
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import PageLayout from '../components/PageLayout';
 
-// Game levels with word sets
-const GAME_LEVELS = [
-    { id: 1, name: 'Basics', difficulty: 'Easy', color: '#10B981', words: [
-        { word: 'Algorithm', definition: 'A step-by-step procedure for solving a problem' },
-        { word: 'Variable', definition: 'A container that holds data values' },
-        { word: 'Function', definition: 'A reusable block of code that performs a task' },
-        { word: 'Loop', definition: 'Code that repeats until a condition is met' },
-        { word: 'Array', definition: 'An ordered collection of elements' },
-    ], requiredScore: 0, timeLimit: 60 },
-    { id: 2, name: 'Web Basics', difficulty: 'Easy', color: '#3B82F6', words: [
-        { word: 'HTML', definition: 'Markup language for creating web pages' },
-        { word: 'CSS', definition: 'Stylesheet language for designing web pages' },
-        { word: 'JavaScript', definition: 'Programming language for web interactivity' },
-        { word: 'DOM', definition: 'Document Object Model for web page structure' },
-        { word: 'API', definition: 'Interface for software applications to communicate' },
-    ], requiredScore: 100, timeLimit: 55 },
-    { id: 3, name: 'Data Types', difficulty: 'Medium', color: '#8B5CF6', words: [
-        { word: 'String', definition: 'A sequence of characters' },
-        { word: 'Integer', definition: 'A whole number without decimals' },
-        { word: 'Boolean', definition: 'A true or false value' },
-        { word: 'Object', definition: 'A collection of key-value pairs' },
-        { word: 'Null', definition: 'Represents intentional absence of value' },
-    ], requiredScore: 200, timeLimit: 50 },
-    { id: 4, name: 'Advanced JS', difficulty: 'Medium', color: '#F59E0B', words: [
-        { word: 'Promise', definition: 'Object representing eventual completion of async operation' },
-        { word: 'Callback', definition: 'Function passed as argument to another function' },
-        { word: 'Closure', definition: 'Function with access to outer scope variables' },
-        { word: 'Prototype', definition: 'Object from which other objects inherit properties' },
-        { word: 'Hoisting', definition: 'Moving declarations to the top of scope' },
-    ], requiredScore: 350, timeLimit: 45 },
-    { id: 5, name: 'React Basics', difficulty: 'Medium', color: '#06B6D4', words: [
-        { word: 'Component', definition: 'Reusable piece of UI in React' },
-        { word: 'Props', definition: 'Data passed from parent to child component' },
-        { word: 'State', definition: 'Local data that can change over time' },
-        { word: 'Hook', definition: 'Function to use React features in functional components' },
-        { word: 'JSX', definition: 'JavaScript syntax extension for writing UI' },
-    ], requiredScore: 500, timeLimit: 45 },
-    { id: 6, name: 'Databases', difficulty: 'Hard', color: '#EC4899', words: [
-        { word: 'Query', definition: 'Request for data from a database' },
-        { word: 'Schema', definition: 'Structure that defines database organization' },
-        { word: 'Index', definition: 'Data structure for faster database queries' },
-        { word: 'Transaction', definition: 'Atomic unit of database operations' },
-        { word: 'Normalization', definition: 'Organizing data to reduce redundancy' },
-    ], requiredScore: 700, timeLimit: 40 },
-    { id: 7, name: 'Security', difficulty: 'Hard', color: '#EF4444', words: [
-        { word: 'Encryption', definition: 'Converting data into coded format' },
-        { word: 'Authentication', definition: 'Verifying user identity' },
-        { word: 'Authorization', definition: 'Granting access permissions' },
-        { word: 'Firewall', definition: 'Network security system monitoring traffic' },
-        { word: 'Vulnerability', definition: 'Weakness that can be exploited' },
-    ], requiredScore: 900, timeLimit: 40 },
-    { id: 8, name: 'Cloud Computing', difficulty: 'Hard', color: '#6366F1', words: [
-        { word: 'Serverless', definition: 'Cloud execution without managing servers' },
-        { word: 'Container', definition: 'Isolated environment for running applications' },
-        { word: 'Microservices', definition: 'Architecture of small independent services' },
-        { word: 'Kubernetes', definition: 'Container orchestration platform' },
-        { word: 'Lambda', definition: 'AWS serverless compute service' },
-    ], requiredScore: 1100, timeLimit: 35 },
-    { id: 9, name: 'AI & ML', difficulty: 'Expert', color: '#A855F7', words: [
-        { word: 'Neural Network', definition: 'Computing system inspired by biological brains' },
-        { word: 'Deep Learning', definition: 'ML using multi-layered neural networks' },
-        { word: 'Tensor', definition: 'Multi-dimensional array of numerical data' },
-        { word: 'Gradient', definition: 'Direction of steepest increase of a function' },
-        { word: 'Epoch', definition: 'One complete pass through training data' },
-    ], requiredScore: 1350, timeLimit: 35 },
-    { id: 10, name: 'Master Level', difficulty: 'Expert', color: '#F43F5E', words: [
-        { word: 'Polymorphism', definition: 'Objects taking many forms in OOP' },
-        { word: 'Idempotent', definition: 'Operation producing same result when repeated' },
-        { word: 'Memoization', definition: 'Caching function results for optimization' },
-        { word: 'Recursion', definition: 'Function calling itself to solve problems' },
-        { word: 'Concurrency', definition: 'Executing multiple tasks simultaneously' },
-    ], requiredScore: 1600, timeLimit: 30 },
-];
+// Tank SVG Component
+function TankSVG({ color = '#4FD1C5', direction = 'right', size = 80 }) {
+    const flip = direction === 'left' ? 'scale(-1, 1)' : '';
+    return (
+        <svg width={size} height={size * 0.6} viewBox="0 0 100 60" style={{ transform: flip }}>
+            {/* Tracks */}
+            <ellipse cx="50" cy="50" rx="45" ry="10" fill="#1a1a2e" />
+            <ellipse cx="50" cy="50" rx="42" ry="8" fill="#2d2d44" />
+            {/* Track wheels */}
+            {[15, 35, 50, 65, 85].map((x, i) => (
+                <circle key={i} cx={x} cy="50" r="6" fill="#1a1a2e" stroke="#3d3d5c" strokeWidth="2" />
+            ))}
+            {/* Body */}
+            <rect x="10" y="30" width="80" height="20" rx="3" fill={color} />
+            <rect x="15" y="32" width="70" height="16" rx="2" fill="#1a1a2e" opacity="0.3" />
+            {/* Turret */}
+            <ellipse cx="45" cy="30" rx="20" ry="12" fill={color} />
+            <ellipse cx="45" cy="28" rx="15" ry="8" fill="#1a1a2e" opacity="0.2" />
+            {/* Cannon */}
+            <rect x="55" y="26" width="40" height="8" rx="2" fill={color} />
+            <rect x="90" y="24" width="8" height="12" rx="1" fill={color} />
+            {/* Details */}
+            <circle cx="45" cy="28" r="4" fill="#1a1a2e" opacity="0.5" />
+            <rect x="20" y="35" width="8" height="10" rx="1" fill="#1a1a2e" opacity="0.4" />
+        </svg>
+    );
+}
 
-function WordBubble({ word, position, onClick, isTarget }) {
+// Explosion Effect
+function Explosion({ x, y, content, onComplete }) {
+    const [phase, setPhase] = useState(0);
+    
+    useEffect(() => {
+        const timer1 = setTimeout(() => setPhase(1), 100);
+        const timer2 = setTimeout(() => setPhase(2), 300);
+        const timer3 = setTimeout(() => setPhase(3), 500);
+        const timer4 = setTimeout(onComplete, 4000);
+        return () => { clearTimeout(timer1); clearTimeout(timer2); clearTimeout(timer3); clearTimeout(timer4); };
+    }, [onComplete]);
+
+    return (
+        <div className="absolute z-50 pointer-events-none" style={{ left: x, top: y, transform: 'translate(-50%, -50%)' }}>
+            {phase < 3 && (
+                <div className={`transition-all duration-200 ${phase === 0 ? 'scale-50 opacity-100' : phase === 1 ? 'scale-150 opacity-80' : 'scale-200 opacity-0'}`}>
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-r from-orange-500 via-yellow-400 to-red-500 animate-ping" />
+                </div>
+            )}
+            {phase >= 2 && (
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full animate-fade-in">
+                    <div className="bg-gray-900/95 border border-cyan-500/50 rounded-xl p-4 min-w-[300px] max-w-[400px] backdrop-blur-sm">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Sparkles className="w-4 h-4 text-cyan-400" />
+                            <span className="text-cyan-400 font-semibold text-sm">{content.subject}</span>
+                        </div>
+                        <h3 className="text-white font-bold mb-2">{content.term}</h3>
+                        <p className="text-gray-300 text-sm mb-3">{content.definition}</p>
+                        <div className="bg-cyan-500/10 rounded-lg p-2">
+                            <p className="text-cyan-300 text-xs"><span className="font-semibold">💡 Fun Fact:</span> {content.funFact}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// Crosshair component
+function GameCrosshair({ position }) {
     return (
         <div 
-            onClick={onClick}
-            className={`absolute cursor-crosshair select-none transition-all duration-100 ${isTarget ? 'ring-4 ring-yellow-400 ring-opacity-75' : ''}`}
-            style={{
-                left: position.x,
-                top: position.y,
-                transform: 'translate(-50%, -50%)'
-            }}
+            className="fixed pointer-events-none z-40 transition-all duration-75"
+            style={{ left: position.x, top: position.y, transform: 'translate(-50%, -50%)' }}
         >
-            <div className={`px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-sm shadow-lg hover:scale-110 transition-transform ${isTarget ? 'animate-pulse' : ''}`}>
-                {word}
+            <div className="relative w-16 h-16">
+                <div className="absolute inset-0 border-2 border-cyan-400 rounded-lg opacity-50" />
+                <div className="absolute top-1/2 left-0 w-4 h-0.5 bg-cyan-400 -translate-y-1/2" />
+                <div className="absolute top-1/2 right-0 w-4 h-0.5 bg-cyan-400 -translate-y-1/2" />
+                <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-cyan-400 -translate-x-1/2" />
+                <div className="absolute left-1/2 bottom-0 w-0.5 h-4 bg-cyan-400 -translate-x-1/2" />
+                <div className="absolute top-1/2 left-1/2 w-2 h-2 border border-red-500 rounded-full -translate-x-1/2 -translate-y-1/2" />
             </div>
         </div>
     );
 }
 
-function GameCanvas({ level, onComplete, onBack }) {
-    const canvasRef = useRef(null);
-    const [words, setWords] = useState([]);
+// Compass HUD
+function CompassHUD({ score, maxScore }) {
+    const angle = (score / maxScore) * 360;
+    return (
+        <div className="relative w-24 h-24">
+            <div className="absolute inset-0 rounded-full border-2 border-gray-600 bg-gray-900/80" />
+            <div className="absolute inset-2 rounded-full border border-gray-700" />
+            {['N', 'E', 'S', 'W'].map((dir, i) => (
+                <span key={dir} className="absolute text-xs text-gray-400 font-bold" style={{
+                    top: i === 0 ? '4px' : i === 2 ? 'auto' : '50%',
+                    bottom: i === 2 ? '4px' : 'auto',
+                    left: i === 3 ? '4px' : i === 1 ? 'auto' : '50%',
+                    right: i === 1 ? '4px' : 'auto',
+                    transform: i === 0 || i === 2 ? 'translateX(-50%)' : 'translateY(-50%)'
+                }}>{dir}</span>
+            ))}
+            <div className="absolute top-1/2 left-1/2 w-0.5 h-8 bg-cyan-400 origin-bottom -translate-x-1/2" 
+                 style={{ transform: `translateX(-50%) rotate(${angle}deg)` }} />
+            <div className="absolute top-1/2 left-1/2 w-2 h-2 bg-cyan-400 rounded-full -translate-x-1/2 -translate-y-1/2" />
+        </div>
+    );
+}
+
+// Score Gauge
+function ScoreGauge({ score, maxScore }) {
+    const percentage = Math.min((score / maxScore) * 100, 100);
+    return (
+        <div className="relative w-24 h-24">
+            <div className="absolute inset-0 rounded-full border-2 border-gray-600 bg-gray-900/80" />
+            <svg className="absolute inset-0 w-full h-full -rotate-90">
+                <circle cx="48" cy="48" r="40" fill="none" stroke="#1f2937" strokeWidth="6" />
+                <circle cx="48" cy="48" r="40" fill="none" stroke="#10b981" strokeWidth="6" 
+                        strokeDasharray={`${percentage * 2.51} 251`} strokeLinecap="round" />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-xs text-gray-400">Score</span>
+                <span className="text-lg font-bold text-green-400">{score}</span>
+            </div>
+        </div>
+    );
+}
+
+// Tank data with educational content
+const TANK_DATA = [
+    { id: 1, subject: 'Programming', term: 'Algorithm', definition: 'A step-by-step procedure for solving a problem or accomplishing a task.', funFact: 'The word comes from the 9th-century Persian mathematician Al-Khwarizmi!', color: '#4FD1C5' },
+    { id: 2, subject: 'Web Dev', term: 'API', definition: 'Application Programming Interface - a way for software to communicate.', funFact: 'There are over 24,000 public APIs available on the internet!', color: '#63B3ED' },
+    { id: 3, subject: 'Database', term: 'SQL', definition: 'Structured Query Language for managing relational databases.', funFact: 'SQL was developed at IBM in the early 1970s!', color: '#F6AD55' },
+    { id: 4, subject: 'Security', term: 'Encryption', definition: 'Converting data into a coded format to prevent unauthorized access.', funFact: 'The first encryption dates back to ancient Egypt around 1900 BC!', color: '#FC8181' },
+    { id: 5, subject: 'Cloud', term: 'Serverless', definition: 'Cloud execution model where the provider manages server infrastructure.', funFact: 'Serverless can reduce costs by up to 90% for sporadic workloads!', color: '#B794F4' },
+    { id: 6, subject: 'AI', term: 'Neural Network', definition: 'Computing system inspired by biological neural networks in brains.', funFact: 'GPT-4 has an estimated 1.76 trillion parameters!', color: '#F687B3' },
+    { id: 7, subject: 'DevOps', term: 'Container', definition: 'Lightweight, standalone package containing everything needed to run software.', funFact: 'Docker containers can start in milliseconds vs minutes for VMs!', color: '#68D391' },
+    { id: 8, subject: 'React', term: 'Component', definition: 'Reusable, self-contained piece of UI in React applications.', funFact: 'Facebook created React in 2011 for their newsfeed feature!', color: '#90CDF4' },
+    { id: 9, subject: 'JavaScript', term: 'Promise', definition: 'Object representing eventual completion of an async operation.', funFact: 'JavaScript was created in just 10 days by Brendan Eich!', color: '#FBD38D' },
+    { id: 10, subject: 'Data', term: 'Big Data', definition: 'Extremely large datasets that require special processing methods.', funFact: 'Humans create 2.5 quintillion bytes of data every day!', color: '#C6F6D5' },
+];
+
+// Main Game Component
+function TankBattleGame({ onBack }) {
+    const gameRef = useRef(null);
+    const [tanks, setTanks] = useState([]);
     const [score, setScore] = useState(0);
     const [combo, setCombo] = useState(0);
-    const [maxCombo, setMaxCombo] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(level.timeLimit);
-    const [isPaused, setIsPaused] = useState(false);
-    const [currentDefinition, setCurrentDefinition] = useState(null);
-    const [targetWord, setTargetWord] = useState(null);
-    const [lives, setLives] = useState(3);
+    const [lives, setLives] = useState(5);
+    const [timeLeft, setTimeLeft] = useState(90);
     const [gameOver, setGameOver] = useState(false);
-    const [showDefinition, setShowDefinition] = useState(null);
+    const [isPaused, setIsPaused] = useState(false);
+    const [explosions, setExplosions] = useState([]);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const [tanksDestroyed, setTanksDestroyed] = useState(0);
 
-    // Initialize words
+    // Initialize tanks
     useEffect(() => {
-        const initialWords = level.words.map((w, i) => ({
-            ...w,
-            id: i,
-            position: {
-                x: Math.random() * 600 + 100,
-                y: Math.random() * 300 + 100
-            },
-            velocity: {
-                x: (Math.random() - 0.5) * 2,
-                y: (Math.random() - 0.5) * 2
-            }
-        }));
-        setWords(initialWords);
-        setTargetWord(initialWords[Math.floor(Math.random() * initialWords.length)]);
-    }, [level]);
+        const spawnTank = () => {
+            if (gameOver || isPaused) return;
+            const tankInfo = TANK_DATA[Math.floor(Math.random() * TANK_DATA.length)];
+            const fromLeft = Math.random() > 0.5;
+            const lane = Math.floor(Math.random() * 3);
+            const yPositions = [180, 280, 380];
+            
+            const newTank = {
+                id: Date.now() + Math.random(),
+                ...tankInfo,
+                x: fromLeft ? -100 : window.innerWidth + 100,
+                y: yPositions[lane],
+                speed: 1 + Math.random() * 2,
+                direction: fromLeft ? 'right' : 'left',
+            };
+            setTanks(prev => [...prev, newTank]);
+        };
 
-    // Game timer
+        const interval = setInterval(spawnTank, 2000);
+        spawnTank(); // Initial tank
+        return () => clearInterval(interval);
+    }, [gameOver, isPaused]);
+
+    // Move tanks
     useEffect(() => {
-        if (isPaused || gameOver) return;
+        if (gameOver || isPaused) return;
+        const moveInterval = setInterval(() => {
+            setTanks(prev => {
+                const updated = prev.map(tank => ({
+                    ...tank,
+                    x: tank.direction === 'right' ? tank.x + tank.speed : tank.x - tank.speed
+                })).filter(tank => {
+                    const escaped = tank.direction === 'right' ? tank.x > window.innerWidth + 100 : tank.x < -100;
+                    if (escaped) {
+                        setLives(l => Math.max(0, l - 1));
+                        setCombo(0);
+                    }
+                    return !escaped;
+                });
+                return updated;
+            });
+        }, 16);
+        return () => clearInterval(moveInterval);
+    }, [gameOver, isPaused]);
+
+    // Timer
+    useEffect(() => {
+        if (gameOver || isPaused) return;
         const timer = setInterval(() => {
             setTimeLeft(t => {
                 if (t <= 1) {
@@ -145,159 +223,218 @@ function GameCanvas({ level, onComplete, onBack }) {
             });
         }, 1000);
         return () => clearInterval(timer);
-    }, [isPaused, gameOver]);
+    }, [gameOver, isPaused]);
 
-    // Word movement
+    // Check lives
     useEffect(() => {
-        if (isPaused || gameOver) return;
-        const moveInterval = setInterval(() => {
-            setWords(prev => prev.map(w => {
-                let newX = w.position.x + w.velocity.x;
-                let newY = w.position.y + w.velocity.y;
-                let newVelX = w.velocity.x;
-                let newVelY = w.velocity.y;
+        if (lives <= 0) setGameOver(true);
+    }, [lives]);
 
-                if (newX < 50 || newX > 750) newVelX *= -1;
-                if (newY < 50 || newY > 350) newVelY *= -1;
+    // Mouse tracking
+    useEffect(() => {
+        const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
 
-                return {
-                    ...w,
-                    position: { x: Math.max(50, Math.min(750, newX)), y: Math.max(50, Math.min(350, newY)) },
-                    velocity: { x: newVelX, y: newVelY }
-                };
-            }));
-        }, 50);
-        return () => clearInterval(moveInterval);
-    }, [isPaused, gameOver]);
-
-    const handleWordClick = (clickedWord) => {
+    // Shoot tank
+    const handleShoot = (e) => {
         if (gameOver || isPaused) return;
+        
+        const rect = gameRef.current?.getBoundingClientRect();
+        if (!rect) return;
+        
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
 
-        if (clickedWord.id === targetWord?.id) {
-            // Correct hit
-            const comboBonus = Math.min(combo, 5) * 10;
-            const points = 50 + comboBonus;
-            setScore(s => s + points);
+        // Check if any tank was hit
+        const hitTank = tanks.find(tank => {
+            const tankWidth = 80;
+            const tankHeight = 50;
+            return clickX >= tank.x - tankWidth/2 && clickX <= tank.x + tankWidth/2 &&
+                   clickY >= tank.y - tankHeight/2 && clickY <= tank.y + tankHeight/2;
+        });
+
+        if (hitTank) {
+            // Create explosion
+            setExplosions(prev => [...prev, {
+                id: Date.now(),
+                x: hitTank.x,
+                y: hitTank.y,
+                content: hitTank
+            }]);
+
+            // Remove tank
+            setTanks(prev => prev.filter(t => t.id !== hitTank.id));
+
+            // Update score
+            const comboBonus = combo * 10;
+            setScore(s => s + 100 + comboBonus);
             setCombo(c => c + 1);
-            setMaxCombo(m => Math.max(m, combo + 1));
-            setShowDefinition({ word: clickedWord.word, definition: clickedWord.definition, correct: true });
-            
-            setTimeout(() => setShowDefinition(null), 2000);
-
-            // Remove word and set new target
-            const remainingWords = words.filter(w => w.id !== clickedWord.id);
-            if (remainingWords.length === 0) {
-                setGameOver(true);
-                onComplete(score + points, maxCombo);
-            } else {
-                setWords(remainingWords);
-                setTargetWord(remainingWords[Math.floor(Math.random() * remainingWords.length)]);
-            }
-        } else {
-            // Wrong hit
-            setCombo(0);
-            setLives(l => {
-                if (l <= 1) {
-                    setGameOver(true);
-                    return 0;
-                }
-                return l - 1;
-            });
-            setShowDefinition({ word: clickedWord.word, definition: clickedWord.definition, correct: false });
-            setTimeout(() => setShowDefinition(null), 2000);
+            setTanksDestroyed(t => t + 1);
         }
     };
 
+    const removeExplosion = (id) => {
+        setExplosions(prev => prev.filter(e => e.id !== id));
+    };
+
     return (
-        <div className="relative w-full h-[500px] bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 rounded-2xl overflow-hidden">
-            {/* HUD */}
-            <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-20 bg-black/30">
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 text-white">
-                        <Trophy className="w-5 h-5 text-yellow-400" />
-                        <span className="font-bold">{score}</span>
+        <div className="relative w-full h-[600px] bg-gradient-to-b from-[#0a0f1a] via-[#0d1526] to-[#0a0f1a] rounded-2xl overflow-hidden cursor-none"
+             ref={gameRef} onClick={handleShoot}>
+            
+            {/* Background mountains */}
+            <svg className="absolute bottom-32 left-0 right-0 h-40 opacity-30" viewBox="0 0 1200 200" preserveAspectRatio="none">
+                <polygon fill="#1a2744" points="0,200 100,120 200,160 350,80 500,140 650,60 800,130 950,90 1100,150 1200,100 1200,200" />
+                <polygon fill="#0f1a2e" points="0,200 150,140 300,180 450,100 600,160 750,80 900,150 1050,110 1200,170 1200,200" />
+            </svg>
+
+            {/* Ground */}
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#1a2744] to-transparent" />
+
+            {/* HUD - Top */}
+            <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-30">
+                {/* Left panel - Topics */}
+                <div className="space-y-2">
+                    <div className="bg-cyan-500 text-white px-4 py-2 rounded-lg font-semibold text-sm">
+                        Tank Battle
                     </div>
-                    <div className="flex items-center gap-2 text-white">
-                        <Flame className="w-5 h-5 text-orange-400" />
-                        <span className="font-bold">x{combo}</span>
+                    <div className="bg-gray-800/80 text-gray-300 px-3 py-1.5 rounded-lg text-xs">
+                        Programming Concepts
                     </div>
-                    <div className="flex items-center gap-1">
-                        {[...Array(3)].map((_, i) => (
+                    <div className="bg-gray-800/80 text-gray-300 px-3 py-1.5 rounded-lg text-xs">
+                        Web Development
+                    </div>
+                    <div className="bg-gray-800/80 text-gray-300 px-3 py-1.5 rounded-lg text-xs">
+                        Data Science
+                    </div>
+                </div>
+
+                {/* Center - Awards */}
+                <div className="text-center">
+                    <p className="text-cyan-400 text-sm font-semibold mb-1">Awards</p>
+                    <p className="text-gray-400 text-xs mb-2">Medals to be won</p>
+                    <div className="flex gap-3">
+                        <Medal className={`w-8 h-8 ${tanksDestroyed >= 5 ? 'text-cyan-400' : 'text-gray-600'}`} />
+                        <Award className={`w-8 h-8 ${tanksDestroyed >= 10 ? 'text-yellow-400' : 'text-gray-600'}`} />
+                        <Trophy className={`w-8 h-8 ${score >= 1000 ? 'text-amber-400' : 'text-gray-600'}`} />
+                    </div>
+                </div>
+
+                {/* Right panel - Gauges */}
+                <div className="flex gap-4">
+                    <CompassHUD score={score} maxScore={2000} />
+                    <ScoreGauge score={score} maxScore={2000} />
+                </div>
+            </div>
+
+            {/* Center targeting display */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-30">
+                <div className="w-24 h-24 border-2 border-cyan-500 rounded-lg flex items-center justify-center">
+                    <div className="w-4 h-4 border border-red-500 rounded-full" />
+                </div>
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex gap-8 text-gray-500 text-xs">
+                    <span>{tanksDestroyed}</span>
+                    <span>|</span>
+                    <span>{tanksDestroyed}</span>
+                </div>
+            </div>
+
+            {/* Tanks */}
+            {tanks.map(tank => (
+                <div key={tank.id} className="absolute transition-none cursor-crosshair"
+                     style={{ left: tank.x, top: tank.y, transform: 'translate(-50%, -50%)' }}>
+                    <TankSVG color={tank.color} direction={tank.direction} />
+                </div>
+            ))}
+
+            {/* Explosions */}
+            {explosions.map(exp => (
+                <Explosion key={exp.id} x={exp.x} y={exp.y} content={exp.content} 
+                           onComplete={() => removeExplosion(exp.id)} />
+            ))}
+
+            {/* Bottom HUD */}
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end z-30">
+                {/* Radar */}
+                <div className="relative w-32 h-32">
+                    <div className="absolute inset-0 rounded-full border-2 border-cyan-500/50 bg-gray-900/80" />
+                    <div className="absolute inset-4 rounded-full border border-cyan-500/30" />
+                    <div className="absolute inset-8 rounded-full border border-cyan-500/20" />
+                    {/* Radar sweep */}
+                    <div className="absolute top-1/2 left-1/2 w-1/2 h-0.5 bg-gradient-to-r from-cyan-400 to-transparent origin-left animate-spin" 
+                         style={{ animationDuration: '3s' }} />
+                    {/* Tank dots on radar */}
+                    {tanks.slice(0, 5).map((tank, i) => (
+                        <div key={tank.id} className="absolute w-2 h-2 bg-cyan-400 rounded-full animate-pulse"
+                             style={{ 
+                                 left: `${50 + (tank.x / window.innerWidth - 0.5) * 80}%`,
+                                 top: `${50 + (tank.y / 600 - 0.5) * 80}%`
+                             }} />
+                    ))}
+                </div>
+
+                {/* Stats */}
+                <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-2">
+                        <Clock className="w-5 h-5 text-cyan-400" />
+                        <span className="text-white font-bold">{timeLeft}s</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Zap className="w-5 h-5 text-orange-400" />
+                        <span className="text-white font-bold">x{combo}</span>
+                    </div>
+                    <div className="flex gap-1">
+                        {[...Array(5)].map((_, i) => (
                             <Heart key={i} className={`w-5 h-5 ${i < lives ? 'text-red-500 fill-red-500' : 'text-gray-600'}`} />
                         ))}
                     </div>
-                </div>
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 text-white">
-                        <Clock className="w-5 h-5 text-cyan-400" />
-                        <span className="font-bold">{timeLeft}s</span>
-                    </div>
-                    <Button size="icon" variant="ghost" onClick={() => setIsPaused(!isPaused)} className="text-white hover:bg-white/20">
+                    <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); setIsPaused(!isPaused); }} 
+                            className="text-white hover:bg-white/20">
                         {isPaused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
                     </Button>
                 </div>
+
+                {/* Tank icon */}
+                <div className="opacity-50">
+                    <TankSVG color="#4FD1C5" size={60} />
+                </div>
             </div>
 
-            {/* Target indicator */}
-            {targetWord && (
-                <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10 bg-black/50 px-4 py-2 rounded-lg text-white text-center">
-                    <p className="text-xs text-gray-400 mb-1">Find & shoot:</p>
-                    <p className="font-bold text-lg text-yellow-400">{targetWord.definition}</p>
-                </div>
-            )}
+            {/* Crosshair */}
+            <GameCrosshair position={mousePos} />
 
-            {/* Game area */}
-            <div ref={canvasRef} className="absolute inset-0 pt-32">
-                {words.map(word => (
-                    <WordBubble 
-                        key={word.id}
-                        word={word.word}
-                        position={word.position}
-                        onClick={() => handleWordClick(word)}
-                        isTarget={word.id === targetWord?.id}
-                    />
-                ))}
-            </div>
-
-            {/* Definition popup */}
-            {showDefinition && (
-                <div className={`absolute bottom-20 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl ${showDefinition.correct ? 'bg-green-500' : 'bg-red-500'} text-white z-30 animate-bounce`}>
-                    <p className="font-bold">{showDefinition.word}</p>
-                    <p className="text-sm opacity-90">{showDefinition.definition}</p>
-                </div>
-            )}
-
-            {/* Pause overlay */}
-            {isPaused && !gameOver && (
-                <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-40">
-                    <div className="text-center text-white">
-                        <Pause className="w-16 h-16 mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold mb-4">Paused</h2>
-                        <Button onClick={() => setIsPaused(false)} className="bg-purple-600 hover:bg-purple-700">
-                            <Play className="w-4 h-4 mr-2" /> Resume
-                        </Button>
-                    </div>
-                </div>
-            )}
-
-            {/* Game over overlay */}
-            {gameOver && (
-                <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-40">
-                    <div className="text-center text-white bg-gray-900/90 p-8 rounded-2xl">
-                        <Trophy className="w-16 h-16 mx-auto mb-4 text-yellow-400" />
-                        <h2 className="text-3xl font-bold mb-2">{words.length === 0 ? 'Level Complete!' : 'Game Over'}</h2>
-                        <div className="space-y-2 mb-6">
-                            <p className="text-xl">Score: <span className="text-yellow-400 font-bold">{score}</span></p>
-                            <p className="text-lg">Max Combo: <span className="text-orange-400 font-bold">x{maxCombo}</span></p>
-                        </div>
-                        <div className="flex gap-3 justify-center">
-                            <Button onClick={onBack} variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
-                                Back to Levels
-                            </Button>
-                            <Button onClick={() => window.location.reload()} className="bg-purple-600 hover:bg-purple-700">
-                                <RotateCcw className="w-4 h-4 mr-2" /> Play Again
-                            </Button>
-                        </div>
+            {/* Game Over / Pause overlay */}
+            {(gameOver || isPaused) && (
+                <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-50 cursor-default" onClick={e => e.stopPropagation()}>
+                    <div className="bg-gray-900 border border-cyan-500/50 rounded-2xl p-8 text-center max-w-md">
+                        {gameOver ? (
+                            <>
+                                <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+                                <h2 className="text-3xl font-bold text-white mb-2">Mission Complete!</h2>
+                                <div className="space-y-2 mb-6 text-gray-300">
+                                    <p>Score: <span className="text-cyan-400 font-bold">{score}</span></p>
+                                    <p>Tanks Destroyed: <span className="text-green-400 font-bold">{tanksDestroyed}</span></p>
+                                    <p>Max Combo: <span className="text-orange-400 font-bold">x{combo}</span></p>
+                                </div>
+                                <div className="flex gap-3 justify-center">
+                                    <Button onClick={onBack} variant="outline" className="border-gray-600 text-gray-300">
+                                        Back
+                                    </Button>
+                                    <Button onClick={() => window.location.reload()} className="bg-cyan-600 hover:bg-cyan-700">
+                                        <RotateCcw className="w-4 h-4 mr-2" /> Play Again
+                                    </Button>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <Pause className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
+                                <h2 className="text-2xl font-bold text-white mb-4">Paused</h2>
+                                <Button onClick={() => setIsPaused(false)} className="bg-cyan-600 hover:bg-cyan-700">
+                                    <Play className="w-4 h-4 mr-2" /> Resume
+                                </Button>
+                            </>
+                        )}
                     </div>
                 </div>
             )}
@@ -306,140 +443,65 @@ function GameCanvas({ level, onComplete, onBack }) {
 }
 
 export default function Games() {
-    const [selectedGame, setSelectedGame] = useState('word-shooter');
-    const [selectedLevel, setSelectedLevel] = useState(null);
-    const [totalScore, setTotalScore] = useState(() => {
-        const saved = localStorage.getItem('wordShooterScore');
-        return saved ? parseInt(saved) : 0;
-    });
-    const [completedLevels, setCompletedLevels] = useState(() => {
-        const saved = localStorage.getItem('wordShooterLevels');
-        return saved ? JSON.parse(saved) : [];
-    });
-
-    const handleLevelComplete = (score, maxCombo) => {
-        const newTotal = totalScore + score;
-        setTotalScore(newTotal);
-        localStorage.setItem('wordShooterScore', newTotal.toString());
-        
-        if (!completedLevels.includes(selectedLevel.id)) {
-            const newCompleted = [...completedLevels, selectedLevel.id];
-            setCompletedLevels(newCompleted);
-            localStorage.setItem('wordShooterLevels', JSON.stringify(newCompleted));
-        }
-    };
-
-    const isLevelUnlocked = (level) => {
-        return totalScore >= level.requiredScore;
-    };
+    const [isPlaying, setIsPlaying] = useState(false);
 
     return (
         <PageLayout activePage="Games" showSearch={false}>
-            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 p-6">
+            <div className="min-h-screen bg-gradient-to-br from-[#0a0f1a] via-[#0d1526] to-[#0a0f1a] p-6">
                 <div className="max-w-6xl mx-auto">
-                    {/* Header */}
-                    <div className="text-center mb-8">
-                        <div className="inline-flex items-center gap-3 mb-4">
-                            <Gamepad2 className="w-10 h-10 text-purple-400" />
-                            <h1 className="text-4xl font-bold text-white">Game Arcade</h1>
-                        </div>
-                        <p className="text-gray-400">Learn while you play!</p>
-                    </div>
-
-                    {selectedLevel ? (
-                        <GameCanvas 
-                            level={selectedLevel} 
-                            onComplete={handleLevelComplete}
-                            onBack={() => setSelectedLevel(null)}
-                        />
-                    ) : (
+                    {!isPlaying ? (
                         <>
-                            {/* Game Selection */}
-                            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 mb-8">
-                                <div className="flex items-center justify-between mb-6">
+                            {/* Header */}
+                            <div className="text-center mb-8">
+                                <div className="inline-flex items-center gap-3 mb-4">
+                                    <Gamepad2 className="w-10 h-10 text-cyan-400" />
+                                    <h1 className="text-4xl font-bold text-white">Game Arcade</h1>
+                                </div>
+                                <p className="text-gray-400">Learn while you play!</p>
+                            </div>
+
+                            {/* Game Card */}
+                            <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-8 border border-cyan-500/20">
+                                <div className="flex items-center gap-6 mb-6">
+                                    <div className="w-24 h-24 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
+                                        <Target className="w-12 h-12 text-white" />
+                                    </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                                            <Rocket className="w-8 h-8 text-purple-400" />
-                                            Word Shooter
-                                        </h2>
-                                        <p className="text-gray-400 mt-1">Gamified Vocabulary Learning</p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-sm text-gray-400">Total Score</p>
-                                        <p className="text-3xl font-bold text-yellow-400">{totalScore}</p>
-                                    </div>
-                                </div>
-
-                                {/* Features */}
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                                    <div className="bg-white/5 rounded-xl p-4 text-center">
-                                        <Target className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
-                                        <h3 className="text-white font-semibold">Shoot Words</h3>
-                                        <p className="text-gray-400 text-sm">Click matching words to collect definitions</p>
-                                    </div>
-                                    <div className="bg-white/5 rounded-xl p-4 text-center">
-                                        <Zap className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-                                        <h3 className="text-white font-semibold">Combo System</h3>
-                                        <p className="text-gray-400 text-sm">Chain hits to multiply your score</p>
-                                    </div>
-                                    <div className="bg-white/5 rounded-xl p-4 text-center">
-                                        <Award className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                                        <h3 className="text-white font-semibold">10 Levels</h3>
-                                        <p className="text-gray-400 text-sm">From basics to expert difficulty</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Level Selection */}
-                            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                <Star className="w-5 h-5 text-yellow-400" /> Select Level
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                                {GAME_LEVELS.map((level) => {
-                                    const unlocked = isLevelUnlocked(level);
-                                    const completed = completedLevels.includes(level.id);
-                                    
-                                    return (
-                                        <div 
-                                            key={level.id}
-                                            onClick={() => unlocked && setSelectedLevel(level)}
-                                            className={`relative rounded-xl p-4 transition-all cursor-pointer ${
-                                                unlocked 
-                                                    ? 'bg-white/10 hover:bg-white/20 hover:scale-105' 
-                                                    : 'bg-gray-800/50 opacity-60 cursor-not-allowed'
-                                            }`}
-                                        >
-                                            {completed && (
-                                                <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                                                    <Check className="w-4 h-4 text-white" />
-                                                </div>
-                                            )}
-                                            <div className="flex items-center justify-between mb-2">
-                                                <span className="text-2xl font-bold text-white">{level.id}</span>
-                                                {!unlocked && <Lock className="w-5 h-5 text-gray-500" />}
-                                            </div>
-                                            <h4 className="text-white font-semibold">{level.name}</h4>
-                                            <span className="inline-block px-2 py-0.5 rounded text-xs mt-1" style={{ backgroundColor: level.color + '30', color: level.color }}>
-                                                {level.difficulty}
-                                            </span>
-                                            <p className="text-xs text-gray-400 mt-2">{level.words.length} words • {level.timeLimit}s</p>
-                                            {!unlocked && (
-                                                <p className="text-xs text-yellow-400 mt-1">Need {level.requiredScore} pts</p>
-                                            )}
+                                        <h2 className="text-2xl font-bold text-white mb-2">Tank Battle</h2>
+                                        <p className="text-gray-400">Shoot tanks to learn programming concepts!</p>
+                                        <div className="flex gap-2 mt-2">
+                                            <span className="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded text-xs">Educational</span>
+                                            <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs">Action</span>
                                         </div>
-                                    );
-                                })}
-                            </div>
-
-                            {/* Progress */}
-                            <div className="mt-8 bg-white/10 rounded-xl p-4">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-gray-400 text-sm">Overall Progress</span>
-                                    <span className="text-white font-semibold">{completedLevels.length}/{GAME_LEVELS.length} Levels</span>
+                                    </div>
                                 </div>
-                                <Progress value={(completedLevels.length / GAME_LEVELS.length) * 100} className="h-2" />
+
+                                <div className="grid grid-cols-3 gap-4 mb-6">
+                                    <div className="bg-gray-900/50 rounded-xl p-4 text-center">
+                                        <Target className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
+                                        <h3 className="text-white font-semibold">Shoot Tanks</h3>
+                                        <p className="text-gray-400 text-sm">Click to destroy enemy tanks</p>
+                                    </div>
+                                    <div className="bg-gray-900/50 rounded-xl p-4 text-center">
+                                        <Sparkles className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
+                                        <h3 className="text-white font-semibold">Learn Facts</h3>
+                                        <p className="text-gray-400 text-sm">Each explosion reveals knowledge</p>
+                                    </div>
+                                    <div className="bg-gray-900/50 rounded-xl p-4 text-center">
+                                        <Trophy className="w-8 h-8 text-amber-400 mx-auto mb-2" />
+                                        <h3 className="text-white font-semibold">Earn Medals</h3>
+                                        <p className="text-gray-400 text-sm">Complete challenges for awards</p>
+                                    </div>
+                                </div>
+
+                                <Button onClick={() => setIsPlaying(true)} size="lg" 
+                                        className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-lg py-6">
+                                    <Play className="w-6 h-6 mr-2" /> Start Mission
+                                </Button>
                             </div>
                         </>
+                    ) : (
+                        <TankBattleGame onBack={() => setIsPlaying(false)} />
                     )}
                 </div>
             </div>
