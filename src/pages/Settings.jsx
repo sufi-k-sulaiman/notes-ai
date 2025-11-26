@@ -1,19 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import PageLayout from '../components/PageLayout';
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
 import { 
     Smartphone, Monitor, Laptop, 
     Sun, Moon, CloudSun,
     BookOpen, ZoomIn, Volume2,
-    Type
+    Type, Eye, Palette, EyeOff
 } from 'lucide-react';
 
+// Text-to-speech utility
+const speakText = (text) => {
+    if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+    }
+};
+
 export default function Settings() {
+    // New settings (card style)
     const [device, setDevice] = useState(() => localStorage.getItem('deviceMode') || 'laptop');
     const [resolution, setResolution] = useState(() => localStorage.getItem('resolution') || '1920x1080');
     const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || 'medium');
     const [cognitiveMode, setCognitiveMode] = useState(() => localStorage.getItem('cognitiveMode') || 'audible');
     const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
     const [uiStyle, setUiStyle] = useState(() => localStorage.getItem('uiStyle') || 'rounded');
+    
+    // Legacy settings (toggles)
+    const [blackWhiteMode, setBlackWhiteMode] = useState(() => localStorage.getItem('blackWhiteMode') === 'true');
+    const [hideIcons, setHideIcons] = useState(() => localStorage.getItem('hideIcons') === 'true');
+    const [voicePrompts, setVoicePrompts] = useState(() => localStorage.getItem('voicePrompts') === 'true');
+    const [fontSizeSlider, setFontSizeSlider] = useState(() => parseInt(localStorage.getItem('fontSizeSlider')) || 16);
 
     useEffect(() => {
         localStorage.setItem('deviceMode', device);
@@ -22,8 +40,12 @@ export default function Settings() {
         localStorage.setItem('cognitiveMode', cognitiveMode);
         localStorage.setItem('theme', theme);
         localStorage.setItem('uiStyle', uiStyle);
+        localStorage.setItem('blackWhiteMode', blackWhiteMode);
+        localStorage.setItem('hideIcons', hideIcons);
+        localStorage.setItem('voicePrompts', voicePrompts);
+        localStorage.setItem('fontSizeSlider', fontSizeSlider);
 
-        // Apply font size
+        // Apply font size from card selection
         const sizes = { small: '14px', medium: '16px', large: '20px' };
         document.documentElement.style.fontSize = sizes[fontSize] || '16px';
 
@@ -33,7 +55,7 @@ export default function Settings() {
         } else {
             document.documentElement.classList.remove('dark');
         }
-    }, [device, resolution, fontSize, cognitiveMode, theme, uiStyle]);
+    }, [device, resolution, fontSize, cognitiveMode, theme, uiStyle, blackWhiteMode, hideIcons, voicePrompts, fontSizeSlider]);
 
     const OptionCard = ({ selected, onClick, children, className = '' }) => (
         <button
@@ -168,6 +190,102 @@ export default function Settings() {
                         <span className="text-sm font-medium">Old school</span>
                     </OptionCard>
                 </Section>
+
+                {/* Accessibility Toggles */}
+                <div className="border-t border-gray-200 pt-8 mt-8">
+                    <h2 className="text-xl font-bold text-gray-800 mb-6">Accessibility Options</h2>
+                    
+                    <div className="space-y-6">
+                        {/* Black & White Mode */}
+                        <div 
+                            className={`bg-white rounded-xl border-2 p-5 transition-all ${blackWhiteMode ? 'border-purple-500 bg-purple-50' : 'border-gray-200'}`}
+                            onFocus={() => voicePrompts && speakText('Black and white mode. Enable for grayscale display.')}
+                            tabIndex={0}
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${blackWhiteMode ? 'bg-purple-100' : 'bg-gray-100'}`}>
+                                        <Eye className={`w-6 h-6 ${blackWhiteMode ? 'text-purple-600' : 'text-gray-500'}`} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-800">Black & White Mode</h3>
+                                        <p className="text-sm text-gray-500">Display in grayscale</p>
+                                    </div>
+                                </div>
+                                <Switch checked={blackWhiteMode} onCheckedChange={setBlackWhiteMode} />
+                            </div>
+                        </div>
+
+                        {/* Hide Icons */}
+                        <div 
+                            className={`bg-white rounded-xl border-2 p-5 transition-all ${hideIcons ? 'border-purple-500 bg-purple-50' : 'border-gray-200'}`}
+                            onFocus={() => voicePrompts && speakText('Hide icons. Enable to show text only navigation.')}
+                            tabIndex={0}
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${hideIcons ? 'bg-purple-100' : 'bg-gray-100'}`}>
+                                        <EyeOff className={`w-6 h-6 ${hideIcons ? 'text-purple-600' : 'text-gray-500'}`} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-800">Hide Icons</h3>
+                                        <p className="text-sm text-gray-500">Show text-only navigation</p>
+                                    </div>
+                                </div>
+                                <Switch checked={hideIcons} onCheckedChange={setHideIcons} />
+                            </div>
+                        </div>
+
+                        {/* Voice Prompts */}
+                        <div 
+                            className={`bg-white rounded-xl border-2 p-5 transition-all ${voicePrompts ? 'border-purple-500 bg-purple-50' : 'border-gray-200'}`}
+                            onFocus={() => voicePrompts && speakText('Voice prompts enabled. Settings will be read aloud.')}
+                            tabIndex={0}
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${voicePrompts ? 'bg-purple-100' : 'bg-gray-100'}`}>
+                                        <Volume2 className={`w-6 h-6 ${voicePrompts ? 'text-purple-600' : 'text-gray-500'}`} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-800">Voice Prompts</h3>
+                                        <p className="text-sm text-gray-500">Read settings aloud on focus</p>
+                                    </div>
+                                </div>
+                                <Switch checked={voicePrompts} onCheckedChange={setVoicePrompts} />
+                            </div>
+                        </div>
+
+                        {/* Font Size Slider */}
+                        <div 
+                            className="bg-white rounded-xl border-2 border-gray-200 p-5"
+                            onFocus={() => voicePrompts && speakText(`Font size slider. Current size is ${fontSizeSlider} pixels.`)}
+                            tabIndex={0}
+                        >
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
+                                    <Type className="w-6 h-6 text-gray-500" />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="font-semibold text-gray-800">Font Size</h3>
+                                    <p className="text-sm text-gray-500">Adjust text size: {fontSizeSlider}px</p>
+                                </div>
+                            </div>
+                            <Slider
+                                value={[fontSizeSlider]}
+                                onValueChange={([value]) => setFontSizeSlider(value)}
+                                min={12}
+                                max={24}
+                                step={1}
+                                className="w-full"
+                            />
+                            <div className="flex justify-between mt-2 text-xs text-gray-400">
+                                <span>12px</span>
+                                <span>24px</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </PageLayout>
     );
