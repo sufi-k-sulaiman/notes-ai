@@ -529,28 +529,37 @@ export default function SpaceBattleGame({ onExit }) {
                 return true;
             });
 
-            // Update and draw bullets with 3D perspective
-            state.bullets = state.bullets.filter(bullet => {
-                bullet.z += bullet.speed;
+            // Update and draw lasers
+            state.lasers = state.lasers.filter(laser => {
+                laser.progress += laser.speed;
                 
-                const scale = bullet.z;
-                // Bullet moves toward target
-                const startY = canvas.height * 0.8;
-                const targetY = bullet.targetY || canvas.height * 0.3;
-                const screenY = startY - (startY - targetY) * (bullet.z - 1) * 3;
-                const screenX = centerX + (bullet.targetX - centerX) * (bullet.z - 1) * 2;
-                const size = 8 / (bullet.z + 0.5);
+                const currentX = laser.startX + (laser.targetX - laser.startX) * laser.progress;
+                const currentY = laser.startY + (laser.targetY - laser.startY) * laser.progress;
                 
-                // Bullet tracer effect
-                ctx.fillStyle = '#00ffff';
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = '#00ffff';
+                // Draw laser beam
+                const gradient = ctx.createLinearGradient(laser.startX, laser.startY, currentX, currentY);
+                gradient.addColorStop(0, 'transparent');
+                gradient.addColorStop(0.3, laser.color);
+                gradient.addColorStop(1, '#fff');
+                
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 4;
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = laser.color;
                 ctx.beginPath();
-                ctx.arc(screenX, screenY, size, 0, Math.PI * 2);
+                ctx.moveTo(laser.startX, laser.startY);
+                ctx.lineTo(currentX, currentY);
+                ctx.stroke();
+                
+                // Laser head glow
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(currentX, currentY, 6, 0, Math.PI * 2);
                 ctx.fill();
+                
                 ctx.shadowBlur = 0;
 
-                return bullet.z < 1.5;
+                return laser.progress < 1.2;
             });
 
             // Update and draw particles
