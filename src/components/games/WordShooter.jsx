@@ -258,7 +258,7 @@ export default function WordShooter({ onExit }) {
         const line1 = words.slice(0, 4).join(' ');
         const line2 = words.slice(4, 8).join(' ');
         const baseBonus = 100 * (state.combo + 1);
-        state.floatingTexts.push({ x: asteroid.x, y: asteroid.y, vy: -2, text: line1.toUpperCase(), text2: line2.toUpperCase(), life: 120, maxLife: 120, color: '#22c55e', bonus: baseBonus, size: 20 });
+        state.floatingTexts.push({ x: asteroid.x, y: asteroid.y, vy: -1.5, text: line1.toUpperCase(), text2: line2.toUpperCase(), life: 180, maxLife: 180, color: '#a855f7', bonus: baseBonus, size: 20 });
         state.combo++;
         state.score += baseBonus;
         state.wordsCompleted++;
@@ -402,7 +402,7 @@ export default function WordShooter({ onExit }) {
           ctx.fillText(ft.text2, 0, ft.size + 4);
         }
         ctx.font = 'bold 24px Inter';
-        ctx.fillStyle = '#22c55e';
+        ctx.fillStyle = '#a855f7';
         ctx.fillText(`+${ft.bonus}`, 0, (ft.text2 ? ft.size * 2 + 8 : ft.size) + 20);
         ctx.globalAlpha = 1;
         ctx.restore();
@@ -432,11 +432,16 @@ export default function WordShooter({ onExit }) {
       
       ctx.restore();
       
+      // Check if all words destroyed - level complete
+      if (state.wordsCompleted >= state.totalWords && state.asteroids.length === 0 && !state.gameOver) {
+        state.gameOver = true;
+      }
+      
       if (state.gameOver) {
         ctx.fillStyle = 'rgba(0,0,0,0.9)'; ctx.fillRect(0, 0, w, h);
         ctx.fillStyle = '#8b5cf6'; ctx.font = 'bold 60px Inter'; ctx.textAlign = 'center'; ctx.shadowBlur = 30; ctx.shadowColor = '#8b5cf6';
-        ctx.fillText('MISSION COMPLETE', w/2, h/2 - 80);
-        ctx.fillStyle = '#22c55e'; ctx.font = 'bold 36px Inter'; ctx.shadowColor = '#22c55e';
+        ctx.fillText('LEVEL COMPLETE!', w/2, h/2 - 80);
+        ctx.fillStyle = '#a855f7'; ctx.font = 'bold 36px Inter'; ctx.shadowColor = '#a855f7';
         ctx.fillText(`Final Score: ${state.score}`, w/2, h/2);
         ctx.fillText(`Words Mastered: ${state.wordsCompleted}/${state.totalWords}`, w/2, h/2 + 50);
         ctx.fillText(`Max Combo: x${state.maxCombo}`, w/2, h/2 + 100);
