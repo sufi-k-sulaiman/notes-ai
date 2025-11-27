@@ -1,8 +1,87 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Newspaper, Search, Loader2, ExternalLink, RefreshCw, TrendingUp, Clock, Globe } from 'lucide-react';
+import { Newspaper, Search, Loader2, ExternalLink, RefreshCw, TrendingUp, Clock, Globe, Image as ImageIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+const NewsCard = ({ article, index }) => {
+    const [imageUrl, setImageUrl] = useState(null);
+    const [imageLoading, setImageLoading] = useState(true);
+
+    useEffect(() => {
+        const generateImage = async () => {
+            setImageLoading(true);
+            try {
+                const prompt = article.imagePrompt || `Lifestyle photography, ${article.title}, natural lighting, earth tones, minimalist composition`;
+                const result = await base44.integrations.Core.GenerateImage({
+                    prompt: `${prompt}, professional photography style, soft natural lighting, lifestyle aesthetic, earth and nature elements, no text or words`
+                });
+                if (result?.url) {
+                    setImageUrl(result.url);
+                }
+            } catch (error) {
+                console.error('Image generation error:', error);
+            } finally {
+                setImageLoading(false);
+            }
+        };
+        generateImage();
+    }, [article.title, article.imagePrompt]);
+
+    return (
+        <article className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow group">
+            <div className="aspect-video bg-gray-100 relative overflow-hidden">
+                {imageLoading ? (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                        <div className="flex flex-col items-center gap-2">
+                            <ImageIcon className="w-8 h-8 text-gray-300 animate-pulse" />
+                            <span className="text-xs text-gray-400">Generating...</span>
+                        </div>
+                    </div>
+                ) : imageUrl ? (
+                    <img 
+                        src={imageUrl} 
+                        alt={article.title} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-50">
+                        <Newspaper className="w-10 h-10 text-red-200" />
+                    </div>
+                )}
+            </div>
+            <div className="p-5">
+                <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xs font-medium px-2 py-1 bg-red-100 text-red-700 rounded-full">
+                        {article.source || 'News'}
+                    </span>
+                    {article.time && (
+                        <span className="text-xs text-gray-500 flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {article.time}
+                        </span>
+                    )}
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                    {article.title}
+                </h3>
+                <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                    {article.summary}
+                </p>
+                {article.url && (
+                    <a
+                        href={article.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-red-600 hover:text-red-700 text-sm font-medium"
+                    >
+                        Read more <ExternalLink className="w-3 h-3" />
+                    </a>
+                )}
+            </div>
+        </article>
+    );
+};
 
 const CATEGORIES = [
     { id: 'technology', label: 'Technology', icon: '💻' },
@@ -48,7 +127,8 @@ Provide the 12 most recent and relevant news articles with their titles, sources
                                     summary: { type: "string" },
                                     time: { type: "string" },
                                     url: { type: "string" },
-                                    category: { type: "string" }
+                                    category: { type: "string" },
+                                    imagePrompt: { type: "string", description: "A short prompt for generating a lifestyle or nature image related to the article, focusing on earth objects, nature, people, or abstract concepts" }
                                 }
                             }
                         }
@@ -172,40 +252,7 @@ Provide the 12 most recent and relevant news articles with their titles, sources
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {news.map((article, index) => (
-                            <article
-                                key={index}
-                                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow group"
-                            >
-                                <div className="p-5">
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <span className="text-xs font-medium px-2 py-1 bg-red-100 text-red-700 rounded-full">
-                                            {article.source || 'News'}
-                                        </span>
-                                        {article.time && (
-                                            <span className="text-xs text-gray-500 flex items-center gap-1">
-                                                <Clock className="w-3 h-3" />
-                                                {article.time}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
-                                        {article.title}
-                                    </h3>
-                                    <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                                        {article.summary}
-                                    </p>
-                                    {article.url && (
-                                        <a
-                                            href={article.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-1 text-red-600 hover:text-red-700 text-sm font-medium"
-                                        >
-                                            Read more <ExternalLink className="w-3 h-3" />
-                                        </a>
-                                    )}
-                                </div>
-                            </article>
+                            <NewsCard key={index} article={article} index={index} />
                         ))}
                     </div>
                 )}
