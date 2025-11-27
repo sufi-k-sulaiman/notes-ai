@@ -344,29 +344,40 @@ export default function MindMapPage() {
         setAnnotations([]);
     };
 
+    const [selectedAnnotation, setSelectedAnnotation] = useState(null);
+
+    const handleAnnotationClick = (index, e) => {
+        e.stopPropagation();
+        setSelectedAnnotation(selectedAnnotation === index ? null : index);
+    };
+
     const renderAnnotations = () => {
         const allAnnotations = [...annotations, currentAnnotation].filter(Boolean);
         return (
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 10 }}>
+            <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 9999, pointerEvents: annotationMode ? 'none' : 'auto' }}>
                 {allAnnotations.map((ann, i) => {
+                    const isSelected = selectedAnnotation === i;
+                    const strokeWidth = isSelected ? 5 : 3;
+                    const strokeColor = isSelected ? '#8b5cf6' : ann.color;
+                    
                     if (ann.type === 'draw') {
                         const pathData = ann.points.map((p, j) => `${j === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-                        return <path key={i} d={pathData} stroke={ann.color} strokeWidth="3" fill="none" strokeLinecap="round" />;
+                        return <path key={i} d={pathData} stroke={strokeColor} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" style={{ cursor: 'pointer', pointerEvents: 'stroke' }} onClick={(e) => handleAnnotationClick(i, e)} />;
                     }
                     if (ann.type === 'text') {
-                        return <text key={i} x={ann.x} y={ann.y} fill={ann.color} fontSize="16" fontWeight="500">{ann.text}</text>;
+                        return <text key={i} x={ann.x} y={ann.y} fill={strokeColor} fontSize="16" fontWeight={isSelected ? '700' : '500'} style={{ cursor: 'pointer' }} onClick={(e) => handleAnnotationClick(i, e)}>{ann.text}</text>;
                     }
                     if (ann.type === 'rectangle') {
                         const x = ann.width < 0 ? ann.x + ann.width : ann.x;
                         const y = ann.height < 0 ? ann.y + ann.height : ann.y;
-                        return <rect key={i} x={x} y={y} width={Math.abs(ann.width)} height={Math.abs(ann.height)} stroke={ann.color} strokeWidth="3" fill="none" />;
+                        return <rect key={i} x={x} y={y} width={Math.abs(ann.width)} height={Math.abs(ann.height)} stroke={strokeColor} strokeWidth={strokeWidth} fill="none" style={{ cursor: 'pointer' }} onClick={(e) => handleAnnotationClick(i, e)} />;
                     }
                     if (ann.type === 'circle') {
                         const cx = ann.x + ann.width / 2;
                         const cy = ann.y + ann.height / 2;
                         const rx = Math.abs(ann.width / 2);
                         const ry = Math.abs(ann.height / 2);
-                        return <ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry} stroke={ann.color} strokeWidth="3" fill="none" />;
+                        return <ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry} stroke={strokeColor} strokeWidth={strokeWidth} fill="none" style={{ cursor: 'pointer' }} onClick={(e) => handleAnnotationClick(i, e)} />;
                     }
                     return null;
                 })}
@@ -520,9 +531,6 @@ export default function MindMapPage() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center">
-                            <Network className="w-5 h-5 text-white" />
-                        </div>
                         <h1 className="text-xl font-bold text-gray-900">Neural MindMaps</h1>
                     </div>
 
@@ -666,7 +674,7 @@ export default function MindMapPage() {
                 </div>
 
                 {/* Mind Map Content */}
-                <div className={`bg-white rounded-2xl border border-gray-200 ${isFullscreen ? 'min-h-[calc(100vh-100px)]' : 'min-h-[calc(100vh-160px)]'} overflow-auto p-8`}>
+                <div className={`bg-white rounded-2xl border border-gray-200 ${isFullscreen ? 'h-[calc(100vh-100px)]' : 'h-[calc(100vh-160px)]'} overflow-hidden p-8`}>
                     {!treeData && !loading ? (
                         <div className="h-full flex flex-col items-center justify-center py-20">
                             <div className="w-20 h-20 rounded-2xl bg-purple-100 flex items-center justify-center mb-4">
@@ -730,7 +738,7 @@ export default function MindMapPage() {
                             onMouseMove={handleCanvasMouseMove}
                             onMouseUp={handleCanvasMouseUp}
                             onMouseLeave={handleCanvasMouseUp}
-                            style={{ minHeight: '400px' }}
+                            style={{ height: '100%', width: '100%' }}
                         >
                             {renderAnnotations()}
                             {textInput.visible && (

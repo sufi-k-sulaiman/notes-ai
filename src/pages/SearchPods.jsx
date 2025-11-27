@@ -394,9 +394,6 @@ Use short sentences for better pacing. Do NOT use any markdown formatting.`,
             <div className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 mb-6">
                 <div className="max-w-7xl mx-auto flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
-                            <Radio className="w-5 h-5 text-white" />
-                        </div>
                         <div>
                             <span className="text-gray-900 font-bold text-lg">SearchPods</span>
                             <p className="text-xs text-gray-500">Generative Podcast</p>
