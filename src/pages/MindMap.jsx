@@ -1,65 +1,73 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Brain, Search, Loader2, Sparkles, Maximize2, Minimize2, Network } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Maximize2, Minimize2, Loader2, Search, Compass, BookOpen, Network } from 'lucide-react';
 import LearnMoreModal from '../components/mindmap/LearnMoreModal';
 
 const NODE_COLORS = [
-    { bg: 'bg-purple-500', text: 'text-white', border: 'border-purple-600' },
-    { bg: 'bg-green-500', text: 'text-white', border: 'border-green-600' },
-    { bg: 'bg-blue-500', text: 'text-white', border: 'border-blue-600' },
-    { bg: 'bg-orange-500', text: 'text-white', border: 'border-orange-600' },
-    { bg: 'bg-pink-500', text: 'text-white', border: 'border-pink-600' },
-    { bg: 'bg-cyan-500', text: 'text-white', border: 'border-cyan-600' },
-    { bg: 'bg-amber-500', text: 'text-white', border: 'border-amber-600' },
-    { bg: 'bg-rose-500', text: 'text-white', border: 'border-rose-600' },
+    { bg: 'bg-purple-500', hover: 'hover:bg-purple-600' },
+    { bg: 'bg-green-500', hover: 'hover:bg-green-600' },
+    { bg: 'bg-blue-500', hover: 'hover:bg-blue-600' },
+    { bg: 'bg-orange-500', hover: 'hover:bg-orange-600' },
+    { bg: 'bg-pink-500', hover: 'hover:bg-pink-600' },
+    { bg: 'bg-cyan-500', hover: 'hover:bg-cyan-600' },
+    { bg: 'bg-amber-500', hover: 'hover:bg-amber-600' },
+    { bg: 'bg-rose-500', hover: 'hover:bg-rose-600' },
+    { bg: 'bg-indigo-500', hover: 'hover:bg-indigo-600' },
+    { bg: 'bg-teal-500', hover: 'hover:bg-teal-600' },
 ];
 
-function MindMapNode({ node, colorIndex, onExplore, onLearn, level = 0 }) {
+function TreeNode({ node, colorIndex = 0, onExplore, onLearn, depth = 0 }) {
     const color = NODE_COLORS[colorIndex % NODE_COLORS.length];
     const hasChildren = node.children && node.children.length > 0;
-    
+
     return (
         <div className="flex flex-col items-center">
-            {/* Node */}
-            <div className={`${color.bg} ${color.text} rounded-xl px-4 py-3 shadow-lg min-w-[140px] max-w-[200px] text-center`}>
-                <p className="font-semibold text-sm leading-tight mb-2">{node.name}</p>
-                <div className="flex gap-1.5 justify-center">
+            {/* Node Card */}
+            <div className={`${color.bg} text-white rounded-xl px-4 py-3 shadow-lg min-w-[160px] max-w-[220px] text-center transition-transform hover:scale-105`}>
+                <p className="font-semibold text-sm leading-tight mb-2 break-words">{node.name}</p>
+                <div className="flex gap-1.5 justify-center flex-wrap">
                     <button
                         onClick={() => onExplore(node)}
-                        className="flex items-center gap-1 px-2 py-1 bg-white/20 hover:bg-white/30 rounded-md text-xs font-medium transition-colors"
+                        className="flex items-center gap-1 px-2.5 py-1 bg-white/20 hover:bg-white/30 rounded-md text-xs font-medium transition-colors"
                     >
-                        <Sparkles className="w-3 h-3" />
+                        <Compass className="w-3 h-3" />
                         Explore
                     </button>
                     <button
                         onClick={() => onLearn(node)}
-                        className="flex items-center gap-1 px-2 py-1 bg-white/20 hover:bg-white/30 rounded-md text-xs font-medium transition-colors"
+                        className="flex items-center gap-1 px-2.5 py-1 bg-white/20 hover:bg-white/30 rounded-md text-xs font-medium transition-colors"
                     >
-                        <Brain className="w-3 h-3" />
+                        <BookOpen className="w-3 h-3" />
                         Learn
                     </button>
                 </div>
             </div>
-            
-            {/* Connection line and children */}
+
+            {/* Children */}
             {hasChildren && (
                 <>
                     <div className="w-0.5 h-6 bg-gray-300" />
-                    <div className="flex gap-4 flex-wrap justify-center">
-                        {node.children.map((child, i) => (
-                            <div key={i} className="flex flex-col items-center">
-                                <div className="w-0.5 h-4 bg-gray-300" />
-                                <MindMapNode
-                                    node={child}
-                                    colorIndex={colorIndex + i + 1}
-                                    onExplore={onExplore}
-                                    onLearn={onLearn}
-                                    level={level + 1}
-                                />
-                            </div>
-                        ))}
+                    <div className="relative">
+                        {node.children.length > 1 && (
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 h-0.5 bg-gray-300" 
+                                 style={{ width: `calc(100% - 80px)` }} />
+                        )}
+                        <div className="flex gap-6 flex-wrap justify-center pt-0">
+                            {node.children.map((child, i) => (
+                                <div key={i} className="flex flex-col items-center">
+                                    <div className="w-0.5 h-6 bg-gray-300" />
+                                    <TreeNode
+                                        node={child}
+                                        colorIndex={colorIndex + i + 1 + depth}
+                                        onExplore={onExplore}
+                                        onLearn={onLearn}
+                                        depth={depth + 1}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </>
             )}
@@ -79,10 +87,10 @@ export default function MindMapPage() {
     const handleSearch = async (topic) => {
         if (!topic?.trim()) return;
         setLoading(true);
-        
+
         try {
             const response = await base44.integrations.Core.InvokeLLM({
-                prompt: `Create a hierarchical topic tree for "${topic}". Generate a root topic with 2-3 main branches, each having 2-4 sub-branches, and some of those having 1-3 leaf nodes. Return as a nested tree structure.`,
+                prompt: `Create a hierarchical knowledge tree for "${topic}". Generate a root topic with 2-3 main branches, each having 2-4 sub-branches. Return as nested structure with name and description for each node.`,
                 add_context_from_internet: true,
                 response_json_schema: {
                     type: "object",
@@ -141,11 +149,17 @@ export default function MindMapPage() {
         setShowModal(true);
     };
 
-    const toggleFullscreen = () => {
-        if (!isFullscreen) {
-            containerRef.current?.requestFullscreen?.();
-        } else {
-            document.exitFullscreen?.();
+    const toggleFullscreen = async () => {
+        try {
+            if (!isFullscreen) {
+                await containerRef.current?.requestFullscreen?.();
+            } else {
+                if (document.fullscreenElement) {
+                    await document.exitFullscreen();
+                }
+            }
+        } catch (error) {
+            console.error('Fullscreen error:', error);
         }
     };
 
@@ -158,21 +172,21 @@ export default function MindMapPage() {
     }, []);
 
     return (
-        <div 
+        <div
             ref={containerRef}
-            className={`min-h-screen bg-gray-50 ${isFullscreen ? 'p-4' : 'p-4 md:p-6'}`}
+            className={`min-h-screen bg-gray-50 ${isFullscreen ? 'p-4 overflow-auto' : 'p-4 md:p-6'}`}
         >
             <div className={`${isFullscreen ? 'max-w-none' : 'max-w-7xl mx-auto'}`}>
                 {/* Header */}
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center">
                             <Network className="w-5 h-5 text-white" />
                         </div>
                         <h1 className="text-xl font-bold text-gray-900">Neural Topic Network</h1>
                     </div>
-                    
-                    <div className="flex items-center gap-3">
+
+                    <div className="flex items-center gap-3 flex-wrap">
                         {/* Search */}
                         <div className="flex gap-2">
                             <div className="relative">
@@ -193,7 +207,7 @@ export default function MindMapPage() {
                                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
                             </Button>
                         </div>
-                        
+
                         {/* Fullscreen toggle */}
                         <Button
                             variant="outline"
@@ -245,8 +259,8 @@ export default function MindMapPage() {
                             <p className="text-gray-600">Building knowledge network...</p>
                         </div>
                     ) : (
-                        <div className="flex justify-center py-8 overflow-x-auto">
-                            <MindMapNode
+                        <div className="flex justify-center py-8 overflow-x-auto min-w-max">
+                            <TreeNode
                                 node={treeData}
                                 colorIndex={0}
                                 onExplore={handleExplore}
