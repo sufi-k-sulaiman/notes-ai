@@ -14,25 +14,14 @@ import { Slider } from "@/components/ui/slider";
 import { PieChart as RechartsPC, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 import { base44 } from '@/api/base44Client';
 
-const DEPARTMENTS = ['Governance', 'Health', 'Education', 'Infrastructure', 'Economy', 'Environment', 'Security', 'Technology'];
+const DEPARTMENTS = ['AI Hub', 'SearchPods', 'MindMap', 'Resume Builder', 'Markets', 'Intelligence', 'Geospatial', 'Learning', 'Tasks', 'Notes', 'Games', 'Settings', 'Feedback', 'Bugs', 'Features'];
 const STATUSES = ['Planning', 'In Progress', 'Completed', 'On Hold'];
 const PRIORITIES = ['Low', 'Medium', 'High', 'Critical'];
 
 const PRIORITY_COLORS = { Low: '#22C55E', Medium: '#F59E0B', High: '#EF4444', Critical: '#DC2626' };
 const STATUS_COLORS = { Planning: '#9CA3AF', 'In Progress': '#3B82F6', Completed: '#10B981', 'On Hold': '#F59E0B' };
 
-const SAMPLE_TASKS = [
-    { id: 1, title: 'Digital Education Platform', description: 'Deploy nationwide e-learning system', department: 'Education', status: 'In Progress', priority: 'High', progress: 58, comments: 12, dueDate: '2025-03-15', attachments: [] },
-    { id: 2, title: 'Healthcare IT Modernization', description: 'Upgrade electronic health records across hospitals', department: 'Health', status: 'In Progress', priority: 'Critical', progress: 65, comments: 8, dueDate: '2025-02-28', attachments: [] },
-    { id: 3, title: 'Skills Training Initiative', description: 'Provide vocational training to 100K workers', department: 'Education', status: 'In Progress', priority: 'High', progress: 62, comments: 15, dueDate: '2025-04-01', attachments: [] },
-    { id: 4, title: 'Mental Health Services Expansion', description: 'Open 20 new mental health clinics nationwide', department: 'Health', status: 'In Progress', priority: 'Critical', progress: 55, comments: 6, dueDate: '2025-05-01', attachments: [] },
-    { id: 5, title: 'Government Portal Redesign', description: 'Modernize citizen services portal', department: 'Governance', status: 'Planning', priority: 'Medium', progress: 15, comments: 4, dueDate: '2025-06-15', attachments: [] },
-    { id: 6, title: 'Green Energy Transition', description: 'Implement renewable energy in public buildings', department: 'Environment', status: 'In Progress', priority: 'High', progress: 42, comments: 9, dueDate: '2025-07-01', attachments: [] },
-    { id: 7, title: 'Cybersecurity Enhancement', description: 'Strengthen national cybersecurity infrastructure', department: 'Security', status: 'In Progress', priority: 'Critical', progress: 38, comments: 7, dueDate: '2025-03-30', attachments: [] },
-    { id: 8, title: 'Public Transit Upgrade', description: 'Modernize bus and rail systems', department: 'Infrastructure', status: 'Planning', priority: 'Medium', progress: 8, comments: 3, dueDate: '2025-08-01', attachments: [] },
-    { id: 9, title: 'Economic Recovery Program', description: 'Support small businesses post-pandemic', department: 'Economy', status: 'Completed', priority: 'High', progress: 100, comments: 22, dueDate: '2025-01-15', attachments: [] },
-    { id: 10, title: 'AI Integration Strategy', description: 'Develop AI adoption framework for government', department: 'Technology', status: 'In Progress', priority: 'High', progress: 28, comments: 11, dueDate: '2025-09-01', attachments: [] },
-];
+const SAMPLE_TASKS = [];
 
 // Toast notification component
 function Toast({ message, onClose }) {
@@ -61,7 +50,7 @@ export default function Tasks() {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [toast, setToast] = useState(null);
     const [uploading, setUploading] = useState(false);
-    const [newTask, setNewTask] = useState({ title: '', description: '', department: 'Governance', status: 'Planning', priority: 'Medium', progress: 0, attachments: [] });
+    const [newTask, setNewTask] = useState({ title: '', description: '', department: 'AI Hub', status: 'Planning', priority: 'Medium', progress: 0, attachments: [] });
     const fileInputRef = useRef(null);
     const modalFileInputRef = useRef(null);
 
@@ -94,7 +83,7 @@ export default function Tasks() {
         const task = { ...newTask, id: Date.now(), comments: 0, dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] };
         setTasks([...tasks, task]);
         setShowNewTaskModal(false);
-        setNewTask({ title: '', description: '', department: 'Governance', status: 'Planning', priority: 'Medium', progress: 0, attachments: [] });
+        setNewTask({ title: '', description: '', department: 'AI Hub', status: 'Planning', priority: 'Medium', progress: 0, attachments: [] });
         showToast('Task created successfully');
     };
 
