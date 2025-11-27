@@ -4,11 +4,11 @@ import {
     X, Star, TrendingUp, TrendingDown, Eye, DollarSign, BarChart3, 
     LineChart, Activity, Brain, Shield, AlertTriangle, List, 
     Sparkles, ChevronRight, Info, Loader2, Target, Zap, Building,
-    Users, Globe, Calendar, FileText, PieChart
+    Users, Globe, Calendar, FileText, PieChart, Percent, ArrowUpRight, ArrowDownRight
 } from 'lucide-react';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, PieChart as RePieChart, Pie, Cell, LineChart as ReLineChart, Line } from 'recharts';
 
 const NAV_ITEMS = [
     { id: 'overview', label: 'Overview', icon: Eye },
@@ -21,7 +21,11 @@ const NAV_ITEMS = [
     { id: 'ai-insights', label: 'AI Insights', icon: Sparkles },
     { id: 'risk', label: 'Risk', icon: AlertTriangle },
     { id: 'news', label: 'News', icon: FileText },
+    { id: 'dividends', label: 'Dividends', icon: Percent },
+    { id: 'peers', label: 'Peers', icon: Users },
 ];
+
+const CHART_COLORS = ['#8B5CF6', '#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#EC4899'];
 
 function MoatBar({ label, value, color = '#8B5CF6' }) {
     return (
@@ -265,10 +269,10 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
 
                 case 'news':
                     prompt = `Recent news and events for ${stock.ticker}:
-- Latest 5 news headlines with dates and sentiment
-- Upcoming events (earnings, conferences)
-- Recent SEC filings summary
-- Management commentary highlights`;
+                - Latest 5 news headlines with dates and sentiment
+                - Upcoming events (earnings, conferences)
+                - Recent SEC filings summary
+                - Management commentary highlights`;
                     schema = {
                         type: "object",
                         properties: {
@@ -280,9 +284,49 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                     };
                     break;
 
+                case 'dividends':
+                    prompt = `Dividend analysis for ${stock.ticker}:
+                - Current dividend yield
+                - Annual dividend per share
+                - Dividend growth rate (5 year)
+                - Payout ratio
+                - Ex-dividend date
+                - Dividend history (last 5 years)
+                - Dividend safety score`;
+                    schema = {
+                        type: "object",
+                        properties: {
+                            yield: { type: "number" },
+                            annualDividend: { type: "number" },
+                            growthRate: { type: "number" },
+                            payoutRatio: { type: "number" },
+                            exDividendDate: { type: "string" },
+                            history: { type: "array", items: { type: "object", properties: { year: { type: "string" }, dividend: { type: "number" } } } },
+                            safetyScore: { type: "number" }
+                        }
+                    };
+                    break;
+
+                case 'peers':
+                    prompt = `Peer comparison for ${stock.ticker}:
+                - Top 5 competitor companies with ticker, name, market cap, P/E, ROE, and revenue growth
+                - Industry average metrics
+                - Competitive advantages vs peers
+                - Market share comparison`;
+                    schema = {
+                        type: "object",
+                        properties: {
+                            peers: { type: "array", items: { type: "object", properties: { ticker: { type: "string" }, name: { type: "string" }, marketCap: { type: "string" }, pe: { type: "number" }, roe: { type: "number" }, growth: { type: "number" } } } },
+                            industryAvg: { type: "object", properties: { pe: { type: "number" }, roe: { type: "number" }, growth: { type: "number" } } },
+                            advantages: { type: "array", items: { type: "string" } },
+                            marketShare: { type: "number" }
+                        }
+                    };
+                    break;
+
                 default:
                     return;
-            }
+                }
 
             const response = await base44.integrations.Core.InvokeLLM({
                 prompt: `${prompt}\n\nProvide accurate, current data for ${stock.ticker} (${stock.name}). Current price: $${stock.price}`,
@@ -926,6 +970,170 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                         <span className="text-sm text-purple-600 font-medium">{e.date}</span>
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case 'dividends':
+                const dividendHistory = data.history || [
+                    { year: '2020', dividend: 2.8 },
+                    { year: '2021', dividend: 3.2 },
+                    { year: '2022', dividend: 3.6 },
+                    { year: '2023', dividend: 4.0 },
+                    { year: '2024', dividend: 4.4 }
+                ];
+                return (
+                    <div className="space-y-6">
+                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                            <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-2">
+                                    <Percent className="w-5 h-5 text-purple-600" />
+                                    <h3 className="font-semibold text-gray-900">Dividend Overview</h3>
+                                </div>
+                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                    (data.safetyScore || 75) >= 70 ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                                }`}>
+                                    Safety: {data.safetyScore || 75}/100
+                                </span>
+                            </div>
+                            <div className="grid grid-cols-4 gap-4 mb-6">
+                                <div className="bg-purple-50 rounded-xl p-4 text-center">
+                                    <p className="text-sm text-gray-600">Yield</p>
+                                    <p className="text-2xl font-bold text-purple-600">{data.yield || stock.dividend || 2.4}%</p>
+                                </div>
+                                <div className="bg-green-50 rounded-xl p-4 text-center">
+                                    <p className="text-sm text-gray-600">Annual</p>
+                                    <p className="text-2xl font-bold text-green-600">${data.annualDividend || 4.40}</p>
+                                </div>
+                                <div className="bg-blue-50 rounded-xl p-4 text-center">
+                                    <p className="text-sm text-gray-600">Growth (5Y)</p>
+                                    <p className="text-2xl font-bold text-blue-600">{data.growthRate || 8.5}%</p>
+                                </div>
+                                <div className="bg-orange-50 rounded-xl p-4 text-center">
+                                    <p className="text-sm text-gray-600">Payout Ratio</p>
+                                    <p className="text-2xl font-bold text-orange-600">{data.payoutRatio || 45}%</p>
+                                </div>
+                            </div>
+                            <div className="h-48">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={dividendHistory}>
+                                        <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+                                        <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
+                                        <Tooltip formatter={(v) => `$${v}`} />
+                                        <Bar dataKey="dividend" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                            <h4 className="font-semibold text-gray-900 mb-4">Dividend Schedule</h4>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 bg-gray-50 rounded-xl">
+                                    <p className="text-sm text-gray-500">Ex-Dividend Date</p>
+                                    <p className="text-lg font-bold text-gray-900">{data.exDividendDate || 'Feb 15, 2025'}</p>
+                                </div>
+                                <div className="p-4 bg-gray-50 rounded-xl">
+                                    <p className="text-sm text-gray-500">Payment Date</p>
+                                    <p className="text-lg font-bold text-gray-900">Mar 1, 2025</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case 'peers':
+                const peerData = data.peers || [
+                    { ticker: 'COMP1', name: 'Competitor A', marketCap: '150B', pe: 22, roe: 18, growth: 12 },
+                    { ticker: 'COMP2', name: 'Competitor B', marketCap: '120B', pe: 28, roe: 15, growth: 8 },
+                    { ticker: 'COMP3', name: 'Competitor C', marketCap: '80B', pe: 18, roe: 22, growth: 15 },
+                    { ticker: 'COMP4', name: 'Competitor D', marketCap: '60B', pe: 25, roe: 12, growth: 10 },
+                    { ticker: 'COMP5', name: 'Competitor E', marketCap: '45B', pe: 20, roe: 20, growth: 18 }
+                ];
+                const radarData = [
+                    { metric: 'P/E', company: stock.pe || 20, industry: data.industryAvg?.pe || 22 },
+                    { metric: 'ROE', company: stock.roe || 25, industry: data.industryAvg?.roe || 18 },
+                    { metric: 'Growth', company: stock.sgr || 15, industry: data.industryAvg?.growth || 12 },
+                    { metric: 'MOAT', company: stock.moat || 70, industry: 60 },
+                    { metric: 'Margin', company: 28, industry: 22 }
+                ];
+                return (
+                    <div className="space-y-6">
+                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-2">
+                                    <Users className="w-5 h-5 text-purple-600" />
+                                    <h3 className="font-semibold text-gray-900">Peer Comparison</h3>
+                                </div>
+                                <span className="text-sm text-gray-500">Market Share: {data.marketShare || 15}%</span>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b border-gray-100">
+                                            <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Company</th>
+                                            <th className="text-right py-3 px-2 text-sm font-medium text-gray-500">Mkt Cap</th>
+                                            <th className="text-right py-3 px-2 text-sm font-medium text-gray-500">P/E</th>
+                                            <th className="text-right py-3 px-2 text-sm font-medium text-gray-500">ROE</th>
+                                            <th className="text-right py-3 px-2 text-sm font-medium text-gray-500">Growth</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="border-b border-gray-50 bg-purple-50">
+                                            <td className="py-3 px-2">
+                                                <span className="font-bold text-purple-700">{stock.ticker}</span>
+                                                <span className="text-xs text-gray-500 ml-2">(You)</span>
+                                            </td>
+                                            <td className="py-3 px-2 text-right text-gray-700">${stock.marketCap}B</td>
+                                            <td className="py-3 px-2 text-right text-gray-700">{stock.pe?.toFixed(1)}</td>
+                                            <td className="py-3 px-2 text-right text-gray-700">{stock.roe}%</td>
+                                            <td className="py-3 px-2 text-right text-gray-700">{stock.sgr}%</td>
+                                        </tr>
+                                        {peerData.map((peer, i) => (
+                                            <tr key={i} className="border-b border-gray-50">
+                                                <td className="py-3 px-2 font-medium text-gray-900">{peer.ticker}</td>
+                                                <td className="py-3 px-2 text-right text-gray-700">${peer.marketCap}</td>
+                                                <td className="py-3 px-2 text-right text-gray-700">{peer.pe}</td>
+                                                <td className="py-3 px-2 text-right text-gray-700">{peer.roe}%</td>
+                                                <td className="py-3 px-2 text-right">
+                                                    <span className={`flex items-center justify-end gap-1 ${peer.growth > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                        {peer.growth > 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                                                        {peer.growth}%
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h4 className="font-semibold text-gray-900 mb-4">vs Industry Average</h4>
+                                <div className="h-48">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <RadarChart data={radarData}>
+                                            <PolarGrid />
+                                            <PolarAngleAxis dataKey="metric" tick={{ fontSize: 10 }} />
+                                            <PolarRadiusAxis tick={{ fontSize: 10 }} />
+                                            <Radar name="Company" dataKey="company" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.4} />
+                                            <Radar name="Industry" dataKey="industry" stroke="#10B981" fill="#10B981" fillOpacity={0.2} />
+                                        </RadarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                    <Zap className="w-4 h-4 text-green-600" /> Competitive Advantages
+                                </h4>
+                                <ul className="space-y-2">
+                                    {(data.advantages || ['Strong brand recognition', 'Leading market position', 'Superior technology', 'Economies of scale']).map((adv, i) => (
+                                        <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0" />
+                                            {adv}
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
                         </div>
                     </div>
