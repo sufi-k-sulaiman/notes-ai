@@ -4,7 +4,7 @@ import Footer from './layout/Footer';
 import Sidebar from './layout/Sidebar';
 
 export default function PageLayout({ children, activePage }) {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import PageLayout from './components/PageLayout';
-import { LOGO_URL } from './components/NavigationConfig';
+import PageLayout from '@/components/PageLayout';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { LOGO_URL } from '@/components/NavigationConfig';
 
 export default function Layout({ children, currentPageName }) {
   useEffect(() => {
@@ -11,10 +12,20 @@ export default function Layout({ children, currentPageName }) {
       document.getElementsByTagName('head')[0].appendChild(link);
     }
     link.href = LOGO_URL;
+    
+    // Also set apple-touch-icon
+    let appleLink = document.querySelector("link[rel='apple-touch-icon']");
+    if (!appleLink) {
+      appleLink = document.createElement('link');
+      appleLink.rel = 'apple-touch-icon';
+      document.getElementsByTagName('head')[0].appendChild(appleLink);
+    }
+    appleLink.href = LOGO_URL;
   }, []);
 
   return (
     <PageLayout activePage={currentPageName}>
+      <ErrorBoundary fallbackMessage="There was an error loading this page.">
       <style>{`
         /* Classic UI Style - links instead of buttons */
         [data-ui-style="classic"] button:not([data-keep-button]) {
@@ -50,6 +61,7 @@ export default function Layout({ children, currentPageName }) {
         }
       `}</style>
       {children}
+      </ErrorBoundary>
     </PageLayout>
   );
 }

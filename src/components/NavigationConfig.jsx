@@ -2,7 +2,7 @@
 import { Home, Globe, Sparkles, BarChart3, Gamepad2, Settings, Radio, Brain, FileText, GraduationCap, ListTodo, StickyNote, MessageCircle, Lightbulb } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
-export const LOGO_URL = 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=100&h=100&fit=crop';
+export const LOGO_URL = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692729a5f5180fbd43f297e9/a1a505225_1cPublishing-logo.png';
 
 export const menuItems = [
     { label: 'Home', icon: Home, href: createPageUrl('Home') },
@@ -24,7 +24,4 @@ export const NAVIGATION_ITEMS = menuItems.map(item => ({
 
 export const footerLinks = [
     { label: 'Privacy Policy', href: '#' },
-    { label: 'Terms of Use', href: '#' },
-    { label: 'Contact Us', href: '#' },
-    { label: 'Governance', href: '#' },
 ];
