@@ -1071,49 +1071,155 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                 );
 
             case 'risk':
+                const drawdownData = [
+                    { month: 'Jan', drawdown: -5 },
+                    { month: 'Mar', drawdown: -12 },
+                    { month: 'May', drawdown: -8 },
+                    { month: 'Jul', drawdown: -15 },
+                    { month: 'Sep', drawdown: -6 },
+                    { month: 'Nov', drawdown: -18 },
+                ];
+                const scenarioData = [
+                    { scenario: 'Recession', impact: -35, probability: 15 },
+                    { scenario: 'Rate Hikes', impact: -20, probability: 25 },
+                    { scenario: 'Tech Disruption', impact: -25, probability: 20 },
+                    { scenario: 'Inflation', impact: -15, probability: 30 },
+                    { scenario: 'Moat Erosion', impact: -40, probability: 10 },
+                ];
                 return (
                     <div className="space-y-6">
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <AlertTriangle className="w-5 h-5 text-orange-600" />
+                                        <h3 className="font-semibold text-gray-900">Risk Score</h3>
+                                    </div>
+                                    <span className="text-3xl font-bold text-orange-600">{data.riskScore || 4.2}<span className="text-lg text-gray-400">/10</span></span>
+                                </div>
+                                <div className="grid grid-cols-3 gap-3 mb-4">
+                                    <div className="bg-gray-50 rounded-xl p-3 text-center">
+                                        <p className="text-xs text-gray-500">Volatility</p>
+                                        <p className="text-lg font-bold text-gray-900">{data.volatility || 'Medium-High'}</p>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-xl p-3 text-center">
+                                        <p className="text-xs text-gray-500">Beta</p>
+                                        <p className="text-lg font-bold text-gray-900">{data.beta || 1.15}</p>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-xl p-3 text-center">
+                                        <p className="text-xs text-gray-500">Sharpe Ratio</p>
+                                        <p className="text-lg font-bold text-gray-900">{data.sharpeRatio || 1.2}</p>
+                                    </div>
+                                </div>
+                                <div className="h-40">
+                                    <p className="text-sm text-gray-600 mb-2">Drawdown History</p>
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={drawdownData}>
+                                            <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+                                            <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => `${v}%`} />
+                                            <Tooltip formatter={(v) => `${v}%`} />
+                                            <Bar dataKey="drawdown" fill="#EF4444" radius={[4, 4, 0, 0]} />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h3 className="font-semibold text-gray-900 mb-4">Stress Test Scenarios</h3>
+                                <div className="space-y-3">
+                                    {scenarioData.map((s, i) => (
+                                        <div key={i} className="flex items-center gap-3">
+                                            <span className="text-sm text-gray-600 w-28">{s.scenario}</span>
+                                            <div className="flex-1 h-4 bg-gray-100 rounded-full overflow-hidden">
+                                                <div className="h-full bg-red-400 rounded-full" style={{ width: `${Math.abs(s.impact)}%` }} />
+                                            </div>
+                                            <span className="text-sm font-medium text-red-600 w-12">{s.impact}%</span>
+                                            <span className="text-xs text-gray-400 w-10">{s.probability}% prob</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="mt-4 p-3 bg-red-50 rounded-lg">
+                                    <p className="text-sm text-red-800">Permanent Loss Simulation: <span className="font-bold">-{data.maxDrawdown || 35}%</span> worst case</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                    <Building className="w-4 h-4" /> Company Risks
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {(data.companyRisks || ['Market pressure', 'Competition', 'Regulation']).map((r, i) => (
+                                        <span key={i} className="px-3 py-1 bg-red-100 text-red-800 text-sm rounded-full">{r}</span>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                    <Globe className="w-4 h-4" /> Macro Risks
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {(data.macroRisks || ['Interest rates', 'Inflation', 'Recession']).map((r, i) => (
+                                        <span key={i} className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full">{r}</span>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h4 className="font-semibold text-gray-900 mb-3">Economic Environment</h4>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-600">Economic Cycle</span>
+                                        <span className="font-medium text-green-600">Expansion</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-600">Sector Trend</span>
+                                        <span className="font-medium text-green-600">Favorable</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-600">Currency Exposure</span>
+                                        <span className="font-medium text-yellow-600">Global</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-600">Geopolitical Risk</span>
+                                        <span className="font-medium text-yellow-600">Moderate</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-2">
-                                    <Shield className="w-5 h-5 text-purple-600" />
-                                    <h3 className="font-semibold text-gray-900">Risk Assessment</h3>
+                            <h4 className="font-semibold text-gray-900 mb-4">Market & Trading Profile</h4>
+                            <div className="grid grid-cols-6 gap-4">
+                                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                                    <p className="text-xs text-gray-500">Market Cap</p>
+                                    <p className="text-lg font-bold text-gray-900">${stock.marketCap}B</p>
+                                    <p className="text-xs text-green-600">Large Cap</p>
                                 </div>
-                                <div className="text-right">
-                                    <p className="text-3xl font-bold text-orange-600">{data.riskScore || 4.2}<span className="text-lg text-gray-400">/10</span></p>
-                                    <p className="text-sm text-gray-500">Risk Score</p>
+                                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                                    <p className="text-xs text-gray-500">Volume</p>
+                                    <p className="text-lg font-bold text-gray-900">{stock.volume}</p>
+                                    <p className="text-xs text-green-600">Strong</p>
                                 </div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-4 mb-6">
-                                <div className="bg-gray-50 rounded-xl p-4 text-center">
-                                    <p className="text-sm text-gray-500">Volatility</p>
-                                    <p className="text-lg font-bold text-gray-900">{data.volatility || 'Medium'}</p>
+                                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                                    <p className="text-xs text-gray-500">Trading Range</p>
+                                    <p className="text-lg font-bold text-gray-900">${(stock.price * 0.7).toFixed(0)}-${(stock.price * 1.3).toFixed(0)}</p>
+                                    <p className="text-xs text-yellow-600">Wide</p>
                                 </div>
-                                <div className="bg-gray-50 rounded-xl p-4 text-center">
-                                    <p className="text-sm text-gray-500">Beta</p>
-                                    <p className="text-lg font-bold text-gray-900">{data.beta || 1.15}</p>
+                                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                                    <p className="text-xs text-gray-500">Commodity</p>
+                                    <p className="text-lg font-bold text-gray-900">Low</p>
+                                    <p className="text-xs text-gray-500">Sensitivity</p>
                                 </div>
-                                <div className="bg-gray-50 rounded-xl p-4 text-center">
-                                    <p className="text-sm text-gray-500">Max Drawdown</p>
-                                    <p className="text-lg font-bold text-red-600">-{data.maxDrawdown || 18}%</p>
+                                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                                    <p className="text-xs text-gray-500">Institutional</p>
+                                    <p className="text-lg font-bold text-gray-900">78%</p>
+                                    <p className="text-xs text-green-600">Present</p>
                                 </div>
-                            </div>
-                            <div className="space-y-4">
-                                <div>
-                                    <h4 className="font-medium text-gray-900 mb-2">Sector Risks</h4>
-                                    <div className="flex flex-wrap gap-2">
-                                        {(data.sectorRisks || ['Market cyclicality', 'Regulatory changes', 'Competition']).map((r, i) => (
-                                            <span key={i} className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full">{r}</span>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 className="font-medium text-gray-900 mb-2">Company Risks</h4>
-                                    <div className="flex flex-wrap gap-2">
-                                        {(data.companyRisks || ['Key person dependency', 'Debt levels']).map((r, i) => (
-                                            <span key={i} className="px-3 py-1 bg-red-100 text-red-800 text-sm rounded-full">{r}</span>
-                                        ))}
-                                    </div>
+                                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                                    <p className="text-xs text-gray-500">Risk-Adjusted</p>
+                                    <p className="text-lg font-bold text-green-600">Stable</p>
+                                    <p className="text-xs text-gray-500">Return</p>
                                 </div>
                             </div>
                         </div>
