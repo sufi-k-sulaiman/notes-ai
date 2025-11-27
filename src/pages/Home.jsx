@@ -5,7 +5,7 @@ import { Sparkles, Radio, Settings, Brain, FileText, BarChart3, GraduationCap, L
 
 const pages = [
     { name: 'Geospatial', page: 'Geospatial', icon: Globe, description: 'Global data intelligence across 18 domains', color: 'from-indigo-600 to-purple-600' },
-    { name: 'Qwirey', page: 'Qwirey', icon: Sparkles, description: 'Your all-in-one AI assistant, powered by Qwirey', color: 'from-purple-600 to-indigo-600' },
+    { name: 'Qwirey', page: 'Qwirey', icon: Sparkles, description: 'Your all-in-one Ai assistant, powered by Qwirey', color: 'from-purple-600 to-indigo-600' },
     { name: 'SearchPods', page: 'SearchPods', icon: Radio, description: 'Ai-generated podcasts on any topic with voice playback', color: 'from-blue-600 to-cyan-600' },
     { name: 'MindMap', page: 'MindMap', icon: Brain, description: 'Ai-powered knowledge visualization and exploration', color: 'from-pink-600 to-rose-600' },
     { name: 'Intelligence', page: 'Intelligence', icon: Lightbulb, description: 'AI predictive analytics and scenario modeling', color: 'from-indigo-600 to-purple-600' },
