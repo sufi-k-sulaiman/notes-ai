@@ -26,7 +26,7 @@ const TasksPage = () => {
 
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['tasks'],
-    queryFn: () => base44.entities.Task.list({ sort: { created_date: -1 } }),
+    queryFn: () => base44.entities.Task.list('-created_date'),
   });
 
   const updateTaskMutation = useMutation({
