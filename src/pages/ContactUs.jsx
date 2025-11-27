@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Mail, MessageSquare, Headphones, Building2, Send, ArrowLeft, Loader2 } from 'lucide-react';
+import { Mail, MessageSquare, Headphones, Building2, Send, ArrowLeft, Loader2, ExternalLink } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from 'sonner';
 
-const ContactCard = ({ icon: Icon, title, description, email, buttonText, color }) => {
+const ContactCard = ({ icon: Icon, title, description, email, buttonText, color, contactType, defaultSubject }) => {
     const [flipped, setFlipped] = useState(false);
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
@@ -19,25 +19,28 @@ const ContactCard = ({ icon: Icon, title, description, email, buttonText, color 
         }
         setSending(true);
         try {
-            const response = await base44.functions.invoke('sendContactEmail', {
-                to: email,
+            await base44.entities.ContactMessage.create({
+                type: contactType,
+                to_email: email,
                 subject: subject,
-                message: message
+                message: message,
+                status: 'new'
             });
-            if (response.data?.success) {
-                toast.success(response.data.message || 'Message sent successfully!');
-                setSubject('');
-                setMessage('');
-                setFlipped(false);
-            } else {
-                throw new Error(response.data?.error || 'Failed to send');
-            }
+            toast.success('Message received! We will get back to you soon.');
+            setSubject('');
+            setMessage('');
+            setFlipped(false);
         } catch (error) {
-            console.error('Email error:', error);
+            console.error('Error:', error);
             toast.error('Failed to send message. Please try again.');
         } finally {
             setSending(false);
         }
+    };
+
+    const handleEmailClick = (e) => {
+        e.stopPropagation();
+        window.location.href = `mailto:${email}?subject=${encodeURIComponent(defaultSubject)}`;
     };
 
     return (
@@ -58,6 +61,14 @@ const ContactCard = ({ icon: Icon, title, description, email, buttonText, color 
                         <Icon className="w-7 h-7" style={{ color }} />
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
+                    <a 
+                        href={`mailto:${email}?subject=${encodeURIComponent(defaultSubject)}`}
+                        className="text-lg font-semibold mb-3 block hover:underline transition-all"
+                        style={{ color }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {email} <ExternalLink className="w-4 h-4 inline ml-1" />
+                    </a>
                     <p className="text-gray-600 mb-4">{description}</p>
                     <button 
                         onClick={() => setFlipped(true)}
@@ -67,8 +78,7 @@ const ContactCard = ({ icon: Icon, title, description, email, buttonText, color 
                         <Send className="w-4 h-4" />
                         {buttonText}
                     </button>
-                    <p className="mt-3 text-sm text-gray-500">{email}</p>
-                </div>
+                    </div>
 
                 {/* Back of card */}
                 <div 
@@ -135,28 +145,34 @@ export default function ContactUs() {
                 {/* Contact Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <ContactCard
-                        icon={Building2}
-                        title="Contact Sales"
-                        description="If you want to use the 1cPublishing research engine as an educational institution, team, or enterprise, send us an email."
-                        email="sales@1cPublishing.com"
-                        buttonText="Email Sales"
-                        color="#8B5CF6"
+                      icon={Building2}
+                      title="Contact Sales"
+                      description="If you want to use the 1cPublishing research engine as an educational institution, team, or enterprise, send us an email."
+                      email="sales@1cPublishing.com"
+                      buttonText="Email Sales"
+                      color="#8B5CF6"
+                      contactType="sales"
+                      defaultSubject="Sales Inquiry - 1cPublishing"
                     />
                     <ContactCard
-                        icon={MessageSquare}
-                        title="Feedback and Errors"
-                        description="To report an error or make a suggestion, send us an email. We value your input to improve our services."
-                        email="help@1cPublishing.com"
-                        buttonText="Send Feedback"
-                        color="#10B981"
+                      icon={MessageSquare}
+                      title="Feedback and Errors"
+                      description="To report an error or make a suggestion, send us an email. We value your input to improve our services."
+                      email="help@1cPublishing.com"
+                      buttonText="Send Feedback"
+                      color="#10B981"
+                      contactType="feedback"
+                      defaultSubject="Feedback - 1cPublishing"
                     />
                     <ContactCard
-                        icon={Headphones}
-                        title="Contact Support"
-                        description="If you need assistance using the 1cPublishing application or the Portal, our support team is ready to help."
-                        email="help@1cPublishing.com"
-                        buttonText="Contact Support"
-                        color="#3B82F6"
+                      icon={Headphones}
+                      title="Contact Support"
+                      description="If you need assistance using the 1cPublishing application or the Portal, our support team is ready to help."
+                      email="help@1cPublishing.com"
+                      buttonText="Contact Support"
+                      color="#3B82F6"
+                      contactType="support"
+                      defaultSubject="Support Request - 1cPublishing"
                     />
                 </div>
 
