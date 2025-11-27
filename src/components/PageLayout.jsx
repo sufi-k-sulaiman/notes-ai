@@ -4,7 +4,8 @@ import { createPageUrl } from '@/utils';
 import { Menu, ChevronLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import GlobalSearchBar from './GlobalSearchBar';
-import { LOGO_URL, menuItems, footerLinks } from './NavigationConfig';
+import { LOGO_URL, menuItems, footerLinks } from './NavigationConfig.js';
+import { createPageUrl } from '@/utils';
 
 export default function PageLayout({ children, activePage, onSearch, searchPlaceholder = "Search anything...", showSearch = true }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -150,7 +151,7 @@ export default function PageLayout({ children, activePage, onSearch, searchPlace
                         {menuItems.map((item, index) => (
                             <Link
                                 key={index}
-                                to={item.href}
+                                to={createPageUrl(item.page)}
                                 onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
                                 className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
                                     item.label === activePage
@@ -180,7 +181,7 @@ export default function PageLayout({ children, activePage, onSearch, searchPlace
                         {!hideIcons && <img src={LOGO_URL} alt="1cPublishing" className="h-8 w-8 object-contain grayscale" />}
                         <nav className="flex flex-wrap justify-center gap-6 text-sm">
                             {footerLinks.map((link, i) => (
-                                <a key={i} href={link.href} className={`hover:text-purple-600 transition-colors ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{link.label}</a>
+                                <Link key={i} to={createPageUrl(link.page)} className={`hover:text-purple-600 transition-colors ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{link.label}</Link>
                             ))}
                         </nav>
                     </div>
