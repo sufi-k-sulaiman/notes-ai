@@ -1,4 +1,3 @@
-
 import { Globe, Sparkles, BarChart3, Gamepad2, Settings, Radio, Brain, FileText, GraduationCap, ListTodo, StickyNote, Lightbulb, ScrollText } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
