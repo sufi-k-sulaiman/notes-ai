@@ -19,16 +19,19 @@ const ContactCard = ({ icon: Icon, title, description, email, buttonText, color 
         }
         setSending(true);
         try {
-            await base44.integrations.Core.SendEmail({
+            const response = await base44.functions.invoke('sendContactEmail', {
                 to: email,
-                subject: `[1cPublishing Contact] ${subject}`,
-                body: `Subject: ${subject}\n\nMessage:\n${message}\n\n---\nSent via 1cPublishing Contact Form`,
-                from_name: "1cPublishing Contact Form"
+                subject: subject,
+                message: message
             });
-            toast.success('Message sent successfully!');
-            setSubject('');
-            setMessage('');
-            setFlipped(false);
+            if (response.data?.success) {
+                toast.success(response.data.message || 'Message sent successfully!');
+                setSubject('');
+                setMessage('');
+                setFlipped(false);
+            } else {
+                throw new Error(response.data?.error || 'Failed to send');
+            }
         } catch (error) {
             console.error('Email error:', error);
             toast.error('Failed to send message. Please try again.');
