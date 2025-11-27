@@ -19,7 +19,6 @@ import Qwirey from './pages/Qwirey';
 import Search from './pages/Search';
 import TermsOfUse from './pages/TermsOfUse';
 import ContactUs from './pages/ContactUs';
-import CookiePolicy from './pages/CookiePolicy';
 import __Layout from './Layout.jsx';
 
 
@@ -45,7 +44,6 @@ export const PAGES = {
     "Search": Search,
     "TermsOfUse": TermsOfUse,
     "ContactUs": ContactUs,
-    "CookiePolicy": CookiePolicy,
 }
 
 export const pagesConfig = {
