@@ -49,7 +49,7 @@ const SendArrowIcon = () => (
 );
 
 const AI_MODELS = [
-    { id: 'qwirey', name: 'Qwirey', icon: QwireyIcon, color: 'bg-purple-100 text-purple-700 border-purple-400', description: 'Full AI suite with images, charts & web search' },
+    { id: 'qwirey', name: 'Qwirey', icon: QwireyIcon, color: 'bg-purple-100 text-purple-700 border-purple-400', description: 'Advance Ai' },
     { id: 'gpt4', name: 'GPT-4', icon: GPT4Icon, color: 'bg-emerald-50 text-emerald-700 border-emerald-400', description: 'OpenAI GPT-4 responses' },
     { id: 'claude', name: 'Claude', icon: ClaudeIcon, color: 'bg-orange-50 text-orange-700 border-orange-400', description: 'Anthropic Claude responses' },
     { id: 'gemini', name: 'Gemini', icon: GeminiIcon, color: 'bg-blue-50 text-blue-700 border-blue-400', description: 'Google Gemini responses' },
