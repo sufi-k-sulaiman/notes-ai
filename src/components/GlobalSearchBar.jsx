@@ -153,7 +153,7 @@ export default function GlobalSearchBar({
                                 {QUICK_ACTIONS.map((action, i) => (
                                     <Link
                                         key={i}
-                                        to={action.href}
+                                        to={createPageUrl(action.page)}
                                         className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 hover:border-purple-300 hover:shadow-sm transition-all"
                                     >
                                         <action.icon className="w-4 h-4" style={{ color: action.color }} />
