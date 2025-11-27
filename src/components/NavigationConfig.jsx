@@ -19,7 +19,7 @@ export const menuItems = [
     { label: 'Games', icon: Gamepad2, href: createPageUrl('Games') },
     { label: 'Settings', icon: Settings, href: createPageUrl('Settings') },
     { label: 'Terms of Use', icon: ScrollText, href: createPageUrl('TermsOfUse') },
-    { label: 'Site Map', icon: Map, href: createPageUrl('SiteMap') },
+    { label: 'Site Map', icon: Map, href: createPageUrl('SiteMapXml') },
 ];
 
 export const NAVIGATION_ITEMS = menuItems.map(item => ({
