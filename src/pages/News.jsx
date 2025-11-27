@@ -69,7 +69,7 @@ const NewsCard = ({ article, index }) => {
                     {article.summary}
                 </p>
                 <a
-                    href={`https://www.google.com/search?q=${encodeURIComponent(article.title)}&tbm=nws`}
+                    href={article.url && article.url.startsWith('http') ? article.url : `https://www.google.com/search?q=${encodeURIComponent(article.title)}&tbm=nws`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-red-600 hover:text-red-700 text-sm font-medium"
@@ -113,7 +113,11 @@ Use information from news sources like:
 - Bing News: https://www.bing.com/news/search?q=${encodeURIComponent(keyword)}
 - DuckDuckGo News: https://duckduckgo.com/?q=${encodeURIComponent(keyword)}&ia=news&iar=news
 
-Provide the 12 most recent and relevant news articles with their titles, sources, summaries, and approximate publish time. Make sure the news is current and from today or the past few days.`,
+Provide the 12 most recent and relevant news articles. 
+
+CRITICAL: For each article, you MUST provide the REAL, ACTUAL, VALID URL to the original news article on the publisher's website (e.g., https://www.cnn.com/2024/..., https://www.bbc.com/news/..., https://www.reuters.com/...). 
+DO NOT make up URLs. Only include articles where you can provide a real, working link to the source.
+The URL must be a direct link to the article page, not a search results page.`,
                 add_context_from_internet: true,
                 response_json_schema: {
                     type: "object",
