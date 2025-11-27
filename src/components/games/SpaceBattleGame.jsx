@@ -184,7 +184,7 @@ export default function SpaceBattleGame({ onExit }) {
             mouseX: canvas.width / 2,
             mouseY: canvas.height / 2,
             bombs: 3,
-            alienTypes: ['bug', 'ghost', 'skull', 'bot', 'ufo', 'squid'],
+            alienTypes: ['truck', 'spacesuit', 'spaceship', 'rocket', 'ufo', 'mech'],
         };
         gameStateRef.current = state;
 
@@ -409,74 +409,107 @@ export default function SpaceBattleGame({ onExit }) {
                 ctx.shadowColor = enemy.color;
                 
                 // Draw different alien types
-                if (enemy.type === 'bug') {
-                    // Bug alien - rounded body with antennae
-                    ctx.beginPath();
-                    ctx.ellipse(0, 0, size/2, size/3, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.strokeStyle = enemy.color;
-                    ctx.lineWidth = 4;
-                    ctx.beginPath();
-                    ctx.moveTo(-size/4, -size/3);
-                    ctx.quadraticCurveTo(-size/3, -size/2, -size/2, -size/2);
-                    ctx.moveTo(size/4, -size/3);
-                    ctx.quadraticCurveTo(size/3, -size/2, size/2, -size/2);
-                    ctx.stroke();
-                    // Eyes
+                if (enemy.type === 'truck') {
+                    // Truck/Bus front view
+                    ctx.fillRect(-size/2.5, -size/4, size/1.25, size/2);
+                    // Windshield
+                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                    ctx.fillRect(-size/3.5, -size/5, size/1.75, size/4);
+                    // Headlights
                     ctx.fillStyle = '#fff';
                     ctx.beginPath();
-                    ctx.arc(-size/6, -size/10, size/8, 0, Math.PI * 2);
-                    ctx.arc(size/6, -size/10, size/8, 0, Math.PI * 2);
+                    ctx.arc(-size/3.5, size/6, size/10, 0, Math.PI * 2);
+                    ctx.arc(size/3.5, size/6, size/10, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.fillStyle = '#000';
+                    // Grill
+                    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                    ctx.fillRect(-size/5, size/12, size/2.5, size/8);
+                } else if (enemy.type === 'spacesuit') {
+                    // Space suit robot - humanoid shape
+                    // Helmet
                     ctx.beginPath();
-                    ctx.arc(-size/6, -size/10, size/16, 0, Math.PI * 2);
-                    ctx.arc(size/6, -size/10, size/16, 0, Math.PI * 2);
+                    ctx.arc(0, -size/4, size/4, 0, Math.PI * 2);
                     ctx.fill();
-                } else if (enemy.type === 'ghost') {
-                    // Ghost alien
+                    // Visor
+                    ctx.fillStyle = 'rgba(255,255,255,0.4)';
                     ctx.beginPath();
-                    ctx.arc(0, -size/6, size/3, Math.PI, 0, false);
-                    ctx.lineTo(size/3, size/4);
-                    for (let i = 0; i < 4; i++) {
-                        const waveX = size/3 - (i * size/6);
-                        ctx.lineTo(waveX - size/12, size/6);
-                        ctx.lineTo(waveX - size/6, size/4);
-                    }
+                    ctx.ellipse(0, -size/4, size/6, size/8, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Body
+                    ctx.fillStyle = enemy.color;
+                    ctx.beginPath();
+                    ctx.ellipse(0, size/8, size/3, size/4, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Arms
+                    ctx.beginPath();
+                    ctx.arc(-size/2.5, 0, size/8, 0, Math.PI * 2);
+                    ctx.arc(size/2.5, 0, size/8, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Legs
+                    ctx.beginPath();
+                    ctx.ellipse(-size/6, size/3, size/10, size/6, 0, 0, Math.PI * 2);
+                    ctx.ellipse(size/6, size/3, size/10, size/6, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (enemy.type === 'spaceship') {
+                    // Aggressive spaceship - angular design
+                    ctx.beginPath();
+                    ctx.moveTo(0, -size/3);
+                    ctx.lineTo(-size/2, size/4);
+                    ctx.lineTo(-size/4, size/6);
+                    ctx.lineTo(-size/6, size/3);
+                    ctx.lineTo(size/6, size/3);
+                    ctx.lineTo(size/4, size/6);
+                    ctx.lineTo(size/2, size/4);
                     ctx.closePath();
                     ctx.fill();
-                    ctx.fillStyle = '#fff';
+                    // Cockpit
+                    ctx.fillStyle = 'rgba(255,255,255,0.4)';
                     ctx.beginPath();
-                    ctx.arc(-size/8, -size/6, size/10, 0, Math.PI * 2);
-                    ctx.arc(size/8, -size/6, size/10, 0, Math.PI * 2);
+                    ctx.arc(0, -size/8, size/8, 0, Math.PI * 2);
                     ctx.fill();
-                } else if (enemy.type === 'skull') {
-                    // Skull alien
+                    // Wings detail
+                    ctx.fillStyle = 'rgba(0,0,0,0.3)';
                     ctx.beginPath();
-                    ctx.arc(0, -size/10, size/3, 0, Math.PI * 2);
+                    ctx.moveTo(-size/3, size/8);
+                    ctx.lineTo(-size/2, size/4);
+                    ctx.lineTo(-size/4, size/6);
+                    ctx.closePath();
                     ctx.fill();
-                    ctx.fillStyle = '#000';
                     ctx.beginPath();
-                    ctx.ellipse(-size/8, -size/8, size/10, size/8, 0, 0, Math.PI * 2);
-                    ctx.ellipse(size/8, -size/8, size/10, size/8, 0, 0, Math.PI * 2);
+                    ctx.moveTo(size/3, size/8);
+                    ctx.lineTo(size/2, size/4);
+                    ctx.lineTo(size/4, size/6);
+                    ctx.closePath();
                     ctx.fill();
-                    ctx.fillRect(-size/6, size/10, size/3, size/12);
-                } else if (enemy.type === 'bot') {
-                    // Robot alien
-                    ctx.fillRect(-size/3, -size/4, size*2/3, size/2);
-                    ctx.fillStyle = '#fff';
-                    ctx.fillRect(-size/5, -size/6, size/8, size/8);
-                    ctx.fillRect(size/10, -size/6, size/8, size/8);
-                    ctx.strokeStyle = enemy.color;
-                    ctx.lineWidth = 3;
+                } else if (enemy.type === 'rocket') {
+                    // Rocket ship - pointed design
                     ctx.beginPath();
-                    ctx.moveTo(-size/3, -size/4);
-                    ctx.lineTo(-size/2, -size/2);
-                    ctx.moveTo(size/3, -size/4);
-                    ctx.lineTo(size/2, -size/2);
-                    ctx.stroke();
+                    ctx.moveTo(0, -size/2);
+                    ctx.quadraticCurveTo(size/4, -size/4, size/5, size/6);
+                    ctx.lineTo(size/3, size/3);
+                    ctx.lineTo(size/8, size/4);
+                    ctx.lineTo(0, size/3);
+                    ctx.lineTo(-size/8, size/4);
+                    ctx.lineTo(-size/3, size/3);
+                    ctx.lineTo(-size/5, size/6);
+                    ctx.quadraticCurveTo(-size/4, -size/4, 0, -size/2);
+                    ctx.closePath();
+                    ctx.fill();
+                    // Window
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.beginPath();
+                    ctx.arc(0, -size/6, size/10, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Flames
+                    ctx.fillStyle = '#ff6b35';
+                    ctx.beginPath();
+                    ctx.moveTo(-size/10, size/3);
+                    ctx.lineTo(0, size/2);
+                    ctx.lineTo(size/10, size/3);
+                    ctx.closePath();
+                    ctx.fill();
                 } else if (enemy.type === 'ufo') {
-                    // UFO alien
+                    // UFO - classic flying saucer
                     ctx.beginPath();
                     ctx.ellipse(0, 0, size/2, size/6, 0, 0, Math.PI * 2);
                     ctx.fill();
@@ -487,23 +520,33 @@ export default function SpaceBattleGame({ onExit }) {
                     ctx.beginPath();
                     ctx.arc(0, -size/6, size/6, Math.PI, 0, false);
                     ctx.fill();
-                } else if (enemy.type === 'squid') {
-                    // Squid alien
-                    ctx.beginPath();
-                    ctx.arc(0, -size/6, size/4, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.strokeStyle = enemy.color;
-                    ctx.lineWidth = 4;
+                    // Lights
+                    ctx.fillStyle = '#fff';
                     for (let i = -2; i <= 2; i++) {
                         ctx.beginPath();
-                        ctx.moveTo(i * size/8, size/8);
-                        ctx.quadraticCurveTo(i * size/6, size/3, i * size/5, size/2);
-                        ctx.stroke();
+                        ctx.arc(i * size/6, size/12, size/20, 0, Math.PI * 2);
+                        ctx.fill();
                     }
+                } else if (enemy.type === 'mech') {
+                    // Mech robot - bulky design
+                    // Head
+                    ctx.fillRect(-size/6, -size/3, size/3, size/5);
+                    // Visor
                     ctx.fillStyle = '#fff';
+                    ctx.fillRect(-size/8, -size/3.5, size/4, size/10);
+                    // Body
+                    ctx.fillStyle = enemy.color;
+                    ctx.fillRect(-size/3, -size/8, size/1.5, size/3);
+                    // Arms
+                    ctx.fillRect(-size/2, -size/10, size/6, size/3);
+                    ctx.fillRect(size/3, -size/10, size/6, size/3);
+                    // Legs
+                    ctx.fillRect(-size/4, size/5, size/6, size/4);
+                    ctx.fillRect(size/12, size/5, size/6, size/4);
+                    // Shoulder pads
                     ctx.beginPath();
-                    ctx.arc(-size/10, -size/6, size/12, 0, Math.PI * 2);
-                    ctx.arc(size/10, -size/6, size/12, 0, Math.PI * 2);
+                    ctx.arc(-size/3, -size/10, size/8, 0, Math.PI * 2);
+                    ctx.arc(size/3, -size/10, size/8, 0, Math.PI * 2);
                     ctx.fill();
                 }
                 ctx.shadowBlur = 0;
