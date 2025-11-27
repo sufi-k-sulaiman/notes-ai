@@ -11,6 +11,7 @@ const ContactCard = ({ icon: Icon, title, description, email, buttonText, color,
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
     const [sending, setSending] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const handleSend = async () => {
         if (!subject.trim() || !message.trim()) {
@@ -26,10 +27,13 @@ const ContactCard = ({ icon: Icon, title, description, email, buttonText, color,
                 message: message,
                 status: 'new'
             });
-            toast.success('Message received! We will get back to you soon.');
+            setShowSuccess(true);
             setSubject('');
             setMessage('');
-            setFlipped(false);
+            setTimeout(() => {
+                setShowSuccess(false);
+                setFlipped(false);
+            }, 2500);
         } catch (error) {
             console.error('Error:', error);
             toast.error('Failed to send message. Please try again.');
@@ -82,9 +86,25 @@ const ContactCard = ({ icon: Icon, title, description, email, buttonText, color,
 
                 {/* Back of card */}
                 <div 
-                    className="absolute inset-0 bg-white rounded-2xl border border-gray-200 p-6"
+                    className="absolute inset-0 bg-white rounded-2xl border border-gray-200 p-6 overflow-hidden"
                     style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                 >
+                    {/* Success overlay */}
+                    <div 
+                        className="absolute inset-0 flex flex-col items-center justify-center text-white z-10 transition-all duration-500"
+                        style={{ 
+                            backgroundColor: color,
+                            transform: showSuccess ? 'scale(1)' : 'scale(0)',
+                            opacity: showSuccess ? 1 : 0,
+                            borderRadius: '1rem'
+                        }}
+                    >
+                        <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4 animate-bounce">
+                            <Send className="w-8 h-8" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
+                        <p className="text-white/90 text-center px-4">We'll get back to you soon.</p>
+                    </div>
                     <div className="flex items-center gap-2 mb-4">
                         <button onClick={() => setFlipped(false)} className="p-1 hover:bg-gray-100 rounded-lg">
                             <ArrowLeft className="w-5 h-5 text-gray-600" />
