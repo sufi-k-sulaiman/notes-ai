@@ -450,41 +450,42 @@ export default function SpaceBattleGame({ onExit }) {
                 return p.life > 0;
             });
 
-            // Draw crosshair (FPS style)
+            // Draw crosshair at mouse position (FPS style)
             ctx.strokeStyle = '#00d4ff';
             ctx.lineWidth = 2;
             const crossSize = 25;
-            const crossY = canvas.height * 0.5;
+            const crossX = state.mouseX;
+            const crossY = state.mouseY;
             
             // Crosshair frame
             ctx.beginPath();
-            ctx.moveTo(centerX - crossSize - 10, crossY - crossSize);
-            ctx.lineTo(centerX - crossSize, crossY - crossSize);
-            ctx.lineTo(centerX - crossSize, crossY - crossSize - 10);
+            ctx.moveTo(crossX - crossSize - 10, crossY - crossSize);
+            ctx.lineTo(crossX - crossSize, crossY - crossSize);
+            ctx.lineTo(crossX - crossSize, crossY - crossSize - 10);
             ctx.stroke();
             
             ctx.beginPath();
-            ctx.moveTo(centerX + crossSize + 10, crossY - crossSize);
-            ctx.lineTo(centerX + crossSize, crossY - crossSize);
-            ctx.lineTo(centerX + crossSize, crossY - crossSize - 10);
+            ctx.moveTo(crossX + crossSize + 10, crossY - crossSize);
+            ctx.lineTo(crossX + crossSize, crossY - crossSize);
+            ctx.lineTo(crossX + crossSize, crossY - crossSize - 10);
             ctx.stroke();
             
             ctx.beginPath();
-            ctx.moveTo(centerX - crossSize - 10, crossY + crossSize);
-            ctx.lineTo(centerX - crossSize, crossY + crossSize);
-            ctx.lineTo(centerX - crossSize, crossY + crossSize + 10);
+            ctx.moveTo(crossX - crossSize - 10, crossY + crossSize);
+            ctx.lineTo(crossX - crossSize, crossY + crossSize);
+            ctx.lineTo(crossX - crossSize, crossY + crossSize + 10);
             ctx.stroke();
             
             ctx.beginPath();
-            ctx.moveTo(centerX + crossSize + 10, crossY + crossSize);
-            ctx.lineTo(centerX + crossSize, crossY + crossSize);
-            ctx.lineTo(centerX + crossSize, crossY + crossSize + 10);
+            ctx.moveTo(crossX + crossSize + 10, crossY + crossSize);
+            ctx.lineTo(crossX + crossSize, crossY + crossSize);
+            ctx.lineTo(crossX + crossSize, crossY + crossSize + 10);
             ctx.stroke();
             
             // Center dot
             ctx.fillStyle = '#ff4444';
             ctx.beginPath();
-            ctx.arc(centerX, crossY, 4, 0, Math.PI * 2);
+            ctx.arc(crossX, crossY, 4, 0, Math.PI * 2);
             ctx.fill();
 
             // Distance markers below crosshair
@@ -493,12 +494,12 @@ export default function SpaceBattleGame({ onExit }) {
             ctx.font = '10px monospace';
             for (let i = -5; i <= 5; i++) {
                 if (i !== 0) {
-                    const markerX = centerX + i * 20;
+                    const markerX = crossX + i * 20;
                     ctx.fillRect(markerX - 1, crossY + crossSize + 25, 2, i % 5 === 0 ? 10 : 5);
                 }
             }
-            ctx.fillText('10', centerX - 100, crossY + crossSize + 50);
-            ctx.fillText('10', centerX + 100, crossY + crossSize + 50);
+            ctx.fillText('10', crossX - 100, crossY + crossSize + 50);
+            ctx.fillText('10', crossX + 100, crossY + crossSize + 50);
 
             ctx.restore();
 
