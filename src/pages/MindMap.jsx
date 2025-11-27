@@ -247,23 +247,20 @@ export default function MindMapPage() {
                 <div className={`bg-white rounded-2xl border border-gray-200 ${isFullscreen ? 'min-h-[calc(100vh-100px)]' : 'min-h-[600px]'} overflow-auto p-8`}>
                     {!treeData && !loading ? (
                         <div className="h-full flex flex-col items-center justify-center py-20">
-                            <div className="w-20 h-20 rounded-2xl bg-purple-100 flex items-center justify-center mb-6">
+                            <div className="w-20 h-20 rounded-2xl bg-purple-100 flex items-center justify-center mb-4">
                                 <Network className="w-10 h-10 text-purple-600" />
                             </div>
-                            <h2 className="text-2xl font-bold text-gray-900 mb-3">Start Exploring</h2>
-                            <p className="text-gray-500 max-w-md text-center mb-6">
-                                Search for any topic to generate an interactive knowledge tree. Click Explore to dive deeper or Learn for detailed insights.
-                            </p>
-                            {/* Search Bar */}
-                            <div className="max-w-xl mx-auto mb-6">
+
+                            {/* Search Bar - Right below icon */}
+                            <div className="w-full max-w-xl mx-auto mb-6">
                                 <div className="relative">
                                     <input
                                         type="text"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(searchTerm); }}
-                                        placeholder="Search any topic to explore..."
-                                        className="w-full h-12 pl-5 pr-14 rounded-full border border-gray-200 bg-white focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none transition-all text-gray-700 placeholder:text-gray-400"
+                                        placeholder="Search anything..."
+                                        className="w-full h-12 pl-5 pr-14 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none transition-all text-gray-700 placeholder:text-gray-400"
                                     />
                                     <button
                                         onClick={() => handleSearch(searchTerm)}
@@ -274,7 +271,12 @@ export default function MindMapPage() {
                                     </button>
                                 </div>
                             </div>
-                            
+
+                            <h2 className="text-2xl font-bold text-gray-900 mb-3">Start Exploring</h2>
+                            <p className="text-gray-500 max-w-md text-center mb-6">
+                                Search for any topic to generate an interactive knowledge tree. Click Explore to dive deeper or Learn for detailed insights.
+                            </p>
+
                             <div className="flex flex-wrap justify-center gap-2">
                                 {['Technology', 'Science', 'History', 'Business', 'Art'].map(topic => (
                                     <Button

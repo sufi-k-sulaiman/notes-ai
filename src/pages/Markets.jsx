@@ -871,7 +871,7 @@ export default function Markets() {
                         type="text"
                         value={searchQuery} 
                         onChange={(e) => setSearchQuery(e.target.value)} 
-                        placeholder="Search stocks by ticker, name, or sector..." 
+                        placeholder="Search anything..." 
                         className="w-full h-12 pl-5 pr-14 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none transition-all text-gray-700 placeholder:text-gray-400"
                     />
                     <button
@@ -881,15 +881,19 @@ export default function Markets() {
                         <Search className="w-4 h-4 text-white" />
                     </button>
                 </div>
-                <Button onClick={refreshStocks} variant="outline" size="sm" className="gap-2 h-10"><RefreshCw className="w-4 h-4" /> Refresh</Button>
-                <span className="text-sm text-gray-500">{stocks.length} stocks</span>
+                <button onClick={refreshStocks} className="w-10 h-10 rounded-full border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center transition-colors">
+                    <RefreshCw className="w-4 h-4 text-gray-600" />
+                </button>
             </div>
 
             <div className="flex flex-wrap gap-2 mb-4">
                 {PRESET_FILTERS.map(preset => (<button key={preset.id} onClick={() => setActivePreset(preset.id)} className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${activePreset === preset.id ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-gray-700 border-gray-200 hover:border-purple-300'}`}><preset.icon className="w-4 h-4" />{preset.label}</button>))}
             </div>
 
-            <FilterChips filters={filters} setFilters={setFilters} filterOptions={FILTER_OPTIONS} sectors={sectors} />
+            <div className="flex items-center gap-2 flex-wrap">
+                <FilterChips filters={filters} setFilters={setFilters} filterOptions={FILTER_OPTIONS} sectors={sectors} />
+                <span className="px-4 py-2 rounded-full border border-purple-300 bg-white text-purple-600 text-sm font-medium">{stocks.length} stocks</span>
+            </div>
 
             <div className="flex items-center justify-between mb-4 mt-6">
                 <p className="text-gray-600">Showing <span className="font-bold text-gray-900">{filteredStocks.length}</span> of {stocks.length} stocks</p>

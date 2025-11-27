@@ -371,24 +371,6 @@ Use short sentences for better pacing. Do NOT use any markdown formatting.`,
                             <p className="text-xs text-gray-500">AI-Generated Audio</p>
                         </div>
                     </div>
-                    <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-auto relative">
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search any topic..."
-                            className="w-full h-12 pl-5 pr-14 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none transition-all text-gray-700 placeholder:text-gray-400"
-                        />
-                        <button 
-                            type="submit"
-                            className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-purple-600 hover:bg-purple-700 flex items-center justify-center transition-colors"
-                        >
-                            <Search className="w-4 h-4 text-white" />
-                        </button>
-                    </form>
-                    <button type="button" className="text-gray-400 hover:text-purple-600 p-2">
-                        <Mic className="w-5 h-5" />
-                    </button>
                 </div>
             </div>
 

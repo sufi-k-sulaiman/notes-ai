@@ -6,10 +6,10 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
-import SubjectSelector from '../components/learning/SubjectSelector';
-import LearningIslandCard from '../components/learning/LearningIslandCard';
-import CourseModal from '../components/learning/CourseModal';
-import { SUBJECTS } from '../components/learning/SubjectData';
+import SubjectSelector from '@/components/learning/SubjectSelector';
+import LearningIslandCard from '@/components/learning/LearningIslandCard';
+import CourseModal from '@/components/learning/CourseModal';
+import { SUBJECTS } from '@/components/learning/SubjectData';
 
 // App theme colors
 const THEME = {
