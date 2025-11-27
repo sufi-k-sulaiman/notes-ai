@@ -4,7 +4,6 @@ import { createPageUrl } from '@/utils';
 import { Menu, ChevronLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import GlobalSearchBar from './GlobalSearchBar';
-import { createPageUrl } from '@/utils';
 import { LOGO_URL, menuItems, footerLinks } from './NavigationConfig.js';
 
 export default function PageLayout({ children, activePage, onSearch, searchPlaceholder = "Search anything...", showSearch = true }) {
