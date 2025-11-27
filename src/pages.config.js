@@ -1,6 +1,5 @@
 import TestFunctions from './pages/TestFunctions';
 import DashboardComponents from './pages/DashboardComponents';
-import Home from './pages/Home';
 import SearchPods from './pages/SearchPods';
 import Settings from './pages/Settings';
 import Template from './pages/Template';
@@ -16,7 +15,6 @@ import Geospatial from './pages/Geospatial';
 import Tasks from './pages/Tasks';
 import MindMap from './pages/MindMap';
 import Qwirey from './pages/Qwirey';
-import Search from './pages/Search';
 import TermsOfUse from './pages/TermsOfUse';
 import ContactUs from './pages/ContactUs';
 import CookiePolicyPage from './pages/CookiePolicyPage';
@@ -27,7 +25,6 @@ import __Layout from './Layout.jsx';
 export const PAGES = {
     "TestFunctions": TestFunctions,
     "DashboardComponents": DashboardComponents,
-    "Home": Home,
     "SearchPods": SearchPods,
     "Settings": Settings,
     "Template": Template,
@@ -43,7 +40,6 @@ export const PAGES = {
     "Tasks": Tasks,
     "MindMap": MindMap,
     "Qwirey": Qwirey,
-    "Search": Search,
     "TermsOfUse": TermsOfUse,
     "ContactUs": ContactUs,
     "CookiePolicyPage": CookiePolicyPage,
@@ -51,7 +47,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "Home",
+    mainPage: "TestFunctions",
     Pages: PAGES,
     Layout: __Layout,
 };
