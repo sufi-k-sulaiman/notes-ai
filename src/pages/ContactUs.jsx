@@ -1,24 +1,110 @@
-import React from 'react';
-import { Mail, MessageSquare, Headphones, Building2, Send } from 'lucide-react';
+import React, { useState } from 'react';
+import { Mail, MessageSquare, Headphones, Building2, Send, ArrowLeft, Loader2 } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from 'sonner';
 
-const ContactCard = ({ icon: Icon, title, description, email, buttonText, color }) => (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
-        <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4`} style={{ backgroundColor: `${color}20` }}>
-            <Icon className="w-7 h-7" style={{ color }} />
+const ContactCard = ({ icon: Icon, title, description, email, buttonText, color }) => {
+    const [flipped, setFlipped] = useState(false);
+    const [subject, setSubject] = useState('');
+    const [message, setMessage] = useState('');
+    const [sending, setSending] = useState(false);
+
+    const handleSend = async () => {
+        if (!subject.trim() || !message.trim()) {
+            toast.error('Please fill in both subject and message');
+            return;
+        }
+        setSending(true);
+        try {
+            await base44.integrations.Core.SendEmail({
+                to: email,
+                subject: subject,
+                body: message
+            });
+            toast.success('Message sent successfully!');
+            setSubject('');
+            setMessage('');
+            setFlipped(false);
+        } catch (error) {
+            toast.error('Failed to send message. Please try again.');
+        } finally {
+            setSending(false);
+        }
+    };
+
+    return (
+        <div className="relative h-[320px]" style={{ perspective: '1000px' }}>
+            <div 
+                className={`relative w-full h-full transition-transform duration-500`} 
+                style={{ 
+                    transformStyle: 'preserve-3d',
+                    transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+                }}
+            >
+                {/* Front of card */}
+                <div 
+                    className="absolute inset-0 bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-shadow"
+                    style={{ backfaceVisibility: 'hidden' }}
+                >
+                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4`} style={{ backgroundColor: `${color}20` }}>
+                        <Icon className="w-7 h-7" style={{ color }} />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
+                    <p className="text-gray-600 mb-4">{description}</p>
+                    <button 
+                        onClick={() => setFlipped(true)}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white font-medium transition-all hover:opacity-90"
+                        style={{ backgroundColor: color }}
+                    >
+                        <Send className="w-4 h-4" />
+                        {buttonText}
+                    </button>
+                    <p className="mt-3 text-sm text-gray-500">{email}</p>
+                </div>
+
+                {/* Back of card */}
+                <div 
+                    className="absolute inset-0 bg-white rounded-2xl border border-gray-200 p-6"
+                    style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                >
+                    <div className="flex items-center gap-2 mb-4">
+                        <button onClick={() => setFlipped(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+                            <ArrowLeft className="w-5 h-5 text-gray-600" />
+                        </button>
+                        <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+                    </div>
+                    <div className="space-y-3">
+                        <Input
+                            placeholder="Subject"
+                            value={subject}
+                            onChange={(e) => setSubject(e.target.value)}
+                            className="w-full"
+                        />
+                        <Textarea
+                            placeholder="Your message..."
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            className="w-full h-32 resize-none"
+                        />
+                        <Button 
+                            onClick={handleSend}
+                            disabled={sending}
+                            className="w-full text-white"
+                            style={{ backgroundColor: color }}
+                        >
+                            {sending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
+                            {sending ? 'Sending...' : 'Send Message'}
+                        </Button>
+                    </div>
+                    <p className="mt-2 text-xs text-gray-500 text-center">To: {email}</p>
+                </div>
+            </div>
         </div>
-        <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
-        <p className="text-gray-600 mb-4">{description}</p>
-        <a 
-            href={`mailto:${email}`} 
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white font-medium transition-all hover:opacity-90"
-            style={{ backgroundColor: color }}
-        >
-            <Send className="w-4 h-4" />
-            {buttonText}
-        </a>
-        <p className="mt-3 text-sm text-gray-500">{email}</p>
-    </div>
-);
+    );
+};
 
 export default function ContactUs() {
     return (
