@@ -1242,6 +1242,11 @@ export default function SpaceBattleGame({ onExit }) {
                 <Button onClick={onExit} className="absolute top-4 right-4 bg-red-600/80 hover:bg-red-700">
                     <X className="w-4 h-4 mr-1" /> Exit
                 </Button>
+                <img 
+                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692729a5f5180fbd43f297e9/8ecb3ee83_image-loading-logo.png" 
+                    alt="Watermark" 
+                    className="absolute bottom-4 right-4 w-16 h-16 opacity-30 pointer-events-none"
+                />
             </div>
         );
     }

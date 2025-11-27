@@ -502,6 +502,11 @@ export default function WordShooter({ onExit }) {
         <div className="absolute top-5 left-5 bg-black/60 px-4 py-2 rounded-lg">
           <p className="text-white text-sm">Level {currentLevel} • {currentTopic}</p>
         </div>
+        <img 
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692729a5f5180fbd43f297e9/8ecb3ee83_image-loading-logo.png" 
+          alt="Watermark" 
+          className="absolute bottom-4 right-4 w-16 h-16 opacity-30 pointer-events-none"
+        />
       </div>
     );
   }
