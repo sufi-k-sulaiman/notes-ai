@@ -572,7 +572,21 @@ export default function Qwirey() {
 
                 {loading && (
                     <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center shadow-sm">
-                        <Loader2 className="w-12 h-12 animate-spin text-purple-600 mx-auto mb-4" />
+                        <style>{`
+                            @keyframes logoPulse {
+                                0%, 100% { opacity: 0.4; transform: scale(1); }
+                                50% { opacity: 0.7; transform: scale(1.03); }
+                            }
+                        `}</style>
+                        <div className="relative mb-4 flex items-center justify-center mx-auto w-fit">
+                            <div className="absolute w-16 h-16 rounded-full border-4 border-purple-200 border-t-purple-600 animate-spin" />
+                            <img 
+                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692729a5f5180fbd43f297e9/622024f26_image-loading-logo.png" 
+                                alt="Loading" 
+                                className="w-12 h-12 object-contain grayscale opacity-50"
+                                style={{ animation: 'logoPulse 1.5s ease-in-out infinite' }}
+                            />
+                        </div>
                         <p className="text-gray-600 font-medium">
                             {selectedModel === 'qwirey' 
                                 ? 'Qwirey is thinking, generating images, and searching the web...'
