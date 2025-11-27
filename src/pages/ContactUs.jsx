@@ -69,10 +69,7 @@ export default function ContactUs() {
                     />
                 </div>
 
-                {/* Footer */}
-                <div className="text-center text-gray-500 text-sm">
-                    <p>© 2025 1cPublishing Inc. All rights reserved.</p>
-                </div>
+
             </div>
         </div>
     );
