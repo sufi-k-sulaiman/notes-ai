@@ -255,12 +255,6 @@ Provide:
             <header className="bg-white sticky top-0 z-40 border-b border-gray-200 shadow-sm h-[72px]">
                 <div className="flex items-center justify-between px-4 h-full">
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(!sidebarOpen)} className="hover:bg-gray-100 md:hidden">
-                            <Menu className="w-5 h-5 text-purple-600" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(!sidebarOpen)} className="hover:bg-gray-100 hidden md:flex">
-                            {sidebarOpen ? <ChevronLeft className="w-5 h-5 text-purple-600" /> : <Menu className="w-5 h-5 text-purple-600" />}
-                        </Button>
                         <Link to={createPageUrl('Home')} className="flex items-center gap-3 hover:opacity-80">
                             <img src={LOGO_URL} alt="1cPublishing" className="h-10 w-10 object-contain" />
                             <div className="hidden sm:block">
@@ -268,6 +262,9 @@ Provide:
                                 <p className="text-xs font-medium text-purple-600">AI Powered</p>
                             </div>
                         </Link>
+                        <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(!sidebarOpen)} className="hover:bg-gray-100">
+                           {sidebarOpen ? <ChevronLeft className="w-5 h-5 text-purple-600" /> : <Menu className="w-5 h-5 text-purple-600" />}
+                        </Button>
                     </div>
 
                     <GlobalSearchBar placeholder="Search templates, tips..." className="flex-1 max-w-xl mx-4 md:mx-8" />
