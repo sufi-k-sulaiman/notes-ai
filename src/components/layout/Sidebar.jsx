@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { menuItems } from '@/components/NavigationConfig.jsx';
+import { menuItems } from '@/components/NavigationConfig';
 
 export default function Sidebar({ isOpen, activePage, onClose }) {
     // Only close on mobile when clicking overlay or a menu item

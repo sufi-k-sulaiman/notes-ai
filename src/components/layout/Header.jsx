@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { ChevronLeft, Menu, Search } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { LOGO_URL, menuItems } from '@/components/NavigationConfig.jsx';
+import { LOGO_URL, menuItems } from '@/components/NavigationConfig';
 
 const PAGES_WITHOUT_SEARCH = ['Qwirey', 'MindMap', 'Learning'];
 const PAGES_WITH_FILTER_SEARCH = ['Markets'];

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PageLayout from '@/components/PageLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { LOGO_URL } from '@/components/NavigationConfig.jsx';
+import { LOGO_URL } from '@/components/NavigationConfig';
 
 export default function Layout({ children, currentPageName }) {
   useEffect(() => {
