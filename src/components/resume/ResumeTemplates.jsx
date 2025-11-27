@@ -1,5 +1,7 @@
-import React from 'react';
-import { Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, Eye, X } from 'lucide-react';
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export const RESUME_TEMPLATES = [
     // Modern
@@ -28,77 +30,87 @@ export const RESUME_TEMPLATES = [
     { id: 'system-architect', name: 'System Architect', category: 'Technical', color: '#0EA5E9', headerStyle: 'left', accentPosition: 'grid' },
 ];
 
-export function TemplateCard({ template, isSelected, onSelect }) {
+export function TemplateCard({ template, isSelected, onSelect, onPreview }) {
     return (
         <div
-            onClick={() => onSelect(template.id)}
-            className={`relative p-2 rounded-xl border-2 cursor-pointer transition-all ${
+            className={`relative p-3 rounded-xl border-2 cursor-pointer transition-all group ${
                 isSelected ? 'border-purple-500 bg-purple-50 shadow-md' : 'border-gray-200 hover:border-gray-300'
             }`}
         >
             {isSelected && (
-                <div className="absolute top-2 right-2 w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center">
-                    <Check className="w-3 h-3 text-white" />
+                <div className="absolute top-3 right-3 w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center z-10">
+                    <Check className="w-4 h-4 text-white" />
                 </div>
             )}
-            <div className="aspect-[3/4] rounded-lg mb-2 overflow-hidden" style={{ backgroundColor: '#F8FAFC' }}>
+            <div 
+                onClick={() => onSelect(template.id)}
+                className="aspect-[3/4] rounded-lg mb-3 overflow-hidden" 
+                style={{ backgroundColor: '#F8FAFC' }}
+            >
                 <TemplateThumbnail template={template} />
             </div>
-            <p className="text-xs font-medium text-gray-700 truncate text-center">{template.name}</p>
+            <p className="text-sm font-medium text-gray-700 truncate text-center mb-2">{template.name}</p>
+            <button
+                onClick={(e) => { e.stopPropagation(); onPreview(template); }}
+                className="w-full py-1.5 text-xs font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 rounded-lg flex items-center justify-center gap-1 transition-colors opacity-0 group-hover:opacity-100"
+            >
+                <Eye className="w-3 h-3" /> Preview
+            </button>
         </div>
     );
 }
 
-export function TemplateThumbnail({ template }) {
+export function TemplateThumbnail({ template, isLarge = false }) {
     const { color, headerStyle, accentPosition } = template;
+    const scale = isLarge ? 2 : 1;
     
     return (
-        <div className="w-full h-full p-2 flex flex-col">
+        <div className="w-full h-full p-4 flex flex-col">
             {/* Header Area */}
             {accentPosition === 'full' && (
-                <div className="w-full h-8 rounded mb-2" style={{ backgroundColor: color }} />
+                <div className={`w-full rounded mb-3`} style={{ backgroundColor: color, height: 16 * scale }} />
             )}
             {accentPosition === 'top' && (
-                <div className="w-full h-1 rounded mb-2" style={{ backgroundColor: color }} />
+                <div className={`w-full rounded mb-3`} style={{ backgroundColor: color, height: 4 * scale }} />
             )}
             
-            <div className={`flex ${headerStyle === 'centered' ? 'justify-center' : 'justify-start'} mb-2`}>
+            <div className={`flex ${headerStyle === 'centered' ? 'justify-center' : 'justify-start'} mb-4`}>
                 <div>
-                    <div className="h-2 w-16 rounded mb-1" style={{ backgroundColor: color }} />
-                    <div className="h-1 w-12 bg-gray-300 rounded" />
+                    <div className="rounded mb-2" style={{ backgroundColor: color, height: 6 * scale, width: 80 * scale }} />
+                    <div className="bg-gray-300 rounded" style={{ height: 4 * scale, width: 60 * scale }} />
                 </div>
             </div>
             
             {accentPosition === 'underline' && (
-                <div className="w-full h-0.5 mb-2" style={{ backgroundColor: color }} />
+                <div className="w-full mb-3" style={{ backgroundColor: color, height: 2 * scale }} />
             )}
             
             {/* Content */}
-            <div className="flex-1 space-y-2">
-                <div className="flex items-center gap-1">
-                    {accentPosition === 'left' && <div className="w-0.5 h-3" style={{ backgroundColor: color }} />}
-                    <div className="h-1.5 w-8 rounded" style={{ backgroundColor: color }} />
+            <div className="flex-1 space-y-4">
+                <div className="flex items-center gap-2">
+                    {accentPosition === 'left' && <div style={{ backgroundColor: color, width: 3 * scale, height: 12 * scale }} />}
+                    <div className="rounded" style={{ backgroundColor: color, height: 6 * scale, width: 50 * scale }} />
                 </div>
-                <div className="space-y-1">
-                    <div className="h-1 bg-gray-200 rounded w-full" />
-                    <div className="h-1 bg-gray-200 rounded w-4/5" />
-                    <div className="h-1 bg-gray-200 rounded w-3/4" />
+                <div className="space-y-2">
+                    <div className="bg-gray-200 rounded w-full" style={{ height: 4 * scale }} />
+                    <div className="bg-gray-200 rounded w-4/5" style={{ height: 4 * scale }} />
+                    <div className="bg-gray-200 rounded w-3/4" style={{ height: 4 * scale }} />
                 </div>
                 
-                <div className="flex items-center gap-1 pt-1">
-                    {accentPosition === 'left' && <div className="w-0.5 h-3" style={{ backgroundColor: color }} />}
-                    <div className="h-1.5 w-6 rounded" style={{ backgroundColor: color }} />
+                <div className="flex items-center gap-2 pt-2">
+                    {accentPosition === 'left' && <div style={{ backgroundColor: color, width: 3 * scale, height: 12 * scale }} />}
+                    <div className="rounded" style={{ backgroundColor: color, height: 6 * scale, width: 40 * scale }} />
                 </div>
-                <div className="space-y-1">
-                    <div className="h-1 bg-gray-200 rounded w-full" />
-                    <div className="h-1 bg-gray-200 rounded w-2/3" />
+                <div className="space-y-2">
+                    <div className="bg-gray-200 rounded w-full" style={{ height: 4 * scale }} />
+                    <div className="bg-gray-200 rounded w-2/3" style={{ height: 4 * scale }} />
                 </div>
                 
                 {/* Skills */}
-                <div className="flex gap-1 pt-1">
-                    <div className="h-2 w-6 rounded-full" style={{ backgroundColor: `${color}30`, border: `1px solid ${color}` }} />
-                    <div className="h-2 w-8 rounded-full" style={{ backgroundColor: `${color}30`, border: `1px solid ${color}` }} />
-                    <div className="h-2 w-5 rounded-full" style={{ backgroundColor: `${color}30`, border: `1px solid ${color}` }} />
+                <div className="flex gap-2 pt-2 flex-wrap">
+                    <div className="rounded-full" style={{ backgroundColor: `${color}30`, border: `1px solid ${color}`, height: 8 * scale, width: 30 * scale }} />
+                    <div className="rounded-full" style={{ backgroundColor: `${color}30`, border: `1px solid ${color}`, height: 8 * scale, width: 40 * scale }} />
+                    <div className="rounded-full" style={{ backgroundColor: `${color}30`, border: `1px solid ${color}`, height: 8 * scale, width: 25 * scale }} />
                 </div>
             </div>
         </div>
@@ -107,6 +119,7 @@ export function TemplateThumbnail({ template }) {
 
 export function TemplateSelector({ selectedTemplate, onSelect }) {
     const categories = ['Modern', 'Classic', 'Creative', 'Technical'];
+    const [previewTemplate, setPreviewTemplate] = useState(null);
     
     return (
         <div className="space-y-6">
@@ -115,18 +128,46 @@ export function TemplateSelector({ selectedTemplate, onSelect }) {
             {categories.map(category => (
                 <div key={category}>
                     <h3 className="text-sm font-medium text-gray-600 mb-3">{category}</h3>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2">
+                    <div className="grid grid-cols-2 gap-4">
                         {RESUME_TEMPLATES.filter(t => t.category === category).map(template => (
                             <TemplateCard
                                 key={template.id}
                                 template={template}
                                 isSelected={selectedTemplate === template.id}
                                 onSelect={onSelect}
+                                onPreview={setPreviewTemplate}
                             />
                         ))}
                     </div>
                 </div>
             ))}
+
+            {/* Preview Modal */}
+            <Dialog open={!!previewTemplate} onOpenChange={() => setPreviewTemplate(null)}>
+                <DialogContent className="max-w-2xl p-0">
+                    <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between z-10">
+                        <div>
+                            <h2 className="font-semibold text-gray-900">{previewTemplate?.name}</h2>
+                            <p className="text-sm text-gray-500">{previewTemplate?.category} Template</p>
+                        </div>
+                        <div className="flex gap-2">
+                            <Button onClick={() => { onSelect(previewTemplate?.id); setPreviewTemplate(null); }} className="bg-purple-600 hover:bg-purple-700">
+                                <Check className="w-4 h-4 mr-1" /> Use Template
+                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => setPreviewTemplate(null)}>
+                                <X className="w-5 h-5" />
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="p-6">
+                        {previewTemplate && (
+                            <div className="aspect-[3/4] rounded-xl overflow-hidden border border-gray-200 bg-gray-50 max-w-md mx-auto">
+                                <TemplateThumbnail template={previewTemplate} isLarge />
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
