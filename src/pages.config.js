@@ -20,7 +20,6 @@ import Search from './pages/Search';
 import TermsOfUse from './pages/TermsOfUse';
 import ContactUs from './pages/ContactUs';
 import News from './pages/News';
-import SiteMapXml from './pages/SiteMapXml';
 import __Layout from './Layout.jsx';
 
 
@@ -47,7 +46,6 @@ export const PAGES = {
     "TermsOfUse": TermsOfUse,
     "ContactUs": ContactUs,
     "News": News,
-    "SiteMapXml": SiteMapXml,
 }
 
 export const pagesConfig = {
