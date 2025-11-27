@@ -4,18 +4,25 @@ import {
     X, Star, TrendingUp, TrendingDown, Eye, DollarSign, BarChart3, 
     LineChart, Activity, Brain, Shield, AlertTriangle, List, 
     Sparkles, ChevronRight, Info, Loader2, Target, Zap, Building,
-    Users, Globe, Calendar, FileText, PieChart, Percent, ArrowUpRight, ArrowDownRight
+    Users, Globe, Calendar, FileText, PieChart, Percent, ArrowUpRight, ArrowDownRight,
+    Calculator, ThumbsUp, ThumbsDown, Download, ExternalLink, Play
 } from 'lucide-react';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, PieChart as RePieChart, Pie, Cell, LineChart as ReLineChart, Line } from 'recharts';
 
 const NAV_ITEMS = [
     { id: 'overview', label: 'Overview', icon: Eye },
     { id: 'invest', label: 'Invest', icon: DollarSign },
     { id: 'valuation', label: 'Valuation', icon: BarChart3 },
+    { id: 'simulator', label: 'Simulator', icon: Target },
+    { id: 'dcf', label: 'DCF Calculator', icon: Activity },
+    { id: 'bullbear', label: 'Bull/Bear Case', icon: TrendingUp },
     { id: 'fundamentals', label: 'Fundamentals', icon: LineChart },
     { id: 'financials', label: 'Financials', icon: Activity },
+    { id: 'reports', label: 'Reports', icon: FileText },
     { id: 'technicals', label: 'Technicals', icon: TrendingUp },
     { id: 'sentiment', label: 'Sentiment', icon: Brain },
     { id: 'ai-insights', label: 'AI Insights', icon: Sparkles },
@@ -53,6 +60,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
     const [isWatchlisted, setIsWatchlisted] = useState(false);
     const [sectionData, setSectionData] = useState({});
     const [loadingSection, setLoadingSection] = useState(null);
+    const [investmentAmount, setInvestmentAmount] = useState(10000);
+    const [yearsToHold, setYearsToHold] = useState(5);
+    const [expectedReturn, setExpectedReturn] = useState(12);
 
     useEffect(() => {
         if (isOpen && stock) {
@@ -309,10 +319,10 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
 
                 case 'peers':
                     prompt = `Peer comparison for ${stock.ticker}:
-                - Top 5 competitor companies with ticker, name, market cap, P/E, ROE, and revenue growth
-                - Industry average metrics
-                - Competitive advantages vs peers
-                - Market share comparison`;
+                    - Top 5 competitor companies with ticker, name, market cap, P/E, ROE, and revenue growth
+                    - Industry average metrics
+                    - Competitive advantages vs peers
+                    - Market share comparison`;
                     schema = {
                         type: "object",
                         properties: {
@@ -320,6 +330,69 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             industryAvg: { type: "object", properties: { pe: { type: "number" }, roe: { type: "number" }, growth: { type: "number" } } },
                             advantages: { type: "array", items: { type: "string" } },
                             marketShare: { type: "number" }
+                        }
+                    };
+                    break;
+
+                case 'bullbear':
+                    prompt = `Bull and Bear case analysis for ${stock.ticker}:
+                    - Top 5 bull case arguments with potential upside
+                    - Top 5 bear case arguments with potential downside
+                    - Bull case price target
+                    - Bear case price target
+                    - Probability assessment`;
+                    schema = {
+                        type: "object",
+                        properties: {
+                            bullCase: { type: "array", items: { type: "string" } },
+                            bearCase: { type: "array", items: { type: "string" } },
+                            bullTarget: { type: "number" },
+                            bearTarget: { type: "number" },
+                            bullProbability: { type: "number" },
+                            bearProbability: { type: "number" }
+                        }
+                    };
+                    break;
+
+                case 'dcf':
+                    prompt = `DCF Intrinsic Value calculation for ${stock.ticker}:
+                    - Current stock price
+                    - Intrinsic value estimate
+                    - Margin of safety percentage
+                    - Verdict (undervalued/fairly valued/overvalued)
+                    - Price target range (low, mid, high)
+                    - Key DCF assumptions (growth rate, discount rate, terminal growth)
+                    - Sensitivity analysis`;
+                    schema = {
+                        type: "object",
+                        properties: {
+                            currentPrice: { type: "number" },
+                            intrinsicValue: { type: "number" },
+                            marginOfSafety: { type: "number" },
+                            verdict: { type: "string" },
+                            priceTargets: { type: "object", properties: { low: { type: "number" }, mid: { type: "number" }, high: { type: "number" } } },
+                            assumptions: { type: "object", properties: { growthRate: { type: "number" }, discountRate: { type: "number" }, terminalGrowth: { type: "number" } } }
+                        }
+                    };
+                    break;
+
+                case 'reports':
+                    prompt = `Company reports and filings for ${stock.ticker}:
+                    - Latest 3 annual reports with titles and dates
+                    - Latest 4 quarterly reports with titles and dates
+                    - Latest 3 investor presentations with titles and dates
+                    - Latest 4 earnings releases with titles and dates
+                    - Latest 3 P&L statements summary
+                    - Last 3 fiscal years data summary`;
+                    schema = {
+                        type: "object",
+                        properties: {
+                            annualReports: { type: "array", items: { type: "object", properties: { title: { type: "string" }, date: { type: "string" }, year: { type: "string" } } } },
+                            quarterlyReports: { type: "array", items: { type: "object", properties: { title: { type: "string" }, date: { type: "string" }, quarter: { type: "string" } } } },
+                            investorPresentations: { type: "array", items: { type: "object", properties: { title: { type: "string" }, date: { type: "string" } } } },
+                            earningsReleases: { type: "array", items: { type: "object", properties: { title: { type: "string" }, date: { type: "string" }, eps: { type: "string" } } } },
+                            plStatements: { type: "array", items: { type: "object", properties: { year: { type: "string" }, revenue: { type: "string" }, netIncome: { type: "string" } } } },
+                            fiscalYearData: { type: "array", items: { type: "object", properties: { year: { type: "string" }, revenue: { type: "string" }, earnings: { type: "string" }, assets: { type: "string" } } } }
                         }
                     };
                     break;
@@ -1134,6 +1207,378 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                         </li>
                                     ))}
                                 </ul>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case 'simulator':
+                const calculateFutureValue = () => {
+                    const shares = investmentAmount / stock.price;
+                    const futurePrice = stock.price * Math.pow(1 + expectedReturn / 100, yearsToHold);
+                    const futureValue = shares * futurePrice;
+                    return { shares: shares.toFixed(2), futurePrice: futurePrice.toFixed(2), futureValue: futureValue.toFixed(2), profit: (futureValue - investmentAmount).toFixed(2) };
+                };
+                const simResult = calculateFutureValue();
+                const projectionData = Array.from({ length: yearsToHold + 1 }, (_, i) => ({
+                    year: `Year ${i}`,
+                    value: investmentAmount * Math.pow(1 + expectedReturn / 100, i)
+                }));
+                return (
+                    <div className="space-y-6">
+                        <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl border border-purple-200 p-6">
+                            <div className="flex items-center gap-2 mb-6">
+                                <Calculator className="w-5 h-5 text-purple-600" />
+                                <h3 className="font-semibold text-gray-900">Investment Simulator</h3>
+                            </div>
+                            <div className="grid grid-cols-3 gap-6 mb-6">
+                                <div>
+                                    <label className="text-sm text-gray-600 mb-2 block">Investment Amount</label>
+                                    <div className="flex gap-2 mb-2">
+                                        {[100, 1000, 10000, 100000, 1000000, 4000000].map(amt => (
+                                            <button key={amt} onClick={() => setInvestmentAmount(amt)} className={`px-2 py-1 text-xs rounded ${investmentAmount === amt ? 'bg-purple-600 text-white' : 'bg-white text-gray-600 border'}`}>
+                                                ${amt >= 1000000 ? `${amt/1000000}M` : amt >= 1000 ? `${amt/1000}K` : amt}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <Input type="number" value={investmentAmount} onChange={(e) => setInvestmentAmount(Number(e.target.value))} className="w-full" min={100} max={4000000} />
+                                </div>
+                                <div>
+                                    <label className="text-sm text-gray-600 mb-2 block">Years to Hold: {yearsToHold}</label>
+                                    <Slider value={[yearsToHold]} onValueChange={(v) => setYearsToHold(v[0])} min={1} max={30} step={1} className="mt-4" />
+                                </div>
+                                <div>
+                                    <label className="text-sm text-gray-600 mb-2 block">Expected Annual Return: {expectedReturn}%</label>
+                                    <Slider value={[expectedReturn]} onValueChange={(v) => setExpectedReturn(v[0])} min={-20} max={50} step={1} className="mt-4" />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-4 gap-4">
+                                <div className="bg-white rounded-xl p-4 text-center">
+                                    <p className="text-sm text-gray-500">Shares Bought</p>
+                                    <p className="text-2xl font-bold text-gray-900">{simResult.shares}</p>
+                                </div>
+                                <div className="bg-white rounded-xl p-4 text-center">
+                                    <p className="text-sm text-gray-500">Future Price</p>
+                                    <p className="text-2xl font-bold text-blue-600">${simResult.futurePrice}</p>
+                                </div>
+                                <div className="bg-white rounded-xl p-4 text-center">
+                                    <p className="text-sm text-gray-500">Future Value</p>
+                                    <p className="text-2xl font-bold text-purple-600">${Number(simResult.futureValue).toLocaleString()}</p>
+                                </div>
+                                <div className="bg-white rounded-xl p-4 text-center">
+                                    <p className="text-sm text-gray-500">Total Profit</p>
+                                    <p className={`text-2xl font-bold ${Number(simResult.profit) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                        {Number(simResult.profit) >= 0 ? '+' : ''}${Number(simResult.profit).toLocaleString()}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                            <h4 className="font-semibold text-gray-900 mb-4">Investment Projection</h4>
+                            <div className="h-64">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={projectionData}>
+                                        <defs>
+                                            <linearGradient id="projGradient" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3}/>
+                                                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
+                                            </linearGradient>
+                                        </defs>
+                                        <XAxis dataKey="year" tick={{ fontSize: 10 }} />
+                                        <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => `$${(v/1000).toFixed(0)}K`} />
+                                        <Tooltip formatter={(v) => `$${Number(v).toLocaleString()}`} />
+                                        <Area type="monotone" dataKey="value" stroke="#8B5CF6" strokeWidth={2} fill="url(#projGradient)" />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case 'dcf':
+                const intrinsicValue = data.intrinsicValue || (stock.price * 1.15);
+                const marginSafety = data.marginOfSafety || Math.round(((intrinsicValue - stock.price) / intrinsicValue) * 100);
+                const verdict = marginSafety > 20 ? 'Undervalued' : marginSafety > 0 ? 'Fairly Valued' : 'Overvalued';
+                return (
+                    <div className="space-y-6">
+                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                            <div className="flex items-center gap-2 mb-6">
+                                <Calculator className="w-5 h-5 text-purple-600" />
+                                <h3 className="font-semibold text-gray-900">DCF Intrinsic Value Calculator</h3>
+                            </div>
+                            <div className="grid grid-cols-4 gap-4 mb-6">
+                                <div className="bg-gray-50 rounded-xl p-4 text-center">
+                                    <p className="text-sm text-gray-500 mb-1">Current Price</p>
+                                    <p className="text-2xl font-bold text-gray-900">${stock.price?.toFixed(2)}</p>
+                                </div>
+                                <div className="bg-purple-50 rounded-xl p-4 text-center">
+                                    <p className="text-sm text-gray-500 mb-1">Intrinsic Value</p>
+                                    <p className="text-2xl font-bold text-purple-600">${intrinsicValue.toFixed(2)}</p>
+                                </div>
+                                <div className="bg-green-50 rounded-xl p-4 text-center">
+                                    <p className="text-sm text-gray-500 mb-1">Margin of Safety</p>
+                                    <p className={`text-2xl font-bold ${marginSafety > 0 ? 'text-green-600' : 'text-red-600'}`}>{marginSafety}%</p>
+                                </div>
+                                <div className={`rounded-xl p-4 text-center ${verdict === 'Undervalued' ? 'bg-green-100' : verdict === 'Overvalued' ? 'bg-red-100' : 'bg-yellow-100'}`}>
+                                    <p className="text-sm text-gray-500 mb-1">Verdict</p>
+                                    <p className={`text-xl font-bold ${verdict === 'Undervalued' ? 'text-green-700' : verdict === 'Overvalued' ? 'text-red-700' : 'text-yellow-700'}`}>{verdict}</p>
+                                </div>
+                            </div>
+                            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                                <h4 className="font-medium text-gray-900 mb-3">Price Target Range</h4>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1 text-center">
+                                        <p className="text-sm text-gray-500">Bear Case</p>
+                                        <p className="text-lg font-bold text-red-600">${data.priceTargets?.low || (stock.price * 0.75).toFixed(2)}</p>
+                                    </div>
+                                    <div className="flex-1 h-2 bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 rounded-full relative">
+                                        <div className="absolute -top-1 w-3 h-3 bg-purple-600 rounded-full border-2 border-white" style={{ left: `${Math.min(Math.max(((stock.price - (stock.price * 0.75)) / ((stock.price * 1.4) - (stock.price * 0.75))) * 100, 0), 100)}%` }} />
+                                    </div>
+                                    <div className="flex-1 text-center">
+                                        <p className="text-sm text-gray-500">Base Case</p>
+                                        <p className="text-lg font-bold text-yellow-600">${data.priceTargets?.mid || (stock.price * 1.1).toFixed(2)}</p>
+                                    </div>
+                                    <div className="flex-1 text-center">
+                                        <p className="text-sm text-gray-500">Bull Case</p>
+                                        <p className="text-lg font-bold text-green-600">${data.priceTargets?.high || (stock.price * 1.4).toFixed(2)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="bg-gray-50 rounded-xl p-4">
+                                    <p className="text-sm text-gray-500">Growth Rate</p>
+                                    <p className="text-lg font-bold text-gray-900">{data.assumptions?.growthRate || 12}%</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-xl p-4">
+                                    <p className="text-sm text-gray-500">Discount Rate</p>
+                                    <p className="text-lg font-bold text-gray-900">{data.assumptions?.discountRate || 10}%</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-xl p-4">
+                                    <p className="text-sm text-gray-500">Terminal Growth</p>
+                                    <p className="text-lg font-bold text-gray-900">{data.assumptions?.terminalGrowth || 2.5}%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case 'bullbear':
+                return (
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200 p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <ThumbsUp className="w-5 h-5 text-green-600" />
+                                        <h3 className="font-semibold text-green-900">Bull Case</h3>
+                                    </div>
+                                    <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                                        Target: ${data.bullTarget || (stock.price * 1.5).toFixed(2)}
+                                    </span>
+                                </div>
+                                <ul className="space-y-3">
+                                    {(data.bullCase || [
+                                        'Strong revenue growth momentum continuing',
+                                        'Expanding market share in key segments',
+                                        'New product launches gaining traction',
+                                        'Operating margin expansion expected',
+                                        'Favorable industry tailwinds'
+                                    ]).map((point, i) => (
+                                        <li key={i} className="flex items-start gap-2">
+                                            <ArrowUpRight className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                            <span className="text-sm text-gray-700">{point}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <div className="mt-4 pt-4 border-t border-green-200">
+                                    <p className="text-sm text-gray-600">Probability: <span className="font-bold text-green-700">{data.bullProbability || 35}%</span></p>
+                                </div>
+                            </div>
+                            <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl border border-red-200 p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <ThumbsDown className="w-5 h-5 text-red-600" />
+                                        <h3 className="font-semibold text-red-900">Bear Case</h3>
+                                    </div>
+                                    <span className="px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full">
+                                        Target: ${data.bearTarget || (stock.price * 0.6).toFixed(2)}
+                                    </span>
+                                </div>
+                                <ul className="space-y-3">
+                                    {(data.bearCase || [
+                                        'Competitive pressure intensifying',
+                                        'Slowing growth in core markets',
+                                        'Rising input costs squeezing margins',
+                                        'Regulatory headwinds increasing',
+                                        'Potential for multiple compression'
+                                    ]).map((point, i) => (
+                                        <li key={i} className="flex items-start gap-2">
+                                            <ArrowDownRight className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                                            <span className="text-sm text-gray-700">{point}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <div className="mt-4 pt-4 border-t border-red-200">
+                                    <p className="text-sm text-gray-600">Probability: <span className="font-bold text-red-700">{data.bearProbability || 20}%</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                            <h4 className="font-semibold text-gray-900 mb-4">Scenario Analysis</h4>
+                            <div className="flex items-center gap-4">
+                                <div className="w-24 text-center">
+                                    <p className="text-sm text-gray-500">Bear</p>
+                                    <p className="text-lg font-bold text-red-600">${data.bearTarget || (stock.price * 0.6).toFixed(2)}</p>
+                                </div>
+                                <div className="flex-1 h-4 rounded-full overflow-hidden flex">
+                                    <div className="bg-red-400 h-full" style={{ width: `${data.bearProbability || 20}%` }} />
+                                    <div className="bg-yellow-400 h-full" style={{ width: `${100 - (data.bearProbability || 20) - (data.bullProbability || 35)}%` }} />
+                                    <div className="bg-green-400 h-full" style={{ width: `${data.bullProbability || 35}%` }} />
+                                </div>
+                                <div className="w-24 text-center">
+                                    <p className="text-sm text-gray-500">Bull</p>
+                                    <p className="text-lg font-bold text-green-600">${data.bullTarget || (stock.price * 1.5).toFixed(2)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case 'reports':
+                return (
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <FileText className="w-5 h-5 text-purple-600" />
+                                        <h3 className="font-semibold text-gray-900">Annual Reports</h3>
+                                    </div>
+                                    <span className="text-xs text-gray-500">3 Reports</span>
+                                </div>
+                                <div className="space-y-3">
+                                    {(data.annualReports || [
+                                        { title: `${stock.ticker} Annual Report 2024`, date: 'Feb 2025', year: '2024' },
+                                        { title: `${stock.ticker} Annual Report 2023`, date: 'Feb 2024', year: '2023' },
+                                        { title: `${stock.ticker} Annual Report 2022`, date: 'Feb 2023', year: '2022' }
+                                    ]).map((r, i) => (
+                                        <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-purple-50 cursor-pointer">
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-900">{r.title}</p>
+                                                <p className="text-xs text-gray-500">{r.date}</p>
+                                            </div>
+                                            <Download className="w-4 h-4 text-gray-400" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <FileText className="w-5 h-5 text-blue-600" />
+                                        <h3 className="font-semibold text-gray-900">Quarterly Reports</h3>
+                                    </div>
+                                    <span className="text-xs text-gray-500">4 Reports</span>
+                                </div>
+                                <div className="space-y-3">
+                                    {(data.quarterlyReports || [
+                                        { title: `Q4 2024 Report`, date: 'Jan 2025', quarter: 'Q4' },
+                                        { title: `Q3 2024 Report`, date: 'Oct 2024', quarter: 'Q3' },
+                                        { title: `Q2 2024 Report`, date: 'Jul 2024', quarter: 'Q2' },
+                                        { title: `Q1 2024 Report`, date: 'Apr 2024', quarter: 'Q1' }
+                                    ]).map((r, i) => (
+                                        <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-blue-50 cursor-pointer">
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-900">{r.title}</p>
+                                                <p className="text-xs text-gray-500">{r.date}</p>
+                                            </div>
+                                            <Download className="w-4 h-4 text-gray-400" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <Play className="w-5 h-5 text-green-600" />
+                                        <h3 className="font-semibold text-gray-900">Investor Presentations</h3>
+                                    </div>
+                                    <span className="text-xs text-gray-500">3 Presentations</span>
+                                </div>
+                                <div className="space-y-3">
+                                    {(data.investorPresentations || [
+                                        { title: `Investor Day 2024`, date: 'Nov 2024' },
+                                        { title: `Capital Markets Day`, date: 'Sep 2024' },
+                                        { title: `Technology Summit`, date: 'Jun 2024' }
+                                    ]).map((r, i) => (
+                                        <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-green-50 cursor-pointer">
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-900">{r.title}</p>
+                                                <p className="text-xs text-gray-500">{r.date}</p>
+                                            </div>
+                                            <ExternalLink className="w-4 h-4 text-gray-400" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <DollarSign className="w-5 h-5 text-orange-600" />
+                                        <h3 className="font-semibold text-gray-900">Earnings Releases</h3>
+                                    </div>
+                                    <span className="text-xs text-gray-500">4 Releases</span>
+                                </div>
+                                <div className="space-y-3">
+                                    {(data.earningsReleases || [
+                                        { title: `Q4 2024 Earnings`, date: 'Jan 28, 2025', eps: '$3.45' },
+                                        { title: `Q3 2024 Earnings`, date: 'Oct 25, 2024', eps: '$3.12' },
+                                        { title: `Q2 2024 Earnings`, date: 'Jul 24, 2024', eps: '$2.98' },
+                                        { title: `Q1 2024 Earnings`, date: 'Apr 25, 2024', eps: '$2.75' }
+                                    ]).map((r, i) => (
+                                        <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-900">{r.title}</p>
+                                                <p className="text-xs text-gray-500">{r.date}</p>
+                                            </div>
+                                            <span className="text-sm font-bold text-green-600">{r.eps}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                            <div className="flex items-center gap-2 mb-4">
+                                <BarChart3 className="w-5 h-5 text-purple-600" />
+                                <h3 className="font-semibold text-gray-900">Fiscal Year Data</h3>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b border-gray-100">
+                                            <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Year</th>
+                                            <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">Revenue</th>
+                                            <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">Earnings</th>
+                                            <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">Assets</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {(data.fiscalYearData || [
+                                            { year: 'FY 2024', revenue: '$98.5B', earnings: '$24.2B', assets: '$412B' },
+                                            { year: 'FY 2023', revenue: '$88.2B', earnings: '$21.8B', assets: '$385B' },
+                                            { year: 'FY 2022', revenue: '$79.5B', earnings: '$19.4B', assets: '$352B' }
+                                        ]).map((fy, i) => (
+                                            <tr key={i} className="border-b border-gray-50">
+                                                <td className="py-3 px-4 font-medium text-gray-900">{fy.year}</td>
+                                                <td className="py-3 px-4 text-right text-gray-700">{fy.revenue}</td>
+                                                <td className="py-3 px-4 text-right text-green-600 font-medium">{fy.earnings}</td>
+                                                <td className="py-3 px-4 text-right text-gray-700">{fy.assets}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
