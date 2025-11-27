@@ -21,9 +21,9 @@ const RECENT_SEARCHES = [
 ];
 
 const QUICK_ACTIONS = [
-    { label: 'AI Hub', icon: Sparkles, href: createPageUrl('AIHub'), color: '#6B4EE6' },
-    { label: 'SearchPods', icon: Radio, href: createPageUrl('SearchPods'), color: '#3B82F6' },
-    { label: 'MindMap', icon: Brain, href: createPageUrl('MindMap'), color: '#EC4899' },
+    { label: 'AI Hub', icon: Sparkles, page: 'AIHub', color: '#6B4EE6' },
+    { label: 'SearchPods', icon: Radio, page: 'SearchPods', color: '#3B82F6' },
+    { label: 'MindMap', icon: Brain, page: 'MindMap', color: '#EC4899' },
 ];
 
 export default function GlobalSearchBar({ 
