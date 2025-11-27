@@ -86,7 +86,7 @@ For each document, provide the actual URL where it can be found.`,
         setImageLoading(true);
         setGeneratedImage(null);
         try {
-            const prompt = `Beautiful professional visual representation of "${topicName}". High quality illustration or photography, modern and clean.`;
+            const prompt = `Professional lifestyle stock photography representing "${topicName}". Real people in realistic settings, photorealistic, high quality DSLR photograph, no illustrations, no cartoons, no drawings, no digital art.`;
             const result = await base44.integrations.Core.GenerateImage({ prompt });
             setGeneratedImage(result?.url);
         } catch (error) {
