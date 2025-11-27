@@ -8,7 +8,7 @@ import {
     Network, TrendingUp, Landmark, Skull, Lightbulb, Languages, BookText,
     PenTool, Palette, Music, Film
 } from 'lucide-react';
-import IslandSVG from './IslandSVG';
+import IslandSVG from '@/components/learning/IslandSVG';
 
 // Icon mapping for dynamic icon rendering
 const ICON_MAP = {
@@ -49,13 +49,14 @@ export default function LearningIslandCard({ topic, index, progress = 0, onExplo
                 {index + 1}
             </div>
             
-            {/* Island SVG */}
+            {/* Island SVG - varied by index for unique look */}
             <div className="w-44 h-36 mx-auto">
                 <IslandSVG 
                     index={index} 
                     color={topic.color} 
                     completed={isCompleted}
                     progress={progress}
+                    variant={(index % 5)}
                 />
             </div>
             

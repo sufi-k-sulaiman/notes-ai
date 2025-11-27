@@ -376,10 +376,16 @@ export default function CourseModal({ isOpen, onClose, topic, onComplete }) {
                                     ) : (
                                         <div className="max-w-none">
                                             <p className="text-lg text-gray-600 mb-6 leading-relaxed">{lessonContent?.introduction}</p>
-                                            <div className="mb-6 text-gray-700 leading-relaxed">
-                                                {lessonContent?.content?.split('\n').map((paragraph, i) => (
-                                                    paragraph.trim() ? <p key={i} className="mb-4">{paragraph}</p> : null
-                                                ))}
+                                            <div className="mb-6 text-gray-700 leading-relaxed prose prose-sm max-w-none">
+                                                <div dangerouslySetInnerHTML={{ 
+                                                    __html: lessonContent?.content
+                                                        ?.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                                        ?.replace(/\*(.*?)\*/g, '<em>$1</em>')
+                                                        ?.replace(/\n\n/g, '</p><p>')
+                                                        ?.replace(/\n/g, '<br/>')
+                                                        ?.replace(/^(.*)$/, '<p>$1</p>')
+                                                        || ''
+                                                }} />
                                             </div>
                                             
                                             {lessonContent?.keyPoints?.length > 0 && (

@@ -870,7 +870,7 @@ export default function Markets() {
 
     return (
         <div className="p-4 md:p-6">
-            <div className="mb-4"><StockTicker stocks={topMovers} /></div>
+            <div className="mb-4 -mx-4 md:-mx-6 -mt-4 md:-mt-6"><StockTicker stocks={topMovers} /></div>
 
 
 

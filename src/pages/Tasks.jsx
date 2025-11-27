@@ -5,13 +5,19 @@ import { base44 } from '@/api/base44Client';
 import { ListTodo, Plus, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { menuItems } from '@/components/NavigationConfig';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { toast } from 'sonner';
 
 import TaskColumn from '../components/tasks/TaskColumn';
 import TaskModal from '../components/tasks/TaskModal';
 
 const STATUSES = ['todo', 'in_progress', 'review', 'done'];
+const TASK_CATEGORIES = [
+  ...menuItems.map(item => item.label),
+  'Feedback',
+  'Bugs',
+  'Features'
+];
 
 const TasksPage = () => {
   const queryClient = useQueryClient();
@@ -87,9 +93,7 @@ const TasksPage = () => {
     }
   };
 
-  const taskCategories = [...new Set(menuItems.map(item => item.label)), 'Feedback', 'Bugs', 'Features'];
-
-  // Chart data
+  // Chart data - dynamic based on actual tasks
   const statusDistribution = STATUSES.map(status => ({
     name: status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
     value: tasks.filter(t => t.status === status).length
@@ -106,12 +110,12 @@ const TasksPage = () => {
       <div className="max-w-full mx-auto">
         <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-                <ListTodo className="w-8 h-8 text-purple-600" />
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Tasks</h1>
-                    <p className="text-sm text-gray-500">A flexible Kanban board to organize your work.</p>
+                    <ListTodo className="w-8 h-8 text-purple-600" />
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-800">Tasks</h1>
+                        <p className="text-sm text-gray-500">Task management</p>
+                    </div>
                 </div>
-            </div>
           <Button onClick={() => handleOpenModal()} className="bg-purple-600 hover:bg-purple-700">
             <Plus className="w-4 h-4 mr-2" />
             New Task
@@ -171,7 +175,7 @@ const TasksPage = () => {
             onSave={handleSaveTask}
             onDelete={deleteTaskMutation.mutate}
             task={selectedTask}
-            categories={taskCategories}
+            categories={TASK_CATEGORIES}
         />
       </div>
     </div>
