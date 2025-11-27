@@ -353,8 +353,9 @@ export default function MindMapPage() {
 
     const renderAnnotations = () => {
         const allAnnotations = [...annotations, currentAnnotation].filter(Boolean);
+        if (allAnnotations.length === 0) return null;
         return (
-            <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 9999, pointerEvents: annotationMode ? 'none' : 'auto' }}>
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 10 }}>
                 {allAnnotations.map((ann, i) => {
                     const isSelected = selectedAnnotation === i;
                     const strokeWidth = isSelected ? 5 : 3;
@@ -732,12 +733,12 @@ export default function MindMapPage() {
                         />
                     ) : (
                         <div 
-                            className={`relative flex justify-center overflow-auto pt-4 select-none ${spacePressed ? 'cursor-grab' : ''} ${isDragging ? 'cursor-grabbing' : ''} ${annotationMode === 'draw' || annotationMode === 'rectangle' || annotationMode === 'circle' ? 'cursor-crosshair' : ''} ${annotationMode === 'text' ? 'cursor-text' : ''} ${annotationMode === 'eraser' ? 'cursor-pointer' : ''}`}
+                            className={`relative flex justify-center overflow-auto pt-4 ${spacePressed || annotationMode ? 'select-none' : ''} ${spacePressed ? 'cursor-grab' : ''} ${isDragging ? 'cursor-grabbing' : ''} ${annotationMode === 'draw' || annotationMode === 'rectangle' || annotationMode === 'circle' ? 'cursor-crosshair' : ''} ${annotationMode === 'text' ? 'cursor-text' : ''} ${annotationMode === 'eraser' ? 'cursor-pointer' : ''}`}
                             ref={canvasOverlayRef}
-                            onMouseDown={handleCanvasMouseDown}
-                            onMouseMove={handleCanvasMouseMove}
-                            onMouseUp={handleCanvasMouseUp}
-                            onMouseLeave={handleCanvasMouseUp}
+                            onMouseDown={(annotationMode || spacePressed) ? handleCanvasMouseDown : undefined}
+                            onMouseMove={(annotationMode || spacePressed || isDragging) ? handleCanvasMouseMove : undefined}
+                            onMouseUp={(annotationMode || spacePressed || isDragging) ? handleCanvasMouseUp : undefined}
+                            onMouseLeave={(annotationMode || spacePressed || isDragging) ? handleCanvasMouseUp : undefined}
                             style={{ height: '100%', width: '100%' }}
                         >
                             {renderAnnotations()}
@@ -755,7 +756,7 @@ export default function MindMapPage() {
                             )}
                             <div 
                                 className="min-w-max px-8 transition-transform duration-75"
-                                style={{ transform: `translate(${panOffset.x}px, ${panOffset.y}px)` }}
+                                style={{ transform: `translate(${panOffset.x}px, ${panOffset.y}px)`, pointerEvents: annotationMode ? 'none' : 'auto' }}
                                 ref={mindmapRef}
                             >
                                 <TreeNode
