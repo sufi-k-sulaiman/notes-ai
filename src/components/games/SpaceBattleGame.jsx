@@ -151,6 +151,7 @@ export default function SpaceBattleGame({ onExit }) {
         const state = {
             player: { x: 0, y: 0, angle: 0, health: 3 },
             bullets: [],
+            lasers: [],
             enemies: [],
             particles: [],
             // Parallax background layers
@@ -160,7 +161,10 @@ export default function SpaceBattleGame({ onExit }) {
                 ground: []
             },
             score: 0,
+            levelScore: 0,
+            levelTarget: 500 * currentLevel,
             gameOver: false,
+            levelComplete: false,
             enemySpawnTimer: 100,
             cameraShake: 0,
             fov: 90,
@@ -168,6 +172,7 @@ export default function SpaceBattleGame({ onExit }) {
             mouseX: canvas.width / 2,
             mouseY: canvas.height / 2,
             bombs: 3,
+            alienTypes: ['bug', 'ghost', 'skull', 'bot', 'ufo', 'squid'],
         };
         gameStateRef.current = state;
 
