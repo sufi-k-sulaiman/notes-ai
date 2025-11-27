@@ -433,33 +433,34 @@ export default function Qwirey() {
                                 </Button>
                             </div>
                         ) : (
-                        <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-3">
-                                    {result.type === 'qwirey' ? (
-                                        <img src={LOGO_URL} alt="Qwirey" className="w-10 h-10 rounded-lg" />
-                                    ) : (
-                                        <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                                            {AI_MODELS.find(m => m.id === result.model)?.icon && 
-                                                React.createElement(AI_MODELS.find(m => m.id === result.model).icon)
-                                            }
+                            <>
+                                <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-center gap-3">
+                                            {result.type === 'qwirey' ? (
+                                                <img src={LOGO_URL} alt="Qwirey" className="w-10 h-10 rounded-lg" />
+                                            ) : (
+                                                <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                                                    {AI_MODELS.find(m => m.id === result.model)?.icon && 
+                                                        React.createElement(AI_MODELS.find(m => m.id === result.model).icon)
+                                                    }
+                                                </div>
+                                            )}
+                                            <span className="font-bold text-gray-900 text-lg">
+                                                {result.type === 'qwirey' ? 'Qwirey' : AI_MODELS.find(m => m.id === result.model)?.name}
+                                            </span>
                                         </div>
-                                    )}
-                                    <span className="font-bold text-gray-900 text-lg">
-                                        {result.type === 'qwirey' ? 'Qwirey' : AI_MODELS.find(m => m.id === result.model)?.name}
-                                    </span>
+                                        <Button variant="ghost" size="sm" onClick={handleCopy} className="text-purple-600">
+                                            {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                                        </Button>
+                                    </div>
+                                    
+                                    <div className="prose prose-sm max-w-none text-gray-700">
+                                        <ReactMarkdown>{result.text}</ReactMarkdown>
+                                    </div>
                                 </div>
-                                <Button variant="ghost" size="sm" onClick={handleCopy} className="text-purple-600">
-                                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-                                </Button>
-                            </div>
-                            
-                            <div className="prose prose-sm max-w-none text-gray-700">
-                                <ReactMarkdown>{result.text}</ReactMarkdown>
-                            </div>
-                        </div>
 
-                        {result.type === 'qwirey' && (
+                                {result.type === 'qwirey' && (
                             <>
                                 {result.chartData?.hasChartData && (
                                     <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
