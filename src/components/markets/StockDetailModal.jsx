@@ -1902,6 +1902,11 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                 );
 
             case 'bullbear':
+                const scenarios = [
+                    { name: 'Bear', target: data.bearTarget || (stock.price * 0.6), probability: data.bearProbability || 20, color: '#EF4444' },
+                    { name: 'Base', target: stock.price, probability: 100 - (data.bearProbability || 20) - (data.bullProbability || 35), color: '#F59E0B' },
+                    { name: 'Bull', target: data.bullTarget || (stock.price * 1.5), probability: data.bullProbability || 35, color: '#10B981' }
+                ];
                 return (
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-6">
@@ -1912,7 +1917,7 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                         <h3 className="font-semibold text-green-900">Bull Case</h3>
                                     </div>
                                     <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-                                        Target: ${data.bullTarget || (stock.price * 1.5).toFixed(2)}
+                                        ${data.bullTarget || (stock.price * 1.5).toFixed(2)}
                                     </span>
                                 </div>
                                 <ul className="space-y-3">
@@ -1940,7 +1945,7 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                         <h3 className="font-semibold text-red-900">Bear Case</h3>
                                     </div>
                                     <span className="px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full">
-                                        Target: ${data.bearTarget || (stock.price * 0.6).toFixed(2)}
+                                        ${data.bearTarget || (stock.price * 0.6).toFixed(2)}
                                     </span>
                                 </div>
                                 <ul className="space-y-3">
@@ -1962,21 +1967,62 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                 </div>
                             </div>
                         </div>
+                        
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h4 className="font-semibold text-gray-900 mb-4">Price Target Scenarios</h4>
+                                <div className="h-56">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={scenarios} layout="horizontal">
+                                            <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={(v) => `$${v}`} />
+                                            <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={60} />
+                                            <Tooltip formatter={(v) => `$${Number(v).toFixed(2)}`} />
+                                            <Bar dataKey="target" radius={[0, 8, 8, 0]}>
+                                                {scenarios.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                                            </Bar>
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h4 className="font-semibold text-gray-900 mb-4">Scenario Probability</h4>
+                                <div className="space-y-4 mb-4">
+                                    {scenarios.map((s, i) => (
+                                        <div key={i}>
+                                            <div className="flex items-center justify-between mb-1">
+                                                <span className="text-sm font-medium" style={{ color: s.color }}>{s.name} Scenario</span>
+                                                <span className="text-sm font-bold text-gray-900">{s.probability}%</span>
+                                            </div>
+                                            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                                <div className="h-full rounded-full" style={{ width: `${s.probability}%`, backgroundColor: s.color }} />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="p-3 bg-purple-50 rounded-lg">
+                                    <p className="text-sm text-purple-800">Probability of undervaluation: <span className="font-bold">Medium-High</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                            <h4 className="font-semibold text-gray-900 mb-4">Scenario Analysis</h4>
+                            <h4 className="font-semibold text-gray-900 mb-4">Future Outlook</h4>
                             <div className="flex items-center gap-4">
-                                <div className="w-24 text-center">
-                                    <p className="text-sm text-gray-500">Bear</p>
-                                    <p className="text-lg font-bold text-red-600">${data.bearTarget || (stock.price * 0.6).toFixed(2)}</p>
+                                <div className="flex-1 text-center p-4 bg-red-50 rounded-xl">
+                                    <p className="text-xs text-gray-500 mb-1">Bear Scenario</p>
+                                    <p className="text-2xl font-bold text-red-600">${scenarios[0].target.toFixed(2)}</p>
+                                    <p className="text-xs text-gray-500 mt-1">{scenarios[0].probability}% probability</p>
                                 </div>
-                                <div className="flex-1 h-4 rounded-full overflow-hidden flex">
-                                    <div className="bg-red-400 h-full" style={{ width: `${data.bearProbability || 20}%` }} />
-                                    <div className="bg-yellow-400 h-full" style={{ width: `${100 - (data.bearProbability || 20) - (data.bullProbability || 35)}%` }} />
-                                    <div className="bg-green-400 h-full" style={{ width: `${data.bullProbability || 35}%` }} />
+                                <div className="flex-1 text-center p-4 bg-yellow-50 rounded-xl">
+                                    <p className="text-xs text-gray-500 mb-1">Base Scenario</p>
+                                    <p className="text-2xl font-bold text-yellow-600">${scenarios[1].target.toFixed(2)}</p>
+                                    <p className="text-xs text-gray-500 mt-1">{scenarios[1].probability}% probability</p>
                                 </div>
-                                <div className="w-24 text-center">
-                                    <p className="text-sm text-gray-500">Bull</p>
-                                    <p className="text-lg font-bold text-green-600">${data.bullTarget || (stock.price * 1.5).toFixed(2)}</p>
+                                <div className="flex-1 text-center p-4 bg-green-50 rounded-xl">
+                                    <p className="text-xs text-gray-500 mb-1">Bull Scenario</p>
+                                    <p className="text-2xl font-bold text-green-600">${scenarios[2].target.toFixed(2)}</p>
+                                    <p className="text-xs text-gray-500 mt-1">{scenarios[2].probability}% probability</p>
                                 </div>
                             </div>
                         </div>
