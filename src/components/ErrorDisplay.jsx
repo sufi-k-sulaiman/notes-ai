@@ -130,7 +130,18 @@ export default function ErrorDisplay({
 export function LoadingState({ message = 'Loading...', size = 'default' }) {
     return (
         <div className={`flex flex-col items-center justify-center ${size === 'large' ? 'min-h-[400px]' : 'py-12'}`}>
-            <div className="w-12 h-12 rounded-full border-4 border-purple-200 border-t-purple-600 animate-spin mb-4" />
+            <style>{`
+                @keyframes logoPulse {
+                    0%, 100% { opacity: 0.3; transform: scale(1); }
+                    50% { opacity: 0.6; transform: scale(1.05); }
+                }
+            `}</style>
+            <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692729a5f5180fbd43f297e9/622024f26_image-loading-logo.png" 
+                alt="Loading" 
+                className="w-12 h-12 object-contain mb-4 grayscale"
+                style={{ animation: 'logoPulse 1.5s ease-in-out infinite' }}
+            />
             <p className="text-gray-600">{message}</p>
         </div>
     );
