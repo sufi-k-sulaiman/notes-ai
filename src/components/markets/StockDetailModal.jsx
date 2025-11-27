@@ -966,52 +966,103 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                 );
 
             case 'fundamentals':
+                const revenueData = data.revenueGrowth || [
+                    { year: '2020', growth: 12, revenue: 78 },
+                    { year: '2021', growth: 18, revenue: 92 },
+                    { year: '2022', growth: 15, revenue: 106 },
+                    { year: '2023', growth: 22, revenue: 129 },
+                    { year: '2024', growth: 28, revenue: 165 }
+                ];
+                const marginTrends = [
+                    { year: '2020', gross: 38, operating: 24, net: 15 },
+                    { year: '2021', gross: 40, operating: 26, net: 16 },
+                    { year: '2022', gross: 41, operating: 27, net: 17 },
+                    { year: '2023', gross: 42, operating: 28, net: 18 },
+                    { year: '2024', gross: 42, operating: 28, net: 18 }
+                ];
+                const competitivePos = [
+                    { category: 'Brand', score: 85 },
+                    { category: 'Technology', score: 78 },
+                    { category: 'Distribution', score: 72 },
+                    { category: 'Pricing', score: 68 },
+                    { category: 'Customer Base', score: 82 }
+                ];
                 return (
                     <div className="space-y-6">
-                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                            <div className="flex items-center gap-2 mb-4">
-                                <LineChart className="w-5 h-5 text-purple-600" />
-                                <h3 className="font-semibold text-gray-900">Fundamental Analysis</h3>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                    <TrendingUp className="w-4 h-4 text-green-600" /> Revenue & Profit Growth
+                                </h3>
+                                <div className="h-52">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={revenueData}>
+                                            <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+                                            <YAxis yAxisId="left" tick={{ fontSize: 10 }} tickFormatter={(v) => `${v}%`} />
+                                            <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} tickFormatter={(v) => `$${v}B`} />
+                                            <Tooltip />
+                                            <Bar yAxisId="right" dataKey="revenue" fill="#8B5CF6" radius={[4, 4, 0, 0]} name="Revenue ($B)" />
+                                            <Bar yAxisId="left" dataKey="growth" fill="#10B981" radius={[4, 4, 0, 0]} name="Growth (%)" />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
                             </div>
-                            <div className="grid grid-cols-3 gap-4 mb-6">
-                                <div className="bg-green-50 rounded-xl p-4 text-center">
-                                    <p className="text-sm text-gray-600">Gross Margin</p>
-                                    <p className="text-2xl font-bold text-green-600">{data.margins?.gross || 42}%</p>
+                            
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h3 className="font-semibold text-gray-900 mb-4">Margin Trends</h3>
+                                <div className="h-52">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <ReLineChart data={marginTrends}>
+                                            <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+                                            <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => `${v}%`} />
+                                            <Tooltip formatter={(v) => `${v}%`} />
+                                            <Line type="monotone" dataKey="gross" stroke="#10B981" strokeWidth={2} dot={{ r: 3 }} name="Gross" />
+                                            <Line type="monotone" dataKey="operating" stroke="#3B82F6" strokeWidth={2} dot={{ r: 3 }} name="Operating" />
+                                            <Line type="monotone" dataKey="net" stroke="#8B5CF6" strokeWidth={2} dot={{ r: 3 }} name="Net" />
+                                        </ReLineChart>
+                                    </ResponsiveContainer>
                                 </div>
-                                <div className="bg-blue-50 rounded-xl p-4 text-center">
-                                    <p className="text-sm text-gray-600">Operating Margin</p>
-                                    <p className="text-2xl font-bold text-blue-600">{data.margins?.operating || 28}%</p>
-                                </div>
-                                <div className="bg-purple-50 rounded-xl p-4 text-center">
-                                    <p className="text-sm text-gray-600">Net Margin</p>
-                                    <p className="text-2xl font-bold text-purple-600">{data.margins?.net || 18}%</p>
+                                <div className="flex gap-3 mt-3 justify-center text-xs">
+                                    <span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-green-500" /> Gross: Stable</span>
+                                    <span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-blue-500" /> Operating: Stable</span>
+                                    <span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-purple-500" /> Net: Stable</span>
                                 </div>
                             </div>
-                            <div className="h-48 mb-6">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={data.revenueGrowth || [
-                                        { year: '2020', growth: 12 },
-                                        { year: '2021', growth: 18 },
-                                        { year: '2022', growth: 15 },
-                                        { year: '2023', growth: 22 },
-                                        { year: '2024', growth: 28 }
-                                    ]}>
-                                        <XAxis dataKey="year" tick={{ fontSize: 11 }} />
-                                        <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}%`} />
-                                        <Tooltip />
-                                        <Bar dataKey="growth" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
-                                    </BarChart>
-                                </ResponsiveContainer>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h3 className="font-semibold text-gray-900 mb-4">Cash Flow Quality</h3>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                        <span className="text-sm text-gray-600">Operating Cash Flow</span>
+                                        <span className="font-bold text-green-600">Positive</span>
+                                    </div>
+                                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span className="text-sm text-gray-600">FCF Yield</span>
+                                        <span className="font-bold text-gray-900">4.2%</span>
+                                    </div>
+                                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span className="text-sm text-gray-600">Revenue Diversified</span>
+                                        <span className="font-medium text-green-600">Yes</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 bg-gray-50 rounded-xl">
-                                    <p className="text-sm text-gray-500 mb-1">Debt to Equity</p>
-                                    <p className="text-xl font-bold text-gray-900">{data.debtToEquity || 0.45}</p>
+                            
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                <h3 className="font-semibold text-gray-900 mb-4">Competitive Position</h3>
+                                <div className="space-y-2">
+                                    {competitivePos.map((c, i) => (
+                                        <div key={i} className="flex items-center gap-3">
+                                            <span className="text-sm text-gray-600 w-28">{c.category}</span>
+                                            <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                                <div className="h-full bg-green-500 rounded-full" style={{ width: `${c.score}%` }} />
+                                            </div>
+                                            <span className="text-sm font-medium text-gray-700 w-8">{c.score}</span>
+                                        </div>
+                                    ))}
                                 </div>
-                                <div className="p-4 bg-gray-50 rounded-xl">
-                                    <p className="text-sm text-gray-500 mb-1">Interest Coverage</p>
-                                    <p className="text-xl font-bold text-gray-900">{data.interestCoverage || 12.5}x</p>
-                                </div>
+                                <p className="text-xs text-gray-500 mt-3">Strong across categories</p>
                             </div>
                         </div>
                     </div>
