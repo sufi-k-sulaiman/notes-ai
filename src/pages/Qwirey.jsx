@@ -562,11 +562,10 @@ export default function Qwirey() {
                                         </div>
                                     </div>
                                 )}
-                            </>
-                            )}
-                            )}
-                            </div>
-                            )}
+                                </>
+                                )}
+                                </div>
+                                )}
 
                 {loading && (
                     <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center shadow-sm">
