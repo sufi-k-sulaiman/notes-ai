@@ -26,6 +26,12 @@ export default function WordShooter({ onExit }) {
     { id: 'education', label: 'Education', color: 'from-blue-600 to-blue-700' },
     { id: 'planet', label: 'Planet', color: 'from-green-600 to-green-700' },
     { id: 'enhance', label: 'Enhance', color: 'from-amber-600 to-amber-700' },
+    { id: 'sports', label: 'Sports', color: 'from-orange-600 to-orange-700' },
+    { id: 'finance', label: 'Finance', color: 'from-emerald-600 to-emerald-700' },
+    { id: 'investment', label: 'Investment', color: 'from-indigo-600 to-indigo-700' },
+    { id: 'health', label: 'Health', color: 'from-rose-600 to-rose-700' },
+    { id: 'wellness', label: 'Wellness', color: 'from-teal-600 to-teal-700' },
+    { id: 'global', label: 'Global', color: 'from-cyan-600 to-cyan-700' },
   ];
 
   useEffect(() => {
@@ -37,10 +43,16 @@ export default function WordShooter({ onExit }) {
     const allTopics = {};
     
     const prompts = {
-      trending: 'Generate 6 trending educational topics people should learn about right now. Include technology, AI, current events, and emerging fields.',
-      education: 'Generate 6 core educational topics across mathematics, science, history, literature, geography, and languages.',
-      planet: 'Generate 6 environmental and planetary topics including climate change, sustainability, conservation, renewable energy, and ecosystems.',
-      enhance: 'Generate 6 self-improvement and cognitive enhancement topics including critical thinking, philosophy, psychology, creativity, and productivity.'
+      trending: 'Generate 9 trending educational topics people should learn about right now. Include technology, AI, current events, and emerging fields.',
+      education: 'Generate 9 core educational topics across mathematics, science, history, literature, geography, and languages.',
+      planet: 'Generate 9 environmental and planetary topics including climate change, sustainability, conservation, renewable energy, and ecosystems.',
+      enhance: 'Generate 9 self-improvement and cognitive enhancement topics including critical thinking, philosophy, psychology, creativity, and productivity.',
+      sports: 'Generate 9 sports topics including athletics, team sports, Olympics, fitness training, and sports science.',
+      finance: 'Generate 9 finance topics including banking, economics, monetary policy, financial markets, and personal finance.',
+      investment: 'Generate 9 investment topics including stocks, bonds, real estate, portfolio management, and investment strategies.',
+      health: 'Generate 9 health topics including medical science, diseases, treatments, nutrition, and public health.',
+      wellness: 'Generate 9 wellness topics including mental health, mindfulness, self-care, stress management, and holistic living.',
+      global: 'Generate 9 global affairs topics including geopolitics, international relations, world events, and global challenges.'
     };
 
     for (const tab of TABS) {
@@ -581,8 +593,8 @@ export default function WordShooter({ onExit }) {
               <p className="text-gray-500">Generating topics with AI...</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {filteredTopics(generatedTopics[activeTab] || []).map((topic, i) => {
+            <div className="grid grid-cols-3 gap-4">
+              {filteredTopics(generatedTopics[activeTab] || []).slice(0, 9).map((topic, i) => {
                 const tabInfo = TABS.find(t => t.id === activeTab);
                 const icons = [Sparkles, Globe, Cpu, Atom, Leaf, Brain, Lightbulb, TrendingUp];
                 const TopicIcon = icons[i % icons.length];
