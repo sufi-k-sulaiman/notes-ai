@@ -1,6 +1,5 @@
 import TestFunctions from './pages/TestFunctions';
 import DashboardComponents from './pages/DashboardComponents';
-import AIHub from './pages/AIHub';
 import Home from './pages/Home';
 import SearchPods from './pages/SearchPods';
 import Settings from './pages/Settings';
@@ -10,19 +9,22 @@ import ResumeBuilder from './pages/ResumeBuilder';
 import SearchResults from './pages/SearchResults';
 import Markets from './pages/Markets';
 import Learning from './pages/Learning';
-import Tasks from './pages/Tasks';
 import Intelligence from './pages/Intelligence';
 import Notes from './pages/Notes';
 import Comms from './pages/Comms';
 import Games from './pages/Games';
 import Geospatial from './pages/Geospatial';
+import ContactUs from './pages/ContactUs';
+import Governance from './pages/Governance';
+import CookiePolicy from './pages/CookiePolicy';
+import TermsOfUse from './pages/TermsOfUse';
+import Teams from './pages/Teams';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "TestFunctions": TestFunctions,
     "DashboardComponents": DashboardComponents,
-    "AIHub": AIHub,
     "Home": Home,
     "SearchPods": SearchPods,
     "Settings": Settings,
@@ -32,12 +34,16 @@ export const PAGES = {
     "SearchResults": SearchResults,
     "Markets": Markets,
     "Learning": Learning,
-    "Tasks": Tasks,
     "Intelligence": Intelligence,
     "Notes": Notes,
     "Comms": Comms,
     "Games": Games,
     "Geospatial": Geospatial,
+    "ContactUs": ContactUs,
+    "Governance": Governance,
+    "CookiePolicy": CookiePolicy,
+    "TermsOfUse": TermsOfUse,
+    "Teams": Teams,
 }
 
 export const pagesConfig = {
