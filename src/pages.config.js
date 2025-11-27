@@ -17,6 +17,7 @@ import Tasks from './pages/Tasks';
 import MindMap from './pages/MindMap';
 import Qwirey from './pages/Qwirey';
 import Search from './pages/Search';
+import TermsOfUse from './pages/TermsOfUse';
 import __Layout from './Layout.jsx';
 
 
@@ -40,6 +41,7 @@ export const PAGES = {
     "MindMap": MindMap,
     "Qwirey": Qwirey,
     "Search": Search,
+    "TermsOfUse": TermsOfUse,
 }
 
 export const pagesConfig = {

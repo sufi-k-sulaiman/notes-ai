@@ -166,6 +166,43 @@ const TasksPage = () => {
                     ))}
                   </div>
                 </DragDropContext>
+
+                {/* All Tasks List */}
+                <div className="mt-8 bg-white rounded-xl border border-gray-200 p-6">
+                    <h2 className="text-lg font-semibold text-gray-800 mb-4">All Tasks</h2>
+                    <div className="space-y-2">
+                        {tasks.map(task => (
+                            <div 
+                                key={task.id}
+                                onClick={() => handleOpenModal(task)}
+                                className="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-purple-50 hover:border-purple-200 cursor-pointer transition-all"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <span className={`w-2 h-2 rounded-full ${
+                                        task.priority === 'urgent' ? 'bg-red-500' :
+                                        task.priority === 'high' ? 'bg-orange-500' :
+                                        task.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                                    }`} />
+                                    <span className="font-medium text-gray-800">{task.title || 'Untitled Task'}</span>
+                                    <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">{task.category}</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <span className={`text-xs px-2 py-1 rounded ${
+                                        task.status === 'done' ? 'bg-green-100 text-green-700' :
+                                        task.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
+                                        task.status === 'review' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700'
+                                    }`}>
+                                        {task.status === 'in_progress' ? 'In Progress' : task.status === 'todo' ? 'To Do' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                                    </span>
+                                    {task.due_date && <span className="text-xs text-gray-500">{task.due_date}</span>}
+                                </div>
+                            </div>
+                        ))}
+                        {tasks.length === 0 && (
+                            <p className="text-center text-gray-500 py-4">No tasks yet. Create one to get started!</p>
+                        )}
+                    </div>
+                </div>
             </>
         )}
 
