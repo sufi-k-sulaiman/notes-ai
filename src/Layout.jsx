@@ -35,6 +35,49 @@ export default function Layout({ children, currentPageName }) {
       keyMeta.content = '';
       document.head.appendChild(keyMeta);
     }
+
+    // Apply saved settings on layout mount
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedHideIcons = localStorage.getItem('hideIcons') === 'true';
+    const savedBlackWhite = localStorage.getItem('blackWhiteMode') === 'true';
+    const savedFontSize = localStorage.getItem('fontSize') || 'medium';
+    const savedUiStyle = localStorage.getItem('uiStyle') || 'rounded';
+    const savedCognitiveMode = localStorage.getItem('cognitiveMode') || 'none';
+
+    // Apply theme
+    document.documentElement.classList.remove('dark', 'hybrid');
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.body.style.backgroundColor = '#1a1a2e';
+      document.body.style.color = '#ffffff';
+    } else if (savedTheme === 'hybrid') {
+      document.documentElement.classList.add('hybrid');
+      document.body.style.backgroundColor = '#f0f0f0';
+      document.body.style.color = '#333333';
+    } else {
+      document.body.style.backgroundColor = '#ffffff';
+      document.body.style.color = '#000000';
+    }
+
+    // Apply hide icons
+    if (savedHideIcons) {
+      document.documentElement.setAttribute('data-hide-icons', 'true');
+    } else {
+      document.documentElement.removeAttribute('data-hide-icons');
+    }
+
+    // Apply grayscale
+    document.documentElement.style.filter = savedBlackWhite ? 'grayscale(100%)' : 'none';
+
+    // Apply font size
+    const sizes = { small: '12px', medium: '16px', large: '20px' };
+    document.documentElement.style.fontSize = sizes[savedFontSize] || '16px';
+
+    // Apply UI style
+    document.documentElement.setAttribute('data-ui-style', savedUiStyle);
+
+    // Apply cognitive mode
+    document.documentElement.setAttribute('data-cognitive', savedCognitiveMode);
   }, []);
 
   return (
@@ -73,7 +116,12 @@ export default function Layout({ children, currentPageName }) {
         [data-cognitive="reader"] .bg-gradient-to-r {
           background: #f9fafb !important;
         }
-      `}</style>
+
+        /* Hide icons mode */
+        [data-hide-icons="true"] svg {
+          display: none !important;
+        }
+        `}</style>
       {children}
       </ErrorBoundary>
     </PageLayout>

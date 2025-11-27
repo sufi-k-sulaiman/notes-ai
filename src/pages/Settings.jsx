@@ -60,6 +60,13 @@ export default function Settings() {
 
         document.documentElement.style.filter = blackWhiteMode ? 'grayscale(100%)' : 'none';
 
+        // Hide icons globally
+        if (hideIcons) {
+            document.documentElement.setAttribute('data-hide-icons', 'true');
+        } else {
+            document.documentElement.removeAttribute('data-hide-icons');
+        }
+
         // UI Style
         document.documentElement.setAttribute('data-ui-style', uiStyle);
         if (uiStyle === 'rounded') {
@@ -92,9 +99,9 @@ export default function Settings() {
         }
     }, [fontSize, cognitiveMode, theme, uiStyle, blackWhiteMode, hideIcons, voicePrompts, fontSizeSlider]);
 
-    // Audible mode - read on hover
+    // Audible mode OR Voice Prompts - read on hover
     useEffect(() => {
-        if (cognitiveMode !== 'audible') return;
+        if (cognitiveMode !== 'audible' && !voicePrompts) return;
         
         const handleMouseOver = (e) => {
             const target = e.target;
@@ -106,7 +113,7 @@ export default function Settings() {
 
         document.addEventListener('mouseover', handleMouseOver);
         return () => document.removeEventListener('mouseover', handleMouseOver);
-    }, [cognitiveMode]);
+    }, [cognitiveMode, voicePrompts]);
 
     useEffect(() => {
         if (cognitiveMode === 'audible' && voicePrompts) {
