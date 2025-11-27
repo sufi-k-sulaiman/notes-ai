@@ -19,13 +19,61 @@ export default function LearnMoreModal({ keyword, isOpen, onClose }) {
     const [loading, setLoading] = useState(false);
     const [generatedImage, setGeneratedImage] = useState(null);
     const [imageLoading, setImageLoading] = useState(false);
+    const [documents, setDocuments] = useState([]);
+    const [documentsLoading, setDocumentsLoading] = useState(false);
 
     useEffect(() => {
         if (isOpen && keyword) {
             fetchData();
             generateImage();
+            fetchDocuments();
         }
     }, [isOpen, keyword]);
+
+    const fetchDocuments = async () => {
+        setDocumentsLoading(true);
+        setDocuments([]);
+        try {
+            const response = await base44.integrations.Core.InvokeLLM({
+                prompt: `Search the internet for real academic papers, research articles, and authoritative documents about "${keyword.name}". 
+                
+Find 6-8 REAL, EXISTING documents that can be found online. Include:
+- Academic papers from Google Scholar, ResearchGate, arXiv
+- Wikipedia articles
+- Official documentation or whitepapers
+- News articles from reputable sources
+- Educational resources
+
+For each document, provide the actual URL where it can be found.`,
+                add_context_from_internet: true,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        documents: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    title: { type: "string" },
+                                    author: { type: "string" },
+                                    year: { type: "string" },
+                                    type: { type: "string" },
+                                    description: { type: "string" },
+                                    url: { type: "string" },
+                                    source: { type: "string" }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            setDocuments(response.documents || []);
+        } catch (error) {
+            console.error('Failed to fetch documents:', error);
+        } finally {
+            setDocumentsLoading(false);
+        }
+    };
 
     const generateImage = async () => {
         setImageLoading(true);
@@ -440,35 +488,61 @@ export default function LearnMoreModal({ keyword, isOpen, onClose }) {
                                     {/* Documents Tab */}
                                     <TabsContent value="documents" className="m-0">
                                         <div className="space-y-4">
-                                            {(!data.documents || data.documents.length === 0) && (
+                                            {documentsLoading ? (
+                                                <div className="flex items-center justify-center py-12">
+                                                    <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+                                                    <span className="ml-3 text-gray-600">Searching for documents...</span>
+                                                </div>
+                                            ) : documents.length === 0 ? (
                                                 <div className="text-center py-12 text-gray-500">
                                                     <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                                                    <p>No documents available for this topic.</p>
+                                                    <p>No documents found for this topic.</p>
+                                                    <Button variant="outline" className="mt-4" onClick={fetchDocuments}>
+                                                        Search Again
+                                                    </Button>
                                                 </div>
-                                            )}
-                                            {data.documents?.map((doc, i) => (
-                                                <div key={i} className="bg-white rounded-xl border p-5 hover:shadow-md transition-shadow">
-                                                    <div className="flex items-start gap-4">
-                                                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
-                                                            <FileText className="w-6 h-6 text-white" />
-                                                        </div>
-                                                        <div className="flex-1">
-                                                            <div className="flex items-start justify-between">
-                                                                <div>
-                                                                    <h4 className="font-semibold text-gray-900 hover:text-purple-600 cursor-pointer">
-                                                                        {doc.title}
-                                                                    </h4>
-                                                                    <p className="text-sm text-gray-500">{doc.author} • {doc.year}</p>
-                                                                </div>
-                                                                <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
-                                                                    {doc.type}
-                                                                </span>
+                                            ) : (
+                                                documents.map((doc, i) => (
+                                                    <a 
+                                                        key={i} 
+                                                        href={doc.url} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className="block bg-white rounded-xl border p-5 hover:shadow-md hover:border-purple-200 transition-all group"
+                                                    >
+                                                        <div className="flex items-start gap-4">
+                                                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 group-hover:from-purple-500 group-hover:to-indigo-600 transition-all">
+                                                                <FileText className="w-6 h-6 text-white" />
                                                             </div>
-                                                            <p className="text-gray-600 text-sm mt-2">{doc.description}</p>
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex items-start justify-between gap-2">
+                                                                    <div className="min-w-0 flex-1">
+                                                                        <h4 className="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors flex items-center gap-2">
+                                                                            <span className="truncate">{doc.title}</span>
+                                                                            <ExternalLink className="w-4 h-4 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                                        </h4>
+                                                                        <p className="text-sm text-gray-500">{doc.author} • {doc.year}</p>
+                                                                    </div>
+                                                                    <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                                                                        <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+                                                                            {doc.type}
+                                                                        </span>
+                                                                        {doc.source && (
+                                                                            <span className="px-2 py-0.5 bg-purple-50 text-purple-600 rounded text-xs">
+                                                                                {doc.source}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                                <p className="text-gray-600 text-sm mt-2 line-clamp-2">{doc.description}</p>
+                                                                {doc.url && (
+                                                                    <p className="text-xs text-blue-500 mt-2 truncate">{doc.url}</p>
+                                                                )}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                                    </a>
+                                                ))
+                                            )}
                                         </div>
                                     </TabsContent>
                                 </>
