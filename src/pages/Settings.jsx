@@ -154,7 +154,6 @@ export default function Settings() {
     );
 
     return (
-        <PageLayout activePage="Settings" showSearch={false}>
             <div className="p-4 md:p-8 max-w-4xl mx-auto">
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Settings</h1>
                 <p className="text-gray-600 mb-8">Customize your experience - all settings are applied immediately</p>
@@ -403,6 +402,5 @@ export default function Settings() {
                     </button>
                 </div>
             </div>
-        </PageLayout>
     );
 }

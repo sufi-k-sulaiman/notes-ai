@@ -17,7 +17,6 @@ export default function Games() {
     }
 
     return (
-        <PageLayout activePage="Games" showSearch={false}>
             <div className="min-h-screen bg-gradient-to-br from-[#0a0f1a] via-[#0d1526] to-[#0a0f1a] p-6">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-8">
@@ -55,6 +54,5 @@ export default function Games() {
                     </div>
                 </div>
             </div>
-        </PageLayout>
     );
 }

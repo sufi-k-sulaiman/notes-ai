@@ -212,7 +212,6 @@ export default function Comms() {
     const formatDate = (date) => new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric' });
 
     return (
-        <PageLayout activePage="Comms" showSearch={false}>
             <div className="h-[calc(100vh-72px)] flex bg-gray-50">
                 {/* Sidebar */}
                 <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
@@ -510,6 +509,5 @@ export default function Comms() {
             </Dialog>
 
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-        </PageLayout>
     );
 }
