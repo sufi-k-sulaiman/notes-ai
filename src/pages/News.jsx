@@ -83,20 +83,23 @@ const NewsCard = ({ article, index }) => {
     );
 };
 
+import { Monitor, TrendingUp as BusinessIcon, FlaskConical, HeartPulse, Landmark, Trophy, Clapperboard, Globe2, ChevronDown, ChevronUp } from 'lucide-react';
+
 const CATEGORIES = [
-    { id: 'technology', label: 'Technology', icon: '💻' },
-    { id: 'business', label: 'Business', icon: '📈' },
-    { id: 'science', label: 'Science', icon: '🔬' },
-    { id: 'health', label: 'Health', icon: '🏥' },
-    { id: 'politics', label: 'Politics', icon: '🏛️' },
-    { id: 'sports', label: 'Sports', icon: '⚽' },
-    { id: 'entertainment', label: 'Entertainment', icon: '🎬' },
-    { id: 'world', label: 'World', icon: '🌍' },
+    { id: 'technology', label: 'Technology', icon: Monitor, subtopics: ['AI', 'Startups', 'Gadgets', 'Cybersecurity', 'Software'] },
+    { id: 'business', label: 'Business', icon: BusinessIcon, subtopics: ['Stocks', 'Economy', 'Crypto', 'Real Estate', 'Finance'] },
+    { id: 'science', label: 'Science', icon: FlaskConical, subtopics: ['Space', 'Physics', 'Biology', 'Climate', 'Research'] },
+    { id: 'health', label: 'Health', icon: HeartPulse, subtopics: ['Medicine', 'Wellness', 'Mental Health', 'Nutrition', 'Fitness'] },
+    { id: 'politics', label: 'Politics', icon: Landmark, subtopics: ['Elections', 'Policy', 'Congress', 'International', 'Law'] },
+    { id: 'sports', label: 'Sports', icon: Trophy, subtopics: ['Football', 'Basketball', 'Soccer', 'Tennis', 'Olympics'] },
+    { id: 'entertainment', label: 'Entertainment', icon: Clapperboard, subtopics: ['Movies', 'Music', 'TV Shows', 'Celebrities', 'Gaming'] },
+    { id: 'world', label: 'World', icon: Globe2, subtopics: ['Europe', 'Asia', 'Americas', 'Africa', 'Middle East'] },
 ];
 
 export default function News() {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState('technology');
+    const [expandedCategory, setExpandedCategory] = useState(null);
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [lastUpdated, setLastUpdated] = useState(null);
@@ -206,22 +209,50 @@ Provide the 12 most recent and relevant news articles with their titles, sources
                 </form>
 
                 {/* Categories */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                    {CATEGORIES.map((cat) => (
-                        <button
-                            key={cat.id}
-                            onClick={() => handleCategoryClick(cat.id)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                                activeCategory === cat.id
-                                    ? 'bg-red-600 text-white shadow-md'
-                                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                            }`}
-                        >
-                            <span>{cat.icon}</span>
-                            {cat.label}
-                        </button>
-                    ))}
+                <div className="flex flex-wrap gap-2 mb-2">
+                    {CATEGORIES.map((cat) => {
+                        const IconComponent = cat.icon;
+                        const isExpanded = expandedCategory === cat.id;
+                        return (
+                            <button
+                                key={cat.id}
+                                onClick={() => {
+                                    handleCategoryClick(cat.id);
+                                    setExpandedCategory(isExpanded ? null : cat.id);
+                                }}
+                                className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                                    activeCategory === cat.id
+                                        ? 'bg-red-600 text-white shadow-md'
+                                        : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                                }`}
+                            >
+                                <IconComponent className="w-4 h-4" />
+                                {cat.label}
+                                {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                            </button>
+                        );
+                    })}
                 </div>
+
+                {/* Subtopics */}
+                {expandedCategory && (
+                    <div className="flex flex-wrap gap-2 mb-6 pl-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                        {CATEGORIES.find(c => c.id === expandedCategory)?.subtopics.map((subtopic) => (
+                            <button
+                                key={subtopic}
+                                onClick={() => {
+                                    setSearchQuery(subtopic);
+                                    fetchNews(subtopic);
+                                }}
+                                className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-medium rounded-full border border-red-200 transition-colors"
+                            >
+                                {subtopic}
+                            </button>
+                        ))}
+                    </div>
+                )}
+                
+                {!expandedCategory && <div className="mb-4" />}
 
                 {/* Refresh Button */}
                 <div className="flex justify-end mb-4">
