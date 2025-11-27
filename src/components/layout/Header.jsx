@@ -5,7 +5,7 @@ import { ChevronLeft, Menu, Search } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { LOGO_URL, menuItems } from '../NavigationConfig';
 
-const PAGES_WITHOUT_SEARCH = ['Qwirey', 'MindMap', 'Markets'];
+const PAGES_WITHOUT_SEARCH = ['Qwirey', 'MindMap', 'Learning'];
 
 export default function Header({ title, sidebarOpen, setSidebarOpen, children, currentPage }) {
     const [searchQuery, setSearchQuery] = useState('');
