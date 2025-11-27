@@ -509,42 +509,55 @@ export default function SpaceBattleGame({ onExit }) {
             if (keys.a) state.viewAngle -= 3;
             if (keys.d) state.viewAngle += 3;
 
-            // Spawn enemies from mountains, stars, and everywhere on screen
+            // Spawn enemies from mountains, stars, above, and everywhere on screen
             state.enemySpawnTimer--;
             if (state.enemySpawnTimer <= 0) {
                 const alienType = state.alienTypes[Math.floor(Math.random() * state.alienTypes.length)];
                 const alienColor = ALIEN_COLORS[Math.floor(Math.random() * ALIEN_COLORS.length)];
                 
-                // Random spawn location type: mountains (40%), stars (30%), random (30%)
+                // Random spawn location type: above (30%), mountains (25%), stars (25%), random (20%)
                 const spawnType = Math.random();
-                let startX, startZ, startVx;
+                let startX, startZ, startVx, startY, fromAbove;
                 
-                if (spawnType < 0.4) {
+                if (spawnType < 0.3) {
+                    // Spawn from above (top of screen, dropping down)
+                    startX = (Math.random() - 0.5) * 600; // Random horizontal position
+                    startZ = 0.15 + Math.random() * 0.25; // Medium distance so they're visible
+                    startVx = (Math.random() - 0.5) * 2;
+                    startY = -100 - Math.random() * 200; // Start above screen
+                    fromAbove = true;
+                } else if (spawnType < 0.55) {
                     // Spawn from mountains (near horizon, left or right)
                     const fromLeft = Math.random() > 0.5;
                     startX = fromLeft ? -400 - Math.random() * 200 : 400 + Math.random() * 200;
                     startZ = 0.03 + Math.random() * 0.08;
                     startVx = fromLeft ? 2 + Math.random() * 2 : -2 - Math.random() * 2;
-                } else if (spawnType < 0.7) {
+                    fromAbove = false;
+                } else if (spawnType < 0.8) {
                     // Spawn from stars (top area, very small/far)
                     startX = (Math.random() - 0.5) * 1000;
                     startZ = 0.01 + Math.random() * 0.04; // Very far away
                     startVx = (Math.random() - 0.5) * 1;
+                    fromAbove = false;
                 } else {
                     // Random spawn across visible area
                     startX = (Math.random() - 0.5) * 800;
                     startZ = 0.02 + Math.random() * 0.15;
                     startVx = (Math.random() - 0.5) * 3;
+                    fromAbove = false;
                 }
                 
                 state.enemies.push({
                     x: startX,
                     z: startZ,
+                    y: startY || 0,
+                    vy: fromAbove ? 3 + Math.random() * 2 : 0, // Vertical velocity for dropping aliens
                     type: alienType,
                     color: alienColor,
                     health: 1,
                     wobble: Math.random() * Math.PI * 2,
-                    vx: startVx
+                    vx: startVx,
+                    fromAbove: fromAbove
                 });
                 state.enemySpawnTimer = Math.max(25, 100 - state.score / 50);
             }
@@ -560,10 +573,26 @@ export default function SpaceBattleGame({ onExit }) {
                     enemy.vx *= 0.995;
                 }
                 
+                // Apply vertical movement for aliens coming from above
+                if (enemy.fromAbove && enemy.y !== undefined) {
+                    enemy.y += enemy.vy || 3;
+                    // Slow down as they reach their target position
+                    if (enemy.y > 0) {
+                        enemy.vy *= 0.95;
+                        if (Math.abs(enemy.vy) < 0.5) {
+                            enemy.fromAbove = false; // Stop vertical movement
+                        }
+                    }
+                }
+                
                 // 3D to 2D projection with wobble
                 const scale = enemy.z * 3;
                 const screenX = centerX + (enemy.x - state.viewAngle * 2) * scale + Math.sin(enemy.wobble) * 5;
-                const screenY = horizon + (canvas.height - horizon) * enemy.z * 0.8;
+                // Adjust screenY for aliens coming from above
+                let screenY = horizon + (canvas.height - horizon) * enemy.z * 0.8;
+                if (enemy.fromAbove && enemy.y !== undefined) {
+                    screenY = enemy.y + horizon * enemy.z;
+                }
                 const size = 80 * scale; // Larger aliens
 
                 if (enemy.z > 1.2) {
