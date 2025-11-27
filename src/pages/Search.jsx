@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Search, Loader2, FileText, Lightbulb, ExternalLink } from 'lucide-react';
+import { Search, Loader2, FileText, Lightbulb, ExternalLink, Globe, Sparkles, BarChart3, Gamepad2, Settings, Radio, Brain, GraduationCap, ListTodo, StickyNote, ScrollText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Globe, Sparkles, BarChart3, Gamepad2, Settings, Radio, Brain, FileText, GraduationCap, ListTodo, StickyNote, Lightbulb as LightbulbIcon, ScrollText } from 'lucide-react';
 
 const menuItems = [
     { label: 'Home', icon: Globe, href: createPageUrl('Home') },
