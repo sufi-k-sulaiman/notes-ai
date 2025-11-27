@@ -357,6 +357,6 @@ export default function MindMapPage() {
                         </div>
                     </div>
                 )}
-            </div></div>
+            </div></div></div>
     );
 }
