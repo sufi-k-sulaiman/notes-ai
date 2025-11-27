@@ -152,6 +152,12 @@ function TreeNode({ node, colorIndex = 0, onExplore, onLearn, depth = 0, nodeRef
 }
 
 export default function MindMapPage() {
+    useEffect(() => {
+        document.title = 'Ai Neural MindMap application';
+        document.querySelector('meta[name="description"]')?.setAttribute('content', 'AI neural networks create interactive knowledge trees to explore knowledge.');
+        document.querySelector('meta[name="keywords"]')?.setAttribute('content', 'mind mapping, Ai MindMap');
+    }, []);
+
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
     const [treeData, setTreeData] = useState(null);

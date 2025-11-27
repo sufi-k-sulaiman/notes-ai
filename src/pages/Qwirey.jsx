@@ -59,6 +59,12 @@ const AI_MODELS = [
 const CHART_COLORS = ['#8b5cf6', '#6366f1', '#3b82f6', '#06b6d4', '#10b981'];
 
 export default function Qwirey() {
+    useEffect(() => {
+        document.title = 'Ai agent thats paradigm shifts and enchances your workflow.';
+        document.querySelector('meta[name="description"]')?.setAttribute('content', 'Agentic AI that adapts and enhances workflows, creating a new paradigm of productivity.');
+        document.querySelector('meta[name="keywords"]')?.setAttribute('content', 'AI agent, agentic AI');
+    }, []);
+
     const [prompt, setPrompt] = useState('');
     const [selectedModel, setSelectedModel] = useState('qwirey');
     const [loading, setLoading] = useState(false);
