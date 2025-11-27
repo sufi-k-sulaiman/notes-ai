@@ -122,6 +122,8 @@ export default function SpaceBattleGame({ onExit }) {
             setScore(0);
             setCurrentQuestion(0);
             setAwards([]);
+            setCurrentLevel(1);
+            setLevelComplete(false);
             setScreen('game');
         } catch (error) {
             console.error('Failed to generate questions:', error);
