@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-    Plus, Search, FileText, Calendar, Tag, Pin, Trash2, 
-    Bold, Italic, Underline, List, ListOrdered, Sparkles, Image,
-    Save, X, Loader2, ChevronRight, Maximize2, Minimize2
+    Plus, Search, FileText, Calendar, Tag, Trash2, 
+    Save, X, Loader2, Maximize2, Minimize2, Sparkles, Image,
+    Clock, FileType, List
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,15 +14,13 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 const TEMPLATES = [
-    { id: 'daily', name: 'Daily', icon: Calendar, color: '#6B4EE6' },
-    { id: 'meeting', name: 'Meeting', icon: FileText, color: '#3B82F6' },
-    { id: 'todo', name: 'Todo', icon: List, color: '#10B981' },
-    { id: 'project', name: 'Project', icon: FileText, color: '#F59E0B' },
-    { id: 'book', name: 'Book', icon: FileText, color: '#EC4899' },
-    { id: 'research', name: 'Research', icon: Search, color: '#8B5CF6' },
+    { id: 'daily', name: 'Daily', icon: Calendar, color: '#6B4EE6', content: '<h2>Daily Journal</h2><p>Date: [Today]</p><h3>Goals for Today</h3><ul><li></li></ul><h3>Notes</h3><p></p><h3>Reflection</h3><p></p>' },
+    { id: 'meeting', name: 'Meeting', icon: FileText, color: '#3B82F6', content: '<h2>Meeting Notes</h2><p><strong>Date:</strong> [Date]</p><p><strong>Attendees:</strong></p><ul><li></li></ul><h3>Agenda</h3><ol><li></li></ol><h3>Discussion Points</h3><p></p><h3>Action Items</h3><ul><li></li></ul>' },
+    { id: 'todo', name: 'Todo', icon: List, color: '#10B981', content: '<h2>Todo List</h2><h3>High Priority</h3><ul><li>[ ] </li></ul><h3>Medium Priority</h3><ul><li>[ ] </li></ul><h3>Low Priority</h3><ul><li>[ ] </li></ul>' },
+    { id: 'project', name: 'Project', icon: FileText, color: '#F59E0B', content: '<h2>Project: [Name]</h2><h3>Overview</h3><p></p><h3>Objectives</h3><ul><li></li></ul><h3>Timeline</h3><p></p><h3>Resources</h3><ul><li></li></ul><h3>Notes</h3><p></p>' },
+    { id: 'book', name: 'Book', icon: FileText, color: '#EC4899', content: '<h2>Book Notes: [Title]</h2><p><strong>Author:</strong></p><p><strong>Genre:</strong></p><h3>Summary</h3><p></p><h3>Key Takeaways</h3><ul><li></li></ul><h3>Favorite Quotes</h3><blockquote></blockquote><h3>Personal Thoughts</h3><p></p>' },
+    { id: 'research', name: 'Research', icon: Search, color: '#8B5CF6', content: '<h2>Research: [Topic]</h2><h3>Research Question</h3><p></p><h3>Sources</h3><ul><li></li></ul><h3>Key Findings</h3><p></p><h3>Analysis</h3><p></p><h3>Conclusions</h3><p></p>' },
 ];
-
-const TAG_COLORS = ['#6B4EE6', '#3B82F6', '#10B981', '#F59E0B', '#EC4899', '#EF4444'];
 
 function Toast({ message, onClose }) {
     useEffect(() => {
@@ -33,6 +31,51 @@ function Toast({ message, onClose }) {
         <div className="fixed bottom-4 right-4 bg-emerald-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50">
             <Save className="w-4 h-4" />
             <span>{message}</span>
+        </div>
+    );
+}
+
+function NoteCard({ note, onClick, formatDate }) {
+    const content = note.content?.replace(/<[^>]*>/g, '') || '';
+    const wordCount = note.word_count || content.split(/\s+/).filter(w => w).length || 0;
+    const charCount = content.length || 0;
+    
+    return (
+        <div
+            onClick={() => onClick(note)}
+            className="bg-white rounded-xl border border-gray-200 p-6 cursor-pointer hover:shadow-md hover:border-purple-200 transition-all"
+        >
+            <h3 className="font-bold text-gray-900 mb-3 text-lg line-clamp-2">{note.title || 'Untitled'}</h3>
+            <p className="text-sm text-gray-600 line-clamp-4 mb-4 min-h-[80px] leading-relaxed">
+                {content.slice(0, 200) || 'No content'}
+            </p>
+            
+            <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-1.5">
+                        <FileType className="w-3.5 h-3.5" />
+                        {wordCount} words
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                        {charCount} chars
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5" />
+                        {formatDate(note.created_date)}
+                    </span>
+                </div>
+            </div>
+            
+            {note.tags && note.tags.length > 0 && (
+                <div className="flex items-center gap-1.5 mt-3 flex-wrap">
+                    {note.tags.slice(0, 3).map((tag, i) => (
+                        <span key={i} className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">{tag}</span>
+                    ))}
+                    {note.tags.length > 3 && (
+                        <span className="text-xs text-gray-400">+{note.tags.length - 3}</span>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
@@ -98,6 +141,7 @@ export default function Notes() {
         if (template) {
             setNoteTitle(template.name + ' Note');
             setNoteTags([template.name.toLowerCase()]);
+            setEditorContent(template.content);
         }
         setShowEditor(true);
     };
@@ -193,93 +237,73 @@ export default function Notes() {
 
     return (
         <>
-            <div className="min-h-screen bg-gray-50 flex">
-                {/* Sidebar */}
-                <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-                    <div className="p-4 border-b border-gray-100">
-                        <h1 className="text-xl font-bold text-purple-600 flex items-center gap-2 mb-4">
-                            AI Generative Notes
-                        </h1>
-                        <Button onClick={() => openNewNote()} className="w-full bg-purple-600 hover:bg-purple-700 mb-3">
-                            <Plus className="w-4 h-4 mr-2" /> New Note
-                        </Button>
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <Input 
-                                placeholder="Search notes..." 
-                                value={searchQuery} 
-                                onChange={e => setSearchQuery(e.target.value)}
-                                className="pl-9"
-                            />
+            <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+                <div className="max-w-7xl mx-auto">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">AI Generative Notes</h1>
+                            <p className="text-gray-500 text-sm">Create and organize your notes</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div className="relative w-64">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                <Input 
+                                    placeholder="Search notes..." 
+                                    value={searchQuery} 
+                                    onChange={e => setSearchQuery(e.target.value)}
+                                    className="pl-9"
+                                />
+                            </div>
+                            <Button onClick={() => openNewNote()} className="bg-purple-600 hover:bg-purple-700">
+                                <Plus className="w-4 h-4 mr-2" /> New Note
+                            </Button>
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-3 space-y-2">
-                        {isLoading ? (
-                            <div className="flex items-center justify-center py-12">
-                                <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
-                            </div>
-                        ) : filteredNotes.length === 0 ? (
-                            <div className="text-center py-12">
-                                <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                                <p className="text-gray-500">No notes yet</p>
-                            </div>
-                        ) : (
-                            filteredNotes.map(note => (
-                                <div
-                                    key={note.id}
-                                    onClick={() => openNote(note)}
-                                    className={`p-3 rounded-xl cursor-pointer transition-all ${
-                                        selectedNote?.id === note.id 
-                                            ? 'bg-purple-100 border-purple-300' 
-                                            : 'bg-gray-50 hover:bg-gray-100 border-transparent'
-                                    } border`}
-                                >
-                                    <h3 className="font-medium text-gray-900 mb-1 truncate">{note.title || 'Untitled'}</h3>
-                                    <p className="text-sm text-gray-500 line-clamp-2">
-                                        {note.content?.replace(/<[^>]*>/g, '').slice(0, 80) || 'No content'}
-                                    </p>
-                                    <div className="flex items-center justify-between mt-2">
-                                        <div className="flex items-center gap-1">
-                                            {note.tags?.slice(0, 2).map((tag, i) => (
-                                                <span key={i} className="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 rounded">{tag}</span>
-                                            ))}
-                                        </div>
-                                        <span className="text-xs text-gray-400">{formatDate(note.created_date)}</span>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-
-                    <div className="p-3 border-t border-gray-100">
-                        <p className="text-xs text-gray-500 mb-2 font-medium">Quick Start Templates</p>
-                        <div className="grid grid-cols-2 gap-2">
+                    {/* Quick Start Templates */}
+                    <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
+                        <h2 className="text-purple-600 font-semibold mb-4">Quick Start Templates</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                             {TEMPLATES.map(t => (
                                 <button
                                     key={t.id}
                                     onClick={() => openNewNote(t)}
-                                    className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 hover:bg-purple-50 text-sm text-gray-700 hover:text-purple-700 transition-colors"
+                                    className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-purple-50 border border-gray-100 hover:border-purple-200 text-left transition-all"
                                 >
-                                    <t.icon className="w-4 h-4" style={{ color: t.color }} />
-                                    {t.name}
+                                    <t.icon className="w-5 h-5" style={{ color: t.color }} />
+                                    <span className="font-medium text-gray-700">{t.name}</span>
                                 </button>
                             ))}
                         </div>
                     </div>
-                </div>
 
-                {/* Main Content */}
-                <div className="flex-1 flex items-center justify-center">
-                    {!showEditor ? (
-                        <div className="text-center">
-                            <FileText className="w-20 h-20 text-gray-200 mx-auto mb-4" />
-                            <h2 className="text-xl font-semibold text-gray-600 mb-2">Select a note or create new</h2>
+                    {/* Notes Grid */}
+                    {isLoading ? (
+                        <div className="flex items-center justify-center py-20">
+                            <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+                        </div>
+                    ) : filteredNotes.length === 0 ? (
+                        <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
+                            <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                            <h2 className="text-xl font-semibold text-gray-600 mb-2">No notes yet</h2>
+                            <p className="text-gray-500 mb-4">Create your first note or use a template</p>
                             <Button onClick={() => openNewNote()} variant="outline">
                                 <Plus className="w-4 h-4 mr-2" /> Create Note
                             </Button>
                         </div>
-                    ) : null}
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                            {filteredNotes.map(note => (
+                                <NoteCard 
+                                    key={note.id} 
+                                    note={note} 
+                                    onClick={openNote}
+                                    formatDate={formatDate}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 
