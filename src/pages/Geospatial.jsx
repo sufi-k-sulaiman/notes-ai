@@ -584,6 +584,7 @@ export default function Geospatial() {
 
                 {/* Geographical Models Tab - Instruction or Selected Countries Display */}
                 {mainTab === 'geographical' && (
+                <>
                 {selectedCountries.length === 0 ? (
                     <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
                         <Globe className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -1644,6 +1645,8 @@ export default function Geospatial() {
                                     </TabsContent>
                                     </Tabs>
                                     </CategorySection>
+                                    )}
+                                    </>
                                     )}
                                     </div>
                                     </div>
