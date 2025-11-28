@@ -535,158 +535,151 @@ export default function MindMapPage() {
             className={`min-h-screen bg-gray-50 ${isFullscreen ? 'p-4 overflow-auto' : 'p-4 md:p-6'}`}
         >
             <div className={`${isFullscreen ? 'max-w-none' : 'max-w-7xl mx-auto'}`}>
-                {/* Header */}
-                <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-                    <div className="flex items-center gap-3">
-                        <h1 className="text-xl font-bold text-gray-900">Neural MindMaps</h1>
-                    </div>
-
-                    <div className="flex gap-2 flex-wrap">
-                        {/* Annotation tools */}
-                        {treeData && (
-                            <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
-                                <Button
-                                    variant={annotationMode === null && !spacePressed ? "secondary" : "ghost"}
-                                    size="sm"
-                                    onClick={() => setAnnotationMode(null)}
-                                    title="Hand / Pan (Space)"
-                                    className="gap-1"
-                                >
-                                    <Hand className="w-4 h-4" />
-                                    <span className="text-[10px] text-gray-400">Space</span>
-                                </Button>
-                                <Button
-                                    variant={annotationMode === 'draw' ? "secondary" : "ghost"}
-                                    size="sm"
-                                    onClick={() => setAnnotationMode('draw')}
-                                    title="Pencil (P)"
-                                    className="gap-1"
-                                >
-                                    <Pencil className="w-4 h-4" />
-                                    <span className="text-[10px] text-gray-400">P</span>
-                                </Button>
-                                <Button
-                                    variant={annotationMode === 'text' ? "secondary" : "ghost"}
-                                    size="sm"
-                                    onClick={() => setAnnotationMode('text')}
-                                    title="Text (T)"
-                                    className="gap-1"
-                                >
-                                    <Type className="w-4 h-4" />
-                                    <span className="text-[10px] text-gray-400">T</span>
-                                </Button>
-                                <Button
-                                    variant={annotationMode === 'rectangle' ? "secondary" : "ghost"}
-                                    size="sm"
-                                    onClick={() => setAnnotationMode('rectangle')}
-                                    title="Rectangle (R)"
-                                    className="gap-1"
-                                >
-                                    <Square className="w-4 h-4" />
-                                    <span className="text-[10px] text-gray-400">R</span>
-                                </Button>
-                                <Button
-                                    variant={annotationMode === 'circle' ? "secondary" : "ghost"}
-                                    size="sm"
-                                    onClick={() => setAnnotationMode('circle')}
-                                    title="Circle (O/C)"
-                                    className="gap-1"
-                                >
-                                    <Circle className="w-4 h-4" />
-                                    <span className="text-[10px] text-gray-400">O</span>
-                                </Button>
-                                <Button
-                                    variant={annotationMode === 'eraser' ? "secondary" : "ghost"}
-                                    size="sm"
-                                    onClick={() => setAnnotationMode('eraser')}
-                                    title="Eraser (E)"
-                                    className="gap-1"
-                                >
-                                    <Eraser className="w-4 h-4" />
-                                    <span className="text-[10px] text-gray-400">E</span>
-                                </Button>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button variant="ghost" size="sm" title="Color">
-                                            <div className="w-4 h-4 rounded-full border-2 border-gray-300" style={{ backgroundColor: annotationColor }} />
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-2">
-                                        <div className="flex gap-1">
-                                            {['#FF9800', '#E91E63', '#00BCD4', '#4CAF50', '#9DD5E8', '#2196F3', '#000000'].map(color => (
-                                                <button
-                                                    key={color}
-                                                    className={`w-6 h-6 rounded-full border-2 ${annotationColor === color ? 'border-gray-800' : 'border-transparent'}`}
-                                                    style={{ backgroundColor: color }}
-                                                    onClick={() => setAnnotationColor(color)}
-                                                />
-                                            ))}
-                                        </div>
-                                    </PopoverContent>
-                                </Popover>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={clearAnnotations}
-                                    title="Clear all annotations"
-                                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </Button>
-                            </div>
-                        )}
-
-                        {/* Export dropdown */}
-                        {treeData && (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className="gap-2" disabled={exporting}>
-                                        {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                                        Export
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuItem onClick={() => exportMindMap('pdf')}>
-                                        Export as PDF
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => exportMindMap('png')}>
-                                        Export as PNG
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => exportMindMap('jpeg')}>
-                                        Export as JPEG
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        )}
-
-                        {/* Fullscreen toggle */}
-                        <Button
-                            variant="outline"
-                            onClick={toggleFullscreen}
-                            className="gap-2"
-                        >
-                            {isFullscreen ? (
-                                <>
-                                    <Minimize2 className="w-4 h-4" />
-                                    Exit Fullscreen
-                                </>
-                            ) : (
-                                <>
-                                    <Maximize2 className="w-4 h-4" />
-                                    Fullscreen
-                                </>
-                            )}
-                        </Button>
-                    </div>
-                </div>
-
                 {/* Mind Map Content */}
-                <div className={`bg-white rounded-2xl border border-gray-200 ${isFullscreen ? 'h-[calc(100vh-100px)]' : 'h-[calc(100vh-160px)]'} overflow-hidden p-8`}>
+                <div className={`bg-white rounded-2xl border border-gray-200 ${isFullscreen ? 'h-[calc(100vh-32px)]' : 'h-[calc(100vh-80px)]'} overflow-hidden p-8`}>
+                    {/* Header inside the card */}
+                    <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+                                <Network className="w-5 h-5 text-purple-600" />
+                            </div>
+                            <h1 className="text-xl font-bold text-gray-900">Neural MindMaps</h1>
+                        </div>
+
+                        <div className="flex gap-2 flex-wrap">
+                            {/* Annotation tools */}
+                            {treeData && (
+                                <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+                                    <Button
+                                        variant={annotationMode === null && !spacePressed ? "secondary" : "ghost"}
+                                        size="sm"
+                                        onClick={() => setAnnotationMode(null)}
+                                        title="Hand / Pan (Space)"
+                                        className="gap-1"
+                                    >
+                                        <Hand className="w-4 h-4" />
+                                        <span className="text-[10px] text-gray-400">Space</span>
+                                    </Button>
+                                    <Button
+                                        variant={annotationMode === 'draw' ? "secondary" : "ghost"}
+                                        size="sm"
+                                        onClick={() => setAnnotationMode('draw')}
+                                        title="Pencil (P)"
+                                        className="gap-1"
+                                    >
+                                        <Pencil className="w-4 h-4" />
+                                        <span className="text-[10px] text-gray-400">P</span>
+                                    </Button>
+                                    <Button
+                                        variant={annotationMode === 'text' ? "secondary" : "ghost"}
+                                        size="sm"
+                                        onClick={() => setAnnotationMode('text')}
+                                        title="Text (T)"
+                                        className="gap-1"
+                                    >
+                                        <Type className="w-4 h-4" />
+                                        <span className="text-[10px] text-gray-400">T</span>
+                                    </Button>
+                                    <Button
+                                        variant={annotationMode === 'rectangle' ? "secondary" : "ghost"}
+                                        size="sm"
+                                        onClick={() => setAnnotationMode('rectangle')}
+                                        title="Rectangle (R)"
+                                        className="gap-1"
+                                    >
+                                        <Square className="w-4 h-4" />
+                                        <span className="text-[10px] text-gray-400">R</span>
+                                    </Button>
+                                    <Button
+                                        variant={annotationMode === 'circle' ? "secondary" : "ghost"}
+                                        size="sm"
+                                        onClick={() => setAnnotationMode('circle')}
+                                        title="Circle (O/C)"
+                                        className="gap-1"
+                                    >
+                                        <Circle className="w-4 h-4" />
+                                        <span className="text-[10px] text-gray-400">O</span>
+                                    </Button>
+                                    <Button
+                                        variant={annotationMode === 'eraser' ? "secondary" : "ghost"}
+                                        size="sm"
+                                        onClick={() => setAnnotationMode('eraser')}
+                                        title="Eraser (E)"
+                                        className="gap-1"
+                                    >
+                                        <Eraser className="w-4 h-4" />
+                                        <span className="text-[10px] text-gray-400">E</span>
+                                    </Button>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button variant="ghost" size="sm" title="Color">
+                                                <div className="w-4 h-4 rounded-full border-2 border-gray-300" style={{ backgroundColor: annotationColor }} />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-2">
+                                            <div className="flex gap-1">
+                                                {['#FF9800', '#E91E63', '#00BCD4', '#4CAF50', '#9DD5E8', '#2196F3', '#000000'].map(color => (
+                                                    <button
+                                                        key={color}
+                                                        className={`w-6 h-6 rounded-full border-2 ${annotationColor === color ? 'border-gray-800' : 'border-transparent'}`}
+                                                        style={{ backgroundColor: color }}
+                                                        onClick={() => setAnnotationColor(color)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={clearAnnotations}
+                                        title="Clear all annotations"
+                                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                            )}
+
+                            {/* Export dropdown */}
+                            {treeData && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" className="gap-2" disabled={exporting}>
+                                            {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                                            Export
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuItem onClick={() => exportMindMap('pdf')}>
+                                            Export as PDF
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => exportMindMap('png')}>
+                                            Export as PNG
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => exportMindMap('jpeg')}>
+                                            Export as JPEG
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
+
+                            {/* Fullscreen toggle */}
+                            <Button
+                                variant="outline"
+                                onClick={toggleFullscreen}
+                                className="gap-2"
+                            >
+                                {isFullscreen ? (
+                                    <Minimize2 className="w-4 h-4" />
+                                ) : (
+                                    <Maximize2 className="w-4 h-4" />
+                                )}
+                            </Button>
+                        </div>
+                    </div>
                     {!treeData && !loading ? (
                         <div className="h-full flex flex-col items-center pt-8">
-                            <div className="w-20 h-20 rounded-2xl bg-purple-100 flex items-center justify-center mb-4">
-                                <Network className="w-10 h-10 text-purple-600" />
-                            </div>
 
                             {/* Search Bar - Right below icon */}
                             <div className="w-full max-w-xl mx-auto mb-6">
