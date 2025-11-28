@@ -78,8 +78,18 @@ export default function LearningIslandCard({ topic, index, progress = 0, onExplo
                 </div>
             )}
             
+            {/* Points badge below island */}
+            <div className="flex justify-center -mt-4 relative z-20">
+                <div 
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg border-2 border-white"
+                    style={{ backgroundColor: topic.color }}
+                >
+                    {xpReward}
+                </div>
+            </div>
+            
             {/* Label */}
-            <div className="text-center mt-1">
+            <div className="text-center mt-2">
                 <h3 className="font-semibold text-gray-800 text-sm leading-tight">{topic.name}</h3>
                 
                 {/* Progress bar */}
