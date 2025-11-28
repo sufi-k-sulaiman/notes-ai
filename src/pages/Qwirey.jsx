@@ -858,19 +858,19 @@ export default function Qwirey() {
                                     <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
                                         <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                                             <Globe className="w-5 h-5 text-purple-600" />
-                                            Sources & References
+                                            Sources
                                         </h3>
-                                        <div className="space-y-2">
+                                        <div className="flex flex-wrap gap-2">
                                             {result.sources.map((source, i) => (
                                                 <a
                                                     key={i}
                                                     href={source.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800 hover:underline"
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-700 rounded-full text-sm font-medium hover:bg-purple-100 transition-colors"
                                                 >
-                                                    <ExternalLink className="w-4 h-4" />
-                                                    {source.title}
+                                                    <ExternalLink className="w-3 h-3" />
+                                                    {source.title?.split(' ').slice(0, 3).join(' ') || 'Source'}
                                                 </a>
                                             ))}
                                         </div>
