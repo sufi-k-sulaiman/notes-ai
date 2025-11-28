@@ -873,9 +873,9 @@ Use short sentences for better pacing. Do NOT use any markdown formatting.`,
                             </div>
                         </div>
 
-                        {/* Voice Selection */}
-                        {voices.length > 1 && (
-                            <div className="mt-4 flex justify-center">
+                        {/* Voice Selection & Download */}
+                        <div className="mt-4 flex items-center justify-center gap-4">
+                            {voices.length > 1 && (
                                 <select
                                     value={selectedVoice?.name || ''}
                                     onChange={(e) => {
@@ -890,8 +890,26 @@ Use short sentences for better pacing. Do NOT use any markdown formatting.`,
                                         </option>
                                     ))}
                                 </select>
-                            </div>
-                        )}
+                            )}
+                            {useElevenLabs && audioRef.current && !isGenerating && !audioLoading && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="gap-2"
+                                    onClick={() => {
+                                        const a = document.createElement('a');
+                                        a.href = audioRef.current.src;
+                                        a.download = `${currentEpisode?.title || 'podcast'}.mp3`;
+                                        document.body.appendChild(a);
+                                        a.click();
+                                        document.body.removeChild(a);
+                                    }}
+                                >
+                                    <Download className="w-4 h-4" />
+                                    Download MP3
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
