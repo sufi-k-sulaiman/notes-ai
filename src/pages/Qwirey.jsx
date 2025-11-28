@@ -233,7 +233,9 @@ export default function Qwirey() {
 
         try {
             if (selectedModel === 'qwirey') {
-                const [textResponse, imagesResponse, webDataResponse, dashboardDataResponse] = await Promise.all([
+                // Build API calls based on selected format - only generate what's needed
+                const apiCalls = [
+                    // Always get text response
                     base44.integrations.Core.InvokeLLM({
                         prompt: `You are Qwirey, an advanced AI assistant by 1cPublishing. Provide a comprehensive, helpful response.\n\n${webUrl ? `Reference URL: ${webUrl}\n` : ''}User query: ${fullPrompt}\n\nAlso suggest 3 follow-up questions the user might want to ask.`,
                         add_context_from_internet: true,
@@ -245,77 +247,93 @@ export default function Qwirey() {
                                 sources: { type: "array", items: { type: "object", properties: { title: { type: "string" }, url: { type: "string" } } } }
                             }
                         }
-                    }),
-                    base44.integrations.Core.InvokeLLM({
-                        prompt: `Generate 4 detailed image prompts related to: "${currentPrompt}". Each should be suitable for AI image generation.`,
-                        response_json_schema: {
-                            type: "object",
-                            properties: {
-                                imagePrompts: { type: "array", items: { type: "string" } }
+                    })
+                ];
+
+                // Only add format-specific calls
+                if (responseFormat === 'dynamic') {
+                    apiCalls.push(
+                        base44.integrations.Core.InvokeLLM({
+                            prompt: `Generate 4 detailed image prompts related to: "${currentPrompt}". Each should be suitable for AI image generation.`,
+                            response_json_schema: {
+                                type: "object",
+                                properties: {
+                                    imagePrompts: { type: "array", items: { type: "string" } }
+                                }
                             }
-                        }
-                    }),
-                    base44.integrations.Core.InvokeLLM({
-                        prompt: `For the topic "${currentPrompt}", generate realistic chart data if relevant (statistics, comparisons, trends). Return hasChartData: false if not applicable.`,
-                        add_context_from_internet: true,
-                        response_json_schema: {
-                            type: "object",
-                            properties: {
-                                hasChartData: { type: "boolean" },
-                                lineChartData: { type: "array", items: { type: "object", properties: { name: { type: "string" }, value: { type: "number" } } } },
-                                pieChartData: { type: "array", items: { type: "object", properties: { name: { type: "string" }, value: { type: "number" } } } },
-                                chartTitle: { type: "string" },
-                                chartDescription: { type: "string" }
+                        }),
+                        base44.integrations.Core.InvokeLLM({
+                            prompt: `For the topic "${currentPrompt}", generate realistic chart data if relevant (statistics, comparisons, trends). Return hasChartData: false if not applicable.`,
+                            add_context_from_internet: true,
+                            response_json_schema: {
+                                type: "object",
+                                properties: {
+                                    hasChartData: { type: "boolean" },
+                                    lineChartData: { type: "array", items: { type: "object", properties: { name: { type: "string" }, value: { type: "number" } } } },
+                                    pieChartData: { type: "array", items: { type: "object", properties: { name: { type: "string" }, value: { type: "number" } } } },
+                                    chartTitle: { type: "string" },
+                                    chartDescription: { type: "string" }
+                                }
                             }
-                        }
-                    }),
-                    // Generate dynamic dashboard data OR tabled data based on format
-                    responseFormat === 'dynamic' ? base44.integrations.Core.InvokeLLM({
-                        prompt: `For "${currentPrompt}", generate dashboard data with: 3 info cards (short insights), 3 rankings (name + numeric value), 4 timeline events (time, title, description, status: completed/current/pending), 4 goals (label, current number, target number), 4 notifications (title, description, time, type: success/warning/info/error).`,
-                        add_context_from_internet: true,
-                        response_json_schema: {
-                            type: "object",
-                            properties: {
-                                infoCards: { type: "array", items: { type: "object", properties: { content: { type: "string" }, color: { type: "string" } } } },
-                                rankings: { type: "array", items: { type: "object", properties: { name: { type: "string" }, value: { type: "number" } } } },
-                                timeline: { type: "array", items: { type: "object", properties: { time: { type: "string" }, title: { type: "string" }, description: { type: "string" }, status: { type: "string" } } } },
-                                goals: { type: "array", items: { type: "object", properties: { label: { type: "string" }, current: { type: "number" }, target: { type: "number" } } } },
-                                notifications: { type: "array", items: { type: "object", properties: { title: { type: "string" }, description: { type: "string" }, time: { type: "string" }, type: { type: "string" } } } }
+                        }),
+                        base44.integrations.Core.InvokeLLM({
+                            prompt: `For "${currentPrompt}", generate dashboard data with: 3 info cards (short insights), 3 rankings (name + numeric value), 4 timeline events (time, title, description, status: completed/current/pending), 4 goals (label, current number, target number), 4 notifications (title, description, time, type: success/warning/info/error).`,
+                            add_context_from_internet: true,
+                            response_json_schema: {
+                                type: "object",
+                                properties: {
+                                    infoCards: { type: "array", items: { type: "object", properties: { content: { type: "string" }, color: { type: "string" } } } },
+                                    rankings: { type: "array", items: { type: "object", properties: { name: { type: "string" }, value: { type: "number" } } } },
+                                    timeline: { type: "array", items: { type: "object", properties: { time: { type: "string" }, title: { type: "string" }, description: { type: "string" }, status: { type: "string" } } } },
+                                    goals: { type: "array", items: { type: "object", properties: { label: { type: "string" }, current: { type: "number" }, target: { type: "number" } } } },
+                                    notifications: { type: "array", items: { type: "object", properties: { title: { type: "string" }, description: { type: "string" }, time: { type: "string" }, type: { type: "string" } } } }
+                                }
                             }
-                        }
-                    }) : responseFormat === 'tabled' ? base44.integrations.Core.InvokeLLM({
-                        prompt: `For "${currentPrompt}", create a comparison table. Provide: a 2-sentence summary, and 4-5 items to compare. Each item needs: name, 2-3 pros, 2-3 cons, and a rating 1-10.`,
-                        add_context_from_internet: true,
-                        response_json_schema: {
-                            type: "object",
-                            properties: {
-                                summary: { type: "string" },
-                                items: { type: "array", items: { type: "object", properties: { 
-                                    name: { type: "string" }, 
-                                    pros: { type: "array", items: { type: "string" } }, 
-                                    cons: { type: "array", items: { type: "string" } }, 
-                                    rating: { type: "number" } 
-                                } } }
+                        })
+                    );
+                } else if (responseFormat === 'tabled') {
+                    apiCalls.push(
+                        base44.integrations.Core.InvokeLLM({
+                            prompt: `For "${currentPrompt}", create a comparison table. Provide: a 2-sentence summary, and 4-5 items to compare. Each item needs: name, 2-3 pros, 2-3 cons, and a rating 1-10.`,
+                            add_context_from_internet: true,
+                            response_json_schema: {
+                                type: "object",
+                                properties: {
+                                    summary: { type: "string" },
+                                    items: { type: "array", items: { type: "object", properties: { 
+                                        name: { type: "string" }, 
+                                        pros: { type: "array", items: { type: "string" } }, 
+                                        cons: { type: "array", items: { type: "string" } }, 
+                                        rating: { type: "number" } 
+                                    } } }
+                                }
                             }
-                        }
-                    }) : responseFormat === 'reviews' ? base44.integrations.Core.InvokeLLM({
-                        prompt: `For "${currentPrompt}", generate exactly 5 realistic user reviews. Provide: a title for the reviews section, a brief intro (max 400 chars), and 5 reviews each with: reviewer name, rating 1-10, review text (2-3 sentences), and a realistic date from last 6 months.`,
-                        add_context_from_internet: true,
-                        response_json_schema: {
-                            type: "object",
-                            properties: {
-                                title: { type: "string" },
-                                intro: { type: "string" },
-                                reviews: { type: "array", items: { type: "object", properties: { 
-                                    name: { type: "string" }, 
-                                    rating: { type: "number" }, 
-                                    text: { type: "string" }, 
-                                    date: { type: "string" }
-                                } } }
+                        })
+                    );
+                } else if (responseFormat === 'reviews') {
+                    apiCalls.push(
+                        base44.integrations.Core.InvokeLLM({
+                            prompt: `For "${currentPrompt}", generate exactly 5 realistic user reviews. Provide: a title for the reviews section, a brief intro (max 400 chars), and 5 reviews each with: reviewer name, rating 1-10, review text (2-3 sentences), and a realistic date from last 6 months.`,
+                            add_context_from_internet: true,
+                            response_json_schema: {
+                                type: "object",
+                                properties: {
+                                    title: { type: "string" },
+                                    intro: { type: "string" },
+                                    reviews: { type: "array", items: { type: "object", properties: { 
+                                        name: { type: "string" }, 
+                                        rating: { type: "number" }, 
+                                        text: { type: "string" }, 
+                                        date: { type: "string" }
+                                    } } }
+                                }
                             }
-                        }
-                    }) : Promise.resolve(null)
-                ]);
+                        })
+                    );
+                }
+
+                const responses = await Promise.all(apiCalls);
+                const textResponse = responses[0];
 
                 // Only generate images for dynamic format
                 let generatedImages = [];
