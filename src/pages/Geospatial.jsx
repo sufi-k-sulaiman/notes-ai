@@ -446,43 +446,47 @@ export default function Geospatial() {
                                 placeholder="Select Countries"
                                 icon={Globe}
                             />
-                            <Button onClick={runAnalysis} disabled={loading} className="bg-white text-blue-600 hover:bg-white/90 gap-2">
-                                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Activity className="w-4 h-4" />}
-                                Run Analysis
-                            </Button>
                         </div>
                     </div>
                 </div>
 
-                {/* Selected Countries Display */}
-                {selectedCountries.length > 0 && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                        <p className="text-sm text-blue-700">
-                            <span className="font-semibold">Analyzing:</span> {selectedCountries.join(', ')}
-                        </p>
+                {/* Instruction or Selected Countries Display */}
+                {selectedCountries.length === 0 ? (
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
+                        <Globe className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-gray-700 mb-2">Select Countries to Begin</h3>
+                        <p className="text-sm text-gray-500">Choose one or more countries from the dropdown above to view infrastructure and resource data</p>
                     </div>
+                ) : (
+                    <>
+                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                            <p className="text-sm text-blue-700">
+                                <span className="font-semibold">Analyzing:</span> {selectedCountries.join(', ')}
+                            </p>
+                        </div>
+
+                        {/* Category Titles */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {CATEGORIES.map(cat => (
+                                <button
+                                    key={cat.id}
+                                    onClick={() => setActiveCategory(activeCategory === cat.id ? 'all' : cat.id)}
+                                    className={`p-4 rounded-xl border-2 transition-all text-left ${activeCategory === cat.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}
+                                >
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${cat.color}15` }}>
+                                            <cat.icon className="w-5 h-5" style={{ color: cat.color }} />
+                                        </div>
+                                        <h3 className="font-semibold text-gray-900 text-sm">{cat.name}</h3>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </>
                 )}
 
-                {/* Category Titles */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {CATEGORIES.map(cat => (
-                        <button
-                            key={cat.id}
-                            onClick={() => setActiveCategory(activeCategory === cat.id ? 'all' : cat.id)}
-                            className={`p-4 rounded-xl border-2 transition-all text-left ${activeCategory === cat.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}
-                        >
-                            <div className="flex items-center gap-3 mb-2">
-                                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${cat.color}15` }}>
-                                    <cat.icon className="w-5 h-5" style={{ color: cat.color }} />
-                                </div>
-                                <h3 className="font-semibold text-gray-900 text-sm">{cat.name}</h3>
-                            </div>
-                        </button>
-                    ))}
-                </div>
-
                 {/* Analysis Results */}
-                {analysisData && (
+                {selectedCountries.length > 0 && analysisData && (
                     <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6 border border-purple-100">
                         <h3 className="font-bold text-gray-900 mb-3">AI Analysis Summary</h3>
                         <p className="text-gray-700 mb-4">{analysisData.summary}</p>
@@ -525,7 +529,7 @@ export default function Geospatial() {
                 )}
 
                 {/* Main Dashboard */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {selectedCountries.length > 0 && <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Infrastructure Trend */}
                     <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-5">
                         <h3 className="font-semibold text-gray-900 mb-4">Infrastructure Development Index</h3>
@@ -584,10 +588,10 @@ export default function Geospatial() {
                             </ResponsiveContainer>
                         </div>
                     </div>
-                </div>
+                </div>}
 
                 {/* CORE INFRASTRUCTURE */}
-                {(activeCategory === 'all' || activeCategory === 'infrastructure') && (
+                {selectedCountries.length > 0 && (activeCategory === 'all' || activeCategory === 'infrastructure') && (
                     <CategorySection
                         title="Core Infrastructure"
                         description="Transportation, energy, water, telecommunications, and defense systems"
@@ -776,7 +780,7 @@ export default function Geospatial() {
                 )}
 
                 {/* NATURAL & STRATEGIC RESOURCES */}
-                {(activeCategory === 'all' || activeCategory === 'resources') && (
+                {selectedCountries.length > 0 && (activeCategory === 'all' || activeCategory === 'resources') && (
                     <CategorySection
                         title="Natural & Strategic Resources"
                         description="Energy reserves, minerals, agricultural resources, human capital, and biodiversity"
@@ -879,7 +883,7 @@ export default function Geospatial() {
                 )}
 
                 {/* NATIONAL ASSETS */}
-                {(activeCategory === 'all' || activeCategory === 'assets') && (
+                {selectedCountries.length > 0 && (activeCategory === 'all' || activeCategory === 'assets') && (
                     <CategorySection
                         title="National Assets"
                         description="Financial, industrial, cultural, intellectual, strategic reserves, and digital assets"
@@ -1009,7 +1013,7 @@ export default function Geospatial() {
                 )}
 
                 {/* GOVERNANCE & INSTITUTIONS */}
-                {(activeCategory === 'all' || activeCategory === 'governance') && (
+                {selectedCountries.length > 0 && (activeCategory === 'all' || activeCategory === 'governance') && (
                     <CategorySection
                         title="Governance & Institutions"
                         description="Legal system, political institutions, law enforcement, and public administration"
@@ -1071,7 +1075,7 @@ export default function Geospatial() {
                 )}
 
                 {/* ECONOMIC SYSTEMS */}
-                {(activeCategory === 'all' || activeCategory === 'economic') && (
+                {selectedCountries.length > 0 && (activeCategory === 'all' || activeCategory === 'economic') && (
                     <CategorySection
                         title="Economic Systems"
                         description="Financial infrastructure, trade networks, industrial base, and labor markets"
@@ -1153,7 +1157,7 @@ export default function Geospatial() {
                 )}
 
                 {/* SOCIAL & HUMAN DEVELOPMENT */}
-                {(activeCategory === 'all' || activeCategory === 'social') && (
+                {selectedCountries.length > 0 && (activeCategory === 'all' || activeCategory === 'social') && (
                     <CategorySection
                         title="Social & Human Development"
                         description="Education systems, healthcare, social safety nets, and cultural institutions"
@@ -1236,7 +1240,7 @@ export default function Geospatial() {
                 )}
 
                 {/* GLOBAL & STRATEGIC POSITIONING */}
-                {(activeCategory === 'all' || activeCategory === 'global') && (
+                {selectedCountries.length > 0 && (activeCategory === 'all' || activeCategory === 'global') && (
                     <CategorySection
                         title="Global & Strategic Positioning"
                         description="Diplomatic networks, geopolitical assets, soft power, and cyber infrastructure"
@@ -1321,7 +1325,7 @@ export default function Geospatial() {
                 )}
 
                 {/* ENVIRONMENTAL & SUSTAINABILITY */}
-                {(activeCategory === 'all' || activeCategory === 'environment') && (
+                {selectedCountries.length > 0 && (activeCategory === 'all' || activeCategory === 'environment') && (
                     <CategorySection
                         title="Environmental & Sustainability Assets"
                         description="Climate resilience, protected areas, and renewable energy potential"
