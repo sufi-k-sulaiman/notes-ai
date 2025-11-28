@@ -3,7 +3,7 @@ import {
     Brain, TrendingUp, Target, Sparkles, Play, Loader2, Activity, Lightbulb, Zap,
     LineChart, GitBranch, Shield, AlertTriangle, CheckCircle2, X, Maximize2, Minimize2,
     Sliders, BarChart3, RefreshCw, Layers, Clock, Cpu, ChevronRight, SlidersHorizontal,
-    FileText, Users, MessageSquare, Share2, Download, Settings2
+    FileText, Users, MessageSquare, Share2, Download, Settings2, Globe, Building2
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +22,8 @@ import HorizontalBarChart from '@/components/dashboard/HorizontalBarChart';
 import RadarChartCard from '@/components/dashboard/RadarChart';
 import StackedBarChart from '@/components/dashboard/StackedBarChart';
 import AreaChartWithMarkers from '@/components/dashboard/AreaChartWithMarkers';
+import MultiSelectDropdown from '@/components/intelligence/MultiSelectDropdown';
+import LineChartWithMarkers from '@/components/dashboard/LineChartWithMarkers';
 
 const MODULES = [
     { id: 'forecast', name: 'Forecasting', icon: LineChart, color: '#8B5CF6', desc: 'Time-series predictions with ARIMA, LSTM, Transformer models' },
@@ -34,6 +36,7 @@ const MODULES = [
 ];
 
 const DOMAINS = ['Economy', 'Health', 'Education', 'Defense', 'Trade', 'Labor', 'Tourism', 'Climate'];
+const COUNTRIES = ['USA', 'China', 'India', 'Germany', 'UK', 'France', 'Japan', 'Brazil', 'Canada', 'Australia', 'South Korea', 'Spain', 'Italy', 'Mexico', 'Indonesia', 'Netherlands', 'Saudi Arabia', 'Turkey', 'Switzerland', 'Poland'];
 const TIME_HORIZONS = ['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly', '5-Year', '10-Year'];
 const MODEL_TYPES = ['ARIMA', 'LSTM', 'Transformer', 'Ensemble', 'Gradient Boosting'];
 
@@ -47,7 +50,8 @@ export default function Intelligence() {
     }, []);
 
     const [activeTab, setActiveTab] = useState('forecast');
-    const [selectedDomain, setSelectedDomain] = useState('Economy');
+    const [selectedDomains, setSelectedDomains] = useState(['Economy']);
+    const [selectedCountries, setSelectedCountries] = useState(['USA', 'China']);
     const [timeHorizon, setTimeHorizon] = useState('Monthly');
     const [modelType, setModelType] = useState('Ensemble');
     const [query, setQuery] = useState('');
@@ -65,6 +69,8 @@ export default function Intelligence() {
     const [radarData, setRadarData] = useState([]);
     const [distributionData, setDistributionData] = useState([]);
     const [metrics, setMetrics] = useState({});
+    const [countryComparisonData, setCountryComparisonData] = useState([]);
+    const [timeSeriesData, setTimeSeriesData] = useState([]);
 
     // What-If Parameters
     const [interestRate, setInterestRate] = useState([3.5]);
@@ -75,13 +81,15 @@ export default function Intelligence() {
     // Load dynamic data based on domain
     useEffect(() => {
         loadDynamicData();
-    }, [selectedDomain, timeHorizon, activeTab]);
+    }, [selectedDomains, selectedCountries, timeHorizon, activeTab]);
 
     const loadDynamicData = async () => {
         setDataLoading(true);
         try {
+            const domains = selectedDomains.join(', ');
+            const countries = selectedCountries.join(', ');
             const response = await base44.integrations.Core.InvokeLLM({
-                prompt: `Generate realistic analytics data for ${selectedDomain} sector intelligence analysis.
+                prompt: `Generate realistic analytics data for ${domains} sectors across ${countries}.
 Time horizon: ${timeHorizon}. Analysis type: ${activeTab}.
 
 Provide JSON with:
@@ -90,7 +98,9 @@ Provide JSON with:
 3. opportunityData: 5 growth opportunities with potential (0-100) and feasibility (0-100)
 4. radarData: 6 performance dimensions each scored 0-100
 5. distributionData: 5 segments with percentage breakdown (must sum to 100)
-6. metrics: accuracy (%), confidence (%), trend (up/down/stable), volatility (low/medium/high)`,
+6. metrics: accuracy (%), confidence (%), trend (up/down/stable), volatility (low/medium/high)
+7. countryComparisonData: 6 countries with score values for comparison
+8. timeSeriesData: 10 time periods with multiple trend lines`,
                 add_context_from_internet: true,
                 response_json_schema: {
                     type: "object",
@@ -159,6 +169,28 @@ Provide JSON with:
                                 trend: { type: "string" }, 
                                 volatility: { type: "string" } 
                             } 
+                        },
+                        countryComparisonData: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    country: { type: "string" },
+                                    score: { type: "number" }
+                                }
+                            }
+                        },
+                        timeSeriesData: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    period: { type: "string" },
+                                    trend1: { type: "number" },
+                                    trend2: { type: "number" },
+                                    trend3: { type: "number" }
+                                }
+                            }
                         }
                     }
                 }
@@ -171,6 +203,8 @@ Provide JSON with:
                 setRadarData(response.radarData || []);
                 setDistributionData(response.distributionData || []);
                 setMetrics(response.metrics || {});
+                setCountryComparisonData(response.countryComparisonData || []);
+                setTimeSeriesData(response.timeSeriesData || []);
             }
         } catch (error) {
             console.error('Failed to load dynamic data:', error);
@@ -223,6 +257,16 @@ Provide JSON with:
             { name: 'Other', value: 5 },
         ]);
         setMetrics({ accuracy: 94, confidence: 87, trend: 'up', volatility: 'medium' });
+        setCountryComparisonData(selectedCountries.slice(0, 6).map(country => ({
+            country,
+            score: Math.round(50 + Math.random() * 45)
+        })));
+        setTimeSeriesData(Array.from({ length: 10 }, (_, i) => ({
+            period: `T${i + 1}`,
+            trend1: Math.round(50 + Math.random() * 40),
+            trend2: Math.round(60 + Math.random() * 35),
+            trend3: Math.round(45 + Math.random() * 45)
+        })));
     };
 
     const runAnalysis = async () => {
@@ -230,7 +274,7 @@ Provide JSON with:
         setLoading(true);
         try {
             const response = await base44.integrations.Core.InvokeLLM({
-                prompt: `Perform ${activeTab} analysis for ${selectedDomain} sector: "${query}"
+                prompt: `Perform ${activeTab} analysis for ${selectedDomains.join(', ')} sectors across ${selectedCountries.join(', ')}: "${query}"
 Time horizon: ${timeHorizon}, Model: ${modelType}
 
 Provide:
@@ -266,6 +310,13 @@ Provide:
 
     const activeModule = MODULES.find(m => m.id === activeTab);
     const gdpProjection = (2.5 + (interestRate[0] * -0.2) + (populationGrowth[0] * 0.3) + (tradeFlows[0] * 0.02) - (energyPrices[0] * 0.01)).toFixed(1);
+    const [comparisonData, setComparisonData] = useState([
+        { name: '2020', value1: 30, value2: 25, value3: 20 },
+        { name: '2021', value1: 35, value2: 30, value3: 25 },
+        { name: '2022', value1: 40, value2: 35, value3: 30 },
+        { name: '2023', value1: 50, value2: 40, value3: 35 },
+        { name: '2024', value1: 55, value2: 45, value3: 38 }
+    ]);
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -388,7 +439,7 @@ Provide:
                                 />
                                 <MetricCard 
                                     title="Trend Direction" 
-                                    subtitle={`${selectedDomain} Outlook`} 
+                                    subtitle={`${selectedDomains.join(', ')} Outlook`} 
                                     value={metrics.trend === 'up' ? 'Bullish' : metrics.trend === 'down' ? 'Bearish' : 'Stable'} 
                                     change={metrics.volatility || 'Medium'} 
                                     changeType={metrics.trend === 'up' ? 'positive' : 'negative'} 
@@ -430,7 +481,7 @@ Provide:
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <PieChartCard 
-                                            title={`${selectedDomain} Distribution`} 
+                                            title={`${selectedDomains.join(' & ')} Distribution`} 
                                             variant="donut" 
                                             data={distributionData} 
                                             colors={COLORS}
@@ -438,6 +489,26 @@ Provide:
                                         <HorizontalBarChart 
                                             title="Performance by Category" 
                                             data={opportunityData.map(d => ({ name: d.name, value1: d.potential, value2: d.feasibility }))} 
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="bg-white rounded-xl border border-gray-200 p-5">
+                                            <h3 className="font-semibold text-gray-900 mb-4">Country Comparison</h3>
+                                            <div className="h-64">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={countryComparisonData}>
+                                                        <XAxis dataKey="country" fontSize={10} />
+                                                        <YAxis />
+                                                        <Tooltip />
+                                                        <Bar dataKey="score" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
+                                        <LineChartWithMarkers
+                                            title="Multi-Trend Analysis"
+                                            data={timeSeriesData}
+                                            color="#8B5CF6"
                                         />
                                     </div>
                                 </>
@@ -472,6 +543,27 @@ Provide:
                                             />
                                         ))}
                                     </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="bg-white rounded-xl border border-gray-200 p-5">
+                                            <h3 className="font-semibold text-gray-900 mb-4">Risk Radar</h3>
+                                            <div className="h-64">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <RadarChart data={radarData}>
+                                                        <PolarGrid />
+                                                        <PolarAngleAxis dataKey="dimension" fontSize={10} />
+                                                        <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                                                        <Radar name="Current" dataKey="current" stroke="#EF4444" fill="#EF4444" fillOpacity={0.3} />
+                                                        <Legend />
+                                                    </RadarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
+                                        <LineChartWithMarkers
+                                            title="Risk Trends Over Time"
+                                            data={timeSeriesData}
+                                            color="#EF4444"
+                                        />
+                                    </div>
                                 </>
                             )}
 
@@ -505,6 +597,26 @@ Provide:
                                         title="Opportunity Feasibility Matrix" 
                                         data={opportunityData.map(d => ({ name: d.name, value1: d.potential, value2: d.feasibility }))} 
                                     />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="bg-white rounded-xl border border-gray-200 p-5">
+                                            <h3 className="font-semibold text-gray-900 mb-4">Country Analysis</h3>
+                                            <div className="h-64">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={countryComparisonData} layout="vertical">
+                                                        <XAxis type="number" domain={[0, 100]} />
+                                                        <YAxis type="category" dataKey="country" width={80} fontSize={10} />
+                                                        <Tooltip />
+                                                        <Bar dataKey="score" fill="#EC4899" radius={[0, 4, 4, 0]} />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
+                                        <StackedBarChart
+                                            title="Opportunity Timeline"
+                                            data={comparisonData}
+                                            colors={COLORS}
+                                        />
+                                    </div>
                                 </>
                             )}
 
@@ -570,6 +682,22 @@ Provide:
                                             bgColor="#10B981" 
                                         />
                                     </div>
+                                    <div className="bg-white rounded-xl border border-gray-200 p-5">
+                                        <h3 className="font-semibold text-gray-900 mb-4">Parameter Impact Trends</h3>
+                                        <div className="h-64">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <AreaChart data={timeSeriesData}>
+                                                    <XAxis dataKey="period" fontSize={10} />
+                                                    <YAxis fontSize={11} />
+                                                    <Tooltip />
+                                                    <Legend />
+                                                    <Area type="monotone" dataKey="trend1" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.3} name="GDP" />
+                                                    <Area type="monotone" dataKey="trend2" stroke="#10B981" fill="#10B981" fillOpacity={0.3} name="Employment" />
+                                                    <Area type="monotone" dataKey="trend3" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.3} name="Inflation" />
+                                                </AreaChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
                                 </>
                             )}
 
@@ -593,6 +721,19 @@ Provide:
                                             data={distributionData} 
                                             colors={COLORS}
                                         />
+                                    </div>
+                                    <div className="bg-white rounded-xl border border-gray-200 p-5">
+                                        <h3 className="font-semibold text-gray-900 mb-4">Cross-Country Simulation</h3>
+                                        <div className="h-64">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <BarChart data={countryComparisonData}>
+                                                    <XAxis dataKey="country" fontSize={10} />
+                                                    <YAxis />
+                                                    <Tooltip />
+                                                    <Bar dataKey="score" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        </div>
                                     </div>
                                 </>
                             )}
@@ -624,6 +765,26 @@ Provide:
                                             title="Impact Distribution" 
                                             variant="pie" 
                                             data={distributionData} 
+                                            colors={COLORS}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="bg-white rounded-xl border border-gray-200 p-5">
+                                            <h3 className="font-semibold text-gray-900 mb-4">Country Impact Scores</h3>
+                                            <div className="h-64">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={countryComparisonData} layout="vertical">
+                                                        <XAxis type="number" />
+                                                        <YAxis type="category" dataKey="country" width={70} fontSize={10} />
+                                                        <Tooltip />
+                                                        <Bar dataKey="score" fill="#0EA5E9" radius={[0, 4, 4, 0]} />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
+                                        <StackedBarChart
+                                            title="Historical Impact Trends"
+                                            data={comparisonData}
                                             colors={COLORS}
                                         />
                                     </div>
@@ -669,6 +830,26 @@ Provide:
                                             ]} 
                                         />
                                     </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <LineChartWithMarkers
+                                            title="Scenario Timeline"
+                                            data={timeSeriesData}
+                                            color="#10B981"
+                                        />
+                                        <div className="bg-white rounded-xl border border-gray-200 p-5">
+                                            <h3 className="font-semibold text-gray-900 mb-4">Geographic Distribution</h3>
+                                            <div className="h-64">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={countryComparisonData}>
+                                                        <XAxis dataKey="country" fontSize={10} />
+                                                        <YAxis />
+                                                        <Tooltip />
+                                                        <Bar dataKey="score" fill="#10B981" radius={[4, 4, 0, 0]} />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </>
                             )}
 
@@ -679,7 +860,7 @@ Provide:
                                     <span className="font-semibold text-gray-900">Custom Analysis Query</span>
                                 </div>
                                 <Textarea value={query} onChange={(e) => setQuery(e.target.value)}
-                                    placeholder={`e.g., "Forecast ${selectedDomain.toLowerCase()} indicators for ${timeHorizon.toLowerCase()} horizon using ${modelType} model..."`}
+                                    placeholder={`e.g., "Forecast ${selectedDomains.join(' and ').toLowerCase()} indicators for ${selectedCountries.join(', ')} using ${modelType} model..."`}
                                     className="min-h-[80px] mb-3" />
                                 <Button onClick={runAnalysis} disabled={loading || !query.trim()} className="bg-purple-600 hover:bg-purple-700">
                                     {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Play className="w-4 h-4 mr-2" />}
@@ -773,7 +954,7 @@ Provide:
                                         {activeModule && <activeModule.icon className="w-6 h-6" />}
                                         <div>
                                             <h2 className="text-lg font-bold">{activeModule?.name} Results</h2>
-                                            <p className="text-white/80 text-sm">{selectedDomain} • {timeHorizon} • {modelType}</p>
+                                            <p className="text-white/80 text-sm">{selectedDomains.join(', ')} • {selectedCountries.join(', ')} • {timeHorizon} • {modelType}</p>
                                         </div>
                                     </div>
                                     <div className="flex gap-2">
