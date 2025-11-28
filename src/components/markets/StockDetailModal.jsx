@@ -2079,82 +2079,80 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
             case 'investor-relations':
                 const irData = sectionData['investor-relations'] || {};
                 const reportTabs = [
-                    { id: 'annual', label: 'Annual Reports', count: 3, icon: FileText, color: 'purple' },
-                    { id: 'quarterly', label: 'Quarterly Reports', count: 4, icon: FileText, color: 'blue' },
-                    { id: 'presentations', label: 'Investor Presentations', count: 3, icon: Play, color: 'cyan' },
-                    { id: 'earnings', label: 'Earnings Releases', count: 4, icon: TrendingUp, color: 'green' },
-                    { id: 'pnl', label: 'P&L Statements', count: 3, icon: DollarSign, color: 'orange' },
-                    { id: 'fiscal', label: 'Fiscal Year Data', count: 3, icon: Calendar, color: 'indigo' },
+                    { id: 'annual', label: 'Annual Reports', count: 3, icon: FileText },
+                    { id: 'quarterly', label: 'Quarterly Reports', count: 4, icon: FileText },
+                    { id: 'presentations', label: 'Investor Presentations', count: 3, icon: Play },
+                    { id: 'earnings', label: 'Earnings Releases', count: 4, icon: TrendingUp },
+                    { id: 'pnl', label: 'P&L Statements', count: 3, icon: DollarSign },
+                    { id: 'fiscal', label: 'Fiscal Year Data', count: 3, icon: Calendar },
                 ];
                 
                 return (
-                    <div className="space-y-6">
-                        {/* Header with company info */}
-                        <div className="bg-[#1a1a2e] rounded-2xl p-6 text-white">
+                    <div className="space-y-4">
+                        {/* Header */}
+                        <div className="bg-white rounded-xl border border-gray-200 p-5">
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 rounded-xl bg-purple-600/30 flex items-center justify-center">
-                                        <Building className="w-7 h-7 text-purple-300" />
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
+                                        <Building className="w-6 h-6 text-purple-600" />
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold">{stock.name} Investor Relations</h2>
-                                        <p className="text-gray-400">{stock.ticker} • {stock.sector}</p>
+                                        <h2 className="text-lg font-bold text-gray-900">{stock.name} Investor Relations</h2>
+                                        <p className="text-sm text-gray-500">{stock.ticker} • {stock.sector}</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-sm text-gray-400">Fiscal Year End</p>
-                                    <p className="text-lg font-semibold">{irData.fiscalYearEnd || 'December 31'}</p>
-                                    <p className="text-xs text-gray-500 mt-1">Next Earnings: {irData.nextEarnings || 'January 2025'}</p>
+                                    <p className="text-xs text-gray-500">Fiscal Year End</p>
+                                    <p className="text-sm font-semibold text-gray-900">{irData.fiscalYearEnd || 'December 31'}</p>
+                                    <p className="text-xs text-gray-400 mt-0.5">Next Earnings: {irData.nextEarnings || 'January 2025'}</p>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Report Type Tabs */}
-                        <div className="bg-[#1a1a2e] rounded-xl p-2 flex gap-2 overflow-x-auto">
+                        {/* Tabs */}
+                        <div className="flex gap-1 overflow-x-auto pb-1">
                             {reportTabs.map(tab => (
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveReportTab(tab.id)}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                                         activeReportTab === tab.id 
-                                            ? `bg-${tab.color}-600 text-white` 
-                                            : 'text-gray-400 hover:text-white hover:bg-white/10'
+                                            ? 'bg-purple-600 text-white' 
+                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                     }`}
-                                    style={activeReportTab === tab.id ? { backgroundColor: tab.color === 'purple' ? '#9333ea' : tab.color === 'blue' ? '#2563eb' : tab.color === 'cyan' ? '#0891b2' : tab.color === 'green' ? '#16a34a' : tab.color === 'orange' ? '#ea580c' : '#4f46e5' } : {}}
                                 >
                                     <tab.icon className="w-4 h-4" />
                                     {tab.label}
-                                    <span className={`px-1.5 py-0.5 rounded text-xs ${activeReportTab === tab.id ? 'bg-white/20' : 'bg-white/10'}`}>
+                                    <span className={`px-1.5 py-0.5 rounded text-xs ${activeReportTab === tab.id ? 'bg-white/20' : 'bg-gray-200'}`}>
                                         {tab.count}
                                     </span>
                                 </button>
                             ))}
                         </div>
 
-                        {/* Report Content */}
-                        <div className="bg-[#1a1a2e] rounded-2xl p-6">
+                        {/* Content */}
+                        <div className="bg-white rounded-xl border border-gray-200 p-5">
                             {activeReportTab === 'annual' && (
                                 <>
                                     <div className="flex items-center gap-2 mb-4">
-                                        <FileText className="w-5 h-5 text-purple-400" />
-                                        <h3 className="font-semibold text-white">Annual Reports</h3>
+                                        <FileText className="w-5 h-5 text-purple-600" />
+                                        <h3 className="font-semibold text-gray-900">Annual Reports</h3>
                                     </div>
-                                    <div className="space-y-3">
+                                    <div className="space-y-2">
                                         {(irData.annualReports || [
-                                            { title: `${stock.ticker} Annual Report 2024 (10-K)`, date: 'March 2025', size: '4.2 MB', description: 'Full year financial results and business overview' },
-                                            { title: `${stock.ticker} Annual Report 2023 (10-K)`, date: 'March 2024', size: '3.8 MB', description: 'Complete fiscal year financial statements' },
-                                            { title: `${stock.ticker} Annual Report 2022 (10-K)`, date: 'March 2023', size: '3.5 MB', description: 'Annual business and financial review' }
+                                            { title: `Annual Report 2024`, date: 'February 28, 2025', description: `Comprehensive financial and operational overview for the fiscal year ending December 31, 2024.` },
+                                            { title: `Annual Report 2023`, date: 'February 28, 2024', description: `Comprehensive financial and operational overview for the fiscal year ending December 31, 2023.` },
+                                            { title: `Annual Report 2022`, date: 'February 28, 2023', description: `Comprehensive financial and operational overview for the fiscal year ending December 31, 2022.` }
                                         ]).map((r, i) => (
-                                            <div key={i} className="flex items-center gap-4 p-4 bg-[#252542] rounded-xl hover:bg-[#2a2a4a] cursor-pointer transition-colors">
-                                                <div className="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center">
-                                                    <FileText className="w-5 h-5 text-purple-400" />
+                                            <div key={i} className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 cursor-pointer transition-colors">
+                                                <div className="w-9 h-9 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                    <FileText className="w-4 h-4 text-purple-600" />
                                                 </div>
-                                                <div className="flex-1">
-                                                    <p className="font-medium text-white">{r.title}</p>
-                                                    <p className="text-sm text-gray-400">{r.date} • {r.size}</p>
-                                                    <p className="text-xs text-gray-500 mt-1">{r.description}</p>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-medium text-gray-900">{r.title}</p>
+                                                    <p className="text-sm text-gray-500">{r.date} •</p>
+                                                    <p className="text-xs text-gray-400 mt-1">{r.description}</p>
                                                 </div>
-                                                <Download className="w-5 h-5 text-gray-500 hover:text-purple-400" />
                                             </div>
                                         ))}
                                     </div>
@@ -2164,26 +2162,25 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             {activeReportTab === 'quarterly' && (
                                 <>
                                     <div className="flex items-center gap-2 mb-4">
-                                        <FileText className="w-5 h-5 text-blue-400" />
-                                        <h3 className="font-semibold text-white">Quarterly Reports</h3>
+                                        <FileText className="w-5 h-5 text-blue-600" />
+                                        <h3 className="font-semibold text-gray-900">Quarterly Reports</h3>
                                     </div>
-                                    <div className="space-y-3">
+                                    <div className="space-y-2">
                                         {(irData.quarterlyReports || [
                                             { title: `Q4 2024 Report (10-Q)`, date: 'January 2025', description: 'Fourth quarter financial results' },
                                             { title: `Q3 2024 Report (10-Q)`, date: 'October 2024', description: 'Third quarter financial results' },
                                             { title: `Q2 2024 Report (10-Q)`, date: 'July 2024', description: 'Second quarter financial results' },
                                             { title: `Q1 2024 Report (10-Q)`, date: 'April 2024', description: 'First quarter financial results' }
                                         ]).map((r, i) => (
-                                            <div key={i} className="flex items-center gap-4 p-4 bg-[#252542] rounded-xl hover:bg-[#2a2a4a] cursor-pointer transition-colors">
-                                                <div className="w-10 h-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
-                                                    <FileText className="w-5 h-5 text-blue-400" />
+                                            <div key={i} className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 cursor-pointer transition-colors">
+                                                <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                    <FileText className="w-4 h-4 text-blue-600" />
                                                 </div>
-                                                <div className="flex-1">
-                                                    <p className="font-medium text-white">{r.title}</p>
-                                                    <p className="text-sm text-gray-400">{r.date}</p>
-                                                    <p className="text-xs text-gray-500 mt-1">{r.description}</p>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-medium text-gray-900">{r.title}</p>
+                                                    <p className="text-sm text-gray-500">{r.date} •</p>
+                                                    <p className="text-xs text-gray-400 mt-1">{r.description}</p>
                                                 </div>
-                                                <Download className="w-5 h-5 text-gray-500 hover:text-blue-400" />
                                             </div>
                                         ))}
                                     </div>
@@ -2193,24 +2190,24 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             {activeReportTab === 'presentations' && (
                                 <>
                                     <div className="flex items-center gap-2 mb-4">
-                                        <Play className="w-5 h-5 text-cyan-400" />
-                                        <h3 className="font-semibold text-white">Investor Presentations</h3>
+                                        <Play className="w-5 h-5 text-cyan-600" />
+                                        <h3 className="font-semibold text-gray-900">Investor Presentations</h3>
                                     </div>
-                                    <div className="space-y-3">
+                                    <div className="space-y-2">
                                         {(irData.investorPresentations || [
                                             { title: `Investor Day 2024`, date: 'November 2024' },
                                             { title: `Capital Markets Day`, date: 'September 2024' },
                                             { title: `Technology Summit Presentation`, date: 'June 2024' }
                                         ]).map((r, i) => (
-                                            <div key={i} className="flex items-center gap-4 p-4 bg-[#252542] rounded-xl hover:bg-[#2a2a4a] cursor-pointer transition-colors">
-                                                <div className="w-10 h-10 rounded-lg bg-cyan-600/20 flex items-center justify-center">
-                                                    <Play className="w-5 h-5 text-cyan-400" />
+                                            <div key={i} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 cursor-pointer transition-colors">
+                                                <div className="w-9 h-9 rounded-lg bg-cyan-100 flex items-center justify-center flex-shrink-0">
+                                                    <Play className="w-4 h-4 text-cyan-600" />
                                                 </div>
-                                                <div className="flex-1">
-                                                    <p className="font-medium text-white">{r.title}</p>
-                                                    <p className="text-sm text-gray-400">{r.date}</p>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-medium text-gray-900">{r.title}</p>
+                                                    <p className="text-sm text-gray-500">{r.date}</p>
                                                 </div>
-                                                <ExternalLink className="w-5 h-5 text-gray-500 hover:text-cyan-400" />
+                                                <ExternalLink className="w-4 h-4 text-gray-400" />
                                             </div>
                                         ))}
                                     </div>
@@ -2220,25 +2217,25 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             {activeReportTab === 'earnings' && (
                                 <>
                                     <div className="flex items-center gap-2 mb-4">
-                                        <TrendingUp className="w-5 h-5 text-green-400" />
-                                        <h3 className="font-semibold text-white">Earnings Releases</h3>
+                                        <TrendingUp className="w-5 h-5 text-green-600" />
+                                        <h3 className="font-semibold text-gray-900">Earnings Releases</h3>
                                     </div>
-                                    <div className="space-y-3">
+                                    <div className="space-y-2">
                                         {(irData.earningsReleases || [
                                             { title: `Q4 2024 Earnings Release`, date: 'January 28, 2025' },
                                             { title: `Q3 2024 Earnings Release`, date: 'October 25, 2024' },
                                             { title: `Q2 2024 Earnings Release`, date: 'July 24, 2024' },
                                             { title: `Q1 2024 Earnings Release`, date: 'April 25, 2024' }
                                         ]).map((r, i) => (
-                                            <div key={i} className="flex items-center gap-4 p-4 bg-[#252542] rounded-xl hover:bg-[#2a2a4a] cursor-pointer transition-colors">
-                                                <div className="w-10 h-10 rounded-lg bg-green-600/20 flex items-center justify-center">
-                                                    <TrendingUp className="w-5 h-5 text-green-400" />
+                                            <div key={i} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 cursor-pointer transition-colors">
+                                                <div className="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
+                                                    <TrendingUp className="w-4 h-4 text-green-600" />
                                                 </div>
-                                                <div className="flex-1">
-                                                    <p className="font-medium text-white">{r.title}</p>
-                                                    <p className="text-sm text-gray-400">{r.date}</p>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-medium text-gray-900">{r.title}</p>
+                                                    <p className="text-sm text-gray-500">{r.date}</p>
                                                 </div>
-                                                <Download className="w-5 h-5 text-gray-500 hover:text-green-400" />
+                                                <Download className="w-4 h-4 text-gray-400" />
                                             </div>
                                         ))}
                                     </div>
@@ -2248,24 +2245,24 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             {activeReportTab === 'pnl' && (
                                 <>
                                     <div className="flex items-center gap-2 mb-4">
-                                        <DollarSign className="w-5 h-5 text-orange-400" />
-                                        <h3 className="font-semibold text-white">P&L Statements</h3>
+                                        <DollarSign className="w-5 h-5 text-orange-600" />
+                                        <h3 className="font-semibold text-gray-900">P&L Statements</h3>
                                     </div>
-                                    <div className="space-y-3">
+                                    <div className="space-y-2">
                                         {(irData.plStatements || [
                                             { year: 'FY 2024', revenue: '$98.5B', netIncome: '$24.2B' },
                                             { year: 'FY 2023', revenue: '$88.2B', netIncome: '$21.8B' },
                                             { year: 'FY 2022', revenue: '$79.5B', netIncome: '$19.4B' }
                                         ]).map((r, i) => (
-                                            <div key={i} className="flex items-center gap-4 p-4 bg-[#252542] rounded-xl">
-                                                <div className="w-10 h-10 rounded-lg bg-orange-600/20 flex items-center justify-center">
-                                                    <DollarSign className="w-5 h-5 text-orange-400" />
+                                            <div key={i} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                                                <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                                                    <DollarSign className="w-4 h-4 text-orange-600" />
                                                 </div>
-                                                <div className="flex-1">
-                                                    <p className="font-medium text-white">{r.year} P&L Statement</p>
-                                                    <p className="text-sm text-gray-400">Revenue: {r.revenue} • Net Income: {r.netIncome}</p>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-medium text-gray-900">{r.year} P&L Statement</p>
+                                                    <p className="text-sm text-gray-500">Revenue: {r.revenue} • Net Income: {r.netIncome}</p>
                                                 </div>
-                                                <Download className="w-5 h-5 text-gray-500 hover:text-orange-400" />
+                                                <Download className="w-4 h-4 text-gray-400" />
                                             </div>
                                         ))}
                                     </div>
@@ -2275,17 +2272,17 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             {activeReportTab === 'fiscal' && (
                                 <>
                                     <div className="flex items-center gap-2 mb-4">
-                                        <Calendar className="w-5 h-5 text-indigo-400" />
-                                        <h3 className="font-semibold text-white">Fiscal Year Data</h3>
+                                        <Calendar className="w-5 h-5 text-indigo-600" />
+                                        <h3 className="font-semibold text-gray-900">Fiscal Year Data</h3>
                                     </div>
                                     <div className="overflow-x-auto">
                                         <table className="w-full">
                                             <thead>
-                                                <tr className="border-b border-gray-700">
-                                                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Year</th>
-                                                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Revenue</th>
-                                                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Earnings</th>
-                                                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Assets</th>
+                                                <tr className="border-b border-gray-200">
+                                                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Year</th>
+                                                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">Revenue</th>
+                                                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">Earnings</th>
+                                                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">Assets</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -2294,11 +2291,11 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                                     { year: 'FY 2023', revenue: '$88.2B', earnings: '$21.8B', assets: '$385B' },
                                                     { year: 'FY 2022', revenue: '$79.5B', earnings: '$19.4B', assets: '$352B' }
                                                 ]).map((fy, i) => (
-                                                    <tr key={i} className="border-b border-gray-700/50">
-                                                        <td className="py-3 px-4 font-medium text-white">{fy.year}</td>
-                                                        <td className="py-3 px-4 text-right text-gray-300">{fy.revenue}</td>
-                                                        <td className="py-3 px-4 text-right text-green-400 font-medium">{fy.earnings}</td>
-                                                        <td className="py-3 px-4 text-right text-gray-300">{fy.assets}</td>
+                                                    <tr key={i} className="border-b border-gray-100">
+                                                        <td className="py-3 px-4 font-medium text-gray-900">{fy.year}</td>
+                                                        <td className="py-3 px-4 text-right text-gray-700">{fy.revenue}</td>
+                                                        <td className="py-3 px-4 text-right text-green-600 font-medium">{fy.earnings}</td>
+                                                        <td className="py-3 px-4 text-right text-gray-700">{fy.assets}</td>
                                                     </tr>
                                                 ))}
                                             </tbody>
