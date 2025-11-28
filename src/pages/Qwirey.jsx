@@ -8,6 +8,21 @@ import { LOGO_URL } from '@/components/NavigationConfig';
 import ReactMarkdown from 'react-markdown';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import InfoCard from '@/components/dashboard/InfoCard';
+import BrowserVisitorsCard from '@/components/dashboard/BrowserVisitorsCard';
+import CountryVisitorsCard from '@/components/dashboard/CountryVisitorsCard';
+import SocialMediaCard from '@/components/dashboard/SocialMediaCard';
+import RankingPodium from '@/components/dashboard/RankingPodium';
+import TimelineCard from '@/components/dashboard/TimelineCard';
+import ProgressListCard from '@/components/dashboard/ProgressListCard';
+import NotificationList from '@/components/dashboard/NotificationList';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 import { toast } from 'sonner';
 import { ERROR_CODES, getErrorCode } from '@/components/ErrorDisplay';
 
@@ -503,14 +518,77 @@ export default function Qwirey() {
                                         <ReactMarkdown>{result.text}</ReactMarkdown>
                                     </div>
                                     
-                                    {/* Dynamic format: Show info cards for key insights */}
+                                    {/* Dynamic format: Show dashboard components */}
                                     {responseFormat === 'dynamic' && result.type === 'qwirey' && (
-                                        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-3">
-                                            <InfoCard content="AI-powered insights" bgColor="#8b5cf6" />
-                                            <InfoCard content="Real-time web data" bgColor="#6366f1" />
-                                            <InfoCard content="Multi-source analysis" bgColor="#3b82f6" />
+                                        <div className="mt-6 space-y-6">
+                                            {/* Info Cards Row */}
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                <InfoCard content="AI-powered insights" bgColor="#8b5cf6" />
+                                                <InfoCard content="Real-time web data" bgColor="#6366f1" />
+                                                <InfoCard content="Multi-source analysis" bgColor="#3b82f6" />
+                                            </div>
+                                            
+                                            {/* Visitors & Social Row */}
+                                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                                                <BrowserVisitorsCard />
+                                                <CountryVisitorsCard />
+                                                <SocialMediaCard />
+                                            </div>
+                                            
+                                            {/* Rankings Row */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <RankingPodium title="Top Results" data={[{ name: '1ST', value: 15420, position: 1 }, { name: '2ND', value: 12350, position: 2 }, { name: '3RD', value: 9800, position: 3 }]} />
+                                                <RankingPodium title="Key Metrics" data={[{ name: '1ST', value: 8500, position: 1 }, { name: '2ND', value: 6200, position: 2 }, { name: '3RD', value: 4100, position: 3 }]} colors={['#50C8E8', '#8BC34A', '#F59E0B']} />
+                                            </div>
+                                            
+                                            {/* Activity & Progress Row */}
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                <TimelineCard />
+                                                <ProgressListCard />
+                                                <NotificationList />
+                                            </div>
                                         </div>
                                     )}
+                                    
+                                    {/* Tabled format: Parse and render proper table */}
+                                    {responseFormat === 'tabled' && result.text && (() => {
+                                        // Parse markdown table from response
+                                        const lines = result.text.split('\n');
+                                        const tableLines = lines.filter(line => line.includes('|') && !line.match(/^[\s|-]+$/));
+                                        const headerLine = tableLines[0];
+                                        const dataLines = tableLines.slice(1);
+                                        
+                                        if (headerLine && dataLines.length > 0) {
+                                            const headers = headerLine.split('|').map(h => h.trim()).filter(Boolean);
+                                            const rows = dataLines.map(line => 
+                                                line.split('|').map(cell => cell.trim()).filter(Boolean)
+                                            );
+                                            
+                                            return (
+                                                <div className="mt-6 rounded-xl border border-gray-200 overflow-hidden">
+                                                    <Table>
+                                                        <TableHeader>
+                                                            <TableRow className="bg-purple-50">
+                                                                {headers.map((header, i) => (
+                                                                    <TableHead key={i} className="font-semibold text-purple-900">{header}</TableHead>
+                                                                ))}
+                                                            </TableRow>
+                                                        </TableHeader>
+                                                        <TableBody>
+                                                            {rows.map((row, i) => (
+                                                                <TableRow key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                                                    {row.map((cell, j) => (
+                                                                        <TableCell key={j} className="text-gray-700">{cell}</TableCell>
+                                                                    ))}
+                                                                </TableRow>
+                                                            ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                </div>
+                                            );
+                                        }
+                                        return null;
+                                    })()}
                                 </div>
 
                                 {result.type === 'qwirey' && (
