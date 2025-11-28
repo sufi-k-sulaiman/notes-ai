@@ -466,7 +466,7 @@ Use short sentences for better pacing. Do NOT use any markdown formatting.`,
                             <Radio className="w-5 h-5 text-purple-600" />
                         </div>
                         <div>
-                            <span className="text-gray-900 font-bold text-lg">SearchPods</span>
+                            <span className="text-gray-900 font-bold text-2xl md:text-3xl">SearchPods</span>
                             <p className="text-xs text-gray-500">Generative Podcast</p>
                         </div>
                     </div>

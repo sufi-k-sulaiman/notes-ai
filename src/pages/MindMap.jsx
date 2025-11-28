@@ -543,7 +543,7 @@ export default function MindMapPage() {
                             <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
                                 <Network className="w-5 h-5 text-purple-600" />
                             </div>
-                            <h1 className="text-xl font-bold text-gray-900">Neural MindMaps</h1>
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Neural MindMaps</h1>
                         </div>
 
                         <div className="flex gap-2 flex-wrap">
