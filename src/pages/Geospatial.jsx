@@ -2755,16 +2755,5 @@ const _LEGACY_HIDDEN_CODE = false && (
                                     </CategorySection>
                                     )}
                                     </>
+                                    )
                                     )}
-                                    </div>
-
-                <CountrySelectModal
-                    isOpen={showCountryModal}
-                    onClose={() => setShowCountryModal(false)}
-                    selectedCountry={selectedCountry}
-                    onSelect={setSelectedCountry}
-                    title="Select Country for Analysis"
-                />
-                                    </div>
-                                    );
-                                    }
