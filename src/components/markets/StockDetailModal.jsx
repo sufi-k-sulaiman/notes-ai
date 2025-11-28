@@ -2075,6 +2075,241 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                     </div>
                 );
 
+            case 'investor-relations':
+                const irData = sectionData['investor-relations'] || {};
+                const reportTabs = [
+                    { id: 'annual', label: 'Annual Reports', count: 3, icon: FileText, color: 'purple' },
+                    { id: 'quarterly', label: 'Quarterly Reports', count: 4, icon: FileText, color: 'blue' },
+                    { id: 'presentations', label: 'Investor Presentations', count: 3, icon: Play, color: 'cyan' },
+                    { id: 'earnings', label: 'Earnings Releases', count: 4, icon: TrendingUp, color: 'green' },
+                    { id: 'pnl', label: 'P&L Statements', count: 3, icon: DollarSign, color: 'orange' },
+                    { id: 'fiscal', label: 'Fiscal Year Data', count: 3, icon: Calendar, color: 'indigo' },
+                ];
+                const [activeReportTab, setActiveReportTab] = useState('annual');
+                
+                return (
+                    <div className="space-y-6">
+                        {/* Header with company info */}
+                        <div className="bg-[#1a1a2e] rounded-2xl p-6 text-white">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-14 h-14 rounded-xl bg-purple-600/30 flex items-center justify-center">
+                                        <Building className="w-7 h-7 text-purple-300" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-bold">{stock.name} Investor Relations</h2>
+                                        <p className="text-gray-400">{stock.ticker} • {stock.sector}</p>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-sm text-gray-400">Fiscal Year End</p>
+                                    <p className="text-lg font-semibold">{irData.fiscalYearEnd || 'December 31'}</p>
+                                    <p className="text-xs text-gray-500 mt-1">Next Earnings: {irData.nextEarnings || 'January 2025'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Report Type Tabs */}
+                        <div className="bg-[#1a1a2e] rounded-xl p-2 flex gap-2 overflow-x-auto">
+                            {reportTabs.map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveReportTab(tab.id)}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                                        activeReportTab === tab.id 
+                                            ? `bg-${tab.color}-600 text-white` 
+                                            : 'text-gray-400 hover:text-white hover:bg-white/10'
+                                    }`}
+                                    style={activeReportTab === tab.id ? { backgroundColor: tab.color === 'purple' ? '#9333ea' : tab.color === 'blue' ? '#2563eb' : tab.color === 'cyan' ? '#0891b2' : tab.color === 'green' ? '#16a34a' : tab.color === 'orange' ? '#ea580c' : '#4f46e5' } : {}}
+                                >
+                                    <tab.icon className="w-4 h-4" />
+                                    {tab.label}
+                                    <span className={`px-1.5 py-0.5 rounded text-xs ${activeReportTab === tab.id ? 'bg-white/20' : 'bg-white/10'}`}>
+                                        {tab.count}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Report Content */}
+                        <div className="bg-[#1a1a2e] rounded-2xl p-6">
+                            {activeReportTab === 'annual' && (
+                                <>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <FileText className="w-5 h-5 text-purple-400" />
+                                        <h3 className="font-semibold text-white">Annual Reports</h3>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {(irData.annualReports || [
+                                            { title: `${stock.ticker} Annual Report 2024 (10-K)`, date: 'March 2025', size: '4.2 MB', description: 'Full year financial results and business overview' },
+                                            { title: `${stock.ticker} Annual Report 2023 (10-K)`, date: 'March 2024', size: '3.8 MB', description: 'Complete fiscal year financial statements' },
+                                            { title: `${stock.ticker} Annual Report 2022 (10-K)`, date: 'March 2023', size: '3.5 MB', description: 'Annual business and financial review' }
+                                        ]).map((r, i) => (
+                                            <div key={i} className="flex items-center gap-4 p-4 bg-[#252542] rounded-xl hover:bg-[#2a2a4a] cursor-pointer transition-colors">
+                                                <div className="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center">
+                                                    <FileText className="w-5 h-5 text-purple-400" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="font-medium text-white">{r.title}</p>
+                                                    <p className="text-sm text-gray-400">{r.date} • {r.size}</p>
+                                                    <p className="text-xs text-gray-500 mt-1">{r.description}</p>
+                                                </div>
+                                                <Download className="w-5 h-5 text-gray-500 hover:text-purple-400" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+
+                            {activeReportTab === 'quarterly' && (
+                                <>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <FileText className="w-5 h-5 text-blue-400" />
+                                        <h3 className="font-semibold text-white">Quarterly Reports</h3>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {(irData.quarterlyReports || [
+                                            { title: `Q4 2024 Report (10-Q)`, date: 'January 2025', description: 'Fourth quarter financial results' },
+                                            { title: `Q3 2024 Report (10-Q)`, date: 'October 2024', description: 'Third quarter financial results' },
+                                            { title: `Q2 2024 Report (10-Q)`, date: 'July 2024', description: 'Second quarter financial results' },
+                                            { title: `Q1 2024 Report (10-Q)`, date: 'April 2024', description: 'First quarter financial results' }
+                                        ]).map((r, i) => (
+                                            <div key={i} className="flex items-center gap-4 p-4 bg-[#252542] rounded-xl hover:bg-[#2a2a4a] cursor-pointer transition-colors">
+                                                <div className="w-10 h-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
+                                                    <FileText className="w-5 h-5 text-blue-400" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="font-medium text-white">{r.title}</p>
+                                                    <p className="text-sm text-gray-400">{r.date}</p>
+                                                    <p className="text-xs text-gray-500 mt-1">{r.description}</p>
+                                                </div>
+                                                <Download className="w-5 h-5 text-gray-500 hover:text-blue-400" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+
+                            {activeReportTab === 'presentations' && (
+                                <>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <Play className="w-5 h-5 text-cyan-400" />
+                                        <h3 className="font-semibold text-white">Investor Presentations</h3>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {(irData.investorPresentations || [
+                                            { title: `Investor Day 2024`, date: 'November 2024' },
+                                            { title: `Capital Markets Day`, date: 'September 2024' },
+                                            { title: `Technology Summit Presentation`, date: 'June 2024' }
+                                        ]).map((r, i) => (
+                                            <div key={i} className="flex items-center gap-4 p-4 bg-[#252542] rounded-xl hover:bg-[#2a2a4a] cursor-pointer transition-colors">
+                                                <div className="w-10 h-10 rounded-lg bg-cyan-600/20 flex items-center justify-center">
+                                                    <Play className="w-5 h-5 text-cyan-400" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="font-medium text-white">{r.title}</p>
+                                                    <p className="text-sm text-gray-400">{r.date}</p>
+                                                </div>
+                                                <ExternalLink className="w-5 h-5 text-gray-500 hover:text-cyan-400" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+
+                            {activeReportTab === 'earnings' && (
+                                <>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <TrendingUp className="w-5 h-5 text-green-400" />
+                                        <h3 className="font-semibold text-white">Earnings Releases</h3>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {(irData.earningsReleases || [
+                                            { title: `Q4 2024 Earnings Release`, date: 'January 28, 2025' },
+                                            { title: `Q3 2024 Earnings Release`, date: 'October 25, 2024' },
+                                            { title: `Q2 2024 Earnings Release`, date: 'July 24, 2024' },
+                                            { title: `Q1 2024 Earnings Release`, date: 'April 25, 2024' }
+                                        ]).map((r, i) => (
+                                            <div key={i} className="flex items-center gap-4 p-4 bg-[#252542] rounded-xl hover:bg-[#2a2a4a] cursor-pointer transition-colors">
+                                                <div className="w-10 h-10 rounded-lg bg-green-600/20 flex items-center justify-center">
+                                                    <TrendingUp className="w-5 h-5 text-green-400" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="font-medium text-white">{r.title}</p>
+                                                    <p className="text-sm text-gray-400">{r.date}</p>
+                                                </div>
+                                                <Download className="w-5 h-5 text-gray-500 hover:text-green-400" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+
+                            {activeReportTab === 'pnl' && (
+                                <>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <DollarSign className="w-5 h-5 text-orange-400" />
+                                        <h3 className="font-semibold text-white">P&L Statements</h3>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {(irData.plStatements || [
+                                            { year: 'FY 2024', revenue: '$98.5B', netIncome: '$24.2B' },
+                                            { year: 'FY 2023', revenue: '$88.2B', netIncome: '$21.8B' },
+                                            { year: 'FY 2022', revenue: '$79.5B', netIncome: '$19.4B' }
+                                        ]).map((r, i) => (
+                                            <div key={i} className="flex items-center gap-4 p-4 bg-[#252542] rounded-xl">
+                                                <div className="w-10 h-10 rounded-lg bg-orange-600/20 flex items-center justify-center">
+                                                    <DollarSign className="w-5 h-5 text-orange-400" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="font-medium text-white">{r.year} P&L Statement</p>
+                                                    <p className="text-sm text-gray-400">Revenue: {r.revenue} • Net Income: {r.netIncome}</p>
+                                                </div>
+                                                <Download className="w-5 h-5 text-gray-500 hover:text-orange-400" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+
+                            {activeReportTab === 'fiscal' && (
+                                <>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <Calendar className="w-5 h-5 text-indigo-400" />
+                                        <h3 className="font-semibold text-white">Fiscal Year Data</h3>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead>
+                                                <tr className="border-b border-gray-700">
+                                                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Year</th>
+                                                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Revenue</th>
+                                                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Earnings</th>
+                                                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Assets</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {(irData.fiscalYearData || [
+                                                    { year: 'FY 2024', revenue: '$98.5B', earnings: '$24.2B', assets: '$412B' },
+                                                    { year: 'FY 2023', revenue: '$88.2B', earnings: '$21.8B', assets: '$385B' },
+                                                    { year: 'FY 2022', revenue: '$79.5B', earnings: '$19.4B', assets: '$352B' }
+                                                ]).map((fy, i) => (
+                                                    <tr key={i} className="border-b border-gray-700/50">
+                                                        <td className="py-3 px-4 font-medium text-white">{fy.year}</td>
+                                                        <td className="py-3 px-4 text-right text-gray-300">{fy.revenue}</td>
+                                                        <td className="py-3 px-4 text-right text-green-400 font-medium">{fy.earnings}</td>
+                                                        <td className="py-3 px-4 text-right text-gray-300">{fy.assets}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                );
+
             case 'reports':
                 return (
                     <div className="space-y-6">
