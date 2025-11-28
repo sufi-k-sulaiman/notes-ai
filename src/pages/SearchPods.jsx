@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { 
     Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
     Sparkles, Radio, Loader2, TrendingUp, Users, Mic,
-    ChevronRight, X, Clock, Search, Plus, AlertTriangle
+    ChevronRight, X, Clock, Search, Plus, AlertTriangle, Download
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -704,7 +704,7 @@ Use short sentences for better pacing. Do NOT use any markdown formatting.`,
                                     <img 
                                         src={podImage} 
                                         alt="Podcast cover" 
-                                        className="absolute inset-0 w-full h-full object-cover"
+                                        className="absolute inset-0 w-full h-full object-cover rounded-2xl"
                                     />
                                 )}
                                 
