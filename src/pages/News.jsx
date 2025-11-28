@@ -99,14 +99,14 @@ const NewsCard = ({ article, index }) => {
 import { Monitor, TrendingUp as BusinessIcon, FlaskConical, HeartPulse, Landmark, Trophy, Clapperboard, Globe2, ChevronDown, ChevronUp } from 'lucide-react';
 
 const CATEGORIES = [
-    { id: 'technology', label: 'Technology', icon: Monitor, subtopics: ['AI', 'Startups', 'Gadgets', 'Cybersecurity', 'Software'] },
-    { id: 'business', label: 'Business', icon: BusinessIcon, subtopics: ['Stocks', 'Economy', 'Crypto', 'Real Estate', 'Finance'] },
-    { id: 'science', label: 'Science', icon: FlaskConical, subtopics: ['Space', 'Physics', 'Biology', 'Climate', 'Research'] },
-    { id: 'health', label: 'Health', icon: HeartPulse, subtopics: ['Medicine', 'Wellness', 'Mental Health', 'Nutrition', 'Fitness'] },
-    { id: 'politics', label: 'Politics', icon: Landmark, subtopics: ['Elections', 'Policy', 'Congress', 'International', 'Law'] },
-    { id: 'sports', label: 'Sports', icon: Trophy, subtopics: ['Football', 'Basketball', 'Soccer', 'Tennis', 'Olympics'] },
-    { id: 'entertainment', label: 'Entertainment', icon: Clapperboard, subtopics: ['Movies', 'Music', 'TV Shows', 'Celebrities', 'Gaming'] },
-    { id: 'world', label: 'World', icon: Globe2, subtopics: ['Europe', 'Asia', 'Americas', 'Africa', 'Middle East'] },
+    { id: 'technology', label: 'Technology', icon: Monitor, subtopics: ['AI', 'Startups', 'Gadgets', 'Cybersecurity', 'Software', 'Cloud Computing', 'Blockchain', 'Robotics', '5G Networks', 'IoT'] },
+    { id: 'business', label: 'Business', icon: BusinessIcon, subtopics: ['Stocks', 'Economy', 'Crypto', 'Real Estate', 'Finance', 'Mergers', 'IPOs', 'Venture Capital', 'Banking', 'Commodities'] },
+    { id: 'science', label: 'Science', icon: FlaskConical, subtopics: ['Space', 'Physics', 'Biology', 'Climate', 'Research', 'Astronomy', 'Genetics', 'Archaeology', 'Chemistry', 'Quantum'] },
+    { id: 'health', label: 'Health', icon: HeartPulse, subtopics: ['Medicine', 'Wellness', 'Mental Health', 'Nutrition', 'Fitness', 'Vaccines', 'Aging', 'Sleep', 'Diseases', 'Healthcare Policy'] },
+    { id: 'politics', label: 'Politics', icon: Landmark, subtopics: ['Elections', 'Policy', 'Congress', 'International', 'Law', 'Supreme Court', 'Diplomacy', 'Defense', 'Immigration', 'Trade'] },
+    { id: 'sports', label: 'Sports', icon: Trophy, subtopics: ['Football', 'Basketball', 'Soccer', 'Tennis', 'Olympics', 'Baseball', 'Golf', 'MMA', 'Formula 1', 'Cricket'] },
+    { id: 'entertainment', label: 'Entertainment', icon: Clapperboard, subtopics: ['Movies', 'Music', 'TV Shows', 'Celebrities', 'Gaming', 'Streaming', 'Broadway', 'Awards', 'Podcasts', 'Anime'] },
+    { id: 'world', label: 'World', icon: Globe2, subtopics: ['Europe', 'Asia', 'Americas', 'Africa', 'Middle East', 'Australia', 'Russia', 'India', 'China', 'Latin America'] },
 ];
 
 export default function News() {
