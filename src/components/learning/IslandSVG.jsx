@@ -28,15 +28,22 @@ export default function IslandSVG({ index, color, completed, progress = 0, varia
     const islandIndex = hashIndex(index, variant);
     const IslandComponent = ALL_ISLANDS[islandIndex];
     
-    // Use provided color or fall back to palette
-    const islandColor = color || ISLAND_COLORS[islandIndex];
+    // Use provided color or fall back to app primary
+    const islandColor = color || APP_COLORS.primary;
     
     return (
         <div className="relative w-full h-full flex items-center justify-center">
-            {/* Water background */}
+            {/* Border circle */}
             <svg viewBox="0 0 120 100" className="absolute inset-0 w-full h-full">
-                <ellipse cx="60" cy="55" rx="55" ry="40" fill="#7DD3FC" />
-                <ellipse cx="60" cy="55" rx="50" ry="36" fill="#38BDF8" />
+                <circle
+                    cx="60"
+                    cy="50"
+                    r="44"
+                    fill="none"
+                    stroke={APP_COLORS.secondary}
+                    strokeWidth="2"
+                    opacity="0.4"
+                />
             </svg>
             
             {/* Island */}
@@ -48,20 +55,11 @@ export default function IslandSVG({ index, color, completed, progress = 0, varia
                     <circle
                         cx="60"
                         cy="50"
-                        r="42"
+                        r="44"
                         fill="none"
-                        stroke="#E9D5FF"
+                        stroke={APP_COLORS.secondary}
                         strokeWidth="2"
-                        opacity="0.5"
-                    />
-                    <circle
-                        cx="60"
-                        cy="50"
-                        r="42"
-                        fill="none"
-                        stroke="#8B5CF6"
-                        strokeWidth="2"
-                        strokeDasharray={`${progress * 2.64} 264`}
+                        strokeDasharray={`${progress * 2.76} 276`}
                         strokeLinecap="round"
                         transform="rotate(-90, 60, 50)"
                     />
@@ -71,7 +69,7 @@ export default function IslandSVG({ index, color, completed, progress = 0, varia
             {/* Completed badge */}
             {completed && (
                 <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 120 100">
-                    <circle cx="100" cy="20" r="10" fill="#10B981" />
+                    <circle cx="100" cy="20" r="10" fill={APP_COLORS.success} />
                     <path d="M95,20 L98,23 L105,16" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
             )}
