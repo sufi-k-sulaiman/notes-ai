@@ -126,6 +126,8 @@ export default function SearchPods() {
     const [volume, setVolume] = useState(80);
     const [isMuted, setIsMuted] = useState(false);
     const [currentCaption, setCurrentCaption] = useState('');
+    const [currentWordIndex, setCurrentWordIndex] = useState(-1);
+    const [captionWords, setCaptionWords] = useState([]);
     const [playbackSpeed, setPlaybackSpeed] = useState(1);
     const [voices, setVoices] = useState([]);
     const [selectedVoice, setSelectedVoice] = useState(null);
@@ -319,6 +321,9 @@ Use short sentences for better pacing. Do NOT use any markdown formatting.`,
         
         const text = sentencesRef.current[currentIndexRef.current];
         setCurrentCaption(text);
+        const words = text.split(/\s+/);
+        setCaptionWords(words);
+        setCurrentWordIndex(-1);
         
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = playbackSpeed;
@@ -329,8 +334,22 @@ Use short sentences for better pacing. Do NOT use any markdown formatting.`,
             utterance.voice = selectedVoice;
         }
         
+        // Word boundary event for highlighting
+        utterance.onboundary = (event) => {
+            if (event.name === 'word') {
+                const spokenText = text.substring(0, event.charIndex);
+                const wordCount = spokenText.split(/\s+/).filter(w => w.length > 0).length;
+                setCurrentWordIndex(wordCount);
+            }
+        };
+        
         utterance.onend = () => {
+            setCurrentWordIndex(-1);
             currentIndexRef.current++;
+            // Update time based on sentence progress
+            const progress = currentIndexRef.current / sentencesRef.current.length;
+            setCurrentTime(Math.floor(progress * duration));
+            
             if (isPlayingRef.current && currentIndexRef.current < sentencesRef.current.length) {
                 setTimeout(() => speakNextSentence(), 200);
             } else if (currentIndexRef.current >= sentencesRef.current.length) {
@@ -342,6 +361,7 @@ Use short sentences for better pacing. Do NOT use any markdown formatting.`,
             if (event.error !== 'interrupted' && event.error !== 'canceled') {
                 console.error('Speech error:', event.error);
             }
+            setCurrentWordIndex(-1);
             currentIndexRef.current++;
             if (isPlayingRef.current && currentIndexRef.current < sentencesRef.current.length) {
                 setTimeout(() => speakNextSentence(), 200);
@@ -350,7 +370,7 @@ Use short sentences for better pacing. Do NOT use any markdown formatting.`,
         
         utteranceRef.current = utterance;
         window.speechSynthesis.speak(utterance);
-    }, [playbackSpeed, isMuted, volume, selectedVoice]);
+    }, [playbackSpeed, isMuted, volume, selectedVoice, duration]);
 
     // Stop playback
     const stopPlayback = useCallback(() => {
@@ -610,18 +630,66 @@ Use short sentences for better pacing. Do NOT use any markdown formatting.`,
                             <p className="text-purple-600 text-sm">{currentEpisode?.category}</p>
                         </div>
 
-                        {/* Captions */}
+                        {/* Captions - fixed height for 3 lines */}
                         {!isGenerating && (
-                            <div className="bg-gray-50 rounded-xl p-4 mb-6 min-h-[60px] border border-gray-200">
-                                <p className="text-center text-gray-700 leading-relaxed text-sm">
-                                    {currentCaption}
+                            <div className="bg-gray-50 rounded-xl p-4 mb-6 h-[84px] border border-gray-200 flex items-center justify-center overflow-hidden">
+                                <p className="text-center leading-relaxed text-sm line-clamp-3">
+                                    {captionWords.length > 0 ? (
+                                        captionWords.map((word, idx) => (
+                                            <span
+                                                key={idx}
+                                                className={`transition-colors duration-100 ${
+                                                    idx === currentWordIndex 
+                                                        ? 'text-purple-600 font-semibold' 
+                                                        : idx < currentWordIndex 
+                                                            ? 'text-gray-500' 
+                                                            : 'text-gray-700'
+                                                }`}
+                                            >
+                                                {word}{idx < captionWords.length - 1 ? ' ' : ''}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="text-gray-700">{currentCaption}</span>
+                                    )}
                                 </p>
                             </div>
                         )}
 
-                        {/* Progress */}
+                        {/* Progress - clickable timeline */}
                         <div className="mb-6">
-                            <Progress value={(currentTime / (duration || 1)) * 100} className="h-1 bg-gray-200" />
+                            <div 
+                                className="relative h-1 bg-gray-200 rounded-full cursor-pointer group"
+                                onClick={(e) => {
+                                    const rect = e.currentTarget.getBoundingClientRect();
+                                    const percent = (e.clientX - rect.left) / rect.width;
+                                    const newTime = Math.floor(percent * duration);
+                                    const newIndex = Math.floor(percent * sentencesRef.current.length);
+                                    
+                                    // Stop current speech and jump to new position
+                                    window.speechSynthesis?.cancel();
+                                    currentIndexRef.current = Math.max(0, Math.min(newIndex, sentencesRef.current.length - 1));
+                                    setCurrentTime(newTime);
+                                    
+                                    if (isPlayingRef.current) {
+                                        setTimeout(() => speakNextSentence(), 100);
+                                    } else {
+                                        const text = sentencesRef.current[currentIndexRef.current] || '';
+                                        setCurrentCaption(text);
+                                        setCaptionWords(text.split(/\s+/));
+                                        setCurrentWordIndex(-1);
+                                    }
+                                }}
+                            >
+                                <div 
+                                    className="absolute h-full bg-purple-600 rounded-full transition-all"
+                                    style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
+                                />
+                                <div 
+                                    className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-purple-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                                    style={{ left: `calc(${(currentTime / (duration || 1)) * 100}% - 6px)` }}
+                                />
+                            </div>
                             <div className="flex justify-between text-xs text-gray-400 mt-2">
                                 <span>{formatTime(currentTime)}</span>
                                 <span>{formatTime(duration)}</span>
