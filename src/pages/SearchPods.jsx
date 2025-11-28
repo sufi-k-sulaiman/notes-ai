@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { 
-    Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
+    Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Download,
     Sparkles, Radio, Loader2, TrendingUp, Users, Mic,
     ChevronRight, X, Clock, Search, Plus, AlertTriangle
 } from 'lucide-react';
