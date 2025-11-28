@@ -547,7 +547,7 @@ export default function Geospatial() {
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold">Geospatial Intelligence</h1>
+                            <h1 className="text-2xl md:text-3xl font-bold">Geospatial Data</h1>
                             <p className="text-white/80">Infrastructure, Resources & National Assets Analytics</p>
                         </div>
                         <div className="flex gap-3 items-center">
