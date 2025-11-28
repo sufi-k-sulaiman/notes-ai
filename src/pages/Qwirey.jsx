@@ -453,31 +453,6 @@ export default function Qwirey() {
                     />
                     
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                        {/* Response Format Switches - Only show for Qwirey */}
-                        {selectedModel === 'qwirey' && (
-                            <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-                                {[
-                                    { id: 'dynamic', label: 'Dynamic' },
-                                    { id: 'short', label: 'Short' },
-                                    { id: 'long', label: 'Long' },
-                                    { id: 'tabled', label: 'Tabled' },
-                                    { id: 'reviews', label: 'Reviews' },
-                                ].map((format) => (
-                                    <button
-                                        key={format.id}
-                                        onClick={() => setResponseFormat(format.id)}
-                                        className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                                            responseFormat === format.id
-                                                ? 'bg-white text-purple-700 shadow-sm'
-                                                : 'text-gray-500 hover:text-gray-700'
-                                        }`}
-                                    >
-                                        {format.label}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                        
                         <div className="flex items-center gap-1">
                         <button
                             onClick={() => setShowUrlDialog(true)}
@@ -528,6 +503,31 @@ export default function Qwirey() {
                         </button>
                         </div>
                     </div>
+                    
+                    {/* Response Format Switches - Only show for Qwirey */}
+                    {selectedModel === 'qwirey' && (
+                        <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1 mt-4">
+                            {[
+                                { id: 'dynamic', label: 'Dynamic' },
+                                { id: 'short', label: 'Short' },
+                                { id: 'long', label: 'Long' },
+                                { id: 'tabled', label: 'Tabled' },
+                                { id: 'reviews', label: 'Reviews' },
+                            ].map((format) => (
+                                <button
+                                    key={format.id}
+                                    onClick={() => setResponseFormat(format.id)}
+                                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                                        responseFormat === format.id
+                                            ? 'bg-white text-purple-700 shadow-sm'
+                                            : 'text-gray-500 hover:text-gray-700'
+                                    }`}
+                                >
+                                    {format.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Results */}
