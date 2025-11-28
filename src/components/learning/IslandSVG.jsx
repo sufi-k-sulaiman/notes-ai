@@ -10,11 +10,24 @@ const ALL_ISLANDS = [
     Island19, Island20, Island21, Island22, Island23, Island24, Island25, Island26, Island27
 ];
 
-// App theme colors
+// Portal theme colors from the app
+const PORTAL_COLORS = [
+    '#8B5CF6', // Purple (Geospatial)
+    '#3B82F6', // Blue (Qwirey)
+    '#10B981', // Green (SearchPods, Resume Builder)
+    '#EC4899', // Pink (MindMap)
+    '#14B8A6', // Teal (Intelligence)
+    '#F97316', // Orange (Markets)
+    '#06B6D4', // Cyan (Learning)
+    '#8B5CF6', // Purple (Tasks)
+    '#EF4444', // Red (Notes)
+    '#F97316', // Orange (News)
+    '#EC4899', // Pink/Magenta (Games)
+];
+
 const APP_COLORS = {
-    primary: '#6B4EE6',
-    secondary: '#8B5CF6',
-    accent: '#F59E0B',
+    primary: '#8B5CF6',
+    secondary: '#6366F1',
     success: '#10B981',
 };
 
@@ -28,8 +41,8 @@ export default function IslandSVG({ index, color, completed, progress = 0, varia
     const islandIndex = hashIndex(index, variant);
     const IslandComponent = ALL_ISLANDS[islandIndex];
     
-    // Use provided color or fall back to app primary
-    const islandColor = color || APP_COLORS.primary;
+    // Use provided color or pick from portal colors based on index
+    const islandColor = color || PORTAL_COLORS[index % PORTAL_COLORS.length];
     
     return (
         <div className="relative w-full h-full flex items-center justify-center">

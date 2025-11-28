@@ -60,20 +60,18 @@ export default function LearningIslandCard({ topic, index, progress = 0, onExplo
                 />
             </div>
             
-            {/* Icon overlay */}
-            <div 
-                className="absolute top-[70px] left-1/2 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform z-10"
-                style={{ 
-                    backgroundColor: topic.color,
-                    transform: hovered ? 'translate(-50%, -4px)' : 'translate(-50%, 0)'
-                }}
-            >
-                {locked ? (
+            {/* Icon overlay - only show lock if locked */}
+            {locked && (
+                <div 
+                    className="absolute top-[70px] left-1/2 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform z-10"
+                    style={{ 
+                        backgroundColor: topic.color,
+                        transform: hovered ? 'translate(-50%, -4px)' : 'translate(-50%, 0)'
+                    }}
+                >
                     <Lock className="w-4 h-4 text-white" />
-                ) : (
-                    <Icon className="w-4 h-4 text-white" />
-                )}
-            </div>
+                </div>
+            )}
             
             {/* Label */}
             <div className="text-center mt-1">
