@@ -373,10 +373,16 @@ export default function News() {
         setPopulatingCache(true);
         try {
             const response = await base44.functions.invoke('populateNewsCache', {});
-            toast.success(response.data?.message || 'Cache populated successfully!');
+            console.log('Cache response:', response.data);
+            if (response.data?.errors?.length > 0) {
+                toast.error('Errors: ' + response.data.errors.slice(0, 2).join(', '));
+            } else {
+                toast.success(response.data?.message || 'Cache populated successfully!');
+            }
             fetchNews(activeCategory);
         } catch (err) {
-            toast.error('Failed to populate cache: ' + (err?.message || 'Unknown error'));
+            console.error('Populate cache error:', err);
+            toast.error('Failed: ' + (err?.response?.data?.error || err?.message || 'Unknown error'));
         } finally {
             setPopulatingCache(false);
         }
