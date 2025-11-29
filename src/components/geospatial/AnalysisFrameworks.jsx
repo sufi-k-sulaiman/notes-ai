@@ -26,14 +26,14 @@ const CATEGORY_LABELS = {
 };
 
 const FRAMEWORK_PROMPTS = {
-    swot: (categories) => `Perform a SWOT analysis for global environmental efforts in: ${categories}. Provide Strengths, Weaknesses, Opportunities, and Threats with 3-4 bullet points each.`,
-    dmaic: (categories) => `Apply DMAIC framework to improving global ${categories} outcomes. For each phase (Define, Measure, Analyze, Improve, Control), provide 2-3 specific actionable points.`,
-    ice: (categories) => `Use the ICE scoring framework to prioritize environmental initiatives for ${categories}. List 5 initiatives with Impact (1-10), Confidence (1-10), and Ease (1-10) scores, plus brief reasoning.`,
-    pareto: (categories) => `Apply Pareto principle (80/20 rule) to ${categories}. Identify the 20% of actions that would yield 80% of environmental improvement results. List top 5 high-impact actions.`,
-    ansoff: (categories) => `Apply Ansoff Matrix to environmental strategy for ${categories}. Provide examples for each quadrant: Market Penetration, Market Development, Product Development, Diversification.`,
-    pestle: (categories) => `Conduct PESTLE analysis for ${categories} environmental sector. Analyze Political, Economic, Social, Technological, Legal, and Environmental factors with 2-3 points each.`,
-    porter: (categories) => `Apply Porter's Five Forces to the ${categories} environmental industry. Analyze: Competitive Rivalry, Supplier Power, Buyer Power, Threat of Substitution, Threat of New Entry.`,
-    bcg: (categories) => `Create BCG Matrix analysis for ${categories} environmental initiatives. Categorize current global efforts into Stars, Cash Cows, Question Marks, and Dogs with examples.`,
+    swot: (categories) => `Perform a detailed SWOT analysis for global environmental efforts in: ${categories}. Provide 4 items each with a score (0-100) indicating strength/severity.`,
+    dmaic: (categories) => `Apply DMAIC framework to improving global ${categories} outcomes. For each phase provide a score (0-100) indicating current progress and 3 specific data points.`,
+    ice: (categories) => `Use ICE scoring for 6 environmental initiatives for ${categories}. Each needs Impact (1-10), Confidence (1-10), Ease (1-10) scores with specific metrics.`,
+    pareto: (categories) => `Apply Pareto (80/20) to ${categories}. List 6 actions with their impact percentage (totaling 100%) and specific measurable outcomes.`,
+    ansoff: (categories) => `Apply Ansoff Matrix to ${categories} environmental strategy. Provide 3 specific initiatives per quadrant with growth potential scores (0-100).`,
+    pestle: (categories) => `Conduct PESTLE analysis for ${categories}. For each factor provide an impact score (0-100) and 2 specific current data points/statistics.`,
+    porter: (categories) => `Apply Porter's Five Forces to ${categories} industry. Rate each force 1-10 and provide specific market data and competitive insights.`,
+    bcg: (categories) => `Create BCG Matrix for ${categories} initiatives. Provide market share % and growth rate % for 8 specific initiatives across all quadrants.`,
 };
 
 const FRAMEWORK_SCHEMAS = {
