@@ -179,8 +179,8 @@ export default function SearchPods() {
             
             setVoices(googleVoices);
             
-            if (googleVoices.length > 0 && !selectedVoice) {
-                // Default to Google UK English Female
+            // Always set the default voice when voices load
+            if (googleVoices.length > 0) {
                 const preferred = googleVoices.find(v => v.name === 'Google UK English Female')
                     || googleVoices[0];
                 setSelectedVoice(preferred);
@@ -188,8 +188,14 @@ export default function SearchPods() {
         };
         
         if ('speechSynthesis' in window) {
+            // Load voices immediately
             loadVoices();
+            // Also listen for async voice loading
             window.speechSynthesis.onvoiceschanged = loadVoices;
+            
+            // Force reload voices after a delay (some browsers need this)
+            setTimeout(loadVoices, 100);
+            setTimeout(loadVoices, 500);
         }
         
         return () => {
