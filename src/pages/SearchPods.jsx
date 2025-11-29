@@ -966,16 +966,7 @@ Do NOT mention any websites, URLs, or external references in the audio script.`
                                 <span className="text-sm">Text</span>
                             </button>
                             
-                            {/* MP3 Download */}
-                            <button 
-                                onClick={downloadMp3}
-                                disabled={isGenerating || isDownloadingMp3}
-                                className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg text-purple-600 disabled:opacity-50 transition-colors"
-                                title="Download MP3"
-                            >
-                                {isDownloadingMp3 ? <Loader2 className="w-4 h-4 animate-spin" /> : <Music className="w-4 h-4" />}
-                                <span className="text-sm">MP3</span>
-                            </button>
+
                         </div>
                     </div>
                 </DialogContent>
