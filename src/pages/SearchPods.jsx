@@ -1093,17 +1093,6 @@ Do NOT mention any websites, URLs, or external references in the audio script.`
                         {/* Options Row */}
                         <div className="mt-4 flex items-center justify-center gap-2 flex-wrap">
                             <button 
-                                onClick={() => setShowEqualizer(!showEqualizer)}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                                    showEqualizer 
-                                        ? 'bg-purple-100 text-purple-600 border border-purple-200' 
-                                        : 'bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-600'
-                                }`}
-                            >
-                                <Sliders className="w-4 h-4" />
-                                Equalizer
-                            </button>
-                            <button 
                                 onClick={() => setShowBraille(!showBraille)}
                                 className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
                                     showBraille 
@@ -1115,35 +1104,18 @@ Do NOT mention any websites, URLs, or external references in the audio script.`
                                 Braille
                             </button>
                             <button 
-                                onClick={downloadText}
+                                onClick={loadRecommendations}
                                 disabled={isGenerating}
-                                className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-gray-600 disabled:opacity-50 transition-colors text-sm"
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                                    showRecommendations 
+                                        ? 'bg-purple-100 text-purple-600 border border-purple-200' 
+                                        : 'bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-600'
+                                } disabled:opacity-50`}
                             >
-                                <FileText className="w-4 h-4" />
-                                Text
+                                <ListMusic className="w-4 h-4" />
+                                Recommended
                             </button>
                         </div>
-
-                        {/* Equalizer Panel */}
-                        {showEqualizer && (
-                            <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                                <h4 className="text-sm font-medium text-gray-700 mb-3">Equalizer</h4>
-                                <div className="flex items-end justify-between gap-2 h-20">
-                                    {['60Hz', '230Hz', '910Hz', '3.6kHz', '14kHz'].map((freq, i) => (
-                                        <div key={freq} className="flex flex-col items-center gap-1 flex-1">
-                                            <div className="w-full h-16 bg-gray-200 rounded-full relative overflow-hidden">
-                                                <div 
-                                                    className="absolute bottom-0 w-full bg-purple-500 rounded-full transition-all"
-                                                    style={{ height: `${50 + (i * 10) - 20}%` }}
-                                                />
-                                            </div>
-                                            <span className="text-[10px] text-gray-500">{freq}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                                <p className="text-xs text-gray-400 mt-2 text-center">Visual equalizer (audio processing not available in browser TTS)</p>
-                            </div>
-                        )}
                     </div>
 
                     {/* Recommendations Drawer */}
