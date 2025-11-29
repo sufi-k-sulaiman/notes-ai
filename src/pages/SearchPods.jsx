@@ -164,12 +164,12 @@ export default function SearchPods() {
         return () => clearInterval(interval);
     }, []);
 
-    // Load ONLY Google voices (Chrome only - other browsers won't have them)
+    // Load ONLY Google voices
     useEffect(() => {
         const loadVoices = () => {
             const availableVoices = window.speechSynthesis?.getVoices() || [];
             
-            // Get ONLY Google English voices
+            // Get ONLY Google voices
             const googleVoices = availableVoices.filter(v => 
                 v.name.toLowerCase().includes('google') && v.lang.startsWith('en')
             );
@@ -177,22 +177,13 @@ export default function SearchPods() {
             // Sort alphabetically
             googleVoices.sort((a, b) => a.name.localeCompare(b.name));
             
-            // If no Google voices (not Chrome), fall back to all English voices
-            if (googleVoices.length === 0) {
-                const englishVoices = availableVoices.filter(v => v.lang.startsWith('en'));
-                englishVoices.sort((a, b) => a.name.localeCompare(b.name));
-                setVoices(englishVoices);
-                if (englishVoices.length > 0 && !selectedVoice) {
-                    setSelectedVoice(englishVoices[0]);
-                }
-            } else {
-                setVoices(googleVoices);
-                if (!selectedVoice) {
-                    // Default to Google UK English Female
-                    const preferred = googleVoices.find(v => v.name === 'Google UK English Female')
-                        || googleVoices[0];
-                    setSelectedVoice(preferred);
-                }
+            setVoices(googleVoices);
+            
+            if (googleVoices.length > 0 && !selectedVoice) {
+                // Default to Google UK English Female
+                const preferred = googleVoices.find(v => v.name === 'Google UK English Female')
+                    || googleVoices[0];
+                setSelectedVoice(preferred);
             }
         };
         
