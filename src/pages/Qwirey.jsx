@@ -937,6 +937,39 @@ export default function Qwirey() {
                                         </div>
                                     )}
                                     
+                                    {/* IMAGES FORMAT */}
+                                    {responseFormat === 'images' && result.imagesData && (
+                                        <div className="space-y-4">
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                {result.imagesData.map((img, i) => (
+                                                    <div key={i} className="group relative aspect-square rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg transition-all">
+                                                        <img src={img.url} alt={img.prompt} className="w-full h-full object-cover" />
+                                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                            <button
+                                                                onClick={() => window.open(img.url, '_blank')}
+                                                                className="p-2 bg-white rounded-full hover:bg-gray-100 transition-colors"
+                                                                title="Preview"
+                                                            >
+                                                                <Maximize2 className="w-5 h-5 text-gray-700" />
+                                                            </button>
+                                                            <a
+                                                                href={img.url}
+                                                                download={`qwirey-image-${i + 1}.png`}
+                                                                className="p-2 bg-white rounded-full hover:bg-gray-100 transition-colors"
+                                                                title="Download"
+                                                            >
+                                                                <Download className="w-5 h-5 text-gray-700" />
+                                                            </a>
+                                                        </div>
+                                                        <p className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent text-white text-xs line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            {img.prompt}
+                                                        </p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
                                     {/* DYNAMIC FORMAT */}
                                     {responseFormat === 'dynamic' && (
                                         <div className="space-y-6">
