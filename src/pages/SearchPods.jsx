@@ -228,10 +228,11 @@ export default function SearchPods() {
             
             setVoices(uniqueVoices);
             if (uniqueVoices.length > 0 && !selectedVoice) {
-                // Prefer Google US English, then Samantha, then first available
-                const preferred = uniqueVoices.find(v => v.name.toLowerCase().includes('google') && v.lang === 'en-US')
+                // Prefer Google UK English Female, then Google US, then first available
+                const preferred = uniqueVoices.find(v => v.name.toLowerCase().includes('google uk english female'))
+                    || uniqueVoices.find(v => v.name.toLowerCase().includes('google uk') && v.name.toLowerCase().includes('female'))
+                    || uniqueVoices.find(v => v.name.toLowerCase().includes('google') && v.lang === 'en-GB')
                     || uniqueVoices.find(v => v.name.toLowerCase().includes('google us'))
-                    || uniqueVoices.find(v => v.name.toLowerCase().includes('samantha')) 
                     || uniqueVoices.find(v => v.name.toLowerCase().includes('google'))
                     || uniqueVoices[0];
                 setSelectedVoice(preferred);
