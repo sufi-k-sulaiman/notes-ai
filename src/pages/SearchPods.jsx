@@ -386,8 +386,17 @@ Do NOT mention any websites, URLs, or external references in the audio script.`
         utterance.volume = isMuted ? 0 : volume / 100;
         utterance.pitch = 1;
         
+        // Force set the voice - required for it to work
         if (selectedVoice) {
             utterance.voice = selectedVoice;
+        } else {
+            // If no voice selected yet, try to find Google UK English Female
+            const voices = window.speechSynthesis.getVoices();
+            const googleVoice = voices.find(v => v.name === 'Google UK English Female') 
+                || voices.find(v => v.name.toLowerCase().includes('google'));
+            if (googleVoice) {
+                utterance.voice = googleVoice;
+            }
         }
         
         // Word boundary event for highlighting
