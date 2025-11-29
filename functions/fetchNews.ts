@@ -115,7 +115,25 @@ Deno.serve(async (req) => {
             });
         }
         
-        // PRODUCTION: Always serve from database only
+        // First try NewsAPI directly
+        if (NEWSAPI_KEY) {
+            try {
+                const articles = await fetchFromNewsAPI(searchTerm, limit);
+                
+                if (articles.length > 0) {
+                    return Response.json({
+                        success: true,
+                        count: articles.length,
+                        articles: articles.map(a => ({ ...a, time: formatTime(a.published_at) })),
+                        cached: false
+                    });
+                }
+            } catch (apiError) {
+                console.log('NewsAPI failed:', apiError.message);
+            }
+        }
+        
+        // Fallback: serve from database cache
         try {
             const cached = await base44.asServiceRole.entities.NewsArticle.filter(
                 { category: searchTerm },
@@ -144,7 +162,7 @@ Deno.serve(async (req) => {
             console.log('Cache check failed:', cacheError.message);
         }
         
-        // DEV ONLY: If refresh requested and no cache, fetch from NewsAPI
+        // If refresh requested, try NewsAPI again to save to cache
         if (refresh && NEWSAPI_KEY) {
             const articles = await fetchFromNewsAPI(searchTerm, limit);
             
