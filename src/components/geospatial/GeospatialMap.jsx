@@ -199,7 +199,7 @@ export default function GeospatialMap({
     }, [mapType]);
     
     const config = isWorldMap ? { center: [20, 0], zoom: 2 } : (USE_CASE_CENTERS[useCase] || USE_CASE_CENTERS.greenhouse);
-    const dataPoints = useMemo(() => generateDataPoints(useCase, mini ? 10 : isWorldMap ? 50 : 25), [useCase, mini, isWorldMap]);
+    const dataPoints = useMemo(() => generateDataPoints(useCase, mini ? 10 : 25, isWorldMap), [useCase, mini, isWorldMap]);
     const routes = useMemo(() => generateRoutes(useCase), [useCase]);
     
     // Use the selected style or fall back to mapType
