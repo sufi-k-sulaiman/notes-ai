@@ -252,7 +252,7 @@ const NewsCardSimple = ({ article, index }) => {
                 <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
                     {cleanTitle}
                 </h3>
-                <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                <p className="text-gray-600 text-sm line-clamp-2 mb-4">
                     {cleanSummary || `Read the full story: ${cleanTitle}`}
                 </p>
                 <span className="inline-flex items-center gap-1 text-red-600 hover:text-red-700 text-sm font-medium">
