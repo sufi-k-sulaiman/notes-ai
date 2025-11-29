@@ -786,6 +786,7 @@ export default function Qwirey() {
                     (responseFormat === 'long' && result.longData) ||
                     (responseFormat === 'tabled' && result.tabledData) ||
                     (responseFormat === 'reviews' && result.reviewsData) ||
+                    (responseFormat === 'images' && result.imagesData) ||
                     (responseFormat === 'dynamic' && result.dashboardData)
                 ) ? (
                                           <div className="space-y-6">
