@@ -38,6 +38,42 @@ const USE_CASE_CENTERS = {
     climatepollution: { center: [39.9, 116.4], zoom: 3 },
 };
 
+// Rationale bullets for each use case
+const USE_CASE_RATIONALE = {
+    carbon: {
+        high: ['Heavy industrial manufacturing', 'Coal-powered electricity', 'Dense vehicle traffic', 'Aging infrastructure', 'Limited renewable adoption'],
+        low: ['100% renewable energy grid', 'Carbon capture programs', 'Electric transport systems', 'Strict emission controls', 'Carbon tax policies']
+    },
+    forests: {
+        high: ['Agricultural expansion', 'Illegal logging operations', 'Palm oil plantations', 'Mining activities', 'Urban development pressure'],
+        low: ['Strong conservation laws', 'Reforestation programs', 'Indigenous land protection', 'Sustainable forestry', 'Protected national parks']
+    },
+    resources: {
+        high: ['Intensive extraction', 'Limited reserves remaining', 'High global demand', 'Minimal recycling', 'Export-dependent economy'],
+        low: ['Circular economy model', 'High recycling rates', 'Sustainable practices', 'Resource efficiency', 'Alternative materials used']
+    },
+    sustainability: {
+        high: ['Renewable energy leader', 'Green infrastructure', 'Electric vehicle adoption', 'Waste recycling programs', 'Climate action policies'],
+        low: ['Fossil fuel dependency', 'Limited green investment', 'Poor waste management', 'Aging power grid', 'Weak environmental laws']
+    },
+    airpollution: {
+        high: ['Industrial emissions', 'Vehicle exhaust fumes', 'Coal power plants', 'Crop burning practices', 'Weak air quality laws'],
+        low: ['Clean energy sources', 'Electric public transit', 'Strict emission standards', 'Green urban planning', 'Air quality monitoring']
+    },
+    waterpollution: {
+        high: ['Industrial discharge', 'Agricultural runoff', 'Untreated sewage', 'Plastic waste dumping', 'Mining contamination'],
+        low: ['Advanced water treatment', 'Strict discharge laws', 'Clean manufacturing', 'Protected watersheds', 'Regular water testing']
+    },
+    plasticpollution: {
+        high: ['Single-use plastic culture', 'Poor waste collection', 'Ocean current patterns', 'Limited recycling', 'Coastal population density'],
+        low: ['Plastic bans enacted', 'High recycling rates', 'Clean-up initiatives', 'Producer responsibility', 'Public awareness campaigns']
+    },
+    default: {
+        high: ['High population density', 'Industrial activity', 'Limited regulations', 'Resource extraction', 'Urban development'],
+        low: ['Strong environmental laws', 'Low population impact', 'Clean technology', 'Protected ecosystems', 'Sustainable practices']
+    }
+};
+
 // Real-world location data for each use case
 const REAL_LOCATIONS = {
     carbon: [
@@ -456,37 +492,56 @@ export default function GeospatialMap({
                 ))}
 
                 {/* Data points */}
-                {dataPoints.map(point => (
-                    <CircleMarker
-                        key={point.id}
-                        center={[point.lat, point.lng]}
-                        radius={getRadius(point.value)}
-                        pathOptions={{
-                            fillColor: getColor(point.value, point),
-                            fillOpacity: point.value >= 70 ? 0.85 : point.value <= 30 ? 0.9 : 0.7,
-                            color: point.value >= 80 ? '#991B1B' : point.value <= 20 ? '#166534' : '#fff',
-                            weight: mini ? 1 : (point.value >= 80 || point.value <= 20 ? 3 : 2)
-                        }}
-                    >
-                        {!mini && (
-                            <Popup>
-                                <div className="p-2 min-w-[160px]">
-                                    <h4 className="font-bold text-gray-900">{point.name}</h4>
-                                    <p className="text-xs text-gray-500 capitalize">{point.type.replace(/pollution/g, ' pollution')}</p>
-                                    <div className="mt-2 flex items-center justify-between">
-                                        <span className="text-sm text-gray-600">Impact:</span>
-                                        <span className="font-bold" style={{ color: getColor(point.value, point) }}>
-                                            {point.value >= 80 ? 'Critical' : point.value >= 70 ? 'High' : point.value >= 50 ? 'Moderate' : point.value >= 30 ? 'Low' : 'Minimal'}
-                                        </span>
+                {dataPoints.map(point => {
+                    const rationale = USE_CASE_RATIONALE[point.type] || USE_CASE_RATIONALE.default;
+                    const bullets = point.value >= 50 ? rationale.high : rationale.low;
+                    const impactLabel = point.value >= 80 ? 'Critical' : point.value >= 70 ? 'High' : point.value >= 50 ? 'Moderate' : point.value >= 30 ? 'Low' : 'Minimal';
+                    
+                    return (
+                        <CircleMarker
+                            key={point.id}
+                            center={[point.lat, point.lng]}
+                            radius={getRadius(point.value)}
+                            pathOptions={{
+                                fillColor: getColor(point.value, point),
+                                fillOpacity: point.value >= 70 ? 0.85 : point.value <= 30 ? 0.9 : 0.7,
+                                color: point.value >= 80 ? '#991B1B' : point.value <= 20 ? '#166534' : '#fff',
+                                weight: mini ? 1 : (point.value >= 80 || point.value <= 20 ? 3 : 2)
+                            }}
+                        >
+                            {!mini && (
+                                <Popup>
+                                    <div className="p-2 min-w-[220px] max-w-[280px]">
+                                        <h4 className="font-bold text-gray-900 text-sm">{point.name}</h4>
+                                        <p className="text-xs text-gray-500 capitalize mb-2">{point.type.replace(/pollution/g, ' pollution')}</p>
+                                        
+                                        <div className="flex items-center justify-between mb-1">
+                                            <span className="text-xs text-gray-600">Impact Score:</span>
+                                            <span className="text-sm font-bold" style={{ color: getColor(point.value, point) }}>
+                                                {point.value} - {impactLabel}
+                                            </span>
+                                        </div>
+                                        <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mb-3">
+                                            <div className="h-full rounded-full" style={{ width: `${point.value}%`, backgroundColor: getColor(point.value, point) }} />
+                                        </div>
+                                        
+                                        <p className="text-xs text-gray-600 mb-2">
+                                            {point.value >= 50 ? 'Key factors contributing to elevated levels:' : 'Factors maintaining low impact:'}
+                                        </p>
+                                        <ul className="space-y-0.5">
+                                            {bullets.map((b, i) => (
+                                                <li key={i} className="text-xs text-gray-700 flex items-start gap-1">
+                                                    <span className="mt-0.5" style={{ color: getColor(point.value, point) }}>•</span>
+                                                    {b}
+                                                </li>
+                                            ))}
+                                        </ul>
                                     </div>
-                                    <div className="mt-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                        <div className="h-full rounded-full" style={{ width: `${point.value}%`, backgroundColor: getColor(point.value, point) }} />
-                                    </div>
-                                </div>
-                            </Popup>
-                        )}
-                    </CircleMarker>
-                ))}
+                                </Popup>
+                            )}
+                        </CircleMarker>
+                    );
+                })}
             </MapContainer>
 
             {/* Legend - only on main maps */}
