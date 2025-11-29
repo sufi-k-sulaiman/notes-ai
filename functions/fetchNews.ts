@@ -312,8 +312,31 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { query, category, limit = 30, scraperUrl } = await req.json();
+        const { query, category, limit = 30, scraperUrl, useCache = true } = await req.json();
         
+        // Try to serve from cache first (production mode)
+        if (useCache) {
+            const cacheKey = query?.toLowerCase() || category || 'general';
+            const cached = await base44.entities.NewsCache.filter({ category: cacheKey });
+            
+            if (cached.length > 0) {
+                const cacheEntry = cached[0];
+                const isExpired = new Date(cacheEntry.expires_at) < new Date();
+                
+                if (!isExpired && cacheEntry.articles?.length > 0) {
+                    return Response.json({
+                        success: true,
+                        count: cacheEntry.articles.length,
+                        query: query || null,
+                        category: category || null,
+                        articles: cacheEntry.articles.slice(0, limit),
+                        cached: true,
+                    });
+                }
+            }
+        }
+        
+        // Fallback to live fetch if no cache or cache expired
         const allArticles = [];
         const fetchPromises = [];
         
@@ -357,6 +380,7 @@ Deno.serve(async (req) => {
             query: query || null,
             category: category || null,
             articles: uniqueArticles,
+            cached: false,
         });
         
     } catch (error) {
