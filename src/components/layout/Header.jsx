@@ -75,7 +75,7 @@ export default function Header({ title, sidebarOpen, setSidebarOpen, children, c
     };
 
     return (
-        <header className="bg-white sticky top-0 z-40 border-b border-gray-200 shadow-sm h-[90px]">
+        <header className="bg-white sticky top-0 z-40 border-b border-gray-200 shadow-sm h-[72px]">
             <div className="flex items-center justify-between px-4 h-full gap-4">
                 <div className="flex items-center gap-4 flex-shrink-0">
                     <Link to={createPageUrl('Home')} className="flex items-center gap-3 hover:opacity-80">
