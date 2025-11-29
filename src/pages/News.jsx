@@ -378,11 +378,15 @@ export default function News() {
             });
 
             const articles = response.data?.articles || [];
+            const backendError = response.data?.error;
             console.log('Fetched articles:', articles.length, 'Source:', response.data?.source);
 
-            if (articles.length === 0 && response.data?.error) {
-                console.error('Backend error:', response.data.error);
+            if (articles.length === 0) {
+                if (backendError) {
+                    console.error('Backend error:', backendError);
+                }
                 setError('E200');
+                setNews([]);
             } else {
                 setNews(articles);
                 setError(null);
