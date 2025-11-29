@@ -183,7 +183,7 @@ const cleanHtmlFromText = (text) => {
         .trim();
 };
 
-const MAX_IMAGES_TO_GENERATE = 9; // Only generate images for first 9 articles
+const MAX_IMAGES_TO_GENERATE = 12; // Only generate images for first 12 articles
 const BATCH_SIZE = 3; // Generate 3 images per batch
 const BATCH_DELAY = 5000; // 5 seconds between batches
 
