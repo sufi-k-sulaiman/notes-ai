@@ -46,10 +46,10 @@ export default function TopicThumbnail({ topic, onClick }) {
     return (
         <button
             onClick={() => onClick(topic)}
-            className="group relative bg-white rounded-xl border border-gray-200 p-3 hover:shadow-lg hover:border-purple-300 transition-all duration-300 text-left col-span-2 min-w-[180px]"
+            className="group relative bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg hover:border-purple-300 transition-all duration-300 text-left col-span-2 min-w-[220px]"
         >
             {/* Mini mind map visualization */}
-            <div className="relative h-28 mb-1">
+            <div className="relative h-36 mb-2">
                 {/* Connecting lines */}
                 <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
                     <line x1="50%" y1="50%" x2="15%" y2="25%" stroke={secondary} strokeWidth="2" opacity="0.4" />
