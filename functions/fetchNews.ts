@@ -353,6 +353,11 @@ Deno.serve(async (req) => {
         });
         
     } catch (error) {
-        return Response.json({ error: error.message }, { status: 500 });
+        console.error('fetchNews error:', error);
+        return Response.json({ 
+            success: false, 
+            error: error.message,
+            articles: [] 
+        }, { status: 500 });
     }
 });
