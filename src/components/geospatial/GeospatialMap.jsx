@@ -29,9 +29,21 @@ const USE_CASE_CENTERS = {
 
 // Generate sample data points for each use case
 const generateDataPoints = (useCase, count = 25) => {
-    const config = USE_CASE_CENTERS[useCase] || USE_CASE_CENTERS.urban;
+    // For world map, generate points across the globe
+    if (count >= 50) {
+        return Array.from({ length: count }, (_, i) => ({
+            id: i,
+            lat: (Math.random() - 0.5) * 140, // -70 to 70
+            lng: (Math.random() - 0.5) * 340, // -170 to 170
+            value: Math.round(20 + Math.random() * 80),
+            name: `Location ${i + 1}`,
+            type: useCase
+        }));
+    }
+    
+    const config = USE_CASE_CENTERS[useCase] || USE_CASE_CENTERS.greenhouse;
     const [lat, lng] = config.center;
-    const spread = useCase === 'agriculture' ? 8 : useCase === 'environment' ? 5 : 0.3;
+    const spread = useCase === 'environmental' ? 5 : 0.3;
     
     return Array.from({ length: count }, (_, i) => ({
         id: i,
