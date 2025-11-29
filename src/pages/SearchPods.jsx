@@ -3,7 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { 
     Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Download, FileText, Music,
     Sparkles, Radio, Loader2, TrendingUp, Users, Mic, ChevronDown,
-    ChevronRight, X, Clock, Search, Plus, AlertTriangle
+    ChevronRight, X, Clock, Search, Plus, AlertTriangle, RotateCcw, RotateCw,
+    ListMusic, Sliders, Eye, MessageSquarePlus
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
