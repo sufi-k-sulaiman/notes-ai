@@ -469,16 +469,27 @@ export default function Qwirey() {
         let noteContent = '';
         let noteTitle = prompt.slice(0, 50) + (prompt.length > 50 ? '...' : '');
         
-        if (result?.shortData) {
+        if (responseFormat === 'short' && result?.shortData) {
             noteContent = `<p>${result.shortData.blurb}</p><ul>${(result.shortData.bullets || []).map(b => `<li>${b}</li>`).join('')}</ul>`;
-        } else if (result?.longData) {
+        } else if (responseFormat === 'long' && result?.longData) {
             noteContent = (result.longData.paragraphs || []).map(p => `<p>${p}</p>`).join('');
-        } else if (result?.reviewsData) {
+        } else if (responseFormat === 'reviews' && result?.reviewsData) {
             noteContent = `<h2>${result.reviewsData.title || 'Reviews'}</h2><p>${result.reviewsData.intro}</p>` + 
                 (result.reviewsData.reviews || []).map(r => `<p><strong>${r.name}</strong> (${r.rating}/10): ${r.text}</p>`).join('');
-        } else if (result?.tabledData) {
+        } else if (responseFormat === 'tabled' && result?.tabledData) {
             noteContent = `<p>${result.tabledData.summary}</p><ul>` + 
                 (result.tabledData.items || []).map(i => `<li><strong>${i.name}</strong>: Pros - ${i.pros?.join(', ')} | Cons - ${i.cons?.join(', ')} | Rating: ${i.rating}/10</li>`).join('') + '</ul>';
+        } else if (responseFormat === 'images' && result?.imagesData) {
+            noteContent = `<p>Generated images for: ${prompt}</p><ul>` + 
+                result.imagesData.map(img => `<li><img src="${img.url}" alt="${img.prompt}" style="max-width:200px" /><br/>${img.prompt}</li>`).join('') + '</ul>';
+        } else if (responseFormat === 'dynamic' && result?.dashboardData) {
+            noteContent = `<p>${result.text || ''}</p>`;
+            if (result.dashboardData.infoCards?.length > 0) {
+                noteContent += '<h3>Key Insights</h3><ul>' + result.dashboardData.infoCards.map(c => `<li>${c.content}</li>`).join('') + '</ul>';
+            }
+            if (result.dashboardData.rankings?.length > 0) {
+                noteContent += '<h3>Rankings</h3><ol>' + result.dashboardData.rankings.map(r => `<li>${r.name}: ${r.value}</li>`).join('') + '</ol>';
+            }
         } else if (result?.text) {
             noteContent = `<p>${result.text}</p>`;
         }
