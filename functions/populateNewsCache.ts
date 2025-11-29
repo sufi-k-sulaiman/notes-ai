@@ -114,6 +114,7 @@ Deno.serve(async (req) => {
             success: true,
             message: `Cached ${results.categories} categories, ${results.subtopics} subtopics, ${results.articles} total articles`,
             results,
+            errors: results.errors,
         });
         
     } catch (error) {
