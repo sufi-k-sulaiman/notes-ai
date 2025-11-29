@@ -159,36 +159,37 @@ const NewsGrid = ({ news }) => {
     );
 };
 
+const cleanHtmlFromText = (text) => {
+    if (!text) return '';
+    return text
+        .replace(/<a[^>]*>.*?<\/a>/gi, '')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&nbsp;/g, ' ')
+        .replace(/https?:\/\/[^\s]+/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+};
+
 const NewsCardSimple = ({ article, index }) => {
     const [imageUrl, setImageUrl] = useState(null);
     const [imageLoading, setImageLoading] = useState(true);
     
-    const getDomain = (url) => {
-        try {
-            return new URL(url).hostname.replace('www.', '');
-        } catch {
-            return 'news';
-        }
-    };
-    
-    const getFavicon = (url) => {
-        try {
-            return `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=32`;
-        } catch {
-            return null;
-        }
-    };
-    
-    const domain = getDomain(article.url);
-    const faviconUrl = getFavicon(article.url);
+    const cleanTitle = cleanHtmlFromText(article.title);
+    const cleanSummary = cleanHtmlFromText(article.summary);
 
     useEffect(() => {
         const generateImage = async () => {
             setImageLoading(true);
             try {
-                const prompt = article.imagePrompt || `Lifestyle photography, ${article.title}, natural lighting, earth tones, minimalist composition`;
+                // Create a specific prompt from both title and description
+                const context = `${cleanTitle}. ${cleanSummary}`.slice(0, 200);
                 const result = await base44.integrations.Core.GenerateImage({
-                    prompt: `${prompt}, professional photography style, soft natural lighting, lifestyle aesthetic, earth and nature elements, no text or words`
+                    prompt: `Professional news photography depicting: ${context}. Photorealistic, editorial style, high quality, no text or words, no logos`
                 });
                 if (result?.url) {
                     setImageUrl(result.url);
@@ -200,7 +201,7 @@ const NewsCardSimple = ({ article, index }) => {
             }
         };
         generateImage();
-    }, [article.title, article.imagePrompt]);
+    }, [cleanTitle, cleanSummary]);
 
     return (
         <a 
