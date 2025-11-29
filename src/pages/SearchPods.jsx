@@ -164,43 +164,25 @@ export default function SearchPods() {
         return () => clearInterval(interval);
     }, []);
 
-    // Load voices - include all available English voices
+    // Load ONLY Google voices
     useEffect(() => {
         const loadVoices = () => {
             const availableVoices = window.speechSynthesis?.getVoices() || [];
             
-            // Blacklist of novelty/broken voices only
-            const badVoicePatterns = [
-                'whisper', 'wobble', 'zarvox', 'boing', 'bells', 'bad news', 'good news',
-                'bubbles', 'cellos', 'deranged', 'hysterical', 'organ', 'trinoids', 'princess',
-                'pipe', 'ralph', 'superstar', 'junior', 'albert', 'fred', 'kathy', 'bruce',
-                'agnes', 'bahh', 'jester', 'novelty', 'effect', 'robot', 'alien'
-            ];
+            // Get ONLY Google voices
+            const googleVoices = availableVoices.filter(v => 
+                v.name.toLowerCase().includes('google') && v.lang.startsWith('en')
+            );
             
-            // Get all English voices except novelty ones
-            const qualityVoices = availableVoices.filter(v => {
-                const isEnglish = v.lang.startsWith('en');
-                const nameLower = v.name.toLowerCase();
-                const isNovelty = badVoicePatterns.some(pattern => nameLower.includes(pattern));
-                return isEnglish && !isNovelty;
-            });
+            // Sort alphabetically
+            googleVoices.sort((a, b) => a.name.localeCompare(b.name));
             
-            // Sort: Google voices first, then others alphabetically
-            qualityVoices.sort((a, b) => {
-                const aIsGoogle = a.name.toLowerCase().includes('google');
-                const bIsGoogle = b.name.toLowerCase().includes('google');
-                if (aIsGoogle && !bIsGoogle) return -1;
-                if (!aIsGoogle && bIsGoogle) return 1;
-                return a.name.localeCompare(b.name);
-            });
+            setVoices(googleVoices);
             
-            setVoices(qualityVoices);
-            if (qualityVoices.length > 0 && !selectedVoice) {
-                // Prefer Google UK English Female as default
-                const preferred = qualityVoices.find(v => v.name === 'Google UK English Female')
-                    || qualityVoices.find(v => v.name.toLowerCase().includes('google uk') && v.name.toLowerCase().includes('female'))
-                    || qualityVoices.find(v => v.name.toLowerCase().includes('google'))
-                    || qualityVoices[0];
+            if (googleVoices.length > 0 && !selectedVoice) {
+                // Default to Google UK English Female
+                const preferred = googleVoices.find(v => v.name === 'Google UK English Female')
+                    || googleVoices[0];
                 setSelectedVoice(preferred);
             }
         };
