@@ -535,7 +535,7 @@ export default function MindMapPage() {
             ref={containerRef}
             className={`min-h-screen bg-gray-50 ${isFullscreen ? 'p-1 overflow-auto' : 'p-1'}`}
         >
-            <div className={`${isFullscreen ? 'max-w-none' : 'max-w-7xl mx-auto'}`}>
+            <div className={`${isFullscreen ? 'max-w-none' : 'max-w-[96rem] mx-auto'}`}>
                 {/* Mind Map Content */}
                 <div className={`bg-white rounded-xl border border-gray-200 ${isFullscreen ? 'h-[calc(100vh-8px)]' : 'h-[calc(100vh-16px)]'} overflow-hidden p-2`}>
                     {/* Header inside the card */}
