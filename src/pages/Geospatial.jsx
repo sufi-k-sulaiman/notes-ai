@@ -11,17 +11,13 @@ import { base44 } from '@/api/base44Client';
 import GeospatialMap from '@/components/geospatial/GeospatialMap';
 
 const USE_CASES = [
-    { id: 'greenhouse', name: 'Greenhouse Issues', icon: Cloud, color: '#EF4444', description: 'Emissions tracking, climate impact analysis' },
-    { id: 'carbon', name: 'Carbon Footprint', icon: Activity, color: '#F97316', description: 'Carbon emissions, offset tracking, net zero' },
-    { id: 'grid', name: 'Grid Map', icon: Layers, color: '#6366F1', description: 'Power grid infrastructure, transmission lines' },
-    { id: 'production', name: 'Production & Consumption', icon: TrendingUp, color: '#3B82F6', description: 'Energy production, consumption patterns' },
-    { id: 'renewables', name: 'Renewables & Sustainability', icon: TreePine, color: '#22C55E', description: 'Solar, wind, hydro, sustainable sources' },
-    { id: 'reliability', name: 'Grid Reliability', icon: Activity, color: '#8B5CF6', description: 'Outages, maintenance, uptime monitoring' },
-    { id: 'provincial', name: 'Provincial Usage', icon: Map, color: '#0EA5E9', description: 'Regional energy consumption data' },
-    { id: 'towns', name: 'Towns & Cities', icon: Building2, color: '#EC4899', description: 'Urban energy distribution, smart cities' },
-    { id: 'smart', name: 'Smart Systems', icon: Compass, color: '#10B981', description: 'IoT, smart meters, automation' },
-    { id: 'environmental', name: 'Environmental Impact', icon: Mountain, color: '#14B8A6', description: 'Ecosystem effects, biodiversity' },
-    { id: 'future', name: 'Future & Innovation', icon: Sparkles, color: '#A855F7', description: 'Emerging tech, innovation projects' },
+    { id: 'carbon', name: 'Carbon & Climate', icon: Cloud, color: '#EF4444', description: 'Carbon emissions, climate tracking, net zero' },
+    { id: 'airwater', name: 'Air & Water', icon: Activity, color: '#0EA5E9', description: 'Air quality, water resources monitoring' },
+    { id: 'forests', name: 'Forests & Biodiversity', icon: TreePine, color: '#22C55E', description: 'Forest coverage, wildlife habitats' },
+    { id: 'resources', name: 'Natural Resources', icon: Mountain, color: '#F97316', description: 'Mining, minerals, energy resources' },
+    { id: 'sustainability', name: 'Sustainability', icon: Compass, color: '#8B5CF6', description: 'Renewable energy, green initiatives' },
+    { id: 'health', name: 'Environmental Health', icon: Activity, color: '#EC4899', description: 'Pollution, health impacts, quality indices' },
+    { id: 'treasures', name: 'National Treasures', icon: Sparkles, color: '#FBBF24', description: 'Protected areas, heritage sites, parks' },
 ];
 
 
