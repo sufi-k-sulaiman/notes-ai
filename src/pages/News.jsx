@@ -137,59 +137,24 @@ import { Monitor, TrendingUp as BusinessIcon, FlaskConical, HeartPulse, Landmark
 const ARTICLES_PER_CATEGORY = 12;
 
 const NewsGrid = ({ news }) => {
-    const [validArticles, setValidArticles] = useState([]);
-    const [checking, setChecking] = useState(true);
+    // RSS feeds provide real URLs - no validation needed
+    const articles = news.slice(0, ARTICLES_PER_CATEGORY);
 
-    useEffect(() => {
-        const validateArticles = async () => {
-            setValidArticles([]);
-            setChecking(true);
-            
-            const valid = [];
-            for (const article of news) {
-                if (valid.length >= ARTICLES_PER_CATEGORY) break;
-                
-                if (!article.url || !article.url.startsWith('http')) {
-                    continue;
-                }
-                
-                try {
-                    const response = await base44.functions.invoke('checkUrl', { url: article.url });
-                    if (response.data?.valid === true) {
-                        valid.push(article);
-                        setValidArticles([...valid]);
-                    }
-                } catch {
-                    // Skip invalid
-                }
-            }
-            setChecking(false);
-        };
-        
-        if (news.length > 0) {
-            validateArticles();
-        }
-    }, [news]);
+    if (articles.length === 0) {
+        return (
+            <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
+                <Globe className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h2 className="text-xl font-semibold text-gray-800 mb-2">No Articles Found</h2>
+                <p className="text-gray-500">Try a different topic</p>
+            </div>
+        );
+    }
 
     return (
-        <div>
-            {checking && validArticles.length < ARTICLES_PER_CATEGORY && (
-                <div className="text-center text-sm text-gray-500 mb-4">
-                    Validating articles... ({validArticles.length}/{ARTICLES_PER_CATEGORY} found)
-                </div>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {validArticles.map((article, index) => (
-                    <NewsCardSimple key={index} article={article} index={index} />
-                ))}
-            </div>
-            {!checking && validArticles.length === 0 && (
-                <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-                    <Globe className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <h2 className="text-xl font-semibold text-gray-800 mb-2">No Valid Articles Found</h2>
-                    <p className="text-gray-500">Try a different topic</p>
-                </div>
-            )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {articles.map((article, index) => (
+                <NewsCardSimple key={index} article={article} index={index} />
+            ))}
         </div>
     );
 };
