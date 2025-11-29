@@ -509,7 +509,7 @@ Do NOT mention any websites, URLs, or external references in the audio script.`
         }
     };
 
-    // Download MP3 - generate audio file from script using browser TTS and MediaRecorder
+    // Download MP3 using ElevenLabs TTS
     const downloadMp3 = async () => {
         if (!sentencesRef.current.length) return;
         setIsDownloadingMp3(true);
@@ -517,66 +517,37 @@ Do NOT mention any websites, URLs, or external references in the audio script.`
         try {
             const fullScript = sentencesRef.current.join(' ');
             
-            // Use Web Audio API to capture speech synthesis output
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const destination = audioContext.createMediaStreamDestination();
-            const mediaRecorder = new MediaRecorder(destination.stream, { mimeType: 'audio/webm' });
-            const chunks = [];
+            // Call ElevenLabs TTS backend function
+            const response = await base44.functions.invoke('elevenlabsTTS', { 
+                text: fullScript,
+                voice_id: 'EXAVITQu4vr4xnSDxMaL'
+            });
             
-            mediaRecorder.ondataavailable = (e) => {
-                if (e.data.size > 0) chunks.push(e.data);
-            };
-            
-            mediaRecorder.onstop = () => {
-                const blob = new Blob(chunks, { type: 'audio/webm' });
+            // The response.data contains base64 audio
+            if (response.data?.audio) {
+                // Decode base64 to binary
+                const binaryString = atob(response.data.audio);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                
+                const blob = new Blob([bytes], { type: 'audio/mpeg' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `${currentEpisode.title.replace(/[^a-z0-9]/gi, '_')}.webm`;
+                a.download = `${currentEpisode.title.replace(/[^a-z0-9]/gi, '_')}.mp3`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                audioContext.close();
-                setIsDownloadingMp3(false);
-            };
-            
-            // Create speech utterance
-            const utterance = new SpeechSynthesisUtterance(fullScript);
-            utterance.rate = playbackSpeed;
-            utterance.volume = 1;
-            if (selectedVoice) utterance.voice = selectedVoice;
-            
-            // Start recording
-            mediaRecorder.start();
-            
-            utterance.onend = () => {
-                setTimeout(() => {
-                    mediaRecorder.stop();
-                }, 500);
-            };
-            
-            utterance.onerror = () => {
-                mediaRecorder.stop();
-                setIsDownloadingMp3(false);
-            };
-            
-            // Speak (this plays through speakers - inform user)
-            window.speechSynthesis.speak(utterance);
-            
+            } else if (response.data?.error) {
+                throw new Error(response.data.error);
+            }
         } catch (err) {
             console.error('MP3 download error:', err);
-            // Fallback: just download the text script
-            const fullScript = sentencesRef.current.join(' ');
-            const blob = new Blob([fullScript], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${currentEpisode.title.replace(/[^a-z0-9]/gi, '_')}_script.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            alert('MP3 download failed: ' + (err.message || 'Unknown error'));
+        } finally {
             setIsDownloadingMp3(false);
         }
     };

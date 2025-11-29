@@ -20,6 +20,10 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'ElevenLabs API key not configured' }, { status: 500 });
         }
 
+        // Truncate text if too long (ElevenLabs has limits)
+        const maxChars = 5000;
+        const truncatedText = text.length > maxChars ? text.substring(0, maxChars) + '...' : text;
+
         // Call ElevenLabs API
         const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {
             method: 'POST',
@@ -29,13 +33,11 @@ Deno.serve(async (req) => {
                 'xi-api-key': apiKey
             },
             body: JSON.stringify({
-                text: text,
-                model_id: 'eleven_multilingual_v2',
+                text: truncatedText,
+                model_id: 'eleven_monolingual_v1',
                 voice_settings: {
                     stability: 0.5,
-                    similarity_boost: 0.75,
-                    style: 0.5,
-                    use_speaker_boost: true
+                    similarity_boost: 0.75
                 }
             })
         });
@@ -43,17 +45,17 @@ Deno.serve(async (req) => {
         if (!response.ok) {
             const error = await response.text();
             console.error('ElevenLabs error:', error);
-            return Response.json({ error: 'Failed to generate speech' }, { status: response.status });
+            return Response.json({ error: 'Failed to generate speech: ' + error }, { status: response.status });
         }
 
         const audioBuffer = await response.arrayBuffer();
         
-        return new Response(audioBuffer, {
-            status: 200,
-            headers: {
-                'Content-Type': 'audio/mpeg',
-                'Content-Length': audioBuffer.byteLength.toString()
-            }
+        // Return as base64 encoded JSON for easier frontend handling
+        const base64Audio = btoa(String.fromCharCode(...new Uint8Array(audioBuffer)));
+        
+        return Response.json({ 
+            audio: base64Audio,
+            contentType: 'audio/mpeg'
         });
     } catch (error) {
         console.error('TTS Error:', error);
