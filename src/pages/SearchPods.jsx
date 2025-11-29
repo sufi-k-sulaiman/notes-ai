@@ -164,20 +164,12 @@ export default function SearchPods() {
         return () => clearInterval(interval);
     }, []);
 
-    // Load voices - filter for quality voices only
+    // Load voices - include all available English voices
     useEffect(() => {
         const loadVoices = () => {
             const availableVoices = window.speechSynthesis?.getVoices() || [];
             
-            // Whitelist of known good quality voices - include all Google variants
-            const goodVoiceNames = [
-                'samantha', 'alex', 'victoria', 'karen', 'daniel', 'moira', 'tessa', 'fiona',
-                'google us', 'google uk', 'google australia', 'google india', 'google',
-                'microsoft', 'zira', 'david', 'mark', 'hazel', 'susan', 'george',
-                'catherine', 'arthur', 'martha', 'native', 'premium', 'enhanced', 'neural'
-            ];
-            
-            // Blacklist of novelty/broken voices
+            // Blacklist of novelty/broken voices only
             const badVoicePatterns = [
                 'whisper', 'wobble', 'zarvox', 'boing', 'bells', 'bad news', 'good news',
                 'bubbles', 'cellos', 'deranged', 'hysterical', 'organ', 'trinoids', 'princess',
@@ -185,53 +177,30 @@ export default function SearchPods() {
                 'agnes', 'bahh', 'jester', 'novelty', 'effect', 'robot', 'alien'
             ];
             
+            // Get all English voices except novelty ones
             const qualityVoices = availableVoices.filter(v => {
                 const isEnglish = v.lang.startsWith('en');
                 const nameLower = v.name.toLowerCase();
-                
-                // Check blacklist
                 const isNovelty = badVoicePatterns.some(pattern => nameLower.includes(pattern));
-                if (isNovelty) return false;
-                
-                // Prefer whitelisted or default voices
-                const isGood = goodVoiceNames.some(name => nameLower.includes(name)) || v.default;
-                
-                return isEnglish && (isGood || v.localService);
+                return isEnglish && !isNovelty;
             });
             
-            // Keep all Google voices (don't deduplicate them) but deduplicate others
-            const uniqueVoices = [];
-            const seenNames = new Set();
-            for (const voice of qualityVoices) {
-                const nameLower = voice.name.toLowerCase();
-                // Keep all Google voice variants
-                if (nameLower.includes('google')) {
-                    uniqueVoices.push(voice);
-                } else {
-                    const simpleName = voice.name.split('(')[0].trim();
-                    if (!seenNames.has(simpleName)) {
-                        seenNames.add(simpleName);
-                        uniqueVoices.push(voice);
-                    }
-                }
-            }
-            
-            // Sort: premium/enhanced first, then by name
-            uniqueVoices.sort((a, b) => {
-                const aName = a.name.toLowerCase();
-                const bName = b.name.toLowerCase();
-                const aScore = (aName.includes('premium') || aName.includes('enhanced') || aName.includes('neural')) ? 0 : 1;
-                const bScore = (bName.includes('premium') || bName.includes('enhanced') || bName.includes('neural')) ? 0 : 1;
-                if (aScore !== bScore) return aScore - bScore;
+            // Sort: Google voices first, then others alphabetically
+            qualityVoices.sort((a, b) => {
+                const aIsGoogle = a.name.toLowerCase().includes('google');
+                const bIsGoogle = b.name.toLowerCase().includes('google');
+                if (aIsGoogle && !bIsGoogle) return -1;
+                if (!aIsGoogle && bIsGoogle) return 1;
                 return a.name.localeCompare(b.name);
             });
             
-            setVoices(uniqueVoices);
-            if (uniqueVoices.length > 0 && !selectedVoice) {
+            setVoices(qualityVoices);
+            if (qualityVoices.length > 0 && !selectedVoice) {
                 // Prefer Google UK English Female as default
-                const preferred = uniqueVoices.find(v => v.name === 'Google UK English Female')
-                    || uniqueVoices.find(v => v.name.toLowerCase() === 'google uk english female')
-                    || uniqueVoices[0];
+                const preferred = qualityVoices.find(v => v.name === 'Google UK English Female')
+                    || qualityVoices.find(v => v.name.toLowerCase().includes('google uk') && v.name.toLowerCase().includes('female'))
+                    || qualityVoices.find(v => v.name.toLowerCase().includes('google'))
+                    || qualityVoices[0];
                 setSelectedVoice(preferred);
             }
         };
