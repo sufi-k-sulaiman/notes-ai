@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap, Polyline } from 'react-leaflet';
-import { ZoomIn, ZoomOut, Globe, Layers, Locate } from 'lucide-react';
+import { ZoomIn, ZoomOut, Globe } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import 'leaflet/dist/leaflet.css';
 
 const MAP_TILES = {

@@ -205,24 +205,6 @@ export default function Geospatial() {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 md:px-6 py-6">
-                {/* Map View Tabs */}
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-4">
-                    <TabsList className="bg-white border border-gray-200">
-                        <TabsTrigger value="explore" className="gap-1.5 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-                            <Map className="w-4 h-4" /> Explore Map
-                        </TabsTrigger>
-                        <TabsTrigger value="satellite" className="gap-1.5 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-                            <Satellite className="w-4 h-4" /> Satellite View
-                        </TabsTrigger>
-                        <TabsTrigger value="heatmap" className="gap-1.5 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-                            <Activity className="w-4 h-4" /> Heatmap
-                        </TabsTrigger>
-                        <TabsTrigger value="terrain" className="gap-1.5 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-                            <Mountain className="w-4 h-4" /> Terrain
-                        </TabsTrigger>
-                    </TabsList>
-                </Tabs>
-
                 {/* Selected categories summary */}
                 {activeUseCases.length > 0 && (
                     <div className="flex items-center gap-2 mb-4 flex-wrap">
@@ -236,7 +218,26 @@ export default function Geospatial() {
                 )}
 
                 {/* World Map - Full Width */}
-                <div className="mb-6">
+                <div className="mb-6 relative">
+                    {/* Map View Tabs - positioned on map */}
+                    <div className="absolute top-4 left-4 z-[1000]">
+                        <Tabs value={activeTab} onValueChange={setActiveTab}>
+                            <TabsList className="bg-white/95 backdrop-blur-sm shadow-lg border border-gray-200">
+                                <TabsTrigger value="explore" className="gap-1.5 text-xs data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                                    <Map className="w-3 h-3" /> Explore
+                                </TabsTrigger>
+                                <TabsTrigger value="satellite" className="gap-1.5 text-xs data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                                    <Satellite className="w-3 h-3" /> Satellite
+                                </TabsTrigger>
+                                <TabsTrigger value="heatmap" className="gap-1.5 text-xs data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                                    <Activity className="w-3 h-3" /> Heatmap
+                                </TabsTrigger>
+                                <TabsTrigger value="terrain" className="gap-1.5 text-xs data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                                    <Mountain className="w-3 h-3" /> Terrain
+                                </TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                    </div>
                     <GeospatialMap 
                         useCase={currentUseCase?.id || 'carbon'}
                         mapType={activeTab}
