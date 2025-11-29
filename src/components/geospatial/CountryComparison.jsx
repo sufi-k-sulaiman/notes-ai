@@ -242,7 +242,7 @@ DO NOT give generic environmental rankings. Be SPECIFIC to ${categoryNames}.`,
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-900">Needs Improvement</h3>
-                        <p className="text-xs text-gray-500">Opportunities for progress</p>
+                        <p className="text-xs text-gray-500">Lagging in {categoryNames}</p>
                     </div>
                 </div>
                 <div className="space-y-3">
@@ -267,6 +267,7 @@ DO NOT give generic environmental rankings. Be SPECIFIC to ${categoryNames}.`,
                         </div>
                     ))}
                 </div>
+            </div>
             </div>
         </div>
     );
