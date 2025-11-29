@@ -13,114 +13,6 @@ const CATEGORY_MAP = {
     politics: 'general',
 };
 
-Deno.serve(async (req) => {
-    try {
-        const base44 = createClientFromRequest(req);
-        const user = await base44.auth.me();
-        
-        if (!user) {
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        let body = {};
-        try {
-            body = await req.json();
-        } catch {
-            // Empty body is fine
-        }
-        
-        const { query, category, limit = 20 } = body;
-        const searchTerm = query || category || 'technology';
-        
-        let articles = [];
-        
-        // Try LLM with internet context first
-        try {
-            const llmResult = await base44.integrations.Core.InvokeLLM({
-                prompt: `Find the latest news articles about "${searchTerm}". Return exactly 15 real, current news articles from reputable sources. For each article provide the actual headline, source name, a brief summary, and the real article URL.`,
-                add_context_from_internet: true,
-                response_json_schema: {
-                    type: "object",
-                    properties: {
-                        articles: {
-                            type: "array",
-                            items: {
-                                type: "object",
-                                properties: {
-                                    title: { type: "string" },
-                                    source: { type: "string" },
-                                    summary: { type: "string" },
-                                    url: { type: "string" },
-                                    time: { type: "string" }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            if (llmResult?.articles?.length > 0) {
-                articles = llmResult.articles.map(a => ({
-                    title: a.title,
-                    source: a.source || 'News',
-                    summary: a.summary || '',
-                    url: a.url,
-                    time: a.time || 'Recently'
-                }));
-            }
-        } catch (llmError) {
-            console.error('LLM fetch failed:', llmError.message);
-        }
-        
-        // Fallback to NewsAPI if LLM didn't return enough articles
-        if (articles.length < 5 && NEWSAPI_KEY) {
-            try {
-                const newsApiCategory = CATEGORY_MAP[category] || 'general';
-                const newsApiUrl = query 
-                    ? `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&pageSize=20&apiKey=${NEWSAPI_KEY}`
-                    : `https://newsapi.org/v2/top-headlines?category=${newsApiCategory}&country=us&pageSize=20&apiKey=${NEWSAPI_KEY}`;
-                
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 8000);
-                
-                const response = await fetch(newsApiUrl, { signal: controller.signal });
-                clearTimeout(timeoutId);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.articles?.length > 0) {
-                        articles = data.articles
-                            .filter(a => a.title && a.url && !a.title.includes('[Removed]'))
-                            .map(a => ({
-                                title: a.title,
-                                source: a.source?.name || 'News',
-                                summary: a.description || '',
-                                url: a.url,
-                                time: formatTime(a.publishedAt)
-                            }));
-                    }
-                }
-            } catch (newsApiError) {
-                console.error('NewsAPI fallback failed:', newsApiError.message);
-            }
-        }
-        
-        return Response.json({
-            success: true,
-            count: articles.length,
-            articles: articles.slice(0, limit),
-        });
-        
-    } catch (error) {
-        console.error('fetchNews error:', error);
-        return Response.json({ 
-            success: false, 
-            error: error.message,
-            articles: [] 
-        }, { status: 500 });
-    }
-});
-
 function formatTime(dateStr) {
     if (!dateStr) return 'Recently';
     try {
@@ -139,3 +31,75 @@ function formatTime(dateStr) {
         return 'Recently';
     }
 }
+
+Deno.serve(async (req) => {
+    try {
+        const base44 = createClientFromRequest(req);
+        const user = await base44.auth.me();
+        
+        if (!user) {
+            return Response.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        let body = {};
+        try {
+            body = await req.json();
+        } catch {
+            // Empty body is fine
+        }
+        
+        const { query, category, limit = 20 } = body;
+        
+        // Use NewsAPI directly - it's fast and reliable
+        if (!NEWSAPI_KEY) {
+            return Response.json({ 
+                success: false, 
+                error: 'NewsAPI key not configured',
+                articles: [] 
+            });
+        }
+        
+        const newsApiCategory = CATEGORY_MAP[category] || 'general';
+        const newsApiUrl = query 
+            ? `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&pageSize=${limit}&language=en&apiKey=${NEWSAPI_KEY}`
+            : `https://newsapi.org/v2/top-headlines?category=${newsApiCategory}&country=us&pageSize=${limit}&apiKey=${NEWSAPI_KEY}`;
+        
+        const response = await fetch(newsApiUrl);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('NewsAPI error:', errorText);
+            return Response.json({ 
+                success: false, 
+                error: `NewsAPI returned ${response.status}`,
+                articles: [] 
+            });
+        }
+        
+        const data = await response.json();
+        
+        const articles = (data.articles || [])
+            .filter(a => a.title && a.url && !a.title.includes('[Removed]'))
+            .map(a => ({
+                title: a.title,
+                source: a.source?.name || 'News',
+                summary: a.description || '',
+                url: a.url,
+                time: formatTime(a.publishedAt)
+            }));
+        
+        return Response.json({
+            success: true,
+            count: articles.length,
+            articles: articles,
+        });
+        
+    } catch (error) {
+        console.error('fetchNews error:', error);
+        return Response.json({ 
+            success: false, 
+            error: error.message,
+            articles: [] 
+        }, { status: 500 });
+    }
+});
