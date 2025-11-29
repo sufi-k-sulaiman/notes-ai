@@ -284,7 +284,7 @@ export default function Learning() {
                     </div>
 
                     {/* Subjects list */}
-                    <div className="flex-1 overflow-y-auto max-h-[260px]">
+                    <div className="flex-1 overflow-y-auto max-h-[325px]">
                         <div className="space-y-1">
                             {filteredSubjects.map(subject => {
                                 const isSelected = selectedSubjects.some(s => s.id === subject.id);
