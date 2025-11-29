@@ -340,11 +340,26 @@ Deno.serve(async (req) => {
             fetchPromises.push(fetchExternalScraper(query, scraperUrl));
         }
         
-        // Fetch all in parallel
-        const results = await Promise.all(fetchPromises);
+        // Fetch all in parallel with overall timeout
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Overall timeout')), 15000)
+        );
+        
+        let results;
+        try {
+            results = await Promise.race([
+                Promise.all(fetchPromises),
+                timeoutPromise
+            ]);
+        } catch (e) {
+            console.error('Fetch timeout, using partial results');
+            results = await Promise.all(fetchPromises.map(p => p.catch(() => [])));
+        }
         
         for (const articles of results) {
-            allArticles.push(...articles);
+            if (Array.isArray(articles)) {
+                allArticles.push(...articles);
+            }
         }
         
         // Deduplicate and limit
