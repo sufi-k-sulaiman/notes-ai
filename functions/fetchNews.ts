@@ -255,28 +255,44 @@ Deno.serve(async (req) => {
 
         // Check cache first
         const cacheKey = query?.toLowerCase() || category || 'technology';
-        const cached = await base44.entities.NewsCache.filter({ category: cacheKey });
+        
+        try {
+            const cached = await base44.entities.NewsCache.filter({ category: cacheKey });
 
-        if (cached.length > 0 && cached[0].articles?.length > 0) {
-            const articles = cached[0].articles.map(art => ({
-                ...art,
-                time: formatTimeFromDate(art.publishedAt),
-            }));
+            if (cached.length > 0 && cached[0].articles?.length > 0) {
+                const articles = cached[0].articles.map(art => ({
+                    ...art,
+                    time: formatTimeFromDate(art.publishedAt),
+                }));
 
-            return Response.json({
-                success: true,
-                count: articles.length,
-                query: query || null,
-                category: category || null,
-                articles: articles.slice(0, limit),
-            });
+                return Response.json({
+                    success: true,
+                    source: 'cache',
+                    count: articles.length,
+                    query: query || null,
+                    category: category || null,
+                    articles: articles.slice(0, limit),
+                });
+            }
+        } catch (cacheError) {
+            console.log('Cache check failed, fetching live:', cacheError.message);
         }
 
         // Fetch live from Google News RSS
+        console.log('Fetching live news for:', query || category || 'technology');
         const liveArticles = await fetchGoogleNewsRSS(query || category || 'technology', !query && !!category);
+        
+        if (!liveArticles || liveArticles.length === 0) {
+            return Response.json({ 
+                error: 'No articles found from Google News RSS', 
+                success: false,
+                articles: [] 
+            }, { status: 200 });
+        }
 
         return Response.json({
             success: true,
+            source: 'live',
             count: liveArticles.length,
             query: query || null,
             category: category || null,
@@ -284,7 +300,12 @@ Deno.serve(async (req) => {
         });
 
     } catch (error) {
-        return Response.json({ error: error.message }, { status: 500 });
+        console.error('fetchNews error:', error);
+        return Response.json({ 
+            error: error.message, 
+            success: false,
+            articles: [] 
+        }, { status: 200 });
     }
 });
 
