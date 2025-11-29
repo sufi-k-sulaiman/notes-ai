@@ -810,10 +810,10 @@ export default function Qwirey() {
                                         key={format.id}
                                         onClick={() => handleFormatChange(format.id)}
                                         disabled={formatLoading}
-                                        className={`flex-1 h-10 rounded-lg text-xs font-medium transition-all border ${
+                                        className={`flex-1 h-10 rounded-lg text-xs font-medium transition-all ${
                                             responseFormat === format.id
-                                                ? 'bg-white text-purple-700 shadow-sm border-purple-400'
-                                                : 'text-gray-500 hover:text-gray-700 border-purple-300'
+                                                ? 'bg-white text-purple-700 shadow-sm border border-purple-400'
+                                                : 'text-gray-500 hover:text-gray-700'
                                         } ${formatLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
                                         {format.label}
