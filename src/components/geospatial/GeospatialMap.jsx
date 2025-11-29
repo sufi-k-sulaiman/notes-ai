@@ -108,7 +108,9 @@ export default function GeospatialMap({
     const dataPoints = useMemo(() => generateDataPoints(useCase, mini ? 10 : isWorldMap ? 50 : 25), [useCase, mini, isWorldMap]);
     const routes = useMemo(() => generateRoutes(useCase), [useCase]);
     
-    const tileUrl = MAP_TILES[mapType] || MAP_TILES.default;
+    // Use the selected style or fall back to mapType
+    const activeTileStyle = selectedStyle || mapType;
+    const tileUrl = MAP_TILES[activeTileStyle] || MAP_TILES.default;
 
     const getColor = (value) => {
         if (mapType === 'heatmap') {
