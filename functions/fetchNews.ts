@@ -1,42 +1,125 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
-// Simple RSS sources that are reliable
-const RSS_FEEDS = {
-    bbc_world: 'https://feeds.bbci.co.uk/news/world/rss.xml',
-    bbc_tech: 'https://feeds.bbci.co.uk/news/technology/rss.xml',
-    bbc_business: 'https://feeds.bbci.co.uk/news/business/rss.xml',
-    bbc_science: 'https://feeds.bbci.co.uk/news/science_and_environment/rss.xml',
-    npr: 'https://feeds.npr.org/1001/rss.xml',
-};
+const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
 
 const CATEGORY_MAP = {
-    technology: 'bbc_tech',
-    business: 'bbc_business',
-    science: 'bbc_science',
-    world: 'bbc_world',
+    technology: 'technology',
+    business: 'business',
+    science: 'science',
+    health: 'health',
+    sports: 'sports',
+    entertainment: 'entertainment',
+    world: 'general',
+    politics: 'general',
 };
 
-function extractTag(xml, tag) {
-    const cdataMatch = xml.match(new RegExp(`<${tag}><!\\[CDATA\\[([\\s\\S]*?)\\]\\]></${tag}>`, 'i'));
-    if (cdataMatch) return cdataMatch[1];
-    const simpleMatch = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, 'i'));
-    return simpleMatch ? simpleMatch[1] : null;
-}
+Deno.serve(async (req) => {
+    try {
+        const base44 = createClientFromRequest(req);
+        const user = await base44.auth.me();
+        
+        if (!user) {
+            return Response.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
-function cleanText(text) {
-    if (!text) return '';
-    return text
-        .replace(/<[^>]*>/g, '')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&amp;/g, '&')
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&nbsp;/g, ' ')
-        .replace(/https?:\/\/[^\s]+/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-}
+        let body = {};
+        try {
+            body = await req.json();
+        } catch {
+            // Empty body is fine
+        }
+        
+        const { query, category, limit = 20 } = body;
+        const searchTerm = query || category || 'technology';
+        
+        let articles = [];
+        
+        // Try LLM with internet context first
+        try {
+            const llmResult = await base44.integrations.Core.InvokeLLM({
+                prompt: `Find the latest news articles about "${searchTerm}". Return exactly 15 real, current news articles from reputable sources. For each article provide the actual headline, source name, a brief summary, and the real article URL.`,
+                add_context_from_internet: true,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        articles: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    title: { type: "string" },
+                                    source: { type: "string" },
+                                    summary: { type: "string" },
+                                    url: { type: "string" },
+                                    time: { type: "string" }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            if (llmResult?.articles?.length > 0) {
+                articles = llmResult.articles.map(a => ({
+                    title: a.title,
+                    source: a.source || 'News',
+                    summary: a.summary || '',
+                    url: a.url,
+                    time: a.time || 'Recently'
+                }));
+            }
+        } catch (llmError) {
+            console.error('LLM fetch failed:', llmError.message);
+        }
+        
+        // Fallback to NewsAPI if LLM didn't return enough articles
+        if (articles.length < 5 && NEWSAPI_KEY) {
+            try {
+                const newsApiCategory = CATEGORY_MAP[category] || 'general';
+                const newsApiUrl = query 
+                    ? `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&pageSize=20&apiKey=${NEWSAPI_KEY}`
+                    : `https://newsapi.org/v2/top-headlines?category=${newsApiCategory}&country=us&pageSize=20&apiKey=${NEWSAPI_KEY}`;
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                
+                const response = await fetch(newsApiUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.articles?.length > 0) {
+                        articles = data.articles
+                            .filter(a => a.title && a.url && !a.title.includes('[Removed]'))
+                            .map(a => ({
+                                title: a.title,
+                                source: a.source?.name || 'News',
+                                summary: a.description || '',
+                                url: a.url,
+                                time: formatTime(a.publishedAt)
+                            }));
+                    }
+                }
+            } catch (newsApiError) {
+                console.error('NewsAPI fallback failed:', newsApiError.message);
+            }
+        }
+        
+        return Response.json({
+            success: true,
+            count: articles.length,
+            articles: articles.slice(0, limit),
+        });
+        
+    } catch (error) {
+        console.error('fetchNews error:', error);
+        return Response.json({ 
+            success: false, 
+            error: error.message,
+            articles: [] 
+        }, { status: 500 });
+    }
+});
 
 function formatTime(dateStr) {
     if (!dateStr) return 'Recently';
@@ -56,117 +139,3 @@ function formatTime(dateStr) {
         return 'Recently';
     }
 }
-
-function parseRSS(xml, sourceName) {
-    const articles = [];
-    const itemRegex = /<item>([\s\S]*?)<\/item>/gi;
-    let match;
-    
-    while ((match = itemRegex.exec(xml)) !== null && articles.length < 15) {
-        const item = match[1];
-        const title = cleanText(extractTag(item, 'title'));
-        const link = extractTag(item, 'link') || extractTag(item, 'guid');
-        const pubDate = extractTag(item, 'pubDate');
-        const description = cleanText(extractTag(item, 'description'));
-        
-        if (title && link) {
-            articles.push({
-                title,
-                url: link.trim(),
-                source: sourceName,
-                summary: description || `Read more about: ${title}`,
-                time: formatTime(pubDate),
-            });
-        }
-    }
-    
-    return articles;
-}
-
-async function fetchFeed(feedKey) {
-    const url = RSS_FEEDS[feedKey];
-    if (!url) return [];
-    
-    const sourceName = feedKey.includes('bbc') ? 'BBC' : 'NPR';
-    
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (compatible; NewsReader/1.0)',
-                'Accept': 'application/rss+xml, application/xml, text/xml',
-            },
-            signal: controller.signal,
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) return [];
-        
-        const xml = await response.text();
-        return parseRSS(xml, sourceName);
-    } catch (error) {
-        console.error(`Feed ${feedKey} failed:`, error.message);
-        return [];
-    }
-}
-
-Deno.serve(async (req) => {
-    try {
-        const base44 = createClientFromRequest(req);
-        const user = await base44.auth.me();
-        
-        if (!user) {
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        let body = {};
-        try {
-            body = await req.json();
-        } catch {
-            // Empty body is fine
-        }
-        
-        const { category, limit = 30 } = body;
-        
-        // Determine which feeds to fetch
-        let feedKeys = ['bbc_world', 'npr'];
-        if (category && CATEGORY_MAP[category]) {
-            feedKeys = [CATEGORY_MAP[category]];
-        }
-        
-        // Fetch feeds in parallel
-        const results = await Promise.allSettled(feedKeys.map(fetchFeed));
-        
-        const allArticles = [];
-        for (const result of results) {
-            if (result.status === 'fulfilled' && Array.isArray(result.value)) {
-                allArticles.push(...result.value);
-            }
-        }
-        
-        // Deduplicate by URL
-        const seen = new Set();
-        const unique = allArticles.filter(art => {
-            if (seen.has(art.url)) return false;
-            seen.add(art.url);
-            return true;
-        }).slice(0, limit);
-        
-        return Response.json({
-            success: true,
-            count: unique.length,
-            articles: unique,
-        });
-        
-    } catch (error) {
-        console.error('fetchNews error:', error);
-        return Response.json({ 
-            success: false, 
-            error: error.message,
-            articles: [] 
-        }, { status: 500 });
-    }
-});
