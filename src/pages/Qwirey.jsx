@@ -234,16 +234,15 @@ export default function Qwirey() {
 
         try {
             if (selectedModel === 'qwirey') {
-                // Build API calls based on selected format - only generate what's needed
+                // Build API calls based on selected format - only generate for current format
                 const apiCalls = [
-                    // Always get text response
+                    // Always get base response with sources and follow-ups
                     base44.integrations.Core.InvokeLLM({
-                        prompt: `You are Qwirey, an advanced AI assistant by 1cPublishing. Provide a comprehensive, helpful response.\n\n${webUrl ? `Reference URL: ${webUrl}\n` : ''}User query: ${fullPrompt}\n\nAlso suggest 3 follow-up questions the user might want to ask.`,
+                        prompt: `You are Qwirey, an advanced AI assistant by 1cPublishing.\n\n${webUrl ? `Reference URL: ${webUrl}\n` : ''}User query: ${currentPrompt}\n\nProvide 3 follow-up questions the user might want to ask.`,
                         add_context_from_internet: true,
                         response_json_schema: {
                             type: "object",
                             properties: {
-                                response: { type: "string" },
                                 followUpQuestions: { type: "array", items: { type: "string" } },
                                 sources: { type: "array", items: { type: "object", properties: { title: { type: "string" }, url: { type: "string" } } } }
                             }
@@ -251,8 +250,35 @@ export default function Qwirey() {
                     })
                 ];
 
-                // Only add format-specific calls
-                if (responseFormat === 'dynamic') {
+                // Add format-specific call
+                if (responseFormat === 'short') {
+                    apiCalls.push(
+                        base44.integrations.Core.InvokeLLM({
+                            prompt: `For "${currentPrompt}", provide a SHORT response: a brief blurb (under 280 characters) and exactly 5 key bullet points (each under 60 chars).`,
+                            add_context_from_internet: true,
+                            response_json_schema: {
+                                type: "object",
+                                properties: {
+                                    blurb: { type: "string" },
+                                    bullets: { type: "array", items: { type: "string" } }
+                                }
+                            }
+                        })
+                    );
+                } else if (responseFormat === 'long') {
+                    apiCalls.push(
+                        base44.integrations.Core.InvokeLLM({
+                            prompt: `For "${currentPrompt}", provide a DETAILED response with 6-8 well-developed paragraphs. Include thorough explanations and examples.`,
+                            add_context_from_internet: true,
+                            response_json_schema: {
+                                type: "object",
+                                properties: {
+                                    paragraphs: { type: "array", items: { type: "string" } }
+                                }
+                            }
+                        })
+                    );
+                } else if (responseFormat === 'dynamic') {
                     apiCalls.push(
                         base44.integrations.Core.InvokeLLM({
                             prompt: `Generate 4 detailed image prompts related to: "${currentPrompt}". Each should be suitable for AI image generation.`,
@@ -334,22 +360,26 @@ export default function Qwirey() {
                 }
 
                 const responses = await Promise.all(apiCalls);
-                const textResponse = responses[0];
+                const baseResponse = responses[0];
 
                 // Process responses based on format
-                let generatedImages = [];
-                let chartData = null;
-                let dashboardData = null;
-                let tabledData = null;
-                let reviewsData = null;
+                let resultData = {
+                    type: 'qwirey',
+                    followUpQuestions: baseResponse?.followUpQuestions || [],
+                    sources: baseResponse?.sources || []
+                };
 
-                if (responseFormat === 'dynamic') {
+                if (responseFormat === 'short') {
+                    resultData.shortData = responses[1];
+                } else if (responseFormat === 'long') {
+                    resultData.longData = responses[1];
+                } else if (responseFormat === 'dynamic') {
                     const imagesResponse = responses[1];
                     const webDataResponse = responses[2];
                     const dashboardDataResponse = responses[3];
                     
                     const imagePrompts = imagesResponse?.imagePrompts?.slice(0, 4) || [];
-                    generatedImages = await Promise.all(
+                    const generatedImages = await Promise.all(
                         imagePrompts.map(async (imgPrompt) => {
                             try {
                                 const img = await base44.integrations.Core.GenerateImage({ prompt: imgPrompt });
@@ -361,25 +391,16 @@ export default function Qwirey() {
                         })
                     );
                     
-                    chartData = webDataResponse?.hasChartData ? webDataResponse : null;
-                    dashboardData = dashboardDataResponse;
+                    resultData.images = generatedImages.filter(Boolean);
+                    resultData.chartData = webDataResponse?.hasChartData ? webDataResponse : null;
+                    resultData.dashboardData = dashboardDataResponse;
                 } else if (responseFormat === 'tabled') {
-                    tabledData = responses[1];
+                    resultData.tabledData = responses[1];
                 } else if (responseFormat === 'reviews') {
-                    reviewsData = responses[1];
+                    resultData.reviewsData = responses[1];
                 }
 
-                setResult({
-                    type: 'qwirey',
-                    text: textResponse?.response || textResponse || 'Here is the analysis of your query.',
-                    followUpQuestions: textResponse?.followUpQuestions || [],
-                    sources: textResponse?.sources || [],
-                    images: generatedImages.filter(Boolean),
-                    chartData: chartData,
-                    dashboardData: dashboardData,
-                    tabledData: tabledData,
-                    reviewsData: reviewsData
-                });
+                setResult(resultData);
 
             } else {
                 const modelPrompts = {
