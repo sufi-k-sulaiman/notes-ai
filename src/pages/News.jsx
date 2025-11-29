@@ -24,9 +24,8 @@ const NewsCard = ({ article, index }) => {
                 return;
             }
             try {
-                const response = await fetch(article.url, { method: 'HEAD', mode: 'no-cors' });
-                // no-cors mode always succeeds if the server responds, so we assume it's valid
-                setIsValidUrl(true);
+                const response = await base44.functions.invoke('checkUrl', { url: article.url });
+                setIsValidUrl(response.data?.valid === true);
             } catch (error) {
                 setIsValidUrl(false);
             }
