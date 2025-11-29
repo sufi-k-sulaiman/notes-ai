@@ -17,6 +17,30 @@ const cleanText = (text) => {
 };
 
 const USE_CASE_CONFIG = {
+    coastal: {
+        title: 'Coastal & Coral Ecosystem',
+        description: 'Coral reef health, coastal erosion, and marine ecosystem status',
+        highLabel: 'Most Threatened Coasts',
+        lowLabel: 'Healthiest Marine Areas',
+        highMetric: 'Coral bleaching (%)',
+        lowMetric: 'Reef health index'
+    },
+    ocean: {
+        title: 'Ocean Sustainability',
+        description: 'Ocean health, marine pollution, and fishing sustainability',
+        highLabel: 'Most Polluted Waters',
+        lowLabel: 'Pristine Ocean Zones',
+        highMetric: 'Pollution index',
+        lowMetric: 'Marine health score'
+    },
+    wildlife: {
+        title: 'Endangered Wildlife',
+        description: 'Species conservation, habitat protection, and biodiversity',
+        highLabel: 'Critical Habitats',
+        lowLabel: 'Conservation Success',
+        highMetric: 'Species at risk',
+        lowMetric: 'Protection level'
+    },
     carbon: {
         title: 'Carbon Hotspots',
         description: 'Global CO2 emission concentrations and climate impact zones',
