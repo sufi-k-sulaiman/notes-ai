@@ -598,14 +598,27 @@ const ParetoDisplay = ({ data }) => {
 
 // Ansoff: Scatter Risk/Reward + Bar by Quadrant
 const AnsoffDisplay = ({ data }) => {
+    const quadrantColors = { 
+        'Market Penetration': '#22C55E', 
+        'Market Development': '#3B82F6', 
+        'Product Development': '#F59E0B', 
+        'Diversification': '#EF4444' 
+    };
+
     const scatterData = data.quadrants?.map(q => ({
         name: q.quadrant,
-        risk: q.risk || Math.random() * 100,
-        reward: q.reward || Math.random() * 100,
+        risk: q.risk || 50,
+        reward: q.reward || 50,
     })) || [];
 
     const barData = data.quadrants?.flatMap(q => 
-        q.initiatives?.map(i => ({ quadrant: q.quadrant, name: i.name?.substring(0, 12), score: i.score })) || []
+        q.initiatives?.map(i => ({ 
+            quadrant: q.quadrant, 
+            name: i.name?.substring(0, 15), 
+            fullName: i.name,
+            score: i.score,
+            detail: i.detail || ''
+        })) || []
     ) || [];
 
     return (
@@ -613,51 +626,86 @@ const AnsoffDisplay = ({ data }) => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="bg-gray-50 rounded-xl p-4 border">
                     <h4 className="font-semibold text-gray-700 mb-2">Risk vs Reward Matrix</h4>
-                    <div className="h-56">
+                    <div className="h-56 relative">
+                        <div className="absolute inset-4 grid grid-cols-2 grid-rows-2 text-[10px] text-gray-300 pointer-events-none">
+                            <div className="flex items-start justify-start p-1">Low Risk</div>
+                            <div className="flex items-start justify-end p-1">High Risk</div>
+                            <div></div>
+                            <div></div>
+                        </div>
                         <ResponsiveContainer width="100%" height="100%">
-                            <ScatterChart>
+                            <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis type="number" dataKey="risk" name="Risk" domain={[0, 100]} tick={{ fontSize: 10 }} />
-                                <YAxis type="number" dataKey="reward" name="Reward" domain={[0, 100]} tick={{ fontSize: 10 }} />
-                                <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                                <Scatter data={scatterData} fill="#8B5CF6">
-                                    {scatterData.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
+                                <XAxis type="number" dataKey="risk" name="Risk" domain={[0, 100]} tick={{ fontSize: 10 }} label={{ value: 'Risk Level', position: 'bottom', fontSize: 10 }} />
+                                <YAxis type="number" dataKey="reward" name="Reward" domain={[0, 100]} tick={{ fontSize: 10 }} label={{ value: 'Reward Potential', angle: -90, position: 'left', fontSize: 10 }} />
+                                <Tooltip content={({ payload }) => payload?.[0] && (
+                                    <div className="bg-white p-2 rounded shadow border text-xs">
+                                        <p className="font-semibold" style={{ color: quadrantColors[payload[0].payload.name] }}>{payload[0].payload.name}</p>
+                                        <p>Risk: {payload[0].payload.risk}%</p>
+                                        <p>Reward: {payload[0].payload.reward}%</p>
+                                    </div>
+                                )} />
+                                <Scatter data={scatterData}>
+                                    {scatterData.map((entry, i) => <Cell key={i} fill={quadrantColors[entry.name] || COLORS[i]} r={12} />)}
                                 </Scatter>
                             </ScatterChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-4 border">
-                    <h4 className="font-semibold text-gray-700 mb-2">Initiative Scores</h4>
+                    <h4 className="font-semibold text-gray-700 mb-2">Initiative Growth Potential</h4>
                     <div className="h-56">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={barData} layout="vertical">
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis type="number" domain={[0, 100]} />
-                                <YAxis dataKey="name" type="category" width={90} tick={{ fontSize: 9 }} />
-                                <Tooltip />
+                                <XAxis type="number" domain={[0, 100]} unit="%" />
+                                <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 9 }} />
+                                <Tooltip content={({ payload }) => payload?.[0] && (
+                                    <div className="bg-white p-2 rounded shadow border text-xs max-w-[200px]">
+                                        <p className="font-semibold">{payload[0].payload.fullName}</p>
+                                        <p style={{ color: quadrantColors[payload[0].payload.quadrant] }}>{payload[0].payload.quadrant}</p>
+                                        <p className="font-bold">Score: {payload[0].payload.score}%</p>
+                                    </div>
+                                )} />
                                 <Bar dataKey="score" radius={[0, 4, 4, 0]}>
-                                    {barData.map((entry, i) => {
-                                        const colorMap = { 'Market Penetration': '#22C55E', 'Market Development': '#3B82F6', 'Product Development': '#F59E0B', 'Diversification': '#EF4444' };
-                                        return <Cell key={i} fill={colorMap[entry.quadrant] || COLORS[i % COLORS.length]} />;
-                                    })}
+                                    {barData.map((entry, i) => <Cell key={i} fill={quadrantColors[entry.quadrant] || COLORS[i % COLORS.length]} />)}
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
             </div>
-            <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
-                <h4 className="font-semibold text-purple-800 mb-2">Strategic Recommendations</h4>
-                <p className="text-gray-700">{data.insight}</p>
-                <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2">
-                    {data.quadrants?.map((q, i) => (
-                        <div key={i} className="bg-white rounded-lg p-2 border">
-                            <span className="text-xs font-medium" style={{ color: COLORS[i] }}>{q.quadrant}</span>
-                            <p className="text-sm text-gray-600">{q.initiatives?.length || 0} initiatives</p>
+
+            {/* Quadrant Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {data.quadrants?.map((q, i) => (
+                    <div key={i} className="bg-white rounded-xl p-4 border" style={{ borderColor: `${quadrantColors[q.quadrant]}40` }}>
+                        <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-semibold text-sm" style={{ color: quadrantColors[q.quadrant] }}>{q.quadrant}</h4>
+                            <div className="flex gap-2 text-xs">
+                                <span className="px-2 py-0.5 rounded" style={{ backgroundColor: `${quadrantColors[q.quadrant]}20` }}>Risk: {q.risk}%</span>
+                                <span className="px-2 py-0.5 rounded bg-gray-100">Reward: {q.reward}%</span>
+                            </div>
                         </div>
-                    ))}
-                </div>
+                        {q.description && <p className="text-xs text-gray-600 mb-2">{q.description}</p>}
+                        <div className="space-y-1.5">
+                            {q.initiatives?.map((init, j) => (
+                                <div key={j} className="bg-gray-50 rounded-lg p-2 border border-gray-100">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium text-gray-800">{init.name}</span>
+                                        <span className="text-xs font-bold" style={{ color: quadrantColors[q.quadrant] }}>{init.score}%</span>
+                                    </div>
+                                    {init.detail && <p className="text-xs text-gray-500 mt-0.5">{init.detail}</p>}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
+                <h4 className="font-semibold text-purple-800 mb-2">Strategic Growth Recommendations</h4>
+                <p className="text-gray-700 text-sm leading-relaxed">{data.insight}</p>
             </div>
         </div>
     );
