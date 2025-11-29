@@ -305,7 +305,13 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { query, category, limit = 30, scraperUrl } = await req.json();
+        let body = {};
+        try {
+            body = await req.json();
+        } catch (e) {
+            // Empty body is fine
+        }
+        const { query, category, limit = 30, scraperUrl } = body;
         
         const allArticles = [];
         const fetchPromises = [];
