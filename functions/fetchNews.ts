@@ -236,23 +236,23 @@ Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
         const user = await base44.auth.me();
-        
+
         if (!user) {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         const { query, category, limit = 30 } = await req.json();
-        
-        // Always serve from database cache
+
+        // Check cache first
         const cacheKey = query?.toLowerCase() || category || 'technology';
         const cached = await base44.entities.NewsCache.filter({ category: cacheKey });
-        
+
         if (cached.length > 0 && cached[0].articles?.length > 0) {
             const articles = cached[0].articles.map(art => ({
                 ...art,
                 time: formatTimeFromDate(art.publishedAt),
             }));
-            
+
             return Response.json({
                 success: true,
                 count: articles.length,
@@ -261,28 +261,18 @@ Deno.serve(async (req) => {
                 articles: articles.slice(0, limit),
             });
         }
-        
-        // If no cache found, fetch live from Google News RSS
-        if (query) {
-            const liveArticles = await fetchGoogleNewsRSS(query);
-            return Response.json({
-                success: true,
-                count: liveArticles.length,
-                query: query,
-                category: category || null,
-                articles: liveArticles.slice(0, limit),
-            });
-        }
+
+        // Fetch live from Google News RSS
+        const liveArticles = await fetchGoogleNewsRSS(query || category || 'technology', !query && !!category);
 
         return Response.json({
             success: true,
-            count: 0,
+            count: liveArticles.length,
             query: query || null,
             category: category || null,
-            articles: [],
-            message: 'No cached data available. Try searching for a topic.',
+            articles: liveArticles.slice(0, limit),
         });
-        
+
     } catch (error) {
         return Response.json({ error: error.message }, { status: 500 });
     }
