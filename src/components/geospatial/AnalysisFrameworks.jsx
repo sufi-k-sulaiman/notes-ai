@@ -41,15 +41,21 @@ ONLY include items directly related to ${categories}. Examples:
 Provide 4 items per category with scores (0-100). Be specific with real data points like percentages, gigatons, PPM levels, hectares.
 Also provide a summary insight paragraph analyzing the overall SWOT position.`,
 
-    dmaic: (categories) => `Apply DMAIC framework SPECIFICALLY to ${categories} environmental outcomes.
+    dmaic: (categories) => `Apply DMAIC (Define, Measure, Analyze, Improve, Control) framework SPECIFICALLY to improve ${categories} outcomes.
 
-Focus on actual ${categories} metrics:
-- For Carbon: CO2 emissions (gigatons), temperature anomalies, renewable capacity (GW)
-- For Forests: deforestation rates (hectares/year), forest coverage %, species populations
-- For Air/Water: AQI levels, PM2.5 concentrations, water quality indices
+For EACH of the 5 DMAIC phases, provide:
+- A progress score (0-100) based on global ${categories} efforts
+- 3 specific data points with real 2024 metrics relevant to ${categories}
 
-Each phase needs a progress score (0-100) and 3 specific measurable data points relevant to ${categories}.
-Also provide timeline data showing progress over 5 years and a summary insight.`,
+Phase-specific guidance for ${categories}:
+- DEFINE: What are the specific ${categories} problems? (e.g., emission levels, pollution rates, resource depletion)
+- MEASURE: Current ${categories} metrics and baselines (actual numbers: tons, hectares, PPM, percentages)
+- ANALYZE: Root causes of ${categories} issues (industries, regions, behaviors responsible)
+- IMPROVE: Solutions being implemented for ${categories} (programs, technologies, policies with real impact data)
+- CONTROL: Monitoring and sustaining ${categories} improvements (reporting systems, enforcement, tracking)
+
+Also provide timeline data showing ${categories} progress from 2020-2024 with yearly scores.
+Provide a detailed insight explaining what the DMAIC analysis reveals about ${categories} and recommended next steps.`,
 
     ice: (categories) => `Score 6 specific initiatives for ${categories} using ICE framework.
 
@@ -61,39 +67,103 @@ Initiatives MUST be directly related to ${categories}:
 Rate Impact/Confidence/Ease (1-10) with specific justification using real metrics.
 Also provide ROI projections for top 3 initiatives and a summary insight.`,
 
-    pareto: (categories) => `Apply Pareto 80/20 rule to ${categories} specifically.
+    pareto: (categories) => `Apply the Pareto 80/20 Principle to ${categories} environmental challenges.
 
-Identify the 20% of actions that drive 80% of improvement in ${categories}:
-- For Carbon: which emission sources to target (power, transport, industry percentages)
-- For Forests: which regions/activities cause most deforestation
-- For Water: which pollutants/sources cause most contamination
+Identify the critical 20% of factors causing 80% of ${categories} problems OR the 20% of solutions delivering 80% of improvements.
 
-List 6 high-impact actions with their specific contribution percentages (must total ~100%).
-Also provide trend data showing cumulative impact and a summary insight.`,
+For ${categories}, analyze:
+- Which specific sources/activities contribute most to the problem?
+- What are the highest-impact interventions?
+- Where should resources be concentrated for maximum effect?
 
-    ansoff: (categories) => `Apply Ansoff Matrix to ${categories} environmental strategy.
+Provide 6 actions/factors ranked by impact percentage. Each must include:
+- Specific action or factor name relevant to ${categories}
+- Individual impact percentage (all should total approximately 100%)
+- Cumulative impact percentage
+- Brief explanation of why this factor is significant for ${categories}
 
-All initiatives MUST relate to ${categories}:
-- Market Penetration: scaling existing ${categories} solutions
-- Market Development: new regions/sectors for ${categories} solutions  
-- Product Development: new technologies for ${categories}
-- Diversification: cross-sector ${categories} innovations
+Also provide a detailed insight explaining:
+- What the Pareto analysis reveals about ${categories} priorities
+- Which 2-3 actions would deliver the most improvement
+- Specific recommendations based on the 80/20 distribution`,
 
-Provide 3 specific initiatives per quadrant with growth potential scores based on real market data.
-Also provide risk vs reward data for each quadrant and a summary insight.`,
+    ansoff: (categories) => `Apply Ansoff Growth Matrix to ${categories} environmental solutions and market strategies.
 
-    pestle: (categories) => `Conduct PESTLE analysis SPECIFICALLY for ${categories} sector.
+Analyze growth opportunities SPECIFICALLY for ${categories}:
 
-Each factor must relate to ${categories}:
-- Political: ${categories}-specific regulations, treaties, government targets
-- Economic: ${categories} market size, investment flows, carbon pricing
-- Social: public awareness of ${categories} issues, behavior changes
-- Technological: ${categories}-specific innovations, R&D breakthroughs
-- Legal: ${categories} compliance requirements, liability laws
-- Environmental: current ${categories} state, trends, tipping points
+1. MARKET PENETRATION (Low Risk - Existing solutions in existing markets):
+   - How can current ${categories} solutions be scaled up?
+   - What adoption barriers exist and how to overcome them?
+   - Provide 3 specific initiatives with growth potential scores (0-100)
 
-Include real 2024 statistics and data points for each factor.
-Also provide trend projections for each factor and a summary insight.`,
+2. MARKET DEVELOPMENT (Medium Risk - Existing solutions in new markets):
+   - Which new regions/sectors could adopt ${categories} solutions?
+   - What adaptations are needed for new markets?
+   - Provide 3 specific initiatives with growth potential scores (0-100)
+
+3. PRODUCT DEVELOPMENT (Medium Risk - New solutions for existing markets):
+   - What new technologies/approaches are emerging for ${categories}?
+   - What R&D investments are being made?
+   - Provide 3 specific initiatives with growth potential scores (0-100)
+
+4. DIVERSIFICATION (High Risk - New solutions in new markets):
+   - What cross-sector innovations could address ${categories}?
+   - What breakthrough technologies are being explored?
+   - Provide 3 specific initiatives with growth potential scores (0-100)
+
+For each quadrant, provide risk score (0-100) and reward potential score (0-100).
+
+Provide a detailed insight explaining:
+- Which quadrant offers the best opportunities for ${categories}
+- Recommended strategic focus based on current market conditions
+- Key success factors for each growth strategy`,
+
+    pestle: (categories) => `Conduct a comprehensive PESTLE analysis for ${categories} sector using 2024 data.
+
+Analyze each factor SPECIFICALLY for ${categories}:
+
+POLITICAL (Score 0-100):
+- Government policies and regulations affecting ${categories}
+- International agreements and treaties
+- Political stability and commitment to ${categories} goals
+- Provide 3 specific data points with real 2024 examples
+
+ECONOMIC (Score 0-100):
+- Market size and growth for ${categories} solutions
+- Investment flows and funding availability
+- Cost trends and economic incentives
+- Provide 3 specific data points with real 2024 numbers ($B, growth rates)
+
+SOCIAL (Score 0-100):
+- Public awareness and attitudes toward ${categories}
+- Consumer behavior changes
+- Workforce and skills availability
+- Provide 3 specific data points with surveys/statistics
+
+TECHNOLOGICAL (Score 0-100):
+- Innovation and R&D in ${categories}
+- Technology adoption rates
+- Breakthrough developments
+- Provide 3 specific data points with real examples
+
+LEGAL (Score 0-100):
+- Compliance requirements for ${categories}
+- Liability and enforcement
+- Upcoming legislation
+- Provide 3 specific data points with real regulations
+
+ENVIRONMENTAL (Score 0-100):
+- Current state of ${categories} metrics
+- Climate and ecosystem trends
+- Tipping points and risks
+- Provide 3 specific data points with real measurements
+
+For each factor, also provide a trend score (-50 to +50) indicating if conditions are worsening or improving.
+
+Provide a detailed insight explaining:
+- Which PESTLE factors are most critical for ${categories}
+- Key risks and opportunities identified
+- Strategic recommendations based on the analysis`,
 
     porter: (categories) => `Apply Porter's Five Forces to ${categories} industry/sector.
 
