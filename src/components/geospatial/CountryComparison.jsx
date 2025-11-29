@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { TrendingUp, TrendingDown, Award, AlertTriangle, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { TrendingUp, TrendingDown, Award, AlertTriangle, Loader2, RefreshCw } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
 
 const CATEGORY_LABELS = {
@@ -12,42 +13,113 @@ const CATEGORY_LABELS = {
     treasures: 'National Treasures & Protected Areas',
 };
 
+const CATEGORY_SPECIFIC_PROMPTS = {
+    carbon: `Focus ONLY on carbon emissions and climate metrics:
+- CO2 emissions per capita (tons)
+- Total emissions (gigatons)
+- Renewable energy % of grid
+- Carbon intensity of economy
+- Net zero commitments and progress
+- Coal phase-out status`,
+
+    airwater: `Focus ONLY on air and water quality metrics:
+- PM2.5 levels (μg/m³)
+- Air Quality Index averages
+- Clean water access %
+- Water treatment coverage
+- Industrial pollution levels
+- Respiratory disease rates`,
+
+    forests: `Focus ONLY on forests and biodiversity metrics:
+- Forest coverage % of land
+- Deforestation rate (hectares/year)
+- Protected area % of territory
+- Species extinction risk
+- Reforestation programs
+- Illegal logging enforcement`,
+
+    resources: `Focus ONLY on natural resource management:
+- Mining sustainability practices
+- Resource extraction rates
+- Environmental damage from extraction
+- Rare earth mining impact
+- Oil/gas spill incidents
+- Rehabilitation of mining sites`,
+
+    sustainability: `Focus ONLY on sustainability metrics:
+- Renewable energy capacity (GW)
+- Circular economy adoption
+- Waste recycling rates
+- Green building standards
+- Sustainable agriculture %
+- ESG investment flows`,
+
+    health: `Focus ONLY on environmental health metrics:
+- Pollution-related deaths per 100k
+- Lead/mercury contamination levels
+- Toxic waste management
+- Chemical spill incidents
+- Environmental disease burden
+- Clean cooking fuel access`,
+
+    treasures: `Focus ONLY on natural heritage protection:
+- UNESCO site conservation status
+- National park coverage
+- Heritage site funding
+- Tourism impact management
+- Indigenous land rights
+- Wildlife corridor preservation`
+};
+
 export default function CountryComparison({ selectedCategories = [] }) {
     const [topCountries, setTopCountries] = useState([]);
     const [bottomCountries, setBottomCountries] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const lastFetchRef = useRef('');
+    const [lastCategories, setLastCategories] = useState('');
 
     useEffect(() => {
         const categoriesKey = selectedCategories.sort().join(',');
-        if (categoriesKey === lastFetchRef.current) return;
-        if (selectedCategories.length === 0) return;
-        
-        lastFetchRef.current = categoriesKey;
-        fetchCountryData();
+        if (categoriesKey !== lastCategories && selectedCategories.length > 0) {
+            setLastCategories(categoriesKey);
+            fetchCountryData();
+        }
     }, [selectedCategories]);
 
     const fetchCountryData = async () => {
         setLoading(true);
         setError(null);
+        setTopCountries([]);
+        setBottomCountries([]);
         
         try {
             const categoryNames = selectedCategories
                 .map(c => CATEGORY_LABELS[c] || c)
                 .join(', ');
 
+            const specificMetrics = selectedCategories
+                .map(c => CATEGORY_SPECIFIC_PROMPTS[c] || '')
+                .filter(Boolean)
+                .join('\n\n');
+
             const response = await base44.integrations.Core.InvokeLLM({
-                prompt: `Analyze countries based on these environmental categories: ${categoryNames}.
+                prompt: `You are an environmental data analyst. Analyze countries SPECIFICALLY for: ${categoryNames}.
 
-Provide the top 5 best-performing countries and bottom 5 worst-performing countries with current 2024 data.
+CRITICAL: Use ONLY these category-specific metrics to rank countries:
+${specificMetrics}
 
-For each country include:
-- Country name
-- Score (0-100 based on performance in these categories)
-- Brief reason explaining their ranking with specific facts/statistics
+Provide the top 5 BEST-performing countries and bottom 5 WORST-performing countries based on 2024 data.
 
-Consider factors like: emissions data, renewable energy %, forest coverage, air quality index, water quality, protected areas, environmental policies, and sustainability initiatives.`,
+REQUIREMENTS:
+- Each country MUST have specific numerical data (not vague statements)
+- Scores must reflect ONLY the selected categories, not general environmental performance
+- Include actual statistics like: percentages, tons, hectares, PPM, μg/m³, GW, etc.
+- Different categories MUST produce different country rankings
+- For Carbon: China, USA, India should likely be in worst performers
+- For Forests: Brazil, Indonesia, DRC deforestation should be considered
+- For Sustainability: Nordic countries, Costa Rica should rank high
+
+DO NOT give generic environmental rankings. Be SPECIFIC to ${categoryNames}.`,
                 add_context_from_internet: true,
                 response_json_schema: {
                     type: "object",
