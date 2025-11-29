@@ -539,7 +539,7 @@ export default function MindMapPage() {
                 {/* Mind Map Content */}
                 <div className={`bg-white rounded-2xl border border-gray-200 ${isFullscreen ? 'h-[calc(100vh-32px)]' : 'h-[calc(100vh-80px)]'} overflow-hidden p-8`}>
                     {/* Header inside the card */}
-                    <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+                    <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
                                 <Network className="w-5 h-5 text-purple-600" />
@@ -680,10 +680,10 @@ export default function MindMapPage() {
                         </div>
                     </div>
                     {!treeData && !loading ? (
-                        <div className="h-full flex flex-col items-center pt-8">
+                        <div className="h-full flex flex-col items-center pt-4 overflow-auto">
 
                             {/* Search Bar - Right below icon */}
-                            <div className="w-full max-w-xl mx-auto mb-6">
+                            <div className="w-full max-w-xl mx-auto mb-4">
                                 <div className="relative">
                                     <input
                                         type="text"
@@ -703,12 +703,12 @@ export default function MindMapPage() {
                                 </div>
                             </div>
 
-                            <h2 className="text-2xl font-bold text-gray-900 mb-3">Start Exploring</h2>
-                            <p className="text-gray-500 max-w-md text-center mb-6">
+                            <h2 className="text-xl font-bold text-gray-900 mb-2">Start Exploring</h2>
+                            <p className="text-gray-500 max-w-md text-center mb-4 text-sm">
                                 Search for any topic to generate an interactive knowledge tree. Click Explore to dive deeper or Learn for detailed insights.
                             </p>
 
-                            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3 w-full px-2">
+                            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 gap-2 w-full">
                                 {[
                                     'Geography', 'Psychology', 'Music', 'Business', 'Sociology', 'Environment',
                                     'Mathematics', 'History', 'Literature', 'Sports', 'Science', 'Culture & Anthropology',
