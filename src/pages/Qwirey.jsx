@@ -699,6 +699,7 @@ export default function Qwirey() {
                                     { id: 'short', label: 'Short' },
                                     { id: 'long', label: 'Long' },
                                     { id: 'reviews', label: 'Reviews' },
+                                    { id: 'images', label: 'Images' },
                                     { id: 'tabled', label: 'Tabled' },
                                     { id: 'dynamic', label: 'Dynamic' },
                                 ].map((format) => (
