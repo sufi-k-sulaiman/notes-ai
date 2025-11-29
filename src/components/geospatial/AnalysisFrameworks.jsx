@@ -21,6 +21,9 @@ const FRAMEWORKS = [
 ];
 
 const CATEGORY_LABELS = {
+    coastal: 'Coastal & Coral Ecosystem',
+    ocean: 'Ocean Sustainability',
+    wildlife: 'Endangered Wildlife',
     carbon: 'Carbon & Climate',
     airwater: 'Air & Water Quality',
     forests: 'Forests & Biodiversity',
@@ -28,6 +31,23 @@ const CATEGORY_LABELS = {
     sustainability: 'Sustainability',
     health: 'Environmental Health',
     treasures: 'National Treasures & Protected Areas',
+    biomass: 'Biomass Production',
+    produce: 'Produce & Crops',
+    dairy: 'Milk & Dairy',
+    livestock: 'Livestock & Protein',
+    power: 'Power Consumption',
+    wellness: 'Wellness & Health',
+    elements: 'Earth Elements',
+    airpollution: 'Air Pollution',
+    waterpollution: 'Water Pollution',
+    soilpollution: 'Soil Pollution',
+    plasticpollution: 'Plastic Pollution',
+    noisepollution: 'Noise Pollution',
+    lightpollution: 'Light Pollution',
+    thermalpollution: 'Thermal Pollution',
+    radioactive: 'Radioactive Pollution',
+    chemical: 'Chemical Pollution',
+    climatepollution: 'Climate-Linked Pollution',
 };
 
 const FRAMEWORK_PROMPTS = {
