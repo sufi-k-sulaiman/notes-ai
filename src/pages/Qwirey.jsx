@@ -442,10 +442,13 @@ export default function Qwirey() {
                     add_context_from_internet: true
                 });
 
+                // Response is a string when no JSON schema is specified
+                const textResponse = typeof response === 'string' ? response : (response?.text || response?.content || JSON.stringify(response));
+
                 setResult({
                     type: 'text',
                     model: selectedModel,
-                    text: response
+                    text: textResponse
                 });
             }
         } catch (error) {
