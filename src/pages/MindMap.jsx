@@ -9,6 +9,7 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import LearnMoreModal from '../components/mindmap/LearnMoreModal';
 import ErrorDisplay, { getErrorCode } from '@/components/ErrorDisplay';
+import TopicThumbnail from '@/components/mindmap/TopicThumbnail';
 
 const NODE_COLORS = [
     { bg: 'bg-purple-500' },
@@ -707,16 +708,17 @@ export default function MindMapPage() {
                                 Search for any topic to generate an interactive knowledge tree. Click Explore to dive deeper or Learn for detailed insights.
                             </p>
 
-                            <div className="flex flex-wrap justify-center gap-2">
-                                {['Technology', 'Science', 'History', 'Business', 'Art'].map(topic => (
-                                    <Button
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-w-5xl">
+                                {[
+                                    'Geography', 'Psychology', 'Music', 'Business', 'Sociology', 'Environment',
+                                    'Mathematics', 'History', 'Literature', 'Sports', 'Science', 'Culture & Anthropology',
+                                    'Health & Medicine', 'Education', 'Art', 'Economics', 'Philosophy', 'Politics'
+                                ].map(topic => (
+                                    <TopicThumbnail
                                         key={topic}
-                                        variant="outline"
-                                        onClick={() => handleSearch(topic)}
-                                        className="rounded-full"
-                                    >
-                                        {topic}
-                                    </Button>
+                                        topic={topic}
+                                        onClick={handleSearch}
+                                    />
                                 ))}
                             </div>
                         </div>
