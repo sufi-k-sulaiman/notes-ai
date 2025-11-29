@@ -1,54 +1,108 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
-const CATEGORIES = [
-    { id: 'technology', apiCategory: 'technology', subtopics: ['AI', 'Startups', 'Gadgets', 'Cybersecurity', 'Software', 'Cloud Computing', 'Blockchain', 'Robotics', '5G Networks', 'IoT'] },
-    { id: 'business', apiCategory: 'business', subtopics: ['Stocks', 'Economy', 'Crypto', 'Real Estate', 'Finance', 'Mergers', 'IPOs', 'Venture Capital', 'Banking', 'Commodities'] },
-    { id: 'science', apiCategory: 'science', subtopics: ['Space', 'Physics', 'Biology', 'Climate', 'Research', 'Astronomy', 'Genetics', 'Archaeology', 'Chemistry', 'Quantum'] },
-    { id: 'health', apiCategory: 'health', subtopics: ['Medicine', 'Wellness', 'Mental Health', 'Nutrition', 'Fitness', 'Vaccines', 'Aging', 'Sleep', 'Diseases', 'Healthcare Policy'] },
-    { id: 'politics', apiCategory: 'general', subtopics: ['Elections', 'Policy', 'Congress', 'International', 'Law', 'Supreme Court', 'Diplomacy', 'Defense', 'Immigration', 'Trade'] },
-    { id: 'sports', apiCategory: 'sports', subtopics: ['Football', 'Basketball', 'Soccer', 'Tennis', 'Olympics', 'Baseball', 'Golf', 'MMA', 'Formula 1', 'Cricket'] },
-    { id: 'entertainment', apiCategory: 'entertainment', subtopics: ['Movies', 'Music', 'TV Shows', 'Celebrities', 'Gaming', 'Streaming', 'Broadway', 'Awards', 'Podcasts', 'Anime'] },
-    { id: 'world', apiCategory: 'general', subtopics: ['Europe', 'Asia', 'Americas', 'Africa', 'Middle East', 'Australia', 'Russia', 'India', 'China', 'Latin America'] },
-];
+// RSS feeds - free, no rate limits
+const RSS_FEEDS = {
+    technology: [
+        'https://feeds.bbci.co.uk/news/technology/rss.xml',
+        'https://techcrunch.com/feed/',
+        'https://www.wired.com/feed/rss',
+    ],
+    business: [
+        'https://feeds.bbci.co.uk/news/business/rss.xml',
+        'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml',
+    ],
+    science: [
+        'https://feeds.bbci.co.uk/news/science_and_environment/rss.xml',
+        'https://rss.nytimes.com/services/xml/rss/nyt/Science.xml',
+    ],
+    health: [
+        'https://rss.nytimes.com/services/xml/rss/nyt/Health.xml',
+        'https://feeds.bbci.co.uk/news/health/rss.xml',
+    ],
+    politics: [
+        'https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml',
+        'https://feeds.bbci.co.uk/news/politics/rss.xml',
+    ],
+    sports: [
+        'https://rss.nytimes.com/services/xml/rss/nyt/Sports.xml',
+        'https://feeds.bbci.co.uk/sport/rss.xml',
+    ],
+    entertainment: [
+        'https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml',
+        'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml',
+    ],
+    world: [
+        'https://feeds.bbci.co.uk/news/world/rss.xml',
+        'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
+        'https://www.theguardian.com/world/rss',
+    ],
+};
 
-async function fetchNewsAPI(query, category = null) {
-    const apiKey = Deno.env.get('NEWSAPI_KEY');
-    if (!apiKey) throw new Error('NEWSAPI_KEY not configured');
-    
-    let url = 'https://newsapi.org/v2/';
-    
-    if (query) {
-        url += `everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&pageSize=20&language=en`;
-    } else if (category) {
-        url += `top-headlines?category=${category}&country=us&pageSize=20`;
-    } else {
-        url += 'top-headlines?country=us&pageSize=20';
-    }
-    
-    const response = await fetch(url, {
-        headers: { 'X-Api-Key': apiKey },
-    });
-    
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`NewsAPI error ${response.status}: ${errorText}`);
-    }
-    
-    const data = await response.json();
-    
-    return (data.articles || [])
-        .filter(a => a.title && a.url && !a.title.includes('[Removed]'))
-        .map(art => ({
-            title: art.title,
-            url: art.url,
-            source: art.source?.name || 'News',
-            summary: art.description || '',
-            publishedAt: art.publishedAt,
-        }));
+// Google News RSS for subtopics
+function getGoogleNewsRSS(query) {
+    return `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
 }
 
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+async function parseRSS(xml, sourceName) {
+    const articles = [];
+    const itemRegex = /<item>([\s\S]*?)<\/item>/gi;
+    let match;
+    
+    while ((match = itemRegex.exec(xml)) !== null && articles.length < 15) {
+        const item = match[1];
+        const title = extractTag(item, 'title');
+        const link = extractTag(item, 'link') || extractTag(item, 'guid');
+        const pubDate = extractTag(item, 'pubDate');
+        const description = extractTag(item, 'description');
+        
+        if (title && link && !title.includes('[Removed]')) {
+            articles.push({
+                title: cleanText(title),
+                url: link.trim(),
+                source: sourceName,
+                summary: cleanText(description || '').slice(0, 300),
+                publishedAt: pubDate || new Date().toISOString(),
+            });
+        }
+    }
+    return articles;
+}
+
+function extractTag(xml, tag) {
+    const cdataMatch = xml.match(new RegExp(`<${tag}><!\\[CDATA\\[([\\s\\S]*?)\\]\\]></${tag}>`, 'i'));
+    if (cdataMatch) return cdataMatch[1];
+    const simpleMatch = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, 'i'));
+    return simpleMatch ? simpleMatch[1] : null;
+}
+
+function cleanText(text) {
+    if (!text) return '';
+    return text
+        .replace(/<[^>]*>/g, '')
+        .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ')
+        .replace(/\s+/g, ' ').trim();
+}
+
+async function fetchRSSFeed(url) {
+    const response = await fetch(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)' },
+    });
+    if (!response.ok) throw new Error(`RSS fetch failed: ${response.status}`);
+    return await response.text();
+}
+
+function getSourceFromUrl(url) {
+    try {
+        const hostname = new URL(url).hostname.replace('www.', '');
+        if (hostname.includes('bbc')) return 'BBC';
+        if (hostname.includes('nytimes')) return 'NY Times';
+        if (hostname.includes('techcrunch')) return 'TechCrunch';
+        if (hostname.includes('wired')) return 'Wired';
+        if (hostname.includes('guardian')) return 'The Guardian';
+        if (hostname.includes('google')) return 'Google News';
+        return hostname.split('.')[0];
+    } catch { return 'News'; }
 }
 
 Deno.serve(async (req) => {
