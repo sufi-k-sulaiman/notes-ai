@@ -443,23 +443,7 @@ export default function GeospatialMap({
 
     return (
         <div className="relative rounded-xl overflow-hidden border border-gray-200" style={{ height }}>
-            {/* Layer Selector - only on main maps */}
-            {!mini && (
-                <div className="absolute top-4 left-4 z-[1000]">
-                    <Select value={selectedStyle} onValueChange={setSelectedStyle}>
-                        <SelectTrigger className="w-32 bg-white shadow-lg h-8 text-xs">
-                            <Layers className="w-3 h-3 mr-1" />
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="default">Default</SelectItem>
-                            <SelectItem value="satellite">Satellite</SelectItem>
-                            <SelectItem value="terrain">Terrain</SelectItem>
-                            <SelectItem value="heatmap">Dark</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            )}
+
 
             <MapContainer
                 center={config.center}
