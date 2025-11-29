@@ -1110,7 +1110,7 @@ export default function Qwirey() {
                             </>
                         )}
                     </div>
-                ))}
+                ) : null}
 
                 {(loading || formatLoading) && (
                                           <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center shadow-sm">
