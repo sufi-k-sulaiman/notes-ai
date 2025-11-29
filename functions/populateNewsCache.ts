@@ -122,45 +122,60 @@ Deno.serve(async (req) => {
             await base44.asServiceRole.entities.NewsCache.delete(cache.id);
         }
         
-        // Fetch and cache main categories
-        for (const cat of CATEGORIES) {
+        // Fetch and cache main categories from RSS feeds
+        for (const [categoryId, feeds] of Object.entries(RSS_FEEDS)) {
             try {
-                const articles = await fetchNewsAPI(null, cat.apiCategory);
+                let allArticles = [];
                 
-                if (articles.length > 0) {
-                    await base44.asServiceRole.entities.NewsCache.create({
-                        category: cat.id,
-                        articles: articles,
-                    });
-                    results.categories++;
-                    results.articles += articles.length;
+                for (const feedUrl of feeds) {
+                    try {
+                        const xml = await fetchRSSFeed(feedUrl);
+                        const articles = await parseRSS(xml, getSourceFromUrl(feedUrl));
+                        allArticles = allArticles.concat(articles);
+                    } catch (err) {
+                        results.errors.push(`Feed ${feedUrl}: ${err.message}`);
+                    }
                 }
                 
-                await delay(1200); // Rate limit
+                // Deduplicate by URL
+                const seen = new Set();
+                allArticles = allArticles.filter(a => {
+                    if (seen.has(a.url)) return false;
+                    seen.add(a.url);
+                    return true;
+                });
+                
+                if (allArticles.length > 0) {
+                    await base44.asServiceRole.entities.NewsCache.create({
+                        category: categoryId,
+                        articles: allArticles.slice(0, 30),
+                    });
+                    results.categories++;
+                    results.articles += Math.min(allArticles.length, 30);
+                }
             } catch (err) {
-                results.errors.push(`Category ${cat.id}: ${err.message}`);
+                results.errors.push(`Category ${categoryId}: ${err.message}`);
             }
         }
         
-        // Fetch and cache all subtopics
-        for (const cat of CATEGORIES) {
-            for (const subtopic of cat.subtopics) {
-                try {
-                    const articles = await fetchNewsAPI(subtopic);
-                    
-                    if (articles.length > 0) {
-                        await base44.asServiceRole.entities.NewsCache.create({
-                            category: subtopic.toLowerCase(),
-                            articles: articles,
-                        });
-                        results.subtopics++;
-                        results.articles += articles.length;
-                    }
-                    
-                    await delay(1200); // Rate limit
-                } catch (err) {
-                    results.errors.push(`Subtopic ${subtopic}: ${err.message}`);
+        // Fetch top subtopics using Google News RSS (free, no limits)
+        const topSubtopics = ['AI', 'Stocks', 'Space', 'Climate', 'Elections', 'Movies'];
+        
+        for (const subtopic of topSubtopics) {
+            try {
+                const xml = await fetchRSSFeed(getGoogleNewsRSS(subtopic));
+                const articles = await parseRSS(xml, 'Google News');
+                
+                if (articles.length > 0) {
+                    await base44.asServiceRole.entities.NewsCache.create({
+                        category: subtopic.toLowerCase(),
+                        articles: articles.slice(0, 20),
+                    });
+                    results.subtopics++;
+                    results.articles += Math.min(articles.length, 20);
                 }
+            } catch (err) {
+                results.errors.push(`Subtopic ${subtopic}: ${err.message}`);
             }
         }
         
@@ -168,7 +183,7 @@ Deno.serve(async (req) => {
             success: true,
             message: `Cached ${results.categories} categories, ${results.subtopics} subtopics, ${results.articles} total articles`,
             results,
-            errors: results.errors,
+            errors: results.errors.slice(0, 5),
         });
         
     } catch (error) {
