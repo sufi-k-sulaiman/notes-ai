@@ -1,31 +1,24 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
-// RSS Feed Sources
-const RSS_SOURCES = {
-    google: (query) => `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`,
-    google_top: 'https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en',
-    bbc_world: 'http://feeds.bbci.co.uk/news/world/rss.xml',
-    bbc_tech: 'http://feeds.bbci.co.uk/news/technology/rss.xml',
-    bbc_business: 'http://feeds.bbci.co.uk/news/business/rss.xml',
-    bbc_science: 'http://feeds.bbci.co.uk/news/science_and_environment/rss.xml',
-    npr: 'https://feeds.npr.org/1001/rss.xml',
-    reuters_world: 'https://www.rss.reuters.com/news/worldNews',
-    cnn_top: 'http://rss.cnn.com/rss/edition.rss',
-    nyt_world: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
-    guardian_world: 'https://www.theguardian.com/world/rss',
-    techcrunch: 'https://techcrunch.com/feed/',
-    wired: 'https://www.wired.com/feed/rss',
-    ars: 'https://feeds.arstechnica.com/arstechnica/index',
-};
+// Google News RSS - free, no rate limits
+function getGoogleNewsURL(query) {
+    return `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
+}
 
-// Category to RSS mapping
-const CATEGORY_FEEDS = {
-    technology: ['bbc_tech', 'techcrunch', 'wired', 'ars'],
-    business: ['bbc_business'],
-    science: ['bbc_science'],
-    world: ['bbc_world', 'guardian_world', 'nyt_world'],
-    general: ['google_top', 'npr', 'cnn_top'],
-};
+function getGoogleNewsCategoryURL(category) {
+    const categoryMap = {
+        technology: 'technology',
+        business: 'business',
+        science: 'science',
+        health: 'health',
+        sports: 'sports',
+        entertainment: 'entertainment',
+        world: 'world',
+        politics: 'politics',
+    };
+    const topic = categoryMap[category] || category;
+    return `https://news.google.com/rss/search?q=${encodeURIComponent(topic + ' news')}&hl=en-US&gl=US&ceid=US:en`;
+}
 
 // Parse RSS XML
 async function parseRSS(xml, source) {
