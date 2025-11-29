@@ -259,7 +259,7 @@ export default function News() {
 
             const articles = response.data?.articles || [];
             const backendError = response.data?.error;
-            console.log('Fetched articles:', articles.length, 'Source:', response.data?.source);
+            console.log('Fetched articles:', articles.length, 'Source:', response.data?.source, 'Error:', backendError);
 
             if (articles.length === 0) {
                 if (backendError) {
@@ -274,11 +274,20 @@ export default function News() {
             setLastUpdated(new Date());
         } catch (err) {
             console.error('Error fetching news:', err);
+            // Check if user needs to login
+            const isAuthError = err?.response?.status === 401 || 
+                err?.message?.includes('401') || 
+                err?.message?.includes('Unauthorized');
+
+            if (isAuthError) {
+                // Redirect to login
+                base44.auth.redirectToLogin();
+                return;
+            }
+
             const errorMessage = err?.message?.toLowerCase() || '';
             if (errorMessage.includes('network') || errorMessage.includes('fetch') || errorMessage.includes('timeout')) {
                 setError('E100');
-            } else if (err?.response?.status === 401) {
-                setError('E400');
             } else {
                 setError('E200');
             }
