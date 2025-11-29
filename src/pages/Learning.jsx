@@ -197,46 +197,48 @@ export default function Learning() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-purple-50">
-            {/* Top Row - Header Left, Subject Selector Right */}
-            <div className="mx-4 md:mx-8 mt-4 flex flex-col lg:flex-row gap-4">
-                {/* Hero Banner - Left */}
-                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 shadow-lg lg:w-1/2 flex flex-col justify-between">
-                    <div>
-                        <h1 className="text-2xl md:text-3xl font-bold text-white">Learning Archipelago</h1>
-                        <p className="text-purple-200 text-sm">Ai-Powered Learning Journey</p>
-                    </div>
+            {/* Header with Stats and Subject Selector */}
+            <div className="mx-4 md:mx-8 mt-4">
+                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 shadow-lg">
+                    {/* Top Section - Title and Stats */}
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-bold text-white">Learning Archipelago</h1>
+                            <p className="text-purple-200 text-sm">Ai-Powered Learning Journey</p>
+                        </div>
 
-                    {/* Stats */}
-                    <div className="grid grid-cols-3 gap-x-8 gap-y-4 mt-4">
-                        <div className="text-center">
-                            <p className="text-xl md:text-2xl font-bold text-white">{subTopics.length}</p>
-                            <p className="text-xs text-purple-200">Islands</p>
-                        </div>
-                        <div className="text-center">
-                            <p className="text-xl md:text-2xl font-bold text-white">{Object.values(userProgress).filter(p => p === 100).length}</p>
-                            <p className="text-xs text-purple-200">Completed</p>
-                        </div>
-                        <div className="text-center">
-                            <p className="text-xl md:text-2xl font-bold text-white">{subTopics.length * 500}</p>
-                            <p className="text-xs text-purple-200">Potential XP</p>
-                        </div>
-                        <div className="text-center">
-                            <p className="text-xl md:text-2xl font-bold text-white">{totalXP.toLocaleString()}</p>
-                            <p className="text-xs text-purple-200">Total XP</p>
-                        </div>
-                        <div className="text-center">
-                            <p className="text-xl md:text-2xl font-bold text-white">{streak}</p>
-                            <p className="text-xs text-purple-200">Day Streak</p>
-                        </div>
-                        <div className="text-center">
-                            <p className="text-xl md:text-2xl font-bold text-white">{certificates}</p>
-                            <p className="text-xs text-purple-200">Certificates</p>
+                        {/* Stats */}
+                        <div className="grid grid-cols-3 md:grid-cols-6 gap-x-6 gap-y-2">
+                            <div className="text-center">
+                                <p className="text-lg md:text-xl font-bold text-white">{subTopics.length}</p>
+                                <p className="text-xs text-purple-200">Islands</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-lg md:text-xl font-bold text-white">{Object.values(userProgress).filter(p => p === 100).length}</p>
+                                <p className="text-xs text-purple-200">Completed</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-lg md:text-xl font-bold text-white">{subTopics.length * 500}</p>
+                                <p className="text-xs text-purple-200">Potential XP</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-lg md:text-xl font-bold text-white">{totalXP.toLocaleString()}</p>
+                                <p className="text-xs text-purple-200">Total XP</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-lg md:text-xl font-bold text-white">{streak}</p>
+                                <p className="text-xs text-purple-200">Day Streak</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-lg md:text-xl font-bold text-white">{certificates}</p>
+                                <p className="text-xs text-purple-200">Certificates</p>
+                            </div>
                         </div>
                     </div>
 
                     {/* XP Progress Bar */}
                     {nextRank && (
-                        <div className="mt-4">
+                        <div className="mb-4">
                             <div className="flex justify-between text-xs text-purple-200 mb-1">
                                 <span>{currentRank.name}</span>
                                 <span>{xpToNextRank} XP to {nextRank.name}</span>
@@ -251,106 +253,87 @@ export default function Learning() {
                             </div>
                         </div>
                     )}
-                </div>
 
-                {/* Subject Selector - Right */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:w-1/2 flex flex-col">
-                    {/* Search Bar */}
-                    <div className="mb-4">
-                        <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search subjects..."
-                                className="w-full h-12 pl-12 pr-4 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none transition-all text-gray-700 placeholder:text-gray-400"
-                            />
+                    {/* Subject Selector */}
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                        {/* Search and Category Row */}
+                        <div className="flex flex-col md:flex-row gap-3 mb-3">
+                            <div className="relative flex-shrink-0 md:w-64">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-300" />
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Search subjects..."
+                                    className="w-full h-9 pl-9 pr-3 rounded-lg bg-white/20 border border-white/20 text-white placeholder:text-purple-200 text-sm focus:bg-white/30 focus:border-white/40 outline-none transition-all"
+                                />
+                            </div>
+                            <div className="flex gap-2 overflow-x-auto flex-1">
+                                <button
+                                    onClick={() => setActiveCategory(null)}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                                        !activeCategory ? 'bg-white text-purple-700' : 'text-white/80 hover:bg-white/20'
+                                    }`}
+                                >
+                                    All
+                                </button>
+                                {CATEGORIES.map(cat => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setActiveCategory(cat)}
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                                            activeCategory === cat ? 'bg-white text-purple-700' : 'text-white/80 hover:bg-white/20'
+                                        }`}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Category tabs */}
-                    <div className="flex gap-2 overflow-x-auto pb-3 mb-3 border-b border-gray-100">
-                        <button
-                            onClick={() => setActiveCategory(null)}
-                            className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                                !activeCategory ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:bg-gray-100'
-                            }`}
-                        >
-                            All
-                        </button>
-                        {CATEGORIES.map(cat => (
-                            <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                                    activeCategory === cat ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:bg-gray-100'
-                                }`}
-                            >
-                                {cat}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Subjects list */}
-                    <div className="flex-1 overflow-y-auto max-h-[200px]">
-                        {Object.entries(groupedSubjects).map(([category, subjects]) => (
-                            <div key={category} className="mb-4">
-                                <div className="text-xs font-semibold text-purple-600 px-2 mb-2">{category}</div>
-                                <div className="space-y-1">
-                                    {subjects.map(subject => {
-                                        const isSelected = selectedSubjects.some(s => s.id === subject.id);
-                                        const IconComponent = ICON_MAP[subject.icon] || GraduationCap;
-                                        return (
-                                            <button
-                                                key={subject.id}
-                                                onClick={() => toggleSubject(subject)}
-                                                className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg transition-colors ${
-                                                    isSelected ? 'bg-purple-50 border border-purple-200' : 'hover:bg-gray-50'
-                                                }`}
-                                            >
-                                                <div 
-                                                    className="w-8 h-8 rounded-lg flex items-center justify-center"
-                                                    style={{ backgroundColor: `${subject.color}20` }}
-                                                >
-                                                    <IconComponent 
-                                                        className="w-4 h-4"
-                                                        style={{ color: subject.color }}
-                                                    />
-                                                </div>
-                                                <span className="flex-1 text-left text-sm font-medium text-gray-700">
-                                                    {subject.name}
-                                                </span>
-                                                {isSelected && (
-                                                    <Check className="w-4 h-4 text-purple-600" />
-                                                )}
-                                            </button>
-                                        );
-                                    })}
+                        {/* Subjects Grid */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 max-h-[180px] overflow-y-auto">
+                            {filteredSubjects.map(subject => {
+                                const isSelected = selectedSubjects.some(s => s.id === subject.id);
+                                const IconComponent = ICON_MAP[subject.icon] || GraduationCap;
+                                return (
+                                    <button
+                                        key={subject.id}
+                                        onClick={() => toggleSubject(subject)}
+                                        className={`flex items-center gap-2 px-2 py-2 rounded-lg transition-all text-left ${
+                                            isSelected 
+                                                ? 'bg-white text-purple-700' 
+                                                : 'bg-white/10 text-white hover:bg-white/20'
+                                        }`}
+                                    >
+                                        <IconComponent className="w-4 h-4 flex-shrink-0" style={{ color: isSelected ? subject.color : 'currentColor' }} />
+                                        <span className="text-xs font-medium truncate">{subject.name}</span>
+                                        {isSelected && <Check className="w-3 h-3 flex-shrink-0 ml-auto" />}
+                                    </button>
+                                );
+                            })}
+                            {filteredSubjects.length === 0 && (
+                                <div className="col-span-full text-center py-4 text-white/60 text-sm">
+                                    No subjects found matching "{searchQuery}"
                                 </div>
-                            </div>
-                        ))}
-                        {filteredSubjects.length === 0 && (
-                            <div className="text-center py-4 text-gray-500 text-sm">
-                                No subjects found matching "{searchQuery}"
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Generate Button */}
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-                        <div className="text-xs text-gray-500">
-                            {selectedSubjects.length} selected
+                            )}
                         </div>
-                        <Button 
-                            onClick={generateSubTopics}
-                            disabled={loadingTopics || selectedSubjects.length === 0}
-                            className="bg-purple-600 hover:bg-purple-700 text-sm"
-                            size="sm"
-                        >
-                            <RefreshCw className={`w-3 h-3 mr-1.5 ${loadingTopics ? 'animate-spin' : ''}`} />
-                            Generate Islands
-                        </Button>
+
+                        {/* Generate Button Row */}
+                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/20">
+                            <div className="text-xs text-white/70">
+                                {selectedSubjects.length} selected
+                            </div>
+                            <Button 
+                                onClick={() => generateSubTopics(++requestIdRef.current)}
+                                disabled={loadingTopics || selectedSubjects.length === 0}
+                                className="bg-white text-purple-700 hover:bg-white/90 text-sm"
+                                size="sm"
+                            >
+                                <RefreshCw className={`w-3 h-3 mr-1.5 ${loadingTopics ? 'animate-spin' : ''}`} />
+                                Generate Islands
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
