@@ -102,7 +102,7 @@ IMPORTANT: Do NOT include any URLs or web links within the text descriptions. Ke
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+            <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto p-0 z-[10000]">
                 {/* Header */}
                 <div className={`p-4 border-b ${borderColor} bg-gradient-to-r ${bgGradient} sticky top-0 z-10`}>
                     <div className="flex items-center justify-between">

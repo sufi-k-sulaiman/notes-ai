@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { 
     Globe, Layers, Satellite, Map, Search, Compass,
     TreePine, Mountain, Cloud, Activity, TrendingUp, 
-    Loader2, RefreshCw, Sparkles, Droplets, Leaf, Milk, 
-    Beef, Zap, Heart, Gem, Wind, Fish, Trash2, Volume2, 
-    Sun, Flame, Radiation, FlaskConical, Thermometer
+    Loader2, RefreshCw, Sparkles, Droplets, Leaf, 
+    Beef, Zap, Heart, Gem, Wind, Fish, Volume2, 
+    Sun, Flame, Radiation, FlaskConical, Thermometer,
+    Waves, Shell, Bird, Package, GlassWater
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,13 +23,18 @@ const USE_CASES = [
     { id: 'sustainability', name: 'Sustainability', icon: Compass, color: '#8B5CF6', description: 'Renewable energy, green initiatives' },
     { id: 'treasures', name: 'National Treasures', icon: Sparkles, color: '#FBBF24', description: 'Protected areas, heritage sites, parks' },
     
-    // New Agriculture & Food categories
+    // Ocean & Wildlife categories
+    { id: 'coastal', name: 'Coastal & Coral Ecosystem', icon: Shell, color: '#06B6D4', description: 'Coral reefs, coastal zones, marine habitats' },
+    { id: 'ocean', name: 'Ocean Sustainability', icon: Waves, color: '#0EA5E9', description: 'Ocean health, fisheries, marine conservation' },
+    { id: 'wildlife', name: 'Endangered Wildlife', icon: Bird, color: '#10B981', description: 'Species protection, habitat loss, conservation' },
+    
+    // Agriculture & Food categories
     { id: 'biomass', name: 'Biomass', icon: Leaf, color: '#84CC16', description: 'Biofuel production, organic matter, composting' },
     { id: 'produce', name: 'Produce & Crops', icon: Leaf, color: '#65A30D', description: 'Agricultural yields, crop health, farming' },
-    { id: 'dairy', name: 'Milk & Dairy', icon: Milk, color: '#F5F5F4', description: 'Dairy production, processing, distribution' },
+    { id: 'dairy', name: 'Milk & Dairy', icon: GlassWater, color: '#E5E7EB', description: 'Dairy production, processing, distribution' },
     { id: 'livestock', name: 'Livestock & Protein', icon: Beef, color: '#B45309', description: 'Cattle, poultry, meat production' },
     
-    // New Energy & Health categories
+    // Energy & Health categories
     { id: 'power', name: 'Power Consumption', icon: Zap, color: '#EAB308', description: 'Energy usage, grid demand, efficiency' },
     { id: 'wellness', name: 'Wellness & Health', icon: Heart, color: '#EC4899', description: 'Public health, disease, life expectancy' },
     { id: 'elements', name: 'Earth Elements', icon: Gem, color: '#7C3AED', description: 'Rare earth, minerals, geological resources' },
@@ -37,7 +43,7 @@ const USE_CASES = [
     { id: 'airpollution', name: 'Air Pollution', icon: Wind, color: '#64748B', description: 'PM2.5, smog, ozone, emissions' },
     { id: 'waterpollution', name: 'Water Pollution', icon: Droplets, color: '#0891B2', description: 'Contamination, runoff, marine debris' },
     { id: 'soilpollution', name: 'Soil Pollution', icon: Mountain, color: '#78716C', description: 'Contaminated land, heavy metals, degradation' },
-    { id: 'plasticpollution', name: 'Plastic Pollution', icon: Trash2, color: '#F472B6', description: 'Ocean plastic, microplastics, waste' },
+    { id: 'plasticpollution', name: 'Plastic Pollution', icon: Package, color: '#F472B6', description: 'Ocean plastic, microplastics, waste' },
     { id: 'noisepollution', name: 'Noise Pollution', icon: Volume2, color: '#A855F7', description: 'Urban noise, industrial sound, traffic' },
     { id: 'lightpollution', name: 'Light Pollution', icon: Sun, color: '#FACC15', description: 'Sky glow, urban lighting, night visibility' },
     { id: 'thermalpollution', name: 'Thermal Pollution', icon: Thermometer, color: '#F97316', description: 'Industrial heat, cooling water, temperature' },
