@@ -201,23 +201,9 @@ export default function Learning() {
             <div className="mx-4 md:mx-8 mt-4 flex flex-col lg:flex-row gap-4">
                 {/* Hero Banner - Left */}
                 <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 shadow-lg lg:w-1/2 flex flex-col justify-between">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-white">Learning Archipelago</h1>
-                            <p className="text-purple-200 text-sm">Ai-Powered Learning Journey</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <span className="text-xs text-white/70">{selectedSubjects.length} selected</span>
-                            <Button 
-                                onClick={() => generateSubTopics(++requestIdRef.current)}
-                                disabled={loadingTopics || selectedSubjects.length === 0}
-                                className="bg-white text-purple-700 hover:bg-white/90 text-sm"
-                                size="sm"
-                            >
-                                <RefreshCw className={`w-3 h-3 mr-1.5 ${loadingTopics ? 'animate-spin' : ''}`} />
-                                Generate Islands
-                            </Button>
-                        </div>
+                    <div>
+                        <h1 className="text-2xl md:text-3xl font-bold text-white">Learning Archipelago</h1>
+                        <p className="text-purple-200 text-sm">Ai-Powered Learning Journey</p>
                     </div>
 
                     {/* Stats */}
