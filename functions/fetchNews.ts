@@ -200,7 +200,7 @@ async function fetchRSS(feedKey, query = null) {
         if (!response.ok) return [];
         
         const xml = await response.text();
-        return parseRSS(xml, feedKey);
+        return await parseRSS(xml, feedKey);
     } catch (error) {
         console.error(`RSS fetch failed for ${feedKey}:`, error.message);
         return [];
