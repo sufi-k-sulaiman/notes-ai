@@ -363,10 +363,11 @@ Be specific with real numbers, avoid generic statements. Use actual statistics w
                                 </div>
                             </TabsContent>
 
-                            <TabsContent value="timeline" className="mt-0">
+                            <TabsContent value="timeline" className="mt-0 space-y-2">
+                                {/* Chart */}
                                 <div className="bg-gray-50 rounded-lg p-2.5 border">
                                     <h4 className="font-semibold text-gray-800 text-xs mb-2">Impact Score Timeline</h4>
-                                    <div className="h-40">
+                                    <div className="h-32">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <AreaChart data={chartData}>
                                                 <defs>
@@ -453,6 +454,41 @@ Be specific with real numbers, avoid generic statements. Use actual statistics w
                                         </div>
                                     </div>
                                 </div>
+
+                                {/* Historical Events Timeline */}
+                                {data.historical_events?.length > 0 && (
+                                    <div className="bg-gray-50 rounded-lg p-2.5 border">
+                                        <h4 className="font-semibold text-gray-800 text-xs mb-3">Key Historical Events</h4>
+                                        <div className="space-y-3">
+                                            {data.historical_events.map((event, i) => (
+                                                <div key={i} className="relative flex gap-3">
+                                                    {/* Timeline dot and line */}
+                                                    <div className="flex flex-col items-center">
+                                                        <div className="w-5 h-5 rounded-full bg-purple-600 flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0">
+                                                            {i + 1}
+                                                        </div>
+                                                        {i < data.historical_events.length - 1 && (
+                                                            <div className="w-0.5 flex-1 bg-purple-200 mt-1" />
+                                                        )}
+                                                    </div>
+                                                    
+                                                    {/* Event content */}
+                                                    <div className="flex-1 pb-3">
+                                                        <div className="bg-white rounded-lg p-2.5 border border-gray-100 shadow-sm">
+                                                            <div className="flex items-center gap-2 mb-1">
+                                                                <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded text-[9px] font-semibold">
+                                                                    {event.year}
+                                                                </span>
+                                                                <span className="text-[11px] font-semibold text-gray-900">{event.title}</span>
+                                                            </div>
+                                                            <p className="text-[10px] text-gray-600 leading-relaxed">{event.description}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </TabsContent>
                         </div>
                     </Tabs>
