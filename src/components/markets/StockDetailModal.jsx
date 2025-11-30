@@ -2751,7 +2751,7 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="w-full h-full max-w-full md:max-w-[1400px] max-h-full md:max-h-[90vh] p-0 overflow-hidden bg-gray-50 rounded-none md:rounded-lg" style={{ WebkitOverflowScrolling: 'touch' }}>
-                <div className="flex flex-col md:flex-row h-full md:h-[85vh]">
+                <div className="flex flex-col md:flex-row h-full md:h-[85vh] overflow-y-auto md:overflow-hidden">
                     {/* Mobile Header */}
                     <div className="md:hidden bg-white border-b border-gray-200 p-3 flex items-center justify-between sticky top-0 z-20">
                         <div className="flex items-center gap-2">

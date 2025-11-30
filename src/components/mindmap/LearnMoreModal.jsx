@@ -96,10 +96,14 @@ For each document, provide the actual URL where it can be found.`,
         }
     };
 
-    const fetchData = async () => {
+    const fetchData = async (retryCount = 0) => {
         setLoading(true);
         try {
-            const response = await base44.integrations.Core.InvokeLLM({
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Timeout')), 30000)
+            );
+            
+            const fetchPromise = base44.integrations.Core.InvokeLLM({
                 prompt: `Provide comprehensive information about "${keyword.name}" for a knowledge exploration tool. Include:
                 
 1. Overview: A detailed description, when it originated, who pioneered it, what it is, where it's used, and 2-3 paragraphs about its significance.
@@ -174,9 +178,27 @@ For each document, provide the actual URL where it can be found.`,
                     }
                 }
             });
+            
+            const response = await Promise.race([fetchPromise, timeoutPromise]);
             setData(response);
         } catch (error) {
             console.error('Failed to fetch data:', error);
+            // Retry up to 2 times on failure
+            if (retryCount < 2) {
+                console.log(`Retrying fetch... attempt ${retryCount + 2}`);
+                return fetchData(retryCount + 1);
+            }
+            // Set fallback data so UI doesn't stay stuck
+            setData({
+                overview: {
+                    description: `Information about ${keyword?.name} is currently unavailable. Please try again later.`,
+                    when: 'N/A',
+                    who: 'N/A', 
+                    what: keyword?.name || 'Topic',
+                    where: 'N/A',
+                    significance: ['Data temporarily unavailable']
+                }
+            });
         } finally {
             setLoading(false);
         }
