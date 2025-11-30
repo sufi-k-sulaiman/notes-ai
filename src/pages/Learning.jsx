@@ -105,13 +105,18 @@ export default function Learning() {
         }
     }, [JSON.stringify(selectedSubjects.map(s => s.id))]);
 
-    const generateSubTopics = async (requestId) => {
+    const generateSubTopics = async (requestId, retryCount = 0) => {
         setLoadingTopics(true);
-        setSubTopics([]);
+        if (retryCount === 0) setSubTopics([]);
+        
         try {
             const subjectNames = selectedSubjects.map(s => s.name).join(', ');
             
-            const response = await base44.integrations.Core.InvokeLLM({
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Timeout')), 30000)
+            );
+            
+            const fetchPromise = base44.integrations.Core.InvokeLLM({
                 prompt: `Generate 10 specific learning sub-topics/courses for these subjects: ${subjectNames}.
                 Each topic should be a focused, learnable concept that could be a standalone course.
                 Make them practical and engaging for learners.
@@ -138,6 +143,8 @@ export default function Learning() {
                 }
             });
 
+            const response = await Promise.race([fetchPromise, timeoutPromise]);
+
             // Map generated topics to include colors from parent subjects
             const topicsWithColors = (response?.topics || []).map((topic, i) => {
                 const parentSubject = selectedSubjects.find(s => 
@@ -154,11 +161,16 @@ export default function Learning() {
 
             // Only update if this is still the current request
             if (requestId === requestIdRef.current) {
-                setSubTopics(topicsWithColors);
+                if (topicsWithColors.length === 0 && retryCount < 2) {
+                    console.log(`No topics returned, retrying... attempt ${retryCount + 2}`);
+                    return generateSubTopics(requestId, retryCount + 1);
+                }
+                
+                setSubTopics(topicsWithColors.length > 0 ? topicsWithColors : getFallbackTopics());
                 
                 // Initialize progress for new topics
                 const newProgress = {};
-                topicsWithColors.forEach(t => {
+                (topicsWithColors.length > 0 ? topicsWithColors : getFallbackTopics()).forEach(t => {
                     newProgress[t.id] = userProgress[t.id] || Math.floor(Math.random() * 30);
                 });
                 setUserProgress(newProgress);
@@ -166,19 +178,29 @@ export default function Learning() {
             
         } catch (error) {
             console.error('Error generating topics:', error);
+            
+            // Retry up to 2 times on failure
+            if (retryCount < 2 && requestId === requestIdRef.current) {
+                console.log(`Retrying fetch... attempt ${retryCount + 2}`);
+                return generateSubTopics(requestId, retryCount + 1);
+            }
+            
             // Fallback topics based on selected subjects
-            const fallbackTopics = selectedSubjects.flatMap((subject, si) => [
-                { id: `${subject.id}-1`, name: `Introduction to ${subject.name}`, description: 'Core fundamentals', color: subject.color, icon: subject.icon, difficulty: 'Beginner', estimatedHours: 4 },
-                { id: `${subject.id}-2`, name: `Advanced ${subject.name}`, description: 'Deep dive into concepts', color: subject.color, icon: subject.icon, difficulty: 'Advanced', estimatedHours: 8 },
-            ]).slice(0, 10);
             if (requestId === requestIdRef.current) {
-                setSubTopics(fallbackTopics);
+                setSubTopics(getFallbackTopics());
             }
         } finally {
             if (requestId === requestIdRef.current) {
                 setLoadingTopics(false);
             }
         }
+    };
+    
+    const getFallbackTopics = () => {
+        return selectedSubjects.flatMap((subject) => [
+            { id: `${subject.id}-1`, name: `Introduction to ${subject.name}`, description: 'Core fundamentals', color: subject.color, icon: subject.icon, difficulty: 'Beginner', estimatedHours: 4 },
+            { id: `${subject.id}-2`, name: `Advanced ${subject.name}`, description: 'Deep dive into concepts', color: subject.color, icon: subject.icon, difficulty: 'Advanced', estimatedHours: 8 },
+        ]).slice(0, 10);
     };
 
     const handleExplore = (topic) => {
