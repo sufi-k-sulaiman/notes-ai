@@ -566,7 +566,7 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                         </div>
 
                         {/* Quick Metrics Grid */}
-                        <div className="grid grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                             <div className="bg-white rounded-2xl border border-gray-200 p-4">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Shield className="w-4 h-4 text-purple-600" />
@@ -616,12 +616,12 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                 ];
                 return (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
                                         <Shield className="w-5 h-5 text-purple-600" />
-                                        <h3 className="font-semibold text-gray-900">MOAT Score</h3>
+                                        <h3 className="font-semibold text-gray-900 text-sm md:text-base">MOAT Score</h3>
                                     </div>
                                     <span className="text-3xl font-bold text-purple-600">{stock.moat}<span className="text-lg text-gray-400">/100</span></span>
                                 </div>
@@ -649,11 +649,11 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
                         
-                        <div className="grid grid-cols-3 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
                                 <div className="flex items-center gap-2 mb-4">
                                     <Sparkles className="w-5 h-5 text-green-600" />
-                                    <h3 className="font-semibold text-gray-900">Return on Equity</h3>
+                                    <h3 className="font-semibold text-gray-900 text-sm md:text-base">Return on Equity</h3>
                                 </div>
                                 <div className="text-center mb-4">
                                     <span className="text-5xl font-bold text-green-600">{stock.roe}%</span>
@@ -805,11 +805,11 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                 const currentSentiment = (data.sentimentScore || 42) > 65 ? 2 : (data.sentimentScore || 42) > 35 ? 1 : 0;
                 return (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
                                 <div className="flex items-center gap-2 mb-4">
                                     <Brain className="w-5 h-5 text-purple-600" />
-                                    <h3 className="font-semibold text-gray-900">Sentiment Indicator</h3>
+                                    <h3 className="font-semibold text-gray-900 text-sm md:text-base">Sentiment Indicator</h3>
                                 </div>
                                 <div className="text-center mb-4">
                                     <p className="text-5xl font-bold text-orange-600">{data.sentimentScore || 42}</p>
@@ -850,9 +850,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                            <h4 className="font-semibold text-gray-900 mb-4">Ownership & Activity</h4>
-                            <div className="grid grid-cols-3 gap-4">
+                        <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                            <h4 className="font-semibold text-gray-900 mb-4 text-sm md:text-base">Ownership & Activity</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                                 <div className="p-4 bg-gray-50 rounded-lg">
                                     <p className="text-sm text-gray-600">Institutional Ownership</p>
                                     <p className={`text-xl font-bold mt-1 ${data.institutionalChange === 'Increasing' ? 'text-green-600' : 'text-gray-900'}`}>
@@ -887,10 +887,10 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                 <Sparkles className="w-5 h-5 text-purple-600" />
                                 <h3 className="font-semibold text-gray-900">AI-Powered Insights</h3>
                             </div>
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                                 <div>
                                     <p className="text-sm text-gray-600 mb-2">AI Confidence Score</p>
-                                    <p className="text-4xl font-bold text-purple-600">{data.aiConfidence || stock.aiRating || 82}%</p>
+                                    <p className="text-3xl md:text-4xl font-bold text-purple-600">{data.aiConfidence || stock.aiRating || 82}%</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600 mb-2">Earnings Surprise Probability</p>
@@ -957,8 +957,8 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                     {data.marginOfSafety > 15 ? 'Undervalued' : data.marginOfSafety > 0 ? 'Fair Value' : 'Overvalued'}
                                 </span>
                             </div>
-                            <div className="grid grid-cols-2 gap-6">
-                                <div className="h-56">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                                <div className="h-48 md:h-56">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <BarChart data={valuationComparison} layout="horizontal">
                                             <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={(v) => `$${v.toFixed(0)}`} />
@@ -1036,9 +1036,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                 ];
                 return (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm md:text-base">
                                     <TrendingUp className="w-4 h-4 text-green-600" /> Revenue & Profit Growth
                                 </h3>
                                 <div className="h-52">
@@ -1077,9 +1077,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                                <h3 className="font-semibold text-gray-900 mb-4">Cash Flow Quality</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                                <h3 className="font-semibold text-gray-900 mb-4 text-sm md:text-base">Cash Flow Quality</h3>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                                         <span className="text-sm text-gray-600">Operating Cash Flow</span>
@@ -1131,9 +1131,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                 ];
                 return (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-sm md:text-base">
                                     <Sparkles className="w-4 h-4 text-green-600" /> Equity Efficiency
                                 </h3>
                                 <div className="mb-4">
@@ -1185,9 +1185,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
                         
-                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                            <h3 className="font-semibold text-gray-900 mb-4">Key Financial Ratios</h3>
-                            <div className="grid grid-cols-3 gap-4">
+                        <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                            <h3 className="font-semibold text-gray-900 mb-4 text-sm md:text-base">Key Financial Ratios</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
                                 {financialRatios.map((r, i) => (
                                     <div key={i} className="p-4 bg-gray-50 rounded-xl">
                                         <div className="flex items-center justify-between mb-2">
@@ -1206,9 +1206,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
                         
-                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                            <h3 className="font-semibold text-gray-900 mb-4">Capital Structure</h3>
-                            <div className="grid grid-cols-3 gap-4">
+                        <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                            <h3 className="font-semibold text-gray-900 mb-4 text-sm md:text-base">Capital Structure</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                                 <div className="p-4 bg-gray-50 rounded-xl text-center">
                                     <p className="text-sm text-gray-500">Debt to Equity</p>
                                     <p className="text-2xl font-bold text-gray-900">{data.debtToEquity || 0.45}</p>
@@ -1265,8 +1265,8 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                     </ReLineChart>
                                 </ResponsiveContainer>
                             </div>
-                            <div className="grid grid-cols-4 gap-3 mt-4">
-                                <div className="bg-purple-50 rounded-lg p-3 text-center">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mt-4">
+                                <div className="bg-purple-50 rounded-lg p-2 md:p-3 text-center">
                                     <p className="text-xs text-gray-500">Current</p>
                                     <p className="text-lg font-bold text-purple-600">${stock.price?.toFixed(2)}</p>
                                 </div>
@@ -1285,9 +1285,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                                <h4 className="font-semibold text-gray-900 mb-4">Momentum Indicator</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                                <h4 className="font-semibold text-gray-900 mb-4 text-sm md:text-base">Momentum Indicator</h4>
                                 <div className="space-y-4">
                                     <div>
                                         <div className="flex items-center justify-between mb-2">
@@ -1360,12 +1360,12 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                 ];
                 return (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
                                         <AlertTriangle className="w-5 h-5 text-orange-600" />
-                                        <h3 className="font-semibold text-gray-900">Risk Score</h3>
+                                        <h3 className="font-semibold text-gray-900 text-sm md:text-base">Risk Score</h3>
                                     </div>
                                     <span className="text-3xl font-bold text-orange-600">{data.riskScore || 4.2}<span className="text-lg text-gray-400">/10</span></span>
                                 </div>
@@ -1416,9 +1416,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
                         
-                        <div className="grid grid-cols-3 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2 text-sm md:text-base">
                                     <Building className="w-4 h-4" /> Company Risks
                                 </h4>
                                 <div className="flex flex-wrap gap-2">
@@ -1460,9 +1460,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
                         
-                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                            <h4 className="font-semibold text-gray-900 mb-4">Market & Trading Profile</h4>
-                            <div className="grid grid-cols-6 gap-4">
+                        <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                            <h4 className="font-semibold text-gray-900 mb-4 text-sm md:text-base">Market & Trading Profile</h4>
+                            <div className="grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-4">
                                 <div className="text-center p-3 bg-gray-50 rounded-lg">
                                     <p className="text-xs text-gray-500">Market Cap</p>
                                     <p className="text-lg font-bold text-gray-900">${stock.marketCap}B</p>
@@ -1594,10 +1594,10 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             <p className="text-sm text-gray-600">Strategy suitable for income and growth investors seeking {yieldStrategy.dividendYield}% current yield with {yieldStrategy.growthExpectation}% dividend growth potential.</p>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="font-semibold text-gray-900">Dividend Metrics</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                                <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+                                    <h3 className="font-semibold text-gray-900 text-sm md:text-base">Dividend Metrics</h3>
                                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                                         (data.safetyScore || 75) >= 70 ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
                                     }`}>
@@ -1716,9 +1716,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                 </table>
                             </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                                <h4 className="font-semibold text-gray-900 mb-4">vs Industry Average</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                                <h4 className="font-semibold text-gray-900 mb-4 text-sm md:text-base">vs Industry Average</h4>
                                 <div className="h-48">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <RadarChart data={radarData}>
@@ -1781,9 +1781,9 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                 </div>
                                 <span className="text-xs text-gray-500 bg-white px-3 py-1 rounded-full">$100 to $4,000,000</span>
                             </div>
-                            <div className="grid grid-cols-3 gap-6 mb-6">
-                                <div>
-                                    <label className="text-sm text-gray-600 mb-2 block">Investment Amount</label>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
+                            <div>
+                                <label className="text-sm text-gray-600 mb-2 block">Investment Amount</label>
                                     <div className="flex flex-wrap gap-1 mb-2">
                                         {[100, 1000, 10000, 100000, 1000000, 4000000].map(amt => (
                                             <button key={amt} onClick={() => setInvestmentAmount(amt)} className={`px-2 py-1 text-xs rounded ${investmentAmount === amt ? 'bg-purple-600 text-white' : 'bg-white text-gray-600 border'}`}>
@@ -1802,7 +1802,7 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                     <Slider value={[expectedReturn]} onValueChange={(v) => setExpectedReturn(v[0])} min={-20} max={50} step={1} className="mt-4" />
                                 </div>
                             </div>
-                            <div className="grid grid-cols-5 gap-3">
+                            <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-3">
                                 <div className="bg-white rounded-xl p-4 text-center">
                                     <p className="text-xs text-gray-500">Shares Ownership</p>
                                     <p className="text-xl font-bold text-gray-900">{simResult.shares}</p>
@@ -1828,10 +1828,10 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                                <h4 className="font-semibold text-gray-900 mb-4">Investment Projection</h4>
-                                <div className="h-56">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                                <h4 className="font-semibold text-gray-900 mb-4 text-sm md:text-base">Investment Projection</h4>
+                                <div className="h-48 md:h-56">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <AreaChart data={projectionData}>
                                             <defs>
@@ -1892,7 +1892,7 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                 <Calculator className="w-5 h-5 text-purple-600" />
                                 <h3 className="font-semibold text-gray-900">DCF Intrinsic Value Calculator</h3>
                             </div>
-                            <div className="grid grid-cols-4 gap-4 mb-6">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
                                 <div className="bg-gray-50 rounded-xl p-4 text-center">
                                     <p className="text-sm text-gray-500 mb-1">Current Price</p>
                                     <p className="text-2xl font-bold text-gray-900">${stock.price?.toFixed(2)}</p>
@@ -1930,8 +1930,8 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                     </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="bg-gray-50 rounded-xl p-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                                <div className="bg-gray-50 rounded-xl p-3 md:p-4">
                                     <p className="text-sm text-gray-500">Growth Rate</p>
                                     <p className="text-lg font-bold text-gray-900">{data.assumptions?.growthRate || 12}%</p>
                                 </div>
@@ -1956,8 +1956,8 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                 ];
                 return (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200 p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200 p-4 md:p-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
                                         <ThumbsUp className="w-5 h-5 text-green-600" />
@@ -2015,10 +2015,10 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                                <h4 className="font-semibold text-gray-900 mb-4">Price Target Scenarios</h4>
-                                <div className="h-56">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                                <h4 className="font-semibold text-gray-900 mb-4 text-sm md:text-base">Price Target Scenarios</h4>
+                                <div className="h-48 md:h-56">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <BarChart data={scenarios} layout="horizontal">
                                             <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={(v) => `$${v}`} />
@@ -2053,22 +2053,22 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
                         
-                        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                            <h4 className="font-semibold text-gray-900 mb-4">Future Outlook</h4>
-                            <div className="flex items-center gap-4">
-                                <div className="flex-1 text-center p-4 bg-red-50 rounded-xl">
+                        <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                            <h4 className="font-semibold text-gray-900 mb-4 text-sm md:text-base">Future Outlook</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                                <div className="text-center p-3 md:p-4 bg-red-50 rounded-xl">
                                     <p className="text-xs text-gray-500 mb-1">Bear Scenario</p>
-                                    <p className="text-2xl font-bold text-red-600">${scenarios[0].target.toFixed(2)}</p>
+                                    <p className="text-xl md:text-2xl font-bold text-red-600">${scenarios[0].target.toFixed(2)}</p>
                                     <p className="text-xs text-gray-500 mt-1">{scenarios[0].probability}% probability</p>
                                 </div>
-                                <div className="flex-1 text-center p-4 bg-yellow-50 rounded-xl">
+                                <div className="text-center p-3 md:p-4 bg-yellow-50 rounded-xl">
                                     <p className="text-xs text-gray-500 mb-1">Base Scenario</p>
-                                    <p className="text-2xl font-bold text-yellow-600">${scenarios[1].target.toFixed(2)}</p>
+                                    <p className="text-xl md:text-2xl font-bold text-yellow-600">${scenarios[1].target.toFixed(2)}</p>
                                     <p className="text-xs text-gray-500 mt-1">{scenarios[1].probability}% probability</p>
                                 </div>
-                                <div className="flex-1 text-center p-4 bg-green-50 rounded-xl">
+                                <div className="text-center p-3 md:p-4 bg-green-50 rounded-xl">
                                     <p className="text-xs text-gray-500 mb-1">Bull Scenario</p>
-                                    <p className="text-2xl font-bold text-green-600">${scenarios[2].target.toFixed(2)}</p>
+                                    <p className="text-xl md:text-2xl font-bold text-green-600">${scenarios[2].target.toFixed(2)}</p>
                                     <p className="text-xs text-gray-500 mt-1">{scenarios[2].probability}% probability</p>
                                 </div>
                             </div>
@@ -2312,12 +2312,12 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
             case 'reports':
                 return (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
                                         <FileText className="w-5 h-5 text-purple-600" />
-                                        <h3 className="font-semibold text-gray-900">Annual Reports</h3>
+                                        <h3 className="font-semibold text-gray-900 text-sm md:text-base">Annual Reports</h3>
                                     </div>
                                     <span className="text-xs text-gray-500">3 Reports</span>
                                 </div>
@@ -2621,20 +2621,20 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                                     <p className="text-white/80">Analyze {stock.ticker} through 16 iconic investment philosophies</p>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
                                 {overallScores.slice(0, 4).map((s, i) => (
-                                    <div key={i} className="bg-white/20 rounded-xl p-4 backdrop-blur-sm">
-                                        <p className="text-sm text-white/80">#{i + 1} {s.name}</p>
-                                        <p className="text-3xl font-bold">{s.score}</p>
+                                    <div key={i} className="bg-white/20 rounded-xl p-3 md:p-4 backdrop-blur-sm">
+                                        <p className="text-xs md:text-sm text-white/80">#{i + 1} {s.name}</p>
+                                        <p className="text-2xl md:text-3xl font-bold">{s.score}</p>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                                <h3 className="font-semibold text-gray-900 mb-4">Value vs Growth Comparison</h3>
-                                <div className="h-64">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                                <h3 className="font-semibold text-gray-900 mb-4 text-sm md:text-base">Value vs Growth Comparison</h3>
+                                <div className="h-52 md:h-64">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <RadarChart data={legendRadarData}>
                                             <PolarGrid />
@@ -2670,7 +2670,7 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                             {legendaryFrameworks.map((legend, i) => (
                                 <div key={i} className="bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-lg transition-shadow">
                                     <div className="flex items-center gap-2 mb-3">
@@ -2718,18 +2718,18 @@ export default function StockDetailModal({ stock, isOpen, onClose }) {
                             <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
                                 <Info className="w-4 h-4" /> Framework Consensus
                             </h4>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="bg-white rounded-xl p-4 text-center">
-                                    <p className="text-sm text-gray-600">Bullish Frameworks</p>
-                                    <p className="text-3xl font-bold text-green-600">{legendaryFrameworks.filter(l => l.verdict.includes('Buy') || l.verdict.includes('Strong')).length}</p>
+                            <div className="grid grid-cols-3 gap-2 md:gap-4">
+                                <div className="bg-white rounded-xl p-3 md:p-4 text-center">
+                                    <p className="text-xs md:text-sm text-gray-600">Bullish</p>
+                                    <p className="text-2xl md:text-3xl font-bold text-green-600">{legendaryFrameworks.filter(l => l.verdict.includes('Buy') || l.verdict.includes('Strong')).length}</p>
                                 </div>
-                                <div className="bg-white rounded-xl p-4 text-center">
-                                    <p className="text-sm text-gray-600">Neutral Frameworks</p>
-                                    <p className="text-3xl font-bold text-yellow-600">{legendaryFrameworks.filter(l => l.verdict.includes('Hold') || l.verdict.includes('OK') || l.verdict.includes('Neutral')).length}</p>
+                                <div className="bg-white rounded-xl p-3 md:p-4 text-center">
+                                    <p className="text-xs md:text-sm text-gray-600">Neutral</p>
+                                    <p className="text-2xl md:text-3xl font-bold text-yellow-600">{legendaryFrameworks.filter(l => l.verdict.includes('Hold') || l.verdict.includes('OK') || l.verdict.includes('Neutral')).length}</p>
                                 </div>
-                                <div className="bg-white rounded-xl p-4 text-center">
-                                    <p className="text-sm text-gray-600">Bearish Frameworks</p>
-                                    <p className="text-3xl font-bold text-red-600">{legendaryFrameworks.filter(l => l.verdict.includes('Avoid') || l.verdict.includes('Not')).length}</p>
+                                <div className="bg-white rounded-xl p-3 md:p-4 text-center">
+                                    <p className="text-xs md:text-sm text-gray-600">Bearish</p>
+                                    <p className="text-2xl md:text-3xl font-bold text-red-600">{legendaryFrameworks.filter(l => l.verdict.includes('Avoid') || l.verdict.includes('Not')).length}</p>
                                 </div>
                             </div>
                         </div>
