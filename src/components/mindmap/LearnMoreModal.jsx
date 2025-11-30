@@ -190,42 +190,42 @@ For each document, provide the actual URL where it can be found.`,
     const modalContent = (
         <>
             <div className="fixed inset-0 bg-black/50" style={{ zIndex: 99998 }} onClick={onClose} />
-            <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-5xl w-[95vw] max-h-[90vh] p-0 overflow-y-auto bg-white rounded-xl shadow-xl" style={{ zIndex: 99999 }}>
+            <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-5xl w-[95vw] max-h-[90vh] md:max-h-[85vh] p-0 overflow-y-auto bg-white rounded-lg md:rounded-xl shadow-xl" style={{ zIndex: 99999 }}>
                 <div className="flex flex-col h-full">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h2 className="text-2xl font-bold mb-2">{keyword.name}</h2>
-                                <p className="text-white/80">{keyword.description}</p>
+                    <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 md:p-6 text-white">
+                        <div className="flex justify-between items-start gap-3">
+                            <div className="flex-1 min-w-0">
+                                <h2 className="text-xl md:text-2xl font-bold mb-1 md:mb-2">{keyword.name}</h2>
+                                <p className="text-white/80 text-sm md:text-base line-clamp-2">{keyword.description}</p>
                             </div>
-                            <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-white/20">
-                                <X className="w-5 h-5" />
+                            <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-white/20 flex-shrink-0">
+                                <X className="w-4 h-4 md:w-5 md:h-5" />
                             </Button>
                         </div>
                     </div>
 
                     {/* Tabs */}
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
-                        <TabsList className="w-full justify-start rounded-none border-b bg-gray-50 p-0 h-auto">
-                            <TabsTrigger value="overview" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-3 px-4 gap-2">
-                                <BookOpen className="w-4 h-4" /> Overview
+                        <TabsList className="w-full justify-start rounded-none border-b bg-gray-50 p-0 h-auto overflow-x-auto">
+                            <TabsTrigger value="overview" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-2 md:py-3 px-2 md:px-4 gap-1 md:gap-2 text-xs md:text-sm whitespace-nowrap">
+                                <BookOpen className="w-3 h-3 md:w-4 md:h-4" /> Overview
                             </TabsTrigger>
-                            <TabsTrigger value="professional" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-3 px-4 gap-2">
-                                <Briefcase className="w-4 h-4" /> Professional
+                            <TabsTrigger value="professional" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-2 md:py-3 px-2 md:px-4 gap-1 md:gap-2 text-xs md:text-sm whitespace-nowrap">
+                                <Briefcase className="w-3 h-3 md:w-4 md:h-4" /> Professional
                             </TabsTrigger>
-                            <TabsTrigger value="timeline" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-3 px-4 gap-2">
-                                <Clock className="w-4 h-4" /> Timeline
+                            <TabsTrigger value="timeline" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-2 md:py-3 px-2 md:px-4 gap-1 md:gap-2 text-xs md:text-sm whitespace-nowrap">
+                                <Clock className="w-3 h-3 md:w-4 md:h-4" /> Timeline
                             </TabsTrigger>
-                            <TabsTrigger value="insights" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-3 px-4 gap-2">
-                                <BarChart3 className="w-4 h-4" /> Deep Insights
+                            <TabsTrigger value="insights" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-2 md:py-3 px-2 md:px-4 gap-1 md:gap-2 text-xs md:text-sm whitespace-nowrap">
+                                <BarChart3 className="w-3 h-3 md:w-4 md:h-4" /> Insights
                             </TabsTrigger>
-                            <TabsTrigger value="documents" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-3 px-4 gap-2">
-                                <FileText className="w-4 h-4" /> Documents
+                            <TabsTrigger value="documents" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-2 md:py-3 px-2 md:px-4 gap-1 md:gap-2 text-xs md:text-sm whitespace-nowrap">
+                                <FileText className="w-3 h-3 md:w-4 md:h-4" /> Docs
                             </TabsTrigger>
                         </TabsList>
 
-                        <div className="flex-1 overflow-y-auto p-6">
+                        <div className="flex-1 overflow-y-auto p-3 md:p-6">
                             {loading ? (
                                 <div className="flex items-center justify-center h-64">
                                     <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
@@ -235,9 +235,9 @@ For each document, provide the actual URL where it can be found.`,
                                 <>
                                     {/* Overview Tab */}
                                     <TabsContent value="overview" className="m-0">
-                                        <div className="space-y-6">
+                                        <div className="space-y-4 md:space-y-6">
                                             {/* Generated Image */}
-                                            <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-purple-100 to-indigo-100 h-48">
+                                            <div className="relative rounded-lg md:rounded-xl overflow-hidden bg-gradient-to-br from-purple-100 to-indigo-100 h-36 md:h-48">
                                                 {imageLoading ? (
                                                     <div className="absolute inset-0 flex items-center justify-center">
                                                         <div className="text-center">
@@ -254,48 +254,48 @@ For each document, provide the actual URL where it can be found.`,
                                                 )}
                                             </div>
 
-                                            <p className="text-gray-700 text-lg leading-relaxed">{data?.overview?.description || 'Loading description...'}</p>
+                                            <p className="text-gray-700 text-sm md:text-lg leading-relaxed">{data?.overview?.description || 'Loading description...'}</p>
                                             
                                             {data?.overview && (
                                                 <>
-                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                                        <div className="bg-purple-50 rounded-xl p-4">
-                                                            <div className="flex items-center gap-2 text-purple-700 mb-2">
-                                                                <Calendar className="w-5 h-5" />
-                                                                <span className="font-semibold">When</span>
+                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+                                                        <div className="bg-purple-50 rounded-lg md:rounded-xl p-2 md:p-4">
+                                                            <div className="flex items-center gap-1 md:gap-2 text-purple-700 mb-1 md:mb-2">
+                                                                <Calendar className="w-3 h-3 md:w-5 md:h-5" />
+                                                                <span className="font-semibold text-xs md:text-sm">When</span>
                                                             </div>
-                                                            <p className="text-gray-700 text-sm">{data.overview?.when}</p>
+                                                            <p className="text-gray-700 text-xs md:text-sm">{data.overview?.when}</p>
                                                         </div>
-                                                        <div className="bg-blue-50 rounded-xl p-4">
-                                                            <div className="flex items-center gap-2 text-blue-700 mb-2">
-                                                                <User className="w-5 h-5" />
-                                                                <span className="font-semibold">Who</span>
+                                                        <div className="bg-blue-50 rounded-lg md:rounded-xl p-2 md:p-4">
+                                                            <div className="flex items-center gap-1 md:gap-2 text-blue-700 mb-1 md:mb-2">
+                                                                <User className="w-3 h-3 md:w-5 md:h-5" />
+                                                                <span className="font-semibold text-xs md:text-sm">Who</span>
                                                             </div>
-                                                            <p className="text-gray-700 text-sm">{data.overview?.who}</p>
+                                                            <p className="text-gray-700 text-xs md:text-sm">{data.overview?.who}</p>
                                                         </div>
-                                                        <div className="bg-emerald-50 rounded-xl p-4">
-                                                            <div className="flex items-center gap-2 text-emerald-700 mb-2">
-                                                                <Target className="w-5 h-5" />
-                                                                <span className="font-semibold">What</span>
+                                                        <div className="bg-emerald-50 rounded-lg md:rounded-xl p-2 md:p-4">
+                                                            <div className="flex items-center gap-1 md:gap-2 text-emerald-700 mb-1 md:mb-2">
+                                                                <Target className="w-3 h-3 md:w-5 md:h-5" />
+                                                                <span className="font-semibold text-xs md:text-sm">What</span>
                                                             </div>
-                                                            <p className="text-gray-700 text-sm">{data.overview?.what}</p>
+                                                            <p className="text-gray-700 text-xs md:text-sm">{data.overview?.what}</p>
                                                         </div>
-                                                        <div className="bg-orange-50 rounded-xl p-4">
-                                                            <div className="flex items-center gap-2 text-orange-700 mb-2">
-                                                                <MapPin className="w-5 h-5" />
-                                                                <span className="font-semibold">Where</span>
+                                                        <div className="bg-orange-50 rounded-lg md:rounded-xl p-2 md:p-4">
+                                                            <div className="flex items-center gap-1 md:gap-2 text-orange-700 mb-1 md:mb-2">
+                                                                <MapPin className="w-3 h-3 md:w-5 md:h-5" />
+                                                                <span className="font-semibold text-xs md:text-sm">Where</span>
                                                             </div>
-                                                            <p className="text-gray-700 text-sm">{data.overview?.where}</p>
+                                                            <p className="text-gray-700 text-xs md:text-sm">{data.overview?.where}</p>
                                                         </div>
                                                     </div>
 
-                                                    <div className="space-y-4">
-                                                        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                                                            <Lightbulb className="w-5 h-5 text-amber-500" />
+                                                    <div className="space-y-3 md:space-y-4">
+                                                        <h3 className="text-base md:text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                                            <Lightbulb className="w-4 h-4 md:w-5 md:h-5 text-amber-500" />
                                                             Significance
                                                         </h3>
                                                         {data.overview?.significance?.map((para, i) => (
-                                                            <p key={i} className="text-gray-600 leading-relaxed">{para}</p>
+                                                            <p key={i} className="text-gray-600 text-sm md:text-base leading-relaxed">{para}</p>
                                                         ))}
                                                     </div>
                                                 </>
@@ -305,66 +305,66 @@ For each document, provide the actual URL where it can be found.`,
 
                                     {/* Professional Tab */}
                                     <TabsContent value="professional" className="m-0">
-                                        <div className="grid md:grid-cols-2 gap-6">
-                                            <div className="bg-white rounded-xl border p-5">
-                                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                                    <Award className="w-5 h-5 text-purple-600" />
+                                        <div className="grid md:grid-cols-2 gap-3 md:gap-6">
+                                            <div className="bg-white rounded-lg md:rounded-xl border p-3 md:p-5">
+                                                <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base">
+                                                    <Award className="w-4 h-4 md:w-5 md:h-5 text-purple-600" />
                                                     Required Skills
                                                 </h3>
-                                                <div className="flex flex-wrap gap-2">
+                                                <div className="flex flex-wrap gap-1.5 md:gap-2">
                                                     {data?.professional?.skills?.map((skill, i) => (
-                                                        <span key={i} className="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                                                        <span key={i} className="px-2 py-1 md:px-3 md:py-1.5 bg-purple-100 text-purple-700 rounded-full text-xs md:text-sm font-medium">
                                                             {skill}
                                                         </span>
                                                     ))}
                                                 </div>
                                             </div>
 
-                                            <div className="bg-white rounded-xl border p-5">
-                                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                                    <GraduationCap className="w-5 h-5 text-blue-600" />
+                                            <div className="bg-white rounded-lg md:rounded-xl border p-3 md:p-5">
+                                                <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base">
+                                                    <GraduationCap className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
                                                     Related Subjects
                                                 </h3>
-                                                <div className="flex flex-wrap gap-2">
+                                                <div className="flex flex-wrap gap-1.5 md:gap-2">
                                                     {data?.professional?.relatedSubjects?.map((subject, i) => (
-                                                        <span key={i} className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                                                        <span key={i} className="px-2 py-1 md:px-3 md:py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs md:text-sm font-medium">
                                                             {subject}
                                                         </span>
                                                     ))}
                                                 </div>
                                             </div>
 
-                                            <div className="bg-white rounded-xl border p-5">
-                                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                                    <Users className="w-5 h-5 text-emerald-600" />
+                                            <div className="bg-white rounded-lg md:rounded-xl border p-3 md:p-5">
+                                                <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base">
+                                                    <Users className="w-4 h-4 md:w-5 md:h-5 text-emerald-600" />
                                                     Subject Matter Experts
                                                 </h3>
-                                                <div className="space-y-3">
+                                                <div className="space-y-2 md:space-y-3">
                                                     {data?.professional?.experts?.map((expert, i) => (
-                                                        <div key={i} className="flex items-start gap-3">
-                                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold">
+                                                        <div key={i} className="flex items-start gap-2 md:gap-3">
+                                                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-sm md:text-base flex-shrink-0">
                                                                 {expert.name?.charAt(0)}
                                                             </div>
-                                                            <div>
-                                                                <p className="font-medium text-gray-900">{expert.name}</p>
-                                                                <p className="text-sm text-gray-500">{expert.role}</p>
-                                                                <p className="text-xs text-gray-400">{expert.organization}</p>
+                                                            <div className="min-w-0">
+                                                                <p className="font-medium text-gray-900 text-sm md:text-base">{expert.name}</p>
+                                                                <p className="text-xs md:text-sm text-gray-500">{expert.role}</p>
+                                                                <p className="text-[10px] md:text-xs text-gray-400 truncate">{expert.organization}</p>
                                                             </div>
                                                         </div>
                                                     ))}
                                                 </div>
                                             </div>
 
-                                            <div className="bg-white rounded-xl border p-5">
-                                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                                    <Briefcase className="w-5 h-5 text-orange-600" />
+                                            <div className="bg-white rounded-lg md:rounded-xl border p-3 md:p-5">
+                                                <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base">
+                                                    <Briefcase className="w-4 h-4 md:w-5 md:h-5 text-orange-600" />
                                                     Relevant Job Titles
                                                 </h3>
-                                                <div className="space-y-2">
+                                                <div className="space-y-1.5 md:space-y-2">
                                                     {data?.professional?.jobTitles?.map((title, i) => (
-                                                        <div key={i} className="flex items-center gap-2 text-gray-700">
-                                                            <Building className="w-4 h-4 text-gray-400" />
-                                                            {title}
+                                                        <div key={i} className="flex items-center gap-2 text-gray-700 text-xs md:text-sm">
+                                                            <Building className="w-3 h-3 md:w-4 md:h-4 text-gray-400 flex-shrink-0" />
+                                                            <span className="line-clamp-1">{title}</span>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -375,21 +375,21 @@ For each document, provide the actual URL where it can be found.`,
                                     {/* Timeline Tab */}
                                     <TabsContent value="timeline" className="m-0">
                                         <div className="relative">
-                                            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-purple-200" />
-                                            <div className="space-y-6">
+                                            <div className="absolute left-3 md:left-4 top-0 bottom-0 w-0.5 bg-purple-200" />
+                                            <div className="space-y-4 md:space-y-6">
                                                 {data?.timeline?.map((event, i) => (
-                                                    <div key={i} className="relative pl-12">
-                                                        <div className="absolute left-0 w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                                                    <div key={i} className="relative pl-8 md:pl-12">
+                                                        <div className="absolute left-0 w-6 h-6 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white text-[10px] md:text-xs font-bold shadow-lg">
                                                             {i + 1}
                                                         </div>
-                                                        <div className="bg-white rounded-xl border p-4 shadow-sm">
-                                                            <div className="flex items-center gap-3 mb-2">
-                                                                <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-sm font-semibold">
+                                                        <div className="bg-white rounded-lg md:rounded-xl border p-3 md:p-4 shadow-sm">
+                                                            <div className="flex items-center gap-2 md:gap-3 mb-1.5 md:mb-2 flex-wrap">
+                                                                <span className="px-1.5 py-0.5 md:px-2 md:py-1 bg-purple-100 text-purple-700 rounded text-[10px] md:text-sm font-semibold">
                                                                     {event.year}
                                                                 </span>
-                                                                <h4 className="font-semibold text-gray-900">{event.title}</h4>
+                                                                <h4 className="font-semibold text-gray-900 text-xs md:text-base">{event.title}</h4>
                                                             </div>
-                                                            <p className="text-gray-600 text-sm">{event.description}</p>
+                                                            <p className="text-gray-600 text-xs md:text-sm">{event.description}</p>
                                                         </div>
                                                     </div>
                                                 ))}
@@ -399,10 +399,10 @@ For each document, provide the actual URL where it can be found.`,
 
                                     {/* Deep Insights Tab */}
                                     <TabsContent value="insights" className="m-0">
-                                        <div className="space-y-6">
+                                        <div className="space-y-4 md:space-y-6">
                                             {/* Key Stats with Radial Progress Cards */}
                                             {data?.insights?.keyStats && (
-                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
                                                     {data.insights.keyStats.slice(0, 2).map((stat, i) => (
                                                         <RadialProgressCard 
                                                             key={i}
@@ -413,20 +413,20 @@ For each document, provide the actual URL where it can be found.`,
                                                         />
                                                     ))}
                                                     {data.insights.keyStats.slice(2).map((stat, i) => (
-                                                        <div key={i + 2} className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl p-4 text-white flex flex-col justify-center">
-                                                            <p className="text-white/70 text-sm">{stat.label}</p>
-                                                            <p className="text-2xl font-bold">{stat.value}</p>
+                                                        <div key={i + 2} className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg md:rounded-xl p-3 md:p-4 text-white flex flex-col justify-center">
+                                                            <p className="text-white/70 text-xs md:text-sm">{stat.label}</p>
+                                                            <p className="text-xl md:text-2xl font-bold">{stat.value}</p>
                                                         </div>
                                                     ))}
                                                 </div>
                                             )}
 
-                                            <div className="grid md:grid-cols-2 gap-6">
+                                            <div className="grid md:grid-cols-2 gap-3 md:gap-6">
                                                 {/* Stacked Bar Chart */}
                                                 {data?.insights?.barChartData && (
-                                                    <div className="bg-white rounded-xl border p-5">
-                                                        <h3 className="font-semibold text-gray-900 mb-4">{data.insights.barChartTitle}</h3>
-                                                        <div className="h-64">
+                                                    <div className="bg-white rounded-lg md:rounded-xl border p-3 md:p-5">
+                                                        <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 text-sm md:text-base">{data.insights.barChartTitle}</h3>
+                                                        <div className="h-48 md:h-64">
                                                             <ResponsiveContainer width="100%" height="100%">
                                                                 <BarChart data={data.insights.barChartData} layout="vertical">
                                                                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
@@ -443,9 +443,9 @@ For each document, provide the actual URL where it can be found.`,
 
                                                 {/* Area Chart */}
                                                 {data?.insights?.lineChartData && (
-                                                    <div className="bg-white rounded-xl border p-5">
-                                                        <h3 className="font-semibold text-gray-900 mb-4">{data.insights.lineChartTitle}</h3>
-                                                        <div className="h-64">
+                                                    <div className="bg-white rounded-lg md:rounded-xl border p-3 md:p-5">
+                                                        <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 text-sm md:text-base">{data.insights.lineChartTitle}</h3>
+                                                        <div className="h-48 md:h-64">
                                                             <ResponsiveContainer width="100%" height="100%">
                                                                 <AreaChart data={data.insights.lineChartData}>
                                                                     <defs>
@@ -472,9 +472,9 @@ For each document, provide the actual URL where it can be found.`,
 
                                                 {/* Pie Chart */}
                                                 {data?.insights?.pieChartData && (
-                                                    <div className="bg-white rounded-xl border p-5 md:col-span-2">
-                                                        <h3 className="font-semibold text-gray-900 mb-4">{data.insights.pieChartTitle}</h3>
-                                                        <div className="h-64">
+                                                    <div className="bg-white rounded-lg md:rounded-xl border p-3 md:p-5 md:col-span-2">
+                                                        <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 text-sm md:text-base">{data.insights.pieChartTitle}</h3>
+                                                        <div className="h-48 md:h-64">
                                                             <ResponsiveContainer width="100%" height="100%">
                                                                 <PieChart>
                                                                     <Pie
@@ -501,7 +501,7 @@ For each document, provide the actual URL where it can be found.`,
 
                                     {/* Documents Tab */}
                                     <TabsContent value="documents" className="m-0">
-                                        <div className="space-y-4">
+                                        <div className="space-y-2 md:space-y-4">
                                             {documentsLoading ? (
                                                 <div className="flex items-center justify-center py-12">
                                                     <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
@@ -522,11 +522,11 @@ For each document, provide the actual URL where it can be found.`,
                                                         href={doc.url} 
                                                         target="_blank" 
                                                         rel="noopener noreferrer"
-                                                        className="block bg-white rounded-xl border p-4 hover:shadow-md hover:border-purple-200 transition-all group"
+                                                        className="block bg-white rounded-lg md:rounded-xl border p-3 md:p-4 hover:shadow-md hover:border-purple-200 transition-all group"
                                                     >
-                                                        <div className="flex items-start gap-3">
-                                                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 group-hover:from-purple-500 group-hover:to-indigo-600 transition-all">
-                                                                <FileText className="w-5 h-5 text-white" />
+                                                        <div className="flex items-start gap-2 md:gap-3">
+                                                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 group-hover:from-purple-500 group-hover:to-indigo-600 transition-all">
+                                                                <FileText className="w-4 h-4 md:w-5 md:h-5 text-white" />
                                                             </div>
                                                             <div className="flex-1 min-w-0 overflow-hidden">
                                                                 <div className="flex items-start justify-between gap-2 flex-wrap">

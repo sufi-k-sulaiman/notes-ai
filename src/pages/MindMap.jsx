@@ -90,26 +90,26 @@ function TreeNode({ node, colorIndex = 0, onExplore, onLearn, depth = 0, nodeRef
     return (
         <div className="flex flex-col items-center" ref={selfRef}>
             {/* Node Card */}
-            <div className={`${color.bg} text-white rounded-xl px-5 py-4 shadow-lg min-w-[175px] max-w-[250px] text-center transition-all hover:scale-105 hover:shadow-xl`}>
-                <p className="font-semibold text-sm leading-tight mb-2 break-words">{node.name}</p>
-                <div className="flex gap-1.5 justify-center flex-wrap">
+            <div className={`${color.bg} text-white rounded-lg md:rounded-xl px-3 py-3 md:px-5 md:py-4 shadow-lg min-w-[120px] md:min-w-[175px] max-w-[180px] md:max-w-[250px] text-center transition-all hover:scale-105 hover:shadow-xl`}>
+                <p className="font-semibold text-xs md:text-sm leading-tight mb-2 break-words">{node.name}</p>
+                <div className="flex gap-1 md:gap-1.5 justify-center flex-wrap">
                     <button
                         onClick={(e) => { e.stopPropagation(); handleExplore(); }}
                         disabled={isExpanding}
-                        className="flex items-center gap-1 px-2.5 py-1 bg-white/20 hover:bg-white/30 rounded-md text-xs font-medium transition-colors disabled:opacity-50"
+                        className="flex items-center gap-1 px-2 md:px-2.5 py-1 bg-white/20 hover:bg-white/30 rounded text-[10px] md:text-xs font-medium transition-colors disabled:opacity-50"
                     >
                         {isExpanding ? (
-                            <Loader2 className="w-3 h-3 animate-spin" />
+                            <Loader2 className="w-2.5 md:w-3 h-2.5 md:h-3 animate-spin" />
                         ) : (
-                            <Compass className="w-3 h-3" />
+                            <Compass className="w-2.5 md:w-3 h-2.5 md:h-3" />
                         )}
                         {isExpanding ? '...' : 'Explore'}
                     </button>
                     <button
                         onClick={(e) => { e.stopPropagation(); onLearn(node); }}
-                        className="flex items-center gap-1 px-2.5 py-1 bg-white/20 hover:bg-white/30 rounded-md text-xs font-medium transition-colors"
+                        className="flex items-center gap-1 px-2 md:px-2.5 py-1 bg-white/20 hover:bg-white/30 rounded text-[10px] md:text-xs font-medium transition-colors"
                     >
-                        <BookOpen className="w-3 h-3" />
+                        <BookOpen className="w-2.5 md:w-3 h-2.5 md:h-3" />
                         Learn
                     </button>
                 </div>
@@ -540,81 +540,81 @@ export default function MindMapPage() {
                 <div className={`bg-white rounded-xl border border-gray-200 ${isFullscreen ? 'h-[calc(100vh-8px)]' : 'h-[calc(100vh-16px)]'} overflow-hidden p-2`}>
                     {/* Header inside the card */}
                     <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-                                <Network className="w-5 h-5 text-purple-600" />
+                        <div className="flex items-center gap-2 md:gap-3">
+                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-purple-100 flex items-center justify-center">
+                                <Network className="w-4 h-4 md:w-5 md:h-5 text-purple-600" />
                             </div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Neural MindMaps</h1>
+                            <h1 className="text-lg md:text-2xl lg:text-3xl font-bold text-gray-900">Neural MindMaps</h1>
                         </div>
 
-                        <div className="flex gap-2 flex-wrap">
+                        <div className="flex gap-1 md:gap-2 flex-wrap">
                             {/* Annotation tools */}
                             {treeData && (
-                                <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+                                <div className="flex gap-0.5 md:gap-1 bg-gray-100 rounded-lg p-0.5 md:p-1">
                                     <Button
                                         variant={annotationMode === null && !spacePressed ? "secondary" : "ghost"}
                                         size="sm"
                                         onClick={() => setAnnotationMode(null)}
                                         title="Hand / Pan (Space)"
-                                        className="gap-1"
+                                        className="gap-0.5 md:gap-1 h-7 md:h-8 px-1.5 md:px-2"
                                     >
-                                        <Hand className="w-4 h-4" />
-                                        <span className="text-[10px] text-gray-400">Space</span>
+                                        <Hand className="w-3 h-3 md:w-4 md:h-4" />
+                                        <span className="text-[9px] md:text-[10px] text-gray-400 hidden sm:inline">Space</span>
                                     </Button>
                                     <Button
                                         variant={annotationMode === 'draw' ? "secondary" : "ghost"}
                                         size="sm"
                                         onClick={() => setAnnotationMode('draw')}
                                         title="Pencil (P)"
-                                        className="gap-1"
+                                        className="gap-0.5 md:gap-1 h-7 md:h-8 px-1.5 md:px-2"
                                     >
-                                        <Pencil className="w-4 h-4" />
-                                        <span className="text-[10px] text-gray-400">P</span>
+                                        <Pencil className="w-3 h-3 md:w-4 md:h-4" />
+                                        <span className="text-[9px] md:text-[10px] text-gray-400 hidden sm:inline">P</span>
                                     </Button>
                                     <Button
                                         variant={annotationMode === 'text' ? "secondary" : "ghost"}
                                         size="sm"
                                         onClick={() => setAnnotationMode('text')}
                                         title="Text (T)"
-                                        className="gap-1"
+                                        className="gap-0.5 md:gap-1 h-7 md:h-8 px-1.5 md:px-2"
                                     >
-                                        <Type className="w-4 h-4" />
-                                        <span className="text-[10px] text-gray-400">T</span>
+                                        <Type className="w-3 h-3 md:w-4 md:h-4" />
+                                        <span className="text-[9px] md:text-[10px] text-gray-400 hidden sm:inline">T</span>
                                     </Button>
                                     <Button
                                         variant={annotationMode === 'rectangle' ? "secondary" : "ghost"}
                                         size="sm"
                                         onClick={() => setAnnotationMode('rectangle')}
                                         title="Rectangle (R)"
-                                        className="gap-1"
+                                        className="gap-0.5 md:gap-1 h-7 md:h-8 px-1.5 md:px-2"
                                     >
-                                        <Square className="w-4 h-4" />
-                                        <span className="text-[10px] text-gray-400">R</span>
+                                        <Square className="w-3 h-3 md:w-4 md:h-4" />
+                                        <span className="text-[9px] md:text-[10px] text-gray-400 hidden sm:inline">R</span>
                                     </Button>
                                     <Button
                                         variant={annotationMode === 'circle' ? "secondary" : "ghost"}
                                         size="sm"
                                         onClick={() => setAnnotationMode('circle')}
                                         title="Circle (O/C)"
-                                        className="gap-1"
+                                        className="gap-0.5 md:gap-1 h-7 md:h-8 px-1.5 md:px-2"
                                     >
-                                        <Circle className="w-4 h-4" />
-                                        <span className="text-[10px] text-gray-400">O</span>
+                                        <Circle className="w-3 h-3 md:w-4 md:h-4" />
+                                        <span className="text-[9px] md:text-[10px] text-gray-400 hidden sm:inline">O</span>
                                     </Button>
                                     <Button
                                         variant={annotationMode === 'eraser' ? "secondary" : "ghost"}
                                         size="sm"
                                         onClick={() => setAnnotationMode('eraser')}
                                         title="Eraser (E)"
-                                        className="gap-1"
+                                        className="gap-0.5 md:gap-1 h-7 md:h-8 px-1.5 md:px-2"
                                     >
-                                        <Eraser className="w-4 h-4" />
-                                        <span className="text-[10px] text-gray-400">E</span>
+                                        <Eraser className="w-3 h-3 md:w-4 md:h-4" />
+                                        <span className="text-[9px] md:text-[10px] text-gray-400 hidden sm:inline">E</span>
                                     </Button>
                                     <Popover>
                                         <PopoverTrigger asChild>
-                                            <Button variant="ghost" size="sm" title="Color">
-                                                <div className="w-4 h-4 rounded-full border-2 border-gray-300" style={{ backgroundColor: annotationColor }} />
+                                            <Button variant="ghost" size="sm" title="Color" className="h-7 md:h-8 px-1.5 md:px-2">
+                                                <div className="w-3 h-3 md:w-4 md:h-4 rounded-full border-2 border-gray-300" style={{ backgroundColor: annotationColor }} />
                                             </Button>
                                         </PopoverTrigger>
                                         <PopoverContent className="w-auto p-2">
@@ -635,9 +635,9 @@ export default function MindMapPage() {
                                         size="sm"
                                         onClick={clearAnnotations}
                                         title="Clear all annotations"
-                                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                                        className="text-red-500 hover:text-red-600 hover:bg-red-50 h-7 md:h-8 px-1.5 md:px-2"
                                     >
-                                        <Trash2 className="w-4 h-4" />
+                                        <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
                                     </Button>
                                 </div>
                             )}
@@ -646,9 +646,9 @@ export default function MindMapPage() {
                             {treeData && (
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" className="gap-2" disabled={exporting}>
-                                            {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                                            Export
+                                        <Button variant="outline" className="gap-1 md:gap-2 text-xs md:text-sm h-7 md:h-9 px-2 md:px-4" disabled={exporting}>
+                                            {exporting ? <Loader2 className="w-3 h-3 md:w-4 md:h-4 animate-spin" /> : <Download className="w-3 h-3 md:w-4 md:h-4" />}
+                                            <span className="hidden sm:inline">Export</span>
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
@@ -669,12 +669,12 @@ export default function MindMapPage() {
                             <Button
                                 variant="outline"
                                 onClick={toggleFullscreen}
-                                className="gap-2"
+                                className="gap-1 md:gap-2 h-7 md:h-9 px-2 md:px-4"
                             >
                                 {isFullscreen ? (
-                                    <Minimize2 className="w-4 h-4" />
+                                    <Minimize2 className="w-3 h-3 md:w-4 md:h-4" />
                                 ) : (
-                                    <Maximize2 className="w-4 h-4" />
+                                    <Maximize2 className="w-3 h-3 md:w-4 md:h-4" />
                                 )}
                             </Button>
                         </div>
