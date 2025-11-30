@@ -93,7 +93,7 @@ const generateImageBatch = async (articles) => {
             
             try {
                 const result = await base44.integrations.Core.GenerateImage({
-                    prompt: `Professional news photography depicting: ${cleanTitle.slice(0, 200)}. Photorealistic, editorial style, high quality, no text or words, no logos`
+                    prompt: `Professional news photography depicting: ${cleanTitle}. Photorealistic, editorial style, high quality, no text or words, no logos`
                 });
                 if (result?.url) {
                     imageCache.set(globalIndex, result.url);
