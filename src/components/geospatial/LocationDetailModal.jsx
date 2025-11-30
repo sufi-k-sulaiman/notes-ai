@@ -183,18 +183,18 @@ Be specific with real numbers, avoid generic statements. Use actual statistics w
                 </button>
             </div>
 
-                {loading ? (
-                    <div className="flex flex-col items-center justify-center py-16">
-                        <img 
-                            src={LOADING_LOGO} 
-                            alt="Loading" 
-                            className="w-16 h-16 object-contain mb-4"
-                            style={{ animation: 'pulse 1.5s ease-in-out infinite' }}
-                        />
-                        <p className="text-gray-500 text-sm">Analyzing {categoryLabel} data...</p>
-                    </div>
-                ) : data ? (
-                    <div className="flex flex-col h-full">
+            {loading ? (
+                <div className="flex flex-col items-center justify-center h-[calc(100%-3rem)]">
+                    <img 
+                        src={LOADING_LOGO} 
+                        alt="Loading" 
+                        className="w-12 h-12 object-contain mb-3"
+                        style={{ animation: 'pulse 1.5s ease-in-out infinite' }}
+                    />
+                    <p className="text-gray-500 text-xs">Analyzing {categoryLabel} data...</p>
+                </div>
+            ) : data ? (
+                <div className="flex flex-col h-[calc(100%-3rem)] overflow-hidden">
                         {/* Impact Score Header - Always visible */}
                         <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border mb-4">
                             <div className="flex items-center justify-between">
