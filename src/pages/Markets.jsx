@@ -1092,7 +1092,7 @@ Return data for all ${stockBatch.length} stocks.`,
             {loading ? (
                 <LoadingState message="Fetching latest market data..." size="large" />
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+                <div className="flex flex-col gap-3 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-4">
                     {filteredStocks.map((stock, i) => (<StockCard key={stock.ticker || i} stock={stock} onClick={handleStockClick} />))}
                 </div>
             )}
