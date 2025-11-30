@@ -166,7 +166,7 @@ Be specific with real numbers, avoid generic statements. Use actual statistics w
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl max-h-[70vh] overflow-hidden z-[10000] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <DialogContent className="max-w-lg h-[75vh] overflow-hidden z-[10000] fixed top-[calc(50%-37.5vh+2rem)] left-8 translate-x-0 translate-y-0">
                 <style>{pulseAnimation}</style>
                 <DialogHeader className="pb-2">
                     <DialogTitle className="flex items-center gap-2">
