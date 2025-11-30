@@ -69,6 +69,8 @@ Provide a comprehensive analysis with REAL 2024 data:
 3. KEY POINTS: 4 bullet points with specific metrics (percentages, measurements, rankings)
 4. HISTORIC SCORES: Yearly impact scores from 2019-2024 (realistic progression)
 5. FUTURE PROJECTIONS: Projected scores for 2025-2030 based on current trends and policies
+6. KEY METRICS: 6 important metrics specific to ${categoryLabel} for this location. Each metric needs a name, current value (with unit), and percentage change from previous period (positive or negative number)
+7. PERFORMANCE COMPARISON: 4 metrics comparing current vs previous period values with change percentages
 
 Be specific with real numbers, avoid generic statements. Use actual statistics where available.`,
                 add_context_from_internet: true,
@@ -101,7 +103,30 @@ Be specific with real numbers, avoid generic statements. Use actual statistics w
                                 }
                             }
                         },
-                        trend: { type: "string", enum: ["improving", "worsening", "stable"] }
+                        trend: { type: "string", enum: ["improving", "worsening", "stable"] },
+                        key_metrics: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    name: { type: "string" },
+                                    value: { type: "string" },
+                                    change: { type: "number" }
+                                }
+                            }
+                        },
+                        performance_comparison: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    metric: { type: "string" },
+                                    current: { type: "string" },
+                                    previous: { type: "string" },
+                                    change: { type: "number" }
+                                }
+                            }
+                        }
                     }
                 }
             });
