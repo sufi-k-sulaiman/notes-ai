@@ -140,10 +140,10 @@ Be specific with real numbers, avoid generic statements. Use actual statistics w
     ] : [];
 
     return (
-        <Dialog open={isOpen} onOpenChange={onClose} style={{ zIndex: 9999 }}>
-            <DialogContent className="max-w-2xl max-h-[75vh] overflow-y-auto z-[10000]">
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="max-w-2xl max-h-[70vh] overflow-hidden z-[10000] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <style>{pulseAnimation}</style>
-                <DialogHeader>
+                <DialogHeader className="pb-2">
                     <DialogTitle className="flex items-center gap-2">
                         <MapPin className="w-5 h-5 text-purple-600" />
                         <span className="truncate">{location?.name || 'Location Details'}</span>
@@ -161,48 +161,50 @@ Be specific with real numbers, avoid generic statements. Use actual statistics w
                         <p className="text-gray-500 text-sm">Analyzing {categoryLabel} data...</p>
                     </div>
                 ) : data ? (
-                    <div className="space-y-6">
-                        {/* Impact Score Card */}
-                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-5 border">
-                            <div className="flex items-center justify-between mb-3">
-                                <div>
-                                    <p className="text-sm text-gray-500 mb-1">{categoryLabel} Impact</p>
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-4xl font-bold" style={{ color: getColor(data.impact_score) }}>
-                                            {data.impact_score}
-                                        </span>
-                                        <span className="text-lg text-gray-600">/ 100</span>
-                                        <span 
-                                            className="px-2 py-1 rounded-full text-xs font-medium"
-                                            style={{ 
-                                                backgroundColor: `${getColor(data.impact_score)}20`,
-                                                color: getColor(data.impact_score)
-                                            }}
-                                        >
-                                            {getImpactLabel(data.impact_score)}
-                                        </span>
+                    <div className="flex flex-col h-full">
+                        {/* Impact Score Header - Always visible */}
+                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border mb-4">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div>
+                                        <p className="text-xs text-gray-500 mb-1">{categoryLabel} Impact</p>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-3xl font-bold" style={{ color: getColor(data.impact_score) }}>
+                                                {data.impact_score}
+                                            </span>
+                                            <span className="text-sm text-gray-600">/ 100</span>
+                                            <span 
+                                                className="px-2 py-0.5 rounded-full text-xs font-medium"
+                                                style={{ 
+                                                    backgroundColor: `${getColor(data.impact_score)}20`,
+                                                    color: getColor(data.impact_score)
+                                                }}
+                                            >
+                                                {getImpactLabel(data.impact_score)}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     {data.trend === 'improving' ? (
-                                        <div className="flex items-center gap-1 text-green-600">
-                                            <TrendingDown className="w-5 h-5" />
-                                            <span className="text-sm font-medium">Improving</span>
+                                        <div className="flex items-center gap-1 text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                                            <TrendingDown className="w-4 h-4" />
+                                            <span className="text-xs font-medium">Improving</span>
                                         </div>
                                     ) : data.trend === 'worsening' ? (
-                                        <div className="flex items-center gap-1 text-red-600">
-                                            <TrendingUp className="w-5 h-5" />
-                                            <span className="text-sm font-medium">Worsening</span>
+                                        <div className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded-full">
+                                            <TrendingUp className="w-4 h-4" />
+                                            <span className="text-xs font-medium">Worsening</span>
                                         </div>
                                     ) : (
-                                        <div className="flex items-center gap-1 text-yellow-600">
-                                            <Target className="w-5 h-5" />
-                                            <span className="text-sm font-medium">Stable</span>
+                                        <div className="flex items-center gap-1 text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">
+                                            <Target className="w-4 h-4" />
+                                            <span className="text-xs font-medium">Stable</span>
                                         </div>
                                     )}
                                 </div>
                             </div>
-                            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mt-3">
                                 <div 
                                     className="h-full rounded-full transition-all duration-500" 
                                     style={{ 
@@ -213,118 +215,138 @@ Be specific with real numbers, avoid generic statements. Use actual statistics w
                             </div>
                         </div>
 
-                        {/* Description */}
-                        <div className="bg-white rounded-xl p-5 border">
-                            <h4 className="font-semibold text-gray-800 mb-2">Overview</h4>
-                            <p className="text-gray-600 text-sm leading-relaxed">{data.description}</p>
-                        </div>
+                        {/* Tabs for Content */}
+                        <Tabs defaultValue="overview" className="flex-1 overflow-hidden flex flex-col">
+                            <TabsList className="bg-gray-100 p-1 mb-3 w-full justify-start">
+                                <TabsTrigger value="overview" className="gap-1.5 text-xs data-[state=active]:bg-white">
+                                    <FileText className="w-3 h-3" /> Overview
+                                </TabsTrigger>
+                                <TabsTrigger value="findings" className="gap-1.5 text-xs data-[state=active]:bg-white">
+                                    <CheckCircle className="w-3 h-3" /> Key Findings
+                                </TabsTrigger>
+                                <TabsTrigger value="timeline" className="gap-1.5 text-xs data-[state=active]:bg-white">
+                                    <Clock className="w-3 h-3" /> Timeline
+                                </TabsTrigger>
+                            </TabsList>
 
-                        {/* Key Points */}
-                        <div className="bg-white rounded-xl p-5 border">
-                            <h4 className="font-semibold text-gray-800 mb-3">Key Findings</h4>
-                            <div className="space-y-2">
-                                {data.key_points?.map((point, i) => (
-                                    <div key={i} className="flex items-start gap-2">
-                                        {data.impact_score >= 50 ? (
-                                            <AlertTriangle className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
-                                        ) : (
-                                            <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                                        )}
-                                        <span className="text-sm text-gray-700">{point}</span>
+                            <div className="flex-1 overflow-y-auto">
+                                <TabsContent value="overview" className="mt-0">
+                                    <div className="bg-white rounded-xl p-4 border">
+                                        <h4 className="font-semibold text-gray-800 mb-2">Overview</h4>
+                                        <p className="text-gray-600 text-sm leading-relaxed">{data.description}</p>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
+                                </TabsContent>
 
-                        {/* Historic & Future Chart */}
-                        <div className="bg-white rounded-xl p-5 border">
-                            <h4 className="font-semibold text-gray-800 mb-4">Impact Score Timeline</h4>
-                            <div className="h-64">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <AreaChart data={chartData}>
-                                        <defs>
-                                            <linearGradient id="historicGradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3}/>
-                                                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
-                                            </linearGradient>
-                                            <linearGradient id="projectedGradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3}/>
-                                                <stop offset="95%" stopColor="#F59E0B" stopOpacity={0}/>
-                                            </linearGradient>
-                                        </defs>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                                        <XAxis 
-                                            dataKey="year" 
-                                            tick={{ fontSize: 11 }} 
-                                            tickLine={false}
-                                        />
-                                        <YAxis 
-                                            domain={[0, 100]} 
-                                            tick={{ fontSize: 11 }} 
-                                            tickLine={false}
-                                        />
-                                        <Tooltip 
-                                            content={({ active, payload }) => {
-                                                if (active && payload && payload[0]) {
-                                                    const d = payload[0].payload;
-                                                    return (
-                                                        <div className="bg-white p-3 rounded-lg shadow-lg border">
-                                                            <p className="font-semibold">{d.year}</p>
-                                                            <p className="text-sm">
-                                                                <span className={d.type === 'historic' ? 'text-purple-600' : 'text-amber-600'}>
-                                                                    {d.type === 'historic' ? 'Historic' : 'Projected'}
-                                                                </span>
-                                                                : {d.score}
-                                                            </p>
-                                                        </div>
-                                                    );
-                                                }
-                                                return null;
-                                            }}
-                                        />
-                                        <Area 
-                                            type="monotone" 
-                                            dataKey="score" 
-                                            stroke="#8B5CF6" 
-                                            strokeWidth={2}
-                                            fill="url(#historicGradient)"
-                                            dot={(props) => {
-                                                const { cx, cy, payload } = props;
-                                                if (payload.type === 'projected') return null;
-                                                return (
-                                                    <circle cx={cx} cy={cy} r={4} fill="#8B5CF6" stroke="#fff" strokeWidth={2} />
-                                                );
-                                            }}
-                                        />
-                                        <Area 
-                                            type="monotone" 
-                                            dataKey="score" 
-                                            stroke="#F59E0B" 
-                                            strokeWidth={2}
-                                            strokeDasharray="5 5"
-                                            fill="url(#projectedGradient)"
-                                            dot={(props) => {
-                                                const { cx, cy, payload } = props;
-                                                if (payload.type === 'historic') return null;
-                                                return (
-                                                    <circle cx={cx} cy={cy} r={4} fill="#F59E0B" stroke="#fff" strokeWidth={2} />
-                                                );
-                                            }}
-                                        />
-                                    </AreaChart>
-                                </ResponsiveContainer>
+                                <TabsContent value="findings" className="mt-0">
+                                    <div className="bg-white rounded-xl p-4 border">
+                                        <h4 className="font-semibold text-gray-800 mb-3">Key Findings</h4>
+                                        <div className="space-y-2">
+                                            {data.key_points?.map((point, i) => (
+                                                <div key={i} className="flex items-start gap-2 bg-gray-50 rounded-lg p-3">
+                                                    {data.impact_score >= 50 ? (
+                                                        <AlertTriangle className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                                                    ) : (
+                                                        <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                                                    )}
+                                                    <span className="text-sm text-gray-700">{point}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </TabsContent>
+
+                                <TabsContent value="timeline" className="mt-0">
+                                    <div className="bg-white rounded-xl p-4 border">
+                                        <h4 className="font-semibold text-gray-800 mb-3">Impact Score Timeline</h4>
+                                        <div className="h-52">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <AreaChart data={chartData}>
+                                                    <defs>
+                                                        <linearGradient id="historicGradient" x1="0" y1="0" x2="0" y2="1">
+                                                            <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3}/>
+                                                            <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
+                                                        </linearGradient>
+                                                        <linearGradient id="projectedGradient" x1="0" y1="0" x2="0" y2="1">
+                                                            <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3}/>
+                                                            <stop offset="95%" stopColor="#F59E0B" stopOpacity={0}/>
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                                                    <XAxis 
+                                                        dataKey="year" 
+                                                        tick={{ fontSize: 10 }} 
+                                                        tickLine={false}
+                                                    />
+                                                    <YAxis 
+                                                        domain={[0, 100]} 
+                                                        tick={{ fontSize: 10 }} 
+                                                        tickLine={false}
+                                                    />
+                                                    <Tooltip 
+                                                        content={({ active, payload }) => {
+                                                            if (active && payload && payload[0]) {
+                                                                const d = payload[0].payload;
+                                                                return (
+                                                                    <div className="bg-white p-2 rounded-lg shadow-lg border text-xs">
+                                                                        <p className="font-semibold">{d.year}</p>
+                                                                        <p>
+                                                                            <span className={d.type === 'historic' ? 'text-purple-600' : 'text-amber-600'}>
+                                                                                {d.type === 'historic' ? 'Historic' : 'Projected'}
+                                                                            </span>
+                                                                            : {d.score}
+                                                                        </p>
+                                                                    </div>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        }}
+                                                    />
+                                                    <Area 
+                                                        type="monotone" 
+                                                        dataKey="score" 
+                                                        stroke="#8B5CF6" 
+                                                        strokeWidth={2}
+                                                        fill="url(#historicGradient)"
+                                                        dot={(props) => {
+                                                            const { cx, cy, payload } = props;
+                                                            if (payload.type === 'projected') return null;
+                                                            return (
+                                                                <circle cx={cx} cy={cy} r={3} fill="#8B5CF6" stroke="#fff" strokeWidth={2} />
+                                                            );
+                                                        }}
+                                                    />
+                                                    <Area 
+                                                        type="monotone" 
+                                                        dataKey="score" 
+                                                        stroke="#F59E0B" 
+                                                        strokeWidth={2}
+                                                        strokeDasharray="5 5"
+                                                        fill="url(#projectedGradient)"
+                                                        dot={(props) => {
+                                                            const { cx, cy, payload } = props;
+                                                            if (payload.type === 'historic') return null;
+                                                            return (
+                                                                <circle cx={cx} cy={cy} r={3} fill="#F59E0B" stroke="#fff" strokeWidth={2} />
+                                                            );
+                                                        }}
+                                                    />
+                                                </AreaChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                        <div className="flex items-center justify-center gap-6 mt-2">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-2 h-2 rounded-full bg-purple-600" />
+                                                <span className="text-xs text-gray-600">Historic</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-2 h-2 rounded-full bg-amber-500" />
+                                                <span className="text-xs text-gray-600">Projected</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </TabsContent>
                             </div>
-                            <div className="flex items-center justify-center gap-6 mt-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 rounded-full bg-purple-600" />
-                                    <span className="text-xs text-gray-600">Historic Data</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 rounded-full bg-amber-500" />
-                                    <span className="text-xs text-gray-600">Future Projection</span>
-                                </div>
-                            </div>
-                        </div>
+                        </Tabs>
                     </div>
                 ) : (
                     <div className="text-center py-12 text-gray-500">
