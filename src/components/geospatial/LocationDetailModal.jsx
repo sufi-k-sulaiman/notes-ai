@@ -163,16 +163,25 @@ Be specific with real numbers, avoid generic statements. Use actual statistics w
         ...(data.future_projections || []).map(d => ({ ...d, type: 'projected' }))
     ] : [];
 
+    if (!isOpen) return null;
+
     return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-lg h-[75vh] overflow-hidden z-[10000] fixed top-[calc(50%-37.5vh+2rem)] left-8 translate-x-0 translate-y-0">
-                <style>{pulseAnimation}</style>
-                <DialogHeader className="pb-2">
-                    <DialogTitle className="flex items-center gap-2">
-                        <MapPin className="w-5 h-5 text-purple-600" />
-                        <span className="truncate">{location?.name || 'Location Details'}</span>
-                    </DialogTitle>
-                </DialogHeader>
+        <div className="absolute top-4 left-4 z-[1001] w-[380px] bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden" style={{ height: 'calc(100% - 2rem)' }}>
+            <style>{pulseAnimation}</style>
+            
+            {/* Header */}
+            <div className="flex items-center justify-between p-3 border-b bg-white">
+                <div className="flex items-center gap-2 min-w-0">
+                    <MapPin className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                    <span className="font-semibold text-gray-900 truncate text-sm">{location?.name || 'Location Details'}</span>
+                </div>
+                <button 
+                    onClick={onClose}
+                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                    <X className="w-4 h-4 text-gray-500" />
+                </button>
+            </div>
 
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-16">
