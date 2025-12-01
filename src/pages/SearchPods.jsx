@@ -868,24 +868,10 @@ Do NOT mention any websites, URLs, or external references in the audio script.`
                             <div 
                                 className="relative h-2 bg-gray-200 rounded-full cursor-pointer group"
                                 onClick={(e) => {
+                                    if (!audioRef.current) return;
                                     const rect = e.currentTarget.getBoundingClientRect();
                                     const percent = (e.clientX - rect.left) / rect.width;
-                                    const newTime = Math.floor(percent * duration);
-                                    const newIndex = Math.floor(percent * sentencesRef.current.length);
-                                    
-                                    // Stop current speech and jump to new position
-                                    window.speechSynthesis?.cancel();
-                                    currentIndexRef.current = Math.max(0, Math.min(newIndex, sentencesRef.current.length - 1));
-                                    setCurrentTime(newTime);
-                                    
-                                    const text = sentencesRef.current[currentIndexRef.current] || '';
-                                    setCurrentCaption(text);
-                                    setCaptionWords(text.split(/\s+/));
-                                    setCurrentWordIndex(-1);
-                                    
-                                    if (isPlayingRef.current) {
-                                        setTimeout(() => speakNextSentence(), 100);
-                                    }
+                                    audioRef.current.currentTime = percent * audioRef.current.duration;
                                 }}
                             >
                                 <div 
