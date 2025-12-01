@@ -906,16 +906,21 @@ export default function SearchPods() {
                                     ) : (
                                         <p className="text-center leading-relaxed text-sm text-gray-700 line-clamp-3">
                                                     {captionWords.map((word, i) => {
-                                                        // Calculate which word should be highlighted based on sentence progress
-                                                        const sentenceIndex = sentencesRef.current.findIndex(s => s === currentCaption);
+                                                        // Calculate word highlight based on time within current sentence
+                                                        const sentenceIndex = Math.max(0, sentencesRef.current.findIndex(s => s === currentCaption));
                                                         const sentenceCount = sentencesRef.current.length || 1;
-                                                        const sentenceStart = sentenceIndex / sentenceCount;
-                                                        const sentenceEnd = (sentenceIndex + 1) / sentenceCount;
-                                                        const sentenceDuration = sentenceEnd - sentenceStart;
-                                                        const timeProgress = duration > 0 ? currentTime / duration : 0;
-                                                        const withinSentence = (timeProgress - sentenceStart) / sentenceDuration;
-                                                        const highlightIndex = Math.floor(withinSentence * captionWords.length);
+
+                                                        // Each sentence gets equal time slice
+                                                        const timePerSentence = duration / sentenceCount;
+                                                        const sentenceStartTime = sentenceIndex * timePerSentence;
+                                                        const timeIntoSentence = currentTime - sentenceStartTime;
+                                                        const sentenceProgress = Math.max(0, Math.min(1, timeIntoSentence / timePerSentence));
+
+                                                        // Highlight word based on progress through sentence
+                                                        const wordCount = captionWords.length || 1;
+                                                        const highlightIndex = Math.floor(sentenceProgress * wordCount);
                                                         const isHighlighted = i === highlightIndex || i === highlightIndex - 1;
+
                                                         return (
                                                             <span key={i} className={isHighlighted ? 'text-purple-600 font-semibold' : ''}>
                                                                 {word}{' '}
