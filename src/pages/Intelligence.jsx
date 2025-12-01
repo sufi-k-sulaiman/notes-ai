@@ -486,7 +486,7 @@ For "${item}", provide COMPLETE data:
                     </ChartCard>
 
                     {/* 4. Composition Donut */}
-                    <ChartCard title="Composition Breakdown" color={category?.color}>
+                    <ChartCard title={`${item} Composition`} color={category?.color}>
                         <ResponsiveContainer width="100%" height="100%">
                             <RechartsPie>
                                 <Pie
