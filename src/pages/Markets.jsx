@@ -946,6 +946,7 @@ export default function Markets() {
     const [selectedStock, setSelectedStock] = useState(null);
     const [showStockModal, setShowStockModal] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [chartFilter, setChartFilter] = useState({ type: null, value: null });
 
     useEffect(() => { fetchStockData(); }, []);
 
@@ -1061,12 +1062,22 @@ Return data for all ${stockBatch.length} stocks.`,
         if (filters.pe !== 'Any') result = result.filter(s => s.pe < parseInt(filters.pe.replace('<', '')));
         if (filters.zscore !== 'Any') result = result.filter(s => s.zscore >= parseFloat(filters.zscore));
         if (filters.sector !== 'All Sectors') result = result.filter(s => s.sector === filters.sector);
+        // Chart filter
+        if (chartFilter.type && chartFilter.value) {
+            result = result.filter(s => 
+                chartFilter.type === 'sector' ? s.sector === chartFilter.value : s.industry === chartFilter.value
+            );
+        }
         return result;
-    }, [stocks, searchQuery, activePreset, filters]);
+    }, [stocks, searchQuery, activePreset, filters, chartFilter]);
 
     const topMovers = useMemo(() => [...stocks].sort((a, b) => Math.abs(b.change) - Math.abs(a.change)).slice(0, 20), [stocks]);
     const sectors = useMemo(() => ['All Sectors', ...[...new Set(stocks.map(s => s.sector).filter(Boolean))].sort()], [stocks]);
-    const clearFilters = () => { setFilters({ market: 'All Markets', sector: 'All Sectors', industry: 'All Industries', moat: 'Any', roe: 'Any', pe: 'Any', zscore: 'Any' }); setActivePreset('all'); setSearchQuery(''); };
+    const clearFilters = () => { setFilters({ market: 'All Markets', sector: 'All Sectors', industry: 'All Industries', moat: 'Any', roe: 'Any', pe: 'Any', zscore: 'Any' }); setActivePreset('all'); setSearchQuery(''); setChartFilter({ type: null, value: null }); };
+    
+    const handleChartFilter = (type, value) => {
+        setChartFilter({ type, value });
+    };
 
     return (
         <div className="p-3 md:p-6">
@@ -1104,7 +1115,7 @@ Return data for all ${stockBatch.length} stocks.`,
 
             {/* Market Overview Chart */}
             {!loading && stocks.length > 0 && (
-                <MarketOverviewChart stocks={stocks} />
+                <MarketOverviewChart stocks={stocks} onFilterByGroup={handleChartFilter} />
             )}
 
             <div className="flex items-center justify-between mb-3 md:mb-4">

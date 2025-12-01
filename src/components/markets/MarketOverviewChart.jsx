@@ -3,8 +3,9 @@ import { TrendingUp, TrendingDown, Loader2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
 import { base44 } from '@/api/base44Client';
 
-export default function MarketOverviewChart({ stocks }) {
+export default function MarketOverviewChart({ stocks, onFilterByGroup }) {
     const [viewMode, setViewMode] = useState('sector'); // 'sector' or 'industry'
+    const [timeRange, setTimeRange] = useState('24h'); // '24h', '48h', 'week'
     const [chartData, setChartData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -30,18 +31,19 @@ export default function MarketOverviewChart({ stocks }) {
         if (stocks.length > 0) {
             fetchMarketData();
         }
-    }, [stocks, viewMode]);
+    }, [stocks, viewMode, timeRange]);
 
     const fetchMarketData = async () => {
         setLoading(true);
+        const timeLabel = timeRange === '24h' ? '24 hours' : timeRange === '48h' ? '48 hours' : 'week';
         try {
             const items = viewMode === 'sector' ? sectors : industries.slice(0, 20);
             
             const response = await base44.integrations.Core.InvokeLLM({
-                prompt: `Provide realistic 24-hour market performance data for these ${viewMode === 'sector' ? 'sectors' : 'industries'}: ${items.join(', ')}
+                prompt: `Provide realistic ${timeLabel} market performance data for these ${viewMode === 'sector' ? 'sectors' : 'industries'}: ${items.join(', ')}
 
 For each, provide:
-- Percentage change in the last 24 hours (between -5% and +5%, realistic based on current market conditions)
+- Percentage change in the last ${timeLabel} (between -8% and +8% for week, -5% and +5% for 24/48h, realistic based on current market conditions)
 - Brief 5-word market sentiment
 
 Make the data realistic and varied - some should be up, some down.`,
@@ -165,10 +167,33 @@ Make the data realistic and varied - some should be up, some down.`,
     return (
         <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <div>
-                    <h3 className="font-semibold text-gray-900">24h Market Overview</h3>
-                    <p className="text-xs text-gray-500">Performance by {viewMode}</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+                <div className="flex items-center gap-3">
+                    <div>
+                        <h3 className="font-semibold text-gray-900">Market Overview</h3>
+                        <p className="text-xs text-gray-500">Performance by {viewMode}</p>
+                    </div>
+                    
+                    {/* Time Range Toggle */}
+                    <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+                        {[
+                            { id: '24h', label: '24h' },
+                            { id: '48h', label: '48h' },
+                            { id: 'week', label: 'Week' }
+                        ].map(range => (
+                            <button
+                                key={range.id}
+                                onClick={() => setTimeRange(range.id)}
+                                className={`px-2.5 py-1 text-xs font-medium transition-colors ${
+                                    timeRange === range.id 
+                                        ? 'bg-purple-600 text-white' 
+                                        : 'bg-white text-gray-600 hover:bg-gray-50'
+                                }`}
+                            >
+                                {range.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
                 
                 <div className="flex items-center gap-4">
@@ -212,29 +237,30 @@ Make the data realistic and varied - some should be up, some down.`,
 
             {/* Chart */}
             {loading ? (
-                <div className="flex items-center justify-center h-[280px]">
+                <div className="flex items-center justify-center h-[320px]">
                     <Loader2 className="w-6 h-6 text-purple-600 animate-spin" />
                 </div>
             ) : (
-                <div className="h-[280px]">
+                <div className="h-[320px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart 
                             data={chartData} 
-                            margin={{ top: 20, right: 20, left: 20, bottom: 60 }}
+                            margin={{ top: 10, right: 20, left: 20, bottom: 5 }}
                         >
                             <XAxis 
                                 type="category" 
                                 dataKey="name"
-                                tick={{ fontSize: 10, angle: -45, textAnchor: 'end' }}
-                                height={60}
+                                tick={{ fontSize: 9, angle: -45, textAnchor: 'end' }}
+                                height={80}
                                 interval={0}
+                                tickMargin={5}
                             />
                             <YAxis 
                                 type="number"
                                 domain={['dataMin - 0.5', 'dataMax + 0.5']}
                                 tickFormatter={(v) => `${v > 0 ? '+' : ''}${v}%`}
                                 tick={{ fontSize: 10 }}
-                                label={{ value: 'Change (%)', angle: -90, position: 'insideLeft', fontSize: 11, fill: '#6b7280' }}
+                                width={50}
                             />
                             <Tooltip content={<CustomTooltip />} />
                             <ReferenceLine y={0} stroke="#9ca3af" strokeDasharray="3 3" />
@@ -242,7 +268,12 @@ Make the data realistic and varied - some should be up, some down.`,
                                 dataKey="change" 
                                 radius={[4, 4, 0, 0]}
                                 cursor="pointer"
-                                onClick={(data) => setSelectedItem(data.fullName)}
+                                onClick={(data) => {
+                                    setSelectedItem(data.fullName);
+                                    if (onFilterByGroup) {
+                                        onFilterByGroup(viewMode, data.fullName);
+                                    }
+                                }}
                             >
                                 {chartData.map((entry, index) => (
                                     <Cell 
@@ -259,19 +290,19 @@ Make the data realistic and varied - some should be up, some down.`,
 
             {/* Selected Item Details */}
             {selectedItem && (
-                <div className="mt-3 pt-3 border-t border-gray-100">
+                <div className="mt-2 pt-2 border-t border-gray-100">
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-900">{selectedItem}</span>
+                        <span className="text-sm font-medium text-gray-900">Filtering by: {selectedItem}</span>
                         <button 
-                            onClick={() => setSelectedItem(null)}
+                            onClick={() => {
+                                setSelectedItem(null);
+                                if (onFilterByGroup) onFilterByGroup(null, null);
+                            }}
                             className="text-xs text-purple-600 hover:text-purple-700"
                         >
-                            Clear
+                            Clear filter
                         </button>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                        Click on stocks below filtered by this {viewMode}
-                    </p>
                 </div>
             )}
         </div>
