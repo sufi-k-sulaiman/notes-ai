@@ -168,6 +168,8 @@ export default function SearchPods() {
         { id: 'en-gb', label: 'UK Female' },
         { id: 'en-us', label: 'US Female' },
         { id: 'en-au', label: 'AU Female' },
+        { id: 'en-uk-male', label: 'UK Male' },
+        { id: 'en-us-male', label: 'US Male' },
     ];
 
     // Cleanup audio on unmount
@@ -545,7 +547,7 @@ export default function SearchPods() {
             const response = await base44.integrations.Core.InvokeLLM({
                 prompt: `Continue this podcast about "${currentEpisode.title}". Here's what was covered so far (summary): "${currentContent.substring(0, 500)}..."
 
-    Write 6 more paragraphs (about 2 minutes worth) expanding on the topic with new insights, examples, stories, or related points. Keep the same conversational tone. Do NOT use markdown formatting.`,
+    Write 10 more paragraphs (about 4 minutes worth) expanding on the topic with new insights, examples, stories, or related points. Keep the same conversational tone. Do NOT use markdown formatting.`,
                 add_context_from_internet: true
             });
 
@@ -565,7 +567,35 @@ export default function SearchPods() {
                     .map(s => s.trim())
                     .filter(s => s.length > 3);
 
+                // Append to existing sentences
                 sentencesRef.current = [...sentencesRef.current, ...newSentences];
+
+                // Get current audio blob if exists
+                let existingBlob = null;
+                if (audioUrlRef.current) {
+                    try {
+                        const existingResponse = await fetch(audioUrlRef.current);
+                        existingBlob = await existingResponse.blob();
+                    } catch (e) {
+                        console.log('Could not fetch existing audio');
+                    }
+                }
+
+                // Create new audio blob from extended content
+                const binaryString = atob(ttsResponse.data.audio);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const newBlob = new Blob([bytes], { type: 'audio/mpeg' });
+
+                // Combine blobs if we have existing audio
+                let combinedBlob;
+                if (existingBlob) {
+                    combinedBlob = new Blob([existingBlob, newBlob], { type: 'audio/mpeg' });
+                } else {
+                    combinedBlob = newBlob;
+                }
 
                 // Stop current audio
                 if (audioRef.current) {
@@ -575,18 +605,13 @@ export default function SearchPods() {
                     URL.revokeObjectURL(audioUrlRef.current);
                 }
 
-                // Create new audio from extended content
-                const binaryString = atob(ttsResponse.data.audio);
-                const bytes = new Uint8Array(binaryString.length);
-                for (let i = 0; i < binaryString.length; i++) {
-                    bytes[i] = binaryString.charCodeAt(i);
-                }
-                const blob = new Blob([bytes], { type: 'audio/mpeg' });
-                const audioUrl = URL.createObjectURL(blob);
+                const audioUrl = URL.createObjectURL(combinedBlob);
                 audioUrlRef.current = audioUrl;
 
                 const audio = new Audio(audioUrl);
                 audioRef.current = audio;
+
+                const allSentences = sentencesRef.current;
 
                 audio.onloadedmetadata = () => {
                     setDuration(audio.duration);
@@ -594,14 +619,14 @@ export default function SearchPods() {
 
                 audio.ontimeupdate = () => {
                     setCurrentTime(audio.currentTime);
-                    if (newSentences.length > 0 && audio.duration > 0) {
+                    if (allSentences.length > 0 && audio.duration > 0) {
                         const progress = audio.currentTime / audio.duration;
                         const sentenceIndex = Math.min(
-                            Math.floor(progress * newSentences.length),
-                            newSentences.length - 1
+                            Math.floor(progress * allSentences.length),
+                            allSentences.length - 1
                         );
-                        setCurrentCaption(newSentences[sentenceIndex]);
-                        setCaptionWords(newSentences[sentenceIndex].split(/\s+/));
+                        setCurrentCaption(allSentences[sentenceIndex]);
+                        setCaptionWords(allSentences[sentenceIndex].split(/\s+/));
                     }
                 };
 
@@ -613,8 +638,8 @@ export default function SearchPods() {
                 audio.playbackRate = playbackSpeed;
                 
                 setExtendedCount(prev => prev + 1);
-                setCurrentTime(0);
                 
+                // Resume from where we left off or continue
                 audio.play().then(() => {
                     setIsPlaying(true);
                 }).catch(err => {
