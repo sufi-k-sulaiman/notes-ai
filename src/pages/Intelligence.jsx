@@ -230,7 +230,14 @@ For "${item}", provide:
     - Ranking: Rankings within the field with real scores
     - Cyclical: Seasonal/monthly patterns with real values
 
-11. RELATED TOPICS: 6 scientifically related concepts to "${item}"`,
+11. RELATED TOPICS: 6 scientifically related concepts to "${item}"
+
+12. ATOMIC & MOLECULAR STRUCTURE specific to "${item}":
+    - Atoms: List the specific atoms that make up "${item}" with their atomic numbers, symbols, and electron configurations
+    - Elements: The key elements present in "${item}" with their properties (atomic mass, state at room temp, group in periodic table)
+    - Molecules: Specific molecules found in or related to "${item}" with their molecular formulas, structures, and properties
+    - Bonds: Types of chemical bonds present (ionic, covalent, metallic, hydrogen bonds, etc.)
+    - Isotopes: Any relevant isotopes and their significance`,
                 add_context_from_internet: true,
                 response_json_schema: {
                     type: "object",
