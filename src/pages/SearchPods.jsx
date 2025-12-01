@@ -301,15 +301,21 @@ As we wrap up, remember that learning is a continuous journey. Thank you for lis
             sentencesRef.current = sentences;
 
             // Generate audio using Edge TTS backend
-            const ttsResponse = await base44.functions.invoke('edgeTTS', {
-                text: cleanText,
-                voice: selectedVoice,
-                rate: Math.round((playbackSpeed - 1) * 50), // Convert 0.5-2x to -25% to +50%
-                pauseMs: 600
-            });
+            let ttsResponse;
+            try {
+                ttsResponse = await base44.functions.invoke('edgeTTS', {
+                    text: cleanText,
+                    voice: selectedVoice,
+                    pauseMs: 600
+                });
+            } catch (ttsError) {
+                console.error('TTS function error:', ttsError);
+                throw new Error('Audio generation failed');
+            }
 
-            if (ttsResponse.data?.error) {
-                throw new Error(ttsResponse.data.error);
+            if (!ttsResponse?.data?.audio) {
+                console.error('TTS response:', ttsResponse);
+                throw new Error(ttsResponse?.data?.error || 'No audio returned');
             }
 
             // Convert base64 to audio blob
