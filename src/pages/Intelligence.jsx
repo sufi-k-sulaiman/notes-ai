@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { 
     Brain, Loader2, ChevronRight, Sparkles,
-    Globe, Mountain, Leaf, Zap, Star, Home
+    Globe, Mountain, Leaf, Zap, Star, Home, TrendingUp, BarChart3, PieChart, Activity
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { 
+    BarChart, Bar, LineChart, Line, PieChart as RechartsPie, Pie, Cell,
+    AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+    XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadialBarChart, RadialBar
+} from 'recharts';
 
 const CATEGORIES = {
     Elements_Environment: {
