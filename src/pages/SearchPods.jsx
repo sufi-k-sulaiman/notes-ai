@@ -484,7 +484,7 @@ Do NOT mention any websites, URLs, or external references in the audio script.`
                 }
             }, 100);
         }
-    }, [playbackSpeed, isMuted, volume, selectedVoice, duration, stopPlayback]);
+    }, [playbackSpeed, isMuted, volume, selectedVoice, duration]);
 
     // Stop playback
     const stopPlayback = useCallback(() => {
