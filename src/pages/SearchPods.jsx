@@ -535,6 +535,99 @@ export default function SearchPods() {
     };
 
     const [extendedCount, setExtendedCount] = useState(0);
+    const [isSwappingVoice, setIsSwappingVoice] = useState(false);
+    const [swappingToVoice, setSwappingToVoice] = useState(null);
+    const currentSentenceIndexRef = useRef(0);
+
+    // Swap voice on the fly
+    const swapVoice = async (newVoice) => {
+        if (newVoice === selectedVoice || isSwappingVoice) return;
+        
+        // Remember current position
+        const wasPlaying = isPlaying;
+        const currentSentenceIdx = sentencesRef.current.findIndex(s => s === currentCaption);
+        currentSentenceIndexRef.current = Math.max(0, currentSentenceIdx);
+        
+        setIsSwappingVoice(true);
+        setSwappingToVoice(newVoice);
+        
+        // Pause current audio
+        if (audioRef.current) {
+            audioRef.current.pause();
+        }
+        
+        try {
+            // Get remaining text from current sentence onwards
+            const remainingSentences = sentencesRef.current.slice(currentSentenceIndexRef.current);
+            const remainingText = remainingSentences.join(' ');
+            
+            // Generate new audio with new voice
+            const ttsResponse = await base44.functions.invoke('edgeTTS', {
+                text: remainingText,
+                lang: newVoice
+            });
+            
+            if (ttsResponse.data?.audio) {
+                // Clean up old audio
+                if (audioUrlRef.current) {
+                    URL.revokeObjectURL(audioUrlRef.current);
+                }
+                
+                // Create new audio
+                const binaryString = atob(ttsResponse.data.audio);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([bytes], { type: 'audio/mpeg' });
+                const audioUrl = URL.createObjectURL(blob);
+                audioUrlRef.current = audioUrl;
+                
+                const audio = new Audio(audioUrl);
+                audioRef.current = audio;
+                
+                audio.onloadedmetadata = () => {
+                    setDuration(audio.duration);
+                };
+                
+                audio.ontimeupdate = () => {
+                    setCurrentTime(audio.currentTime);
+                    if (remainingSentences.length > 0 && audio.duration > 0) {
+                        const progress = audio.currentTime / audio.duration;
+                        const sentenceIndex = Math.min(
+                            Math.floor(progress * remainingSentences.length),
+                            remainingSentences.length - 1
+                        );
+                        setCurrentCaption(remainingSentences[sentenceIndex]);
+                        setCaptionWords(remainingSentences[sentenceIndex].split(/\s+/));
+                    }
+                };
+                
+                audio.onended = () => {
+                    setIsPlaying(false);
+                };
+                
+                audio.volume = volume / 100;
+                audio.playbackRate = playbackSpeed;
+                
+                setSelectedVoice(newVoice);
+                setCurrentTime(0);
+                
+                if (wasPlaying) {
+                    audio.play().then(() => {
+                        setIsPlaying(true);
+                    }).catch(err => {
+                        console.log('Autoplay blocked');
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error swapping voice:', error);
+        } finally {
+            setIsSwappingVoice(false);
+            setSwappingToVoice(null);
+        }
+    };
 
     // Extend the podcast content
     const extendPodcast = async () => {
@@ -1056,14 +1149,17 @@ export default function SearchPods() {
                         {googleVoices.map((voice) => (
                             <button
                                 key={voice.id}
-                                onClick={() => setSelectedVoice(voice.id)}
+                                onClick={() => swapVoice(voice.id)}
+                                disabled={isSwappingVoice}
                                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                                     selectedVoice === voice.id 
                                         ? 'bg-purple-600 text-white' 
                                         : 'bg-gray-100 text-gray-600 hover:bg-purple-100 hover:text-purple-600'
-                                }`}
+                                } disabled:opacity-50`}
                             >
-                                {voice.label}
+                                {isSwappingVoice && selectedVoice !== voice.id && swappingToVoice === voice.id ? (
+                                    <Loader2 className="w-4 h-4 animate-spin inline" />
+                                ) : voice.label}
                             </button>
                         ))}
                         </div>
