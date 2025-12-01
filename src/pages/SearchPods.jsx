@@ -532,6 +532,8 @@ export default function SearchPods() {
         }
     };
 
+    const [extendedCount, setExtendedCount] = useState(0);
+
     // Extend the podcast content
     const extendPodcast = async () => {
         if (!currentEpisode || isExtending) return;
@@ -552,13 +554,11 @@ export default function SearchPods() {
             // Generate new audio for extended content
             const ttsResponse = await base44.functions.invoke('edgeTTS', {
                 text: cleanText,
-                voice: selectedVoice,
-                rate: Math.round((playbackSpeed - 1) * 50),
-                pauseMs: 600
+                lang: selectedVoice
             });
 
             if (ttsResponse.data?.audio) {
-                // For now, just notify user - full audio replacement would need more complex handling
+                // Add new sentences to the ref
                 const newSentences = cleanText
                     .replace(/\n+/g, ' ')
                     .split(/(?<=[.!?])\s+/)
@@ -566,7 +566,60 @@ export default function SearchPods() {
                     .filter(s => s.length > 3);
 
                 sentencesRef.current = [...sentencesRef.current, ...newSentences];
-                alert('Extended content generated! Replay to hear the full version.');
+
+                // Stop current audio
+                if (audioRef.current) {
+                    audioRef.current.pause();
+                }
+                if (audioUrlRef.current) {
+                    URL.revokeObjectURL(audioUrlRef.current);
+                }
+
+                // Create new audio from extended content
+                const binaryString = atob(ttsResponse.data.audio);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([bytes], { type: 'audio/mpeg' });
+                const audioUrl = URL.createObjectURL(blob);
+                audioUrlRef.current = audioUrl;
+
+                const audio = new Audio(audioUrl);
+                audioRef.current = audio;
+
+                audio.onloadedmetadata = () => {
+                    setDuration(audio.duration);
+                };
+
+                audio.ontimeupdate = () => {
+                    setCurrentTime(audio.currentTime);
+                    if (newSentences.length > 0 && audio.duration > 0) {
+                        const progress = audio.currentTime / audio.duration;
+                        const sentenceIndex = Math.min(
+                            Math.floor(progress * newSentences.length),
+                            newSentences.length - 1
+                        );
+                        setCurrentCaption(newSentences[sentenceIndex]);
+                        setCaptionWords(newSentences[sentenceIndex].split(/\s+/));
+                    }
+                };
+
+                audio.onended = () => {
+                    setIsPlaying(false);
+                };
+
+                audio.volume = volume / 100;
+                audio.playbackRate = playbackSpeed;
+                
+                setExtendedCount(prev => prev + 1);
+                setCurrentTime(0);
+                
+                audio.play().then(() => {
+                    setIsPlaying(true);
+                }).catch(err => {
+                    console.log('Autoplay blocked');
+                });
             }
         } catch (error) {
             console.error('Error extending podcast:', error);
@@ -759,6 +812,12 @@ export default function SearchPods() {
                         {/* Album Art */}
                         <div className="flex justify-center mb-6">
                             <div className="relative w-56 h-56 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-purple-500/30 overflow-hidden">
+                                {/* Extended ribbon */}
+                                {extendedCount > 0 && (
+                                    <div className="absolute top-3 -right-8 bg-green-500 text-white text-xs font-bold px-8 py-1 rotate-45 z-20 shadow-md">
+                                        +{extendedCount} Extended
+                                    </div>
+                                )}
                                 {/* Generated Image Background */}
                                 {podImage && (
                                     <img 
