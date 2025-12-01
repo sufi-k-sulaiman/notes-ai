@@ -5,8 +5,6 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
 
 const CATEGORIES = {
     Elements_Environment: {
@@ -35,10 +33,7 @@ const CATEGORIES = {
         icon: Zap,
         color: "#F59E0B",
         gradient: "from-amber-500 to-orange-500",
-        items: ["Gravity", "Seasons", "Weather", "Energy", "Time"],
-        specialLinks: {
-            "Seasons": "Seasons"
-        }
+        items: ["Gravity", "Seasons", "Weather", "Energy", "Time"]
     },
     Cosmic_Celestial: {
         name: "Cosmic & Celestial",
@@ -99,40 +94,25 @@ function CategoryCard({ category, onClick }) {
     );
 }
 
-function ItemCard({ item, color, onClick, linkTo }) {
-    const content = (
-        <div className="flex items-center gap-3">
-            <div 
-                className="w-10 h-10 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: `${color}20` }}
-            >
-                <Sparkles className="w-5 h-5" style={{ color }} />
-            </div>
-            <div className="flex-1">
-                <h4 className="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">{item}</h4>
-                <p className="text-xs text-gray-500">{linkTo ? 'Open dedicated page' : 'Tap to explore'}</p>
-            </div>
-            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-500 group-hover:translate-x-1 transition-all" />
-        </div>
-    );
-
-    if (linkTo) {
-        return (
-            <Link 
-                to={createPageUrl(linkTo)}
-                className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg hover:border-purple-200 cursor-pointer transition-all group block"
-            >
-                {content}
-            </Link>
-        );
-    }
-
+function ItemCard({ item, color, onClick }) {
     return (
         <div 
             onClick={onClick}
             className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg hover:border-purple-200 cursor-pointer transition-all group"
         >
-            {content}
+            <div className="flex items-center gap-3">
+                <div 
+                    className="w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: `${color}20` }}
+                >
+                    <Sparkles className="w-5 h-5" style={{ color }} />
+                </div>
+                <div className="flex-1">
+                    <h4 className="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">{item}</h4>
+                    <p className="text-xs text-gray-500">Tap to explore</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-500 group-hover:translate-x-1 transition-all" />
+            </div>
         </div>
     );
 }
@@ -371,7 +351,6 @@ export default function Intelligence() {
                                     item={item}
                                     color={currentCategory.color}
                                     onClick={() => handleItemClick(item)}
-                                    linkTo={currentCategory.specialLinks?.[item]}
                                 />
                             ))}
                         </div>
