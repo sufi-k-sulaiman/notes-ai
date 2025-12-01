@@ -223,17 +223,19 @@ function ItemDetailView({ item, category }) {
 
 9. EXPERTS: Exactly 5 scientists who study "${item}" with institutions, specialties, contributions
 
-10. CHART DATA - MUST have realistic numerical data for "${item}":
-    - Distribution: 5-6 categories with percentage values (should sum to ~100)
-    - Trend: 6 time periods with values showing change over time
-    - Comparison: 4-5 items with valueA and valueB for comparison
-    - Composition: 5-6 components with percentage values
-    - Geographic: 5-6 regions with numerical values
-    - Annual: 6 years (2019-2024) with values
-    - Performance: 5-6 metrics with score (0-100) and max (100)
-    - Correlation: 8-10 data points with x and y values
-    - Ranking: 5-6 items with rank and score
-    - Cyclical: 12 months with values showing seasonal patterns
+10. CHART DATA - CRITICAL - MUST have REAL NUMERIC data for "${item}":
+    Generate chart titles and data SPECIFIC to "${item}". For example, if "${item}" is "Water", use titles like "Water Distribution by Type" not generic "Distribution Analysis".
+    
+    - distribution: 5 objects with "name" (string) and "value" (number 10-40, sum ~100). Names should be types/categories of "${item}"
+    - trend: 6 objects with "period" (years 2019-2024) and "value" (numbers showing realistic trend for "${item}")
+    - comparison: 5 objects with "name" (aspects of "${item}"), "valueA" (number), "valueB" (number)
+    - composition: 5 objects with "name" (components of "${item}") and "value" (percentage, sum ~100)
+    - geographic: 5 objects with "region" (continent/country names) and "value" (number relevant to "${item}")
+    - annual: 6 objects with "year" (2019-2024) and "value" (realistic annual data for "${item}")
+    - performance: 5 objects with "metric" (measurement for "${item}"), "score" (0-100), "max" (100)
+    - correlation: 8 objects with "x" (number 0-100) and "y" (number 0-100) showing correlation
+    - ranking: 5 objects with "name" (variants of "${item}"), "rank" (1-5), "score" (number)
+    - cyclical: 12 objects with "month" (Jan-Dec) and "value" (seasonal pattern for "${item}")
 
 11. RELATED TOPICS: 6 related scientific concepts
 
