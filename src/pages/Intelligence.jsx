@@ -30,7 +30,7 @@ const CATEGORIES = {
         icon: Leaf,
         color: "#22C55E",
         gradient: "from-green-500 to-lime-500",
-        items: ["Plants", "Animals", "Microorganisms", "Insects", "Birds", "Fish", "Reptiles", "Humans"]
+        items: ["Plants", "Animals", "Microorganisms", "Insects", "Birds", "Fish", "Reptiles", "Humans", "Amphibians", "Fungi"]
     },
     Forces_Cycles: {
         name: "Forces & Cycles",
