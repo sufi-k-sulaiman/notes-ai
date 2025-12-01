@@ -179,13 +179,15 @@ function ItemDetailView({ item, category }) {
             const response = await base44.integrations.Core.InvokeLLM({
                 prompt: `You are an expert scientist. Generate ACCURATE, REAL, COMPLETE scientific data specifically about "${item}" in the category "${category?.name || 'natural world'}".
 
-CRITICAL REQUIREMENTS:
-- Every piece of data must be REAL and SPECIFIC to "${item}"
-- ALL arrays must have AT LEAST 4-6 items each
-- ALL chart data arrays must have AT LEAST 5 data points each with realistic numbers
-- DO NOT return empty arrays - fill everything with real data
+            ABSOLUTELY CRITICAL - READ CAREFULLY:
+            - Every piece of data must be REAL and SPECIFIC to "${item}"
+            - ALL arrays MUST have 5-6 items with REAL NUMERIC VALUES
+            - ALL chartData arrays MUST have numeric values (not strings, not null, not empty)
+            - Example for distribution: [{"name": "Type A", "value": 35}, {"name": "Type B", "value": 28}] - values are NUMBERS
+            - Example for trend: [{"period": "2019", "value": 120}, {"period": "2020", "value": 145}] - values are NUMBERS
+            - NEVER return empty arrays [] - always populate with real scientific data
 
-For "${item}", provide COMPLETE data:
+            For "${item}", provide COMPLETE data:
 
 1. OVERVIEW: 4-5 factual sentences about "${item}".
 
