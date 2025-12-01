@@ -177,67 +177,70 @@ function ItemDetailView({ item, category }) {
         setData(null);
         try {
             const response = await base44.integrations.Core.InvokeLLM({
-                prompt: `You are an expert scientist. Generate ACCURATE, REAL scientific data specifically about "${item}" in the category "${category?.name || 'natural world'}".
+                prompt: `You are an expert scientist. Generate ACCURATE, REAL, COMPLETE scientific data specifically about "${item}" in the category "${category?.name || 'natural world'}".
 
-CRITICAL: Every piece of data must be REAL and SPECIFIC to "${item}". Use your knowledge and web context to provide factual information.
+CRITICAL REQUIREMENTS:
+- Every piece of data must be REAL and SPECIFIC to "${item}"
+- ALL arrays must have AT LEAST 4-6 items each
+- ALL chart data arrays must have AT LEAST 5 data points each with realistic numbers
+- DO NOT return empty arrays - fill everything with real data
 
-For "${item}", provide:
+For "${item}", provide COMPLETE data:
 
-1. OVERVIEW: What is "${item}"? Give 4-5 factual sentences with real scientific information.
+1. OVERVIEW: 4-5 factual sentences about "${item}".
 
-2. KEY FACTS: 8 real, verified facts about "${item}" with actual numbers/measurements where applicable.
+2. KEY FACTS: Exactly 8 real facts about "${item}" with numbers/measurements.
 
-3. FUN FACTS: 5 surprising but true facts specifically about "${item}".
+3. FUN FACTS: Exactly 5 surprising facts about "${item}".
 
-4. SIGNIFICANCE: Why "${item}" matters - real importance to science, environment, or humanity.
+4. SIGNIFICANCE: Why "${item}" matters scientifically.
 
-5. PHYSICAL COMPOSITIONS specific to "${item}":
-   - Structure: Real physical structure of "${item}"
-   - Measurable Properties: Real values (e.g., temperature, density, size, mass) with actual units
-   - Physical States: Actual states "${item}" can exist in
-   - Metrics: Real measurements specific to "${item}"
+5. PHYSICAL COMPOSITIONS for "${item}":
+   - Structure: Detailed physical structure description
+   - Measurable Properties: At least 5 properties with real values and units (temperature, density, size, mass, etc.)
+   - Physical States: States "${item}" exists in
+   - Metrics: Key measurements
 
-6. CHEMICAL COMPOSITIONS specific to "${item}":
-   - Elements: Real elemental composition with accurate percentages
-   - Compounds: Actual molecules/compounds in "${item}"
-   - Properties: Real chemical properties
-   - Molecular Structure: Accurate molecular description
+6. CHEMICAL COMPOSITIONS for "${item}":
+   - Elements: At least 4 elements with real percentages that sum close to 100%
+   - Compounds: At least 4 key compounds/molecules
+   - Properties: Chemical properties description
+   - Molecular Structure: Molecular description
 
 7. MATHEMATICAL ILLUSTRATIONS for "${item}":
-   - Equations: Real scientific equations used to study/describe "${item}" (e.g., physics formulas, rate equations)
-   - Models: Actual mathematical/computational models
-   - Geometric Representations: Real geometric patterns in "${item}"
-   - Statistical Patterns: Real statistical data about "${item}"
+   - Equations: At least 3 real equations with descriptions (physics formulas, rate equations specific to "${item}")
+   - Models: At least 3 mathematical models used to study "${item}"
+   - Geometric Representations: Geometric patterns in "${item}"
+   - Statistical Patterns: Statistical patterns observed
 
 8. RESEARCH DATA about "${item}":
-   - Findings: 5 real research discoveries with actual institution names and years
-   - Statistics: Real statistical data with sources
-   - Recent Discoveries: Actual discoveries from 2020-2024
-   - Ongoing Research: Current real research areas
+   - Findings: Exactly 5 research discoveries with institution names and years (2015-2024)
+   - Statistics: At least 4 statistics with values and sources
+   - Recent Discoveries: At least 3 discoveries from 2020-2024
+   - Ongoing Research: At least 4 current research areas
 
-9. EXPERTS on "${item}":
-   - 5 real scientists who study "${item}" with their actual institutions, specialties, and contributions
+9. EXPERTS: Exactly 5 scientists who study "${item}" with institutions, specialties, contributions
 
-10. CHART DATA - Generate realistic numerical data specific to "${item}":
-    - Distribution: Types/categories of "${item}" with real percentages
-    - Trend: Historical data showing real changes over time
-    - Comparison: Compare aspects of "${item}" with real values
-    - Composition: Real breakdown of what makes up "${item}"
-    - Geographic: Where "${item}" is found/occurs with real data
-    - Annual: Year-by-year real statistics
-    - Performance: Measurable metrics with real scores
-    - Correlation: Two related variables with realistic data points
-    - Ranking: Rankings within the field with real scores
-    - Cyclical: Seasonal/monthly patterns with real values
+10. CHART DATA - MUST have realistic numerical data for "${item}":
+    - Distribution: 5-6 categories with percentage values (should sum to ~100)
+    - Trend: 6 time periods with values showing change over time
+    - Comparison: 4-5 items with valueA and valueB for comparison
+    - Composition: 5-6 components with percentage values
+    - Geographic: 5-6 regions with numerical values
+    - Annual: 6 years (2019-2024) with values
+    - Performance: 5-6 metrics with score (0-100) and max (100)
+    - Correlation: 8-10 data points with x and y values
+    - Ranking: 5-6 items with rank and score
+    - Cyclical: 12 months with values showing seasonal patterns
 
-11. RELATED TOPICS: 6 scientifically related concepts to "${item}"
+11. RELATED TOPICS: 6 related scientific concepts
 
-12. ATOMIC & MOLECULAR STRUCTURE specific to "${item}":
-    - Atoms: List the specific atoms that make up "${item}" with their atomic numbers, symbols, and electron configurations
-    - Elements: The key elements present in "${item}" with their properties (atomic mass, state at room temp, group in periodic table)
-    - Molecules: Specific molecules found in or related to "${item}" with their molecular formulas, structures, and properties
-    - Bonds: Types of chemical bonds present (ionic, covalent, metallic, hydrogen bonds, etc.)
-    - Isotopes: Any relevant isotopes and their significance`,
+12. ATOMIC & MOLECULAR STRUCTURE for "${item}":
+    - Atoms: 3-5 atoms with name, symbol, atomicNumber, electronConfig
+    - Elements: 4-6 elements with name, symbol, atomicMass, state, group, role
+    - Molecules: 3-5 molecules with name, formula, structure, properties
+    - Bonds: 2-4 bond types with type, description, strength
+    - Isotopes: 2-3 isotopes with name, symbol, halfLife, significance`,
                 add_context_from_internet: true,
                 response_json_schema: {
                     type: "object",
