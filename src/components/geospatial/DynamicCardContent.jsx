@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
@@ -8,11 +8,8 @@ const contentCache = new Map();
 export default function DynamicCardContent({ useCase, useCaseName }) {
     const [content, setContent] = useState(null);
     const [loading, setLoading] = useState(true);
-    const fetchedRef = useRef(false);
 
     useEffect(() => {
-        if (fetchedRef.current) return;
-        
         // Check cache first
         if (contentCache.has(useCase)) {
             setContent(contentCache.get(useCase));
@@ -20,9 +17,10 @@ export default function DynamicCardContent({ useCase, useCaseName }) {
             return;
         }
 
-        fetchedRef.current = true;
+        setLoading(true);
+        setContent(null);
         fetchContent();
-    }, [useCase]);
+    }, [useCase, useCaseName]);
 
     const fetchContent = async () => {
         try {
