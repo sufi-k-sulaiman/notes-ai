@@ -547,7 +547,7 @@ For "${item}", provide COMPLETE data:
                     </ChartCard>
 
                     {/* 8. Correlation Scatter */}
-                    <ChartCard title="Correlation Analysis" color={category?.color}>
+                    <ChartCard title={`${item} Variable Correlation`} color={category?.color}>
                         <ResponsiveContainer width="100%" height="100%">
                             <ScatterChart>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
