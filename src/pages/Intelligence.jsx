@@ -426,168 +426,230 @@ For "${item}", provide:
             </div>
 
             {/* Charts Section - 10 Dynamic Charts */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5" style={{ color: category?.color }} />
-                    Data Visualizations & Analytics
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* 1. Distribution Pie Chart */}
-                    <ChartCard title="Distribution Analysis" color={category?.color}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <RechartsPie>
-                                <Pie
-                                    data={data?.chartData?.distribution || []}
-                                    dataKey="value"
-                                    nameKey="name"
-                                    cx="50%"
-                                    cy="50%"
-                                    outerRadius={60}
-                                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                                    labelLine={false}
-                                >
-                                    {(data?.chartData?.distribution || []).map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                            </RechartsPie>
-                        </ResponsiveContainer>
-                    </ChartCard>
+            {data?.chartData && (
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <BarChart3 className="w-5 h-5" style={{ color: category?.color }} />
+                        Data Visualizations & Analytics
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* 1. Distribution Pie Chart */}
+                        {data?.chartData?.distribution?.length > 0 ? (
+                            <ChartCard title="Distribution Analysis" color={category?.color}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <RechartsPie>
+                                        <Pie
+                                            data={data.chartData.distribution}
+                                            dataKey="value"
+                                            nameKey="name"
+                                            cx="50%"
+                                            cy="50%"
+                                            outerRadius={60}
+                                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                            labelLine={false}
+                                        >
+                                            {data.chartData.distribution.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip />
+                                    </RechartsPie>
+                                </ResponsiveContainer>
+                            </ChartCard>
+                        ) : (
+                            <ChartCard title="Distribution Analysis" color={category?.color}>
+                                <div className="h-full flex items-center justify-center text-gray-400 text-sm">Loading distribution data...</div>
+                            </ChartCard>
+                        )}
 
-                    {/* 2. Trend Line Chart */}
-                    <ChartCard title="Trend Analysis" color={category?.color}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={data?.chartData?.trend || []}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                                <XAxis dataKey="period" tick={{ fontSize: 10 }} />
-                                <YAxis tick={{ fontSize: 10 }} />
-                                <Tooltip />
-                                <Line type="monotone" dataKey="value" stroke={category?.color} strokeWidth={2} dot={{ fill: category?.color }} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </ChartCard>
+                        {/* 2. Trend Line Chart */}
+                        {data?.chartData?.trend?.length > 0 ? (
+                            <ChartCard title="Trend Analysis" color={category?.color}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={data.chartData.trend}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                        <XAxis dataKey="period" tick={{ fontSize: 10 }} />
+                                        <YAxis tick={{ fontSize: 10 }} />
+                                        <Tooltip />
+                                        <Line type="monotone" dataKey="value" stroke={category?.color} strokeWidth={2} dot={{ fill: category?.color }} />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </ChartCard>
+                        ) : (
+                            <ChartCard title="Trend Analysis" color={category?.color}>
+                                <div className="h-full flex items-center justify-center text-gray-400 text-sm">Loading trend data...</div>
+                            </ChartCard>
+                        )}
 
-                    {/* 3. Comparison Bar Chart */}
-                    <ChartCard title="Comparative Analysis" color={category?.color}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data?.chartData?.comparison || []}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                                <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                                <YAxis tick={{ fontSize: 10 }} />
-                                <Tooltip />
-                                <Bar dataKey="valueA" fill={category?.color} name="Primary" />
-                                <Bar dataKey="valueB" fill="#94A3B8" name="Secondary" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </ChartCard>
+                        {/* 3. Comparison Bar Chart */}
+                        {data?.chartData?.comparison?.length > 0 ? (
+                            <ChartCard title="Comparative Analysis" color={category?.color}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={data.chartData.comparison}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                        <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                                        <YAxis tick={{ fontSize: 10 }} />
+                                        <Tooltip />
+                                        <Bar dataKey="valueA" fill={category?.color} name="Primary" />
+                                        <Bar dataKey="valueB" fill="#94A3B8" name="Secondary" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </ChartCard>
+                        ) : (
+                            <ChartCard title="Comparative Analysis" color={category?.color}>
+                                <div className="h-full flex items-center justify-center text-gray-400 text-sm">Loading comparison data...</div>
+                            </ChartCard>
+                        )}
 
-                    {/* 4. Composition Donut */}
-                    <ChartCard title="Composition Breakdown" color={category?.color}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <RechartsPie>
-                                <Pie
-                                    data={data?.chartData?.composition || []}
-                                    dataKey="value"
-                                    nameKey="name"
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={30}
-                                    outerRadius={60}
-                                >
-                                    {(data?.chartData?.composition || []).map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                                <Legend />
-                            </RechartsPie>
-                        </ResponsiveContainer>
-                    </ChartCard>
+                        {/* 4. Composition Donut */}
+                        {data?.chartData?.composition?.length > 0 ? (
+                            <ChartCard title="Composition Breakdown" color={category?.color}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <RechartsPie>
+                                        <Pie
+                                            data={data.chartData.composition}
+                                            dataKey="value"
+                                            nameKey="name"
+                                            cx="50%"
+                                            cy="50%"
+                                            innerRadius={30}
+                                            outerRadius={60}
+                                        >
+                                            {data.chartData.composition.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip />
+                                        <Legend />
+                                    </RechartsPie>
+                                </ResponsiveContainer>
+                            </ChartCard>
+                        ) : (
+                            <ChartCard title="Composition Breakdown" color={category?.color}>
+                                <div className="h-full flex items-center justify-center text-gray-400 text-sm">Loading composition data...</div>
+                            </ChartCard>
+                        )}
 
-                    {/* 5. Geographic Bar */}
-                    <ChartCard title="Geographic Distribution" color={category?.color}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data?.chartData?.geographic || []} layout="vertical">
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                                <XAxis type="number" tick={{ fontSize: 10 }} />
-                                <YAxis dataKey="region" type="category" tick={{ fontSize: 10 }} width={80} />
-                                <Tooltip />
-                                <Bar dataKey="value" fill={category?.color} radius={[0, 4, 4, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </ChartCard>
+                        {/* 5. Geographic Bar */}
+                        {data?.chartData?.geographic?.length > 0 ? (
+                            <ChartCard title="Geographic Distribution" color={category?.color}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={data.chartData.geographic} layout="vertical">
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                        <XAxis type="number" tick={{ fontSize: 10 }} />
+                                        <YAxis dataKey="region" type="category" tick={{ fontSize: 10 }} width={80} />
+                                        <Tooltip />
+                                        <Bar dataKey="value" fill={category?.color} radius={[0, 4, 4, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </ChartCard>
+                        ) : (
+                            <ChartCard title="Geographic Distribution" color={category?.color}>
+                                <div className="h-full flex items-center justify-center text-gray-400 text-sm">Loading geographic data...</div>
+                            </ChartCard>
+                        )}
 
-                    {/* 6. Annual Area Chart */}
-                    <ChartCard title="Annual Statistics" color={category?.color}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={data?.chartData?.annual || []}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                                <XAxis dataKey="year" tick={{ fontSize: 10 }} />
-                                <YAxis tick={{ fontSize: 10 }} />
-                                <Tooltip />
-                                <Area type="monotone" dataKey="value" stroke={category?.color} fill={`${category?.color}40`} />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </ChartCard>
+                        {/* 6. Annual Area Chart */}
+                        {data?.chartData?.annual?.length > 0 ? (
+                            <ChartCard title="Annual Statistics" color={category?.color}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={data.chartData.annual}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                        <XAxis dataKey="year" tick={{ fontSize: 10 }} />
+                                        <YAxis tick={{ fontSize: 10 }} />
+                                        <Tooltip />
+                                        <Area type="monotone" dataKey="value" stroke={category?.color} fill={`${category?.color}40`} />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            </ChartCard>
+                        ) : (
+                            <ChartCard title="Annual Statistics" color={category?.color}>
+                                <div className="h-full flex items-center justify-center text-gray-400 text-sm">Loading annual data...</div>
+                            </ChartCard>
+                        )}
 
-                    {/* 7. Performance Radar */}
-                    <ChartCard title="Performance Metrics" color={category?.color}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <RadarChart data={data?.chartData?.performance || []}>
-                                <PolarGrid />
-                                <PolarAngleAxis dataKey="metric" tick={{ fontSize: 8 }} />
-                                <PolarRadiusAxis tick={{ fontSize: 8 }} />
-                                <Radar name="Score" dataKey="score" stroke={category?.color} fill={category?.color} fillOpacity={0.5} />
-                            </RadarChart>
-                        </ResponsiveContainer>
-                    </ChartCard>
+                        {/* 7. Performance Radar */}
+                        {data?.chartData?.performance?.length > 0 ? (
+                            <ChartCard title="Performance Metrics" color={category?.color}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <RadarChart data={data.chartData.performance}>
+                                        <PolarGrid />
+                                        <PolarAngleAxis dataKey="metric" tick={{ fontSize: 8 }} />
+                                        <PolarRadiusAxis tick={{ fontSize: 8 }} />
+                                        <Radar name="Score" dataKey="score" stroke={category?.color} fill={category?.color} fillOpacity={0.5} />
+                                    </RadarChart>
+                                </ResponsiveContainer>
+                            </ChartCard>
+                        ) : (
+                            <ChartCard title="Performance Metrics" color={category?.color}>
+                                <div className="h-full flex items-center justify-center text-gray-400 text-sm">Loading performance data...</div>
+                            </ChartCard>
+                        )}
 
-                    {/* 8. Correlation Scatter */}
-                    <ChartCard title="Correlation Analysis" color={category?.color}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <ScatterChart>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                                <XAxis dataKey="x" tick={{ fontSize: 10 }} />
-                                <YAxis dataKey="y" tick={{ fontSize: 10 }} />
-                                <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                                <Scatter data={data?.chartData?.correlation || []} fill={category?.color} />
-                            </ScatterChart>
-                        </ResponsiveContainer>
-                    </ChartCard>
+                        {/* 8. Correlation Scatter */}
+                        {data?.chartData?.correlation?.length > 0 ? (
+                            <ChartCard title="Correlation Analysis" color={category?.color}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <ScatterChart>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                        <XAxis dataKey="x" tick={{ fontSize: 10 }} />
+                                        <YAxis dataKey="y" tick={{ fontSize: 10 }} />
+                                        <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                                        <Scatter data={data.chartData.correlation} fill={category?.color} />
+                                    </ScatterChart>
+                                </ResponsiveContainer>
+                            </ChartCard>
+                        ) : (
+                            <ChartCard title="Correlation Analysis" color={category?.color}>
+                                <div className="h-full flex items-center justify-center text-gray-400 text-sm">Loading correlation data...</div>
+                            </ChartCard>
+                        )}
 
-                    {/* 9. Ranking Bar */}
-                    <ChartCard title="Rankings" color={category?.color}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data?.chartData?.ranking || []}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                                <XAxis dataKey="name" tick={{ fontSize: 9 }} />
-                                <YAxis tick={{ fontSize: 10 }} />
-                                <Tooltip />
-                                <Bar dataKey="score" fill={category?.color}>
-                                    {(data?.chartData?.ranking || []).map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </ChartCard>
+                        {/* 9. Ranking Bar */}
+                        {data?.chartData?.ranking?.length > 0 ? (
+                            <ChartCard title="Rankings" color={category?.color}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={data.chartData.ranking}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                        <XAxis dataKey="name" tick={{ fontSize: 9 }} />
+                                        <YAxis tick={{ fontSize: 10 }} />
+                                        <Tooltip />
+                                        <Bar dataKey="score" fill={category?.color}>
+                                            {data.chartData.ranking.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </ChartCard>
+                        ) : (
+                            <ChartCard title="Rankings" color={category?.color}>
+                                <div className="h-full flex items-center justify-center text-gray-400 text-sm">Loading ranking data...</div>
+                            </ChartCard>
+                        )}
 
-                    {/* 10. Cyclical Pattern */}
-                    <ChartCard title="Cyclical Patterns" color={category?.color}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <ComposedChart data={data?.chartData?.cyclical || []}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                                <XAxis dataKey="month" tick={{ fontSize: 9 }} />
-                                <YAxis tick={{ fontSize: 10 }} />
-                                <Tooltip />
-                                <Area type="monotone" dataKey="value" fill={`${category?.color}30`} stroke="none" />
-                                <Line type="monotone" dataKey="value" stroke={category?.color} strokeWidth={2} />
-                            </ComposedChart>
-                        </ResponsiveContainer>
-                    </ChartCard>
+                        {/* 10. Cyclical Pattern */}
+                        {data?.chartData?.cyclical?.length > 0 ? (
+                            <ChartCard title="Cyclical Patterns" color={category?.color}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <ComposedChart data={data.chartData.cyclical}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                        <XAxis dataKey="month" tick={{ fontSize: 9 }} />
+                                        <YAxis tick={{ fontSize: 10 }} />
+                                        <Tooltip />
+                                        <Area type="monotone" dataKey="value" fill={`${category?.color}30`} stroke="none" />
+                                        <Line type="monotone" dataKey="value" stroke={category?.color} strokeWidth={2} />
+                                    </ComposedChart>
+                                </ResponsiveContainer>
+                            </ChartCard>
+                        ) : (
+                            <ChartCard title="Cyclical Patterns" color={category?.color}>
+                                <div className="h-full flex items-center justify-center text-gray-400 text-sm">Loading cyclical data...</div>
+                            </ChartCard>
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Key Facts */}
             <div className="bg-white rounded-xl border border-gray-200 p-5">
