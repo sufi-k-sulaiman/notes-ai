@@ -577,7 +577,7 @@ For "${item}", provide COMPLETE data:
                     </ChartCard>
 
                     {/* 10. Cyclical Pattern */}
-                    <ChartCard title="Cyclical Patterns" color={category?.color}>
+                    <ChartCard title={`${item} Monthly Patterns`} color={category?.color}>
                         <ResponsiveContainer width="100%" height="100%">
                             <ComposedChart data={data?.chartData?.cyclical || []}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
