@@ -950,12 +950,7 @@ export default function Markets() {
 
     useEffect(() => { fetchStockData(); }, []);
 
-    // Listen for header search changes
-    useEffect(() => {
-        const handleHeaderSearch = (e) => setSearchQuery(e.detail || '');
-        window.addEventListener('headerSearchChange', handleHeaderSearch);
-        return () => window.removeEventListener('headerSearchChange', handleHeaderSearch);
-    }, []);
+
 
     const fetchStockData = async () => {
         setLoading(true);
