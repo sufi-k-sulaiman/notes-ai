@@ -503,8 +503,12 @@ Do NOT mention any websites, URLs, or external references in the audio script.`
             stopPlayback();
         } else {
             startSpeaking();
+            // Small delay then start speaking
+            setTimeout(() => {
+                speakNextSentence();
+            }, 100);
         }
-    }, [isPlaying, stopPlayback, startSpeaking]);
+    }, [isPlaying, stopPlayback, startSpeaking, speakNextSentence]);
 
     // Download Text Script
     const downloadText = () => {
