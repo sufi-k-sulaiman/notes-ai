@@ -288,7 +288,7 @@ export default function Geospatial() {
 
                         {MAP_TABS.map(tab => (
                             <TabsContent key={tab.id} value={tab.id} className="p-4 mt-0">
-                                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {USE_CASES.filter(uc => uc.tab === tab.id).map((useCase, index) => {
                                         const Icon = useCase.icon;
                                         const mapTypes = ['heatmap', 'satellite', 'terrain', 'default'];
@@ -300,22 +300,22 @@ export default function Geospatial() {
                                                 style={{ '--hover-color': useCase.color }}
                                                 onClick={() => setModalMap({ title: useCase.name, icon: Icon, color: useCase.color, useCase: useCase.id, mapType })}
                                             >
-                                                <div className="p-3 border-b border-gray-100">
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <div className="flex items-center gap-2 min-w-0">
-                                                            <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${useCase.color}20` }}>
-                                                                <Icon className="w-3 h-3" style={{ color: useCase.color }} />
+                                                <div className="p-4 border-b border-gray-100">
+                                                    <div className="flex items-center justify-between mb-3">
+                                                        <div className="flex items-center gap-3 min-w-0">
+                                                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${useCase.color}20` }}>
+                                                                <Icon className="w-4 h-4" style={{ color: useCase.color }} />
                                                             </div>
-                                                            <span className="font-medium text-sm text-gray-900 truncate">{useCase.name}</span>
+                                                            <span className="font-semibold text-base text-gray-900 truncate">{useCase.name}</span>
                                                         </div>
-                                                        <span className="text-xs text-gray-500 capitalize flex-shrink-0 ml-2">{mapType === 'default' ? 'Map' : mapType}</span>
+                                                        <span className="text-sm text-gray-500 capitalize flex-shrink-0 ml-2">{mapType === 'default' ? 'Map' : mapType}</span>
                                                     </div>
                                                     <DynamicCardContent useCase={useCase.id} useCaseName={useCase.name} />
                                                 </div>
                                                 <GeospatialMap 
                                                     useCase={useCase.id}
                                                     mapType={mapType}
-                                                    height="160px"
+                                                    height="220px"
                                                     mini={true}
                                                     color={useCase.color}
                                                 />

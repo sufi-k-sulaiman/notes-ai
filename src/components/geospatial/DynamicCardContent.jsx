@@ -68,12 +68,12 @@ Keep it factual with 2024 data. No URLs.`,
     }
 
     return (
-        <div className="space-y-1">
-            <p className="text-[10px] text-gray-500 line-clamp-2">{content?.description}</p>
-            <ul className="space-y-0.5">
+        <div className="space-y-2">
+            <p className="text-sm text-gray-600 line-clamp-2">{content?.description}</p>
+            <ul className="space-y-1">
                 {content?.bullets?.slice(0, 3).map((bullet, i) => (
-                    <li key={i} className="text-[9px] text-gray-400 flex items-start gap-1">
-                        <span className="text-gray-300 mt-0.5">•</span>
+                    <li key={i} className="text-xs text-gray-500 flex items-start gap-1.5">
+                        <span className="text-gray-400 mt-0.5">•</span>
                         <span className="line-clamp-1">{bullet}</span>
                     </li>
                 ))}
