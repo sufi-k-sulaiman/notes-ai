@@ -349,7 +349,11 @@ export default function Intelligence() {
                     </div>
                 ) : (
                     /* Item Detail View */
-                    <ItemDetailView item={selectedItem} category={currentCategory} />
+                    selectedCategory === 'Elements_Environment' ? (
+                        <ElementsEnvironmentDetail item={selectedItem} category={currentCategory} />
+                    ) : (
+                        <ItemDetailView item={selectedItem} category={currentCategory} />
+                    )
                 )}
             </div>
         </div>
