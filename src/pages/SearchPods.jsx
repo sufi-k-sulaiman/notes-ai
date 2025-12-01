@@ -303,32 +303,15 @@ export default function SearchPods() {
             sentencesRef.current = sentences;
 
             // Generate audio using Edge TTS backend
-            console.log('Calling edgeTTS with:', { textLength: cleanText.length, voice: selectedVoice });
-
-            let ttsResponse;
-            try {
-                ttsResponse = await base44.functions.invoke('edgeTTS', {
-                    text: cleanText,
-                    voice: selectedVoice,
-                    rate: Math.round((playbackSpeed - 1) * 50),
-                    pauseMs: 600
-                });
-            } catch (ttsError) {
-                console.error('Edge TTS call failed:', ttsError);
-                // Fallback to ElevenLabs if Edge TTS fails
-                console.log('Trying ElevenLabs fallback...');
-                ttsResponse = await base44.functions.invoke('elevenlabsTTS', {
-                    text: cleanText,
-                    voice_id: 'EXAVITQu4vr4xnSDxMaL'
-                });
-            }
+            const ttsResponse = await base44.functions.invoke('edgeTTS', {
+                text: cleanText,
+                voice: selectedVoice,
+                rate: Math.round((playbackSpeed - 1) * 50), // Convert 0.5-2x to -25% to +50%
+                pauseMs: 600
+            });
 
             if (ttsResponse.data?.error) {
                 throw new Error(ttsResponse.data.error);
-            }
-
-            if (!ttsResponse.data?.audio) {
-                throw new Error('No audio returned from TTS service');
             }
 
             // Convert base64 to audio blob
