@@ -223,6 +223,7 @@ export default function WordShooter({ onExit }) {
     const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     
     const handleTouchStart = (e) => {
+      e.preventDefault();
       const touch = e.touches[0];
       touchStartX = touch.clientX;
       touchStartY = touch.clientY;
@@ -235,6 +236,7 @@ export default function WordShooter({ onExit }) {
     };
     
     const handleTouchMove = (e) => {
+      e.preventDefault();
       if (!touchStartX || !touchStartY) return;
       const touch = e.touches[0];
       const deltaX = touch.clientX - touchStartX;
