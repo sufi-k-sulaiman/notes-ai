@@ -118,12 +118,21 @@ function ItemCard({ item, color, onClick }) {
     );
 }
 
+// Special items that have dedicated dashboards
+const SPECIAL_ITEMS = {
+    'Seasons': WeatherDashboard,
+    'Weather': WeatherDashboard,
+};
+
 function ItemDetailView({ item, category }) {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState(null);
 
+    // Check if this item has a special dashboard
+    const SpecialDashboard = SPECIAL_ITEMS[item];
+    
     useEffect(() => {
-        if (item) {
+        if (item && !SpecialDashboard) {
             fetchItemData();
         }
     }, [item]);
@@ -165,6 +174,11 @@ function ItemDetailView({ item, category }) {
             setLoading(false);
         }
     };
+
+    // Render special dashboard if available
+    if (SpecialDashboard) {
+        return <SpecialDashboard />;
+    }
 
     if (loading) {
         return (
