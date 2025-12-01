@@ -495,41 +495,13 @@ Do NOT mention any websites, URLs, or external references in the audio script.`
 
     // Skip forward/backward
     const skipForward = () => {
-        const skipSeconds = 30;
-        const skipSentences = Math.ceil(skipSeconds / 3); // ~3 seconds per sentence
-        const newIndex = Math.min(currentIndexRef.current + skipSentences, sentencesRef.current.length - 1);
-        
-        window.speechSynthesis?.cancel();
-        currentIndexRef.current = newIndex;
-        setCurrentTime(prev => Math.min(prev + skipSeconds, duration));
-        
-        const text = sentencesRef.current[currentIndexRef.current] || '';
-        setCurrentCaption(text);
-        setCaptionWords(text.split(/\s+/));
-        setCurrentWordIndex(-1);
-        
-        if (isPlayingRef.current) {
-            setTimeout(() => speakNextSentence(), 100);
-        }
+        if (!audioRef.current) return;
+        audioRef.current.currentTime = Math.min(audioRef.current.currentTime + 30, audioRef.current.duration);
     };
 
     const skipBackward = () => {
-        const skipSeconds = 15;
-        const skipSentences = Math.ceil(skipSeconds / 3);
-        const newIndex = Math.max(currentIndexRef.current - skipSentences, 0);
-        
-        window.speechSynthesis?.cancel();
-        currentIndexRef.current = newIndex;
-        setCurrentTime(prev => Math.max(prev - skipSeconds, 0));
-        
-        const text = sentencesRef.current[currentIndexRef.current] || '';
-        setCurrentCaption(text);
-        setCaptionWords(text.split(/\s+/));
-        setCurrentWordIndex(-1);
-        
-        if (isPlayingRef.current) {
-            setTimeout(() => speakNextSentence(), 100);
-        }
+        if (!audioRef.current) return;
+        audioRef.current.currentTime = Math.max(audioRef.current.currentTime - 15, 0);
     };
 
     // Load recommendations based on current episode
