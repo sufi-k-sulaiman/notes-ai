@@ -383,155 +383,29 @@ Do NOT mention any websites, URLs, or external references in the audio script.`
         }
     };
 
-    // Start speaking
-    const startSpeaking = useCallback(() => {
-        if (!('speechSynthesis' in window)) {
-            setCurrentCaption('Text-to-speech is not supported in your browser.');
-            return;
-        }
-        
-        // Cancel any pending speech first
-        window.speechSynthesis.cancel();
-        
-        // Mobile browsers require a workaround - speech synthesis can get "stuck"
-        // This forces it to reset on mobile
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            // On mobile, we need to "wake up" speechSynthesis
-            const wakeSpeech = new SpeechSynthesisUtterance('');
-            wakeSpeech.volume = 0;
-            window.speechSynthesis.speak(wakeSpeech);
-            window.speechSynthesis.cancel();
-        }
-        
-        isPlayingRef.current = true;
-        setIsPlaying(true);
-        
-        // Start timer for progress
-        if (timerRef.current) clearInterval(timerRef.current);
-        timerRef.current = setInterval(() => {
-            setCurrentTime(prev => {
-                if (prev >= duration) {
-                    clearInterval(timerRef.current);
-                    return duration;
-                }
-                return prev + 1;
-            });
-        }, 1000);
-    }, [duration]);
-
-    // Speak next sentence
-    const speakNextSentence = useCallback(() => {
-        if (!isPlayingRef.current) return;
-        
-        if (currentIndexRef.current >= sentencesRef.current.length) {
-            stopPlayback();
-            return;
-        }
-        
-        const text = sentencesRef.current[currentIndexRef.current];
-        setCurrentCaption(text);
-        const words = text.split(/\s+/);
-        setCaptionWords(words);
-        setCurrentWordIndex(-1);
-        
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = playbackSpeed;
-        utterance.volume = isMuted ? 0 : volume / 100;
-        utterance.pitch = 1;
-        
-        // Get available voices
-        const availableVoices = window.speechSynthesis.getVoices();
-        
-        // Force set the voice - required for it to work
-        if (selectedVoice) {
-            utterance.voice = selectedVoice;
-        } else if (availableVoices.length > 0) {
-            // If no voice selected yet, try to find a good default
-            const googleVoice = availableVoices.find(v => v.name === 'Google UK English Female') 
-                || availableVoices.find(v => v.name.toLowerCase().includes('google'))
-                || availableVoices.find(v => v.lang.startsWith('en'));
-            if (googleVoice) {
-                utterance.voice = googleVoice;
-            }
-        }
-        
-        // Word boundary event for highlighting (not supported on all mobile browsers)
-        utterance.onboundary = (event) => {
-            if (event.name === 'word') {
-                const spokenText = text.substring(0, event.charIndex);
-                const wordCount = spokenText.split(/\s+/).filter(w => w.length > 0).length;
-                setCurrentWordIndex(wordCount);
-            }
-        };
-        
-        utterance.onend = () => {
-            setCurrentWordIndex(-1);
-            currentIndexRef.current++;
-            // Update time based on sentence progress
-            const progress = currentIndexRef.current / sentencesRef.current.length;
-            setCurrentTime(Math.floor(progress * duration));
-            
-            if (isPlayingRef.current && currentIndexRef.current < sentencesRef.current.length) {
-                // Longer delay on mobile for stability
-                const delay = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 300 : 200;
-                setTimeout(() => speakNextSentence(), delay);
-            } else if (currentIndexRef.current >= sentencesRef.current.length) {
-                stopPlayback();
-            }
-        };
-        
-        utterance.onerror = (event) => {
-            if (event.error !== 'interrupted' && event.error !== 'canceled') {
-                console.error('Speech error:', event.error);
-            }
-            setCurrentWordIndex(-1);
-            currentIndexRef.current++;
-            if (isPlayingRef.current && currentIndexRef.current < sentencesRef.current.length) {
-                setTimeout(() => speakNextSentence(), 300);
-            }
-        };
-        
-        utteranceRef.current = utterance;
-        
-        // Mobile browsers sometimes need the speak call wrapped
-        try {
-            window.speechSynthesis.speak(utterance);
-        } catch (e) {
-            console.error('Speech synthesis error:', e);
-            // Retry once after a delay
-            setTimeout(() => {
-                try {
-                    window.speechSynthesis.speak(utterance);
-                } catch (e2) {
-                    console.error('Speech synthesis retry failed:', e2);
-                }
-            }, 100);
-        }
-    }, [playbackSpeed, isMuted, volume, selectedVoice, duration]);
-
     // Stop playback
     const stopPlayback = useCallback(() => {
-        window.speechSynthesis?.cancel();
+        if (audioRef.current) {
+            audioRef.current.pause();
+        }
         isPlayingRef.current = false;
         setIsPlaying(false);
-        if (timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-        }
     }, []);
 
     // Toggle play/pause
     const togglePlay = useCallback(() => {
+        if (!audioRef.current) return;
+
         if (isPlaying) {
-            stopPlayback();
+            audioRef.current.pause();
+            isPlayingRef.current = false;
+            setIsPlaying(false);
         } else {
-            startSpeaking();
-            // Small delay then start speaking
-            setTimeout(() => {
-                speakNextSentence();
-            }, 100);
+            audioRef.current.play();
+            isPlayingRef.current = true;
+            setIsPlaying(true);
         }
-    }, [isPlaying, stopPlayback, startSpeaking, speakNextSentence]);
+    }, [isPlaying]);
 
     // Download Text Script
     const downloadText = () => {
