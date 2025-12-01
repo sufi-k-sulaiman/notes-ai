@@ -23,7 +23,7 @@ const CATEGORIES = {
         icon: Mountain,
         color: "#10B981",
         gradient: "from-emerald-500 to-teal-500",
-        items: ["Mountains", "Rivers", "Oceans", "Forests", "Deserts"]
+        items: ["Mountains", "Rivers", "Oceans", "Forests", "Deserts", "Islands", "Valleys", "Grasslands", "Polar Regions", "Caves"]
     },
     Living_Things: {
         name: "Living Things",
