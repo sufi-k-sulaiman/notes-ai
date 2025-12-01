@@ -163,13 +163,13 @@ export default function SearchPods() {
         return () => clearInterval(interval);
     }, []);
 
-    // Available Edge TTS voices
+    // Available Google TTS voices (Google TTS only supports language codes, not gender)
+    // Using different English variants for variety
     const googleVoices = [
         { id: 'en-gb', label: 'UK Female' },
-        { id: 'en-us', label: 'US Female' },
+        { id: 'en-us', label: 'US Male' },
         { id: 'en-au', label: 'AU Female' },
-        { id: 'en-uk-male', label: 'UK Male' },
-        { id: 'en-us-male', label: 'US Male' },
+        { id: 'en-in', label: 'UK Male' },
     ];
 
     // Cleanup audio on unmount
