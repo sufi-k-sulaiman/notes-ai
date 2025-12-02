@@ -659,27 +659,32 @@ export default function TankCity({ onExit }) {
                     return false;
                 }
 
-                // Check word brick collision
+                // Check word brick collision - only player bullets can destroy words
                 for (let i = wordBricks.length - 1; i >= 0; i--) {
                     const brick = wordBricks[i];
                     if (brick.health <= 0) continue;
-                    
+
                     if (bullet.x > brick.x && bullet.x < brick.x + brick.width &&
                         bullet.y > brick.y && bullet.y < brick.y + brick.height) {
-                        brick.health--;
-                        spawnParticles(bullet.x, bullet.y, brick.color);
-                        
-                        if (brick.health <= 0 && bullet.friendly) {
-                            state.score += 100;
-                            state.wordsDestroyed++;
-                            console.log('Word destroyed:', state.wordsDestroyed, '/', state.totalWords);
-                            setScore(state.score);
-                            setWordsDestroyed(state.wordsDestroyed);
-                            
-                            // Show word and short definition
-                            const shortDef = brick.definition ? brick.definition.split('.')[0].substring(0, 50) : '';
-                            addFloatingText(brick.x + brick.width/2, brick.y, `${brick.word.toUpperCase()}: ${shortDef}`, brick.color, 100);
+
+                        // Only friendly (player) bullets destroy words
+                        if (bullet.friendly) {
+                            brick.health--;
+                            spawnParticles(bullet.x, bullet.y, brick.color);
+
+                            if (brick.health <= 0) {
+                                state.score += 100;
+                                state.wordsDestroyed++;
+                                console.log('Word destroyed:', state.wordsDestroyed, '/', state.totalWords);
+                                setScore(state.score);
+                                setWordsDestroyed(state.wordsDestroyed);
+
+                                // Show word and short definition
+                                const shortDef = brick.definition ? brick.definition.split('.')[0].substring(0, 50) : '';
+                                addFloatingText(brick.x + brick.width/2, brick.y, `${brick.word.toUpperCase()}: ${shortDef}`, brick.color, 100);
+                            }
                         }
+                        // Enemy bullets just bounce off words (block them)
                         return false;
                     }
                 }
