@@ -351,16 +351,45 @@ export default function SearchPage() {
                     </div>
                 )}
 
-                {/* Empty State */}
-                {!loading && !results && !query && (
-                    <div className="text-center py-20">
-                        <div className="w-20 h-20 rounded-2xl bg-purple-100 flex items-center justify-center mx-auto mb-6">
-                            <Search className="w-10 h-10 text-purple-600" />
+                {/* Default State - Show all features */}
+                {!loading && !results && (
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500 mb-3">Explore Features</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {Object.entries(IN_APP_CONTENT).map(([page, item]) => {
+                                const Icon = item.icon;
+                                return (
+                                    <div key={page} className="bg-white rounded-xl border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all overflow-hidden">
+                                        <Link
+                                            to={createPageUrl(page)}
+                                            className="flex items-center gap-4 p-4 group"
+                                        >
+                                            <div 
+                                                className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                style={{ backgroundColor: `${item.color}15` }}
+                                            >
+                                                <Icon className="w-6 h-6" style={{ color: item.color }} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">{item.name}</h4>
+                                                <p className="text-sm text-gray-500 truncate">{item.description}</p>
+                                            </div>
+                                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-500 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                                        </Link>
+                                        {item.canCreate && (
+                                            <Link 
+                                                to={createPageUrl(page)}
+                                                className="flex items-center gap-2 px-4 py-2.5 border-t border-gray-100 text-sm font-medium hover:bg-purple-50 transition-colors"
+                                                style={{ color: item.color }}
+                                            >
+                                                <Plus className="w-4 h-4" />
+                                                {item.createLabel}
+                                            </Link>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Search Anything</h2>
-                        <p className="text-gray-500 max-w-md mx-auto">
-                            Search across pages, get AI-powered answers, and discover information quickly.
-                        </p>
                     </div>
                 )}
             </div>
