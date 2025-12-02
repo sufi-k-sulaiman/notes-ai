@@ -251,6 +251,7 @@ export default function News() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [lastUpdated, setLastUpdated] = useState(null);
+    const [activeSubtopic, setActiveSubtopic] = useState(null);
 
     const fetchNews = async (keyword) => {
         setLoading(true);
@@ -306,6 +307,7 @@ export default function News() {
     const handleCategoryClick = (categoryId) => {
         setActiveCategory(categoryId);
         setSearchQuery('');
+        setActiveSubtopic(null);
     };
 
     return (
@@ -383,9 +385,14 @@ export default function News() {
                                 key={subtopic}
                                 onClick={() => {
                                     setSearchQuery(subtopic);
+                                    setActiveSubtopic(subtopic);
                                     fetchNews(subtopic);
                                 }}
-                                className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-medium rounded-full border border-red-200 transition-colors"
+                                className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
+                                    activeSubtopic === subtopic
+                                        ? 'bg-red-600 text-white border-red-600'
+                                        : 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200'
+                                }`}
                             >
                                 {subtopic}
                             </button>
