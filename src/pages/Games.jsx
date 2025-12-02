@@ -23,6 +23,22 @@ export default function Games() {
         return <WordShooter onExit={() => setActiveGame(null)} />;
     }
 
+    if (activeGame === 'tank-city') {
+        return (
+            <div className="min-h-screen bg-gray-900 p-4">
+                <div className="max-w-xl mx-auto">
+                    <div className="flex justify-between items-center mb-4">
+                        <h1 className="text-xl font-bold text-white">Tank City</h1>
+                        <Button variant="outline" size="sm" onClick={() => setActiveGame(null)}>
+                            Exit
+                        </Button>
+                    </div>
+                    <TankCity />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="max-w-6xl mx-auto">
