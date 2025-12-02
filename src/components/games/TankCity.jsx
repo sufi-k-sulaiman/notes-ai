@@ -141,6 +141,7 @@ export default function TankCity({ onExit }) {
     };
 
     const generateWordData = async (topic) => {
+        setCurrentTopic(topic); // Set topic FIRST before loading screen
         setLoading(true);
         setScreen('loading');
         try {
@@ -156,8 +157,10 @@ export default function TankCity({ onExit }) {
             const words = result?.words || [];
             setWordData(words);
             setTotalWords(words.length);
-            setCurrentTopic(topic);
             setLevel(1);
+            setWordsDestroyed(0);
+            setLives(3);
+            setScore(0);
             setScreen('game');
         } catch (error) {
             console.error('Failed to generate words:', error);
@@ -901,38 +904,73 @@ export default function TankCity({ onExit }) {
                 ctx.fillStyle = '#00ddff';
                 ctx.fillText(`SHIELD: ${state.shieldHealth}/3`, canvas.width / 2, baseY - 8);
                 
-                // Base - draw globe/world icon
+                // Base - draw spinning Earth
                 const centerX = baseX + TILE;
                 const centerY = baseY + TILE * 0.75;
                 const radius = TILE * 0.7;
+                const rotation = Date.now() * 0.001; // Slow spin
                 
-                // Globe circle
-                ctx.strokeStyle = '#60a5fa';
-                ctx.lineWidth = 3;
+                // Earth circle with gradient
+                const earthGradient = ctx.createRadialGradient(centerX - radius * 0.3, centerY - radius * 0.3, 0, centerX, centerY, radius);
+                earthGradient.addColorStop(0, '#4ade80');
+                earthGradient.addColorStop(0.5, '#22c55e');
+                earthGradient.addColorStop(1, '#166534');
+                
+                ctx.fillStyle = earthGradient;
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Ocean blue base
+                const oceanGradient = ctx.createRadialGradient(centerX - radius * 0.3, centerY - radius * 0.3, 0, centerX, centerY, radius);
+                oceanGradient.addColorStop(0, '#60a5fa');
+                oceanGradient.addColorStop(0.5, '#3b82f6');
+                oceanGradient.addColorStop(1, '#1e40af');
+                
+                ctx.fillStyle = oceanGradient;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw rotating continents (simplified)
+                ctx.fillStyle = '#22c55e';
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                
+                // Continent 1 - rotating blob
+                const c1x = Math.cos(rotation) * radius * 0.3;
+                const c1y = Math.sin(rotation * 0.5) * radius * 0.2;
+                ctx.beginPath();
+                ctx.ellipse(c1x, c1y - radius * 0.2, radius * 0.35, radius * 0.25, rotation * 0.3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Continent 2
+                const c2x = Math.cos(rotation + Math.PI) * radius * 0.4;
+                const c2y = Math.sin(rotation * 0.5 + 1) * radius * 0.15;
+                ctx.beginPath();
+                ctx.ellipse(c2x, c2y + radius * 0.15, radius * 0.25, radius * 0.2, -rotation * 0.2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Continent 3 - small island
+                const c3x = Math.cos(rotation + Math.PI/2) * radius * 0.5;
+                ctx.beginPath();
+                ctx.arc(c3x, radius * 0.3, radius * 0.12, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+                
+                // Atmosphere glow
+                ctx.strokeStyle = 'rgba(96, 165, 250, 0.5)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius + 3, 0, Math.PI * 2);
                 ctx.stroke();
                 
-                // Horizontal lines
+                // Specular highlight
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
                 ctx.beginPath();
-                ctx.moveTo(centerX - radius, centerY);
-                ctx.lineTo(centerX + radius, centerY);
-                ctx.stroke();
-                
-                // Vertical ellipse
-                ctx.beginPath();
-                ctx.ellipse(centerX, centerY, radius * 0.4, radius, 0, 0, Math.PI * 2);
-                ctx.stroke();
-                
-                // Latitude lines
-                ctx.beginPath();
-                ctx.moveTo(centerX - radius * 0.85, centerY - radius * 0.4);
-                ctx.quadraticCurveTo(centerX, centerY - radius * 0.3, centerX + radius * 0.85, centerY - radius * 0.4);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(centerX - radius * 0.85, centerY + radius * 0.4);
-                ctx.quadraticCurveTo(centerX, centerY + radius * 0.3, centerX + radius * 0.85, centerY + radius * 0.4);
-                ctx.stroke();
+                ctx.ellipse(centerX - radius * 0.3, centerY - radius * 0.3, radius * 0.2, radius * 0.15, -0.5, 0, Math.PI * 2);
+                ctx.fill();
             }
 
             // Draw tanks
@@ -1118,8 +1156,10 @@ export default function TankCity({ onExit }) {
             updateParticles();
             
             // Check level complete after all updates
-            // enemiesTotal tracks spawns remaining, enemies.length tracks alive enemies
-            if (!state.levelComplete && state.enemiesTotal <= 0 && state.enemies.length === 0 && state.wordsDestroyed >= state.totalWords) {
+            // All words destroyed AND all enemies killed (none left to spawn and none alive)
+            const allWordsDestroyed = state.wordsDestroyed >= state.totalWords;
+            const allEnemiesKilled = state.enemiesTotal <= 0 && state.enemies.length === 0;
+            if (!state.levelComplete && allWordsDestroyed && allEnemiesKilled) {
                 state.levelComplete = true;
             }
             
