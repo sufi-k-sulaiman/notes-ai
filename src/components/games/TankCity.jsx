@@ -426,23 +426,9 @@ export default function TankCity({ onExit }) {
         };
 
         const addFloatingText = (x, y, text, color, bonus) => {
-            // Star Wars style crawl - queue if there's already one showing
-            if (state.floatingTexts.length > 0) {
-                state.textQueue = state.textQueue || [];
-                state.textQueue.push({ text, color, bonus });
-                return;
-            }
-            state.floatingTexts.push({
-                x: canvas.width / 2,
-                y: canvas.height + 50,
-                vy: -1.2,
-                text,
-                bonus,
-                life: 400,
-                maxLife: 400,
-                color,
-                startY: canvas.height + 50,
-            });
+            // Queue all texts to show one after another
+            state.textQueue = state.textQueue || [];
+            state.textQueue.push({ text, color, bonus });
         };
 
         const keys = keysRef.current;
@@ -773,20 +759,24 @@ export default function TankCity({ onExit }) {
                 return ft.y > -150;
             });
             
-            // Process queue when current text is done
-            if (state.floatingTexts.length === 0 && state.textQueue?.length > 0) {
-                const next = state.textQueue.shift();
-                state.floatingTexts.push({
-                    x: canvas.width / 2,
-                    y: canvas.height + 50,
-                    vy: -1.2,
-                    text: next.text,
-                    bonus: next.bonus,
-                    life: 400,
-                    maxLife: 400,
-                    color: next.color,
-                    startY: canvas.height + 50,
-                });
+            // Process queue - show next text when current one is high enough
+            if (state.textQueue?.length > 0) {
+                const lastText = state.floatingTexts[state.floatingTexts.length - 1];
+                // Spawn next when no texts or last text has moved up enough
+                if (!lastText || lastText.y < canvas.height * 0.6) {
+                    const next = state.textQueue.shift();
+                    state.floatingTexts.push({
+                        x: canvas.width / 2,
+                        y: canvas.height + 50,
+                        vy: -1.5,
+                        text: next.text,
+                        bonus: next.bonus,
+                        life: 600,
+                        maxLife: 600,
+                        color: next.color,
+                        startY: canvas.height + 50,
+                    });
+                }
             }
         };
 
@@ -1025,20 +1015,20 @@ export default function TankCity({ onExit }) {
                 const def = parts[1] || '';
                 
                 ctx.fillStyle = ft.color;
-                ctx.font = 'bold 28px Inter';
+                ctx.font = 'bold 36px Inter';
                 ctx.textAlign = 'center';
                 ctx.fillText(word, 0, 0);
                 
                 if (def) {
                     ctx.fillStyle = '#e2e8f0';
-                    ctx.font = '16px Inter';
-                    ctx.fillText(def, 0, 32);
+                    ctx.font = '20px Inter';
+                    ctx.fillText(def, 0, 40);
                 }
                 
                 if (ft.bonus > 0) {
                     ctx.fillStyle = '#ffd700';
-                    ctx.font = 'bold 18px Inter';
-                    ctx.fillText(`+${ft.bonus}`, 0, def ? 58 : 32);
+                    ctx.font = 'bold 22px Inter';
+                    ctx.fillText(`+${ft.bonus}`, 0, def ? 70 : 40);
                 }
                 
                 ctx.restore();
