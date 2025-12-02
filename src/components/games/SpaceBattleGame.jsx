@@ -319,23 +319,39 @@ export default function SpaceBattleGame({ onExit }) {
             if (e.key.toLowerCase() === 'b' && state.bombs > 0) {
                 e.preventDefault();
                 state.bombs--;
-                // Bomb destroys all enemies
+                // Electronic wave bomb - create expanding ripple
+                state.waveEffects = state.waveEffects || [];
+                state.waveEffects.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    radius: 0,
+                    maxRadius: Math.max(canvas.width, canvas.height),
+                    speed: 15,
+                    life: 60,
+                    maxLife: 60
+                });
+                // Destroy all enemies with electric sparks
                 state.enemies.forEach(enemy => {
-                    for (let j = 0; j < 30; j++) {
+                    const ex = canvas.width / 2 + (enemy.x - state.viewAngle * 2) * enemy.z * 3;
+                    const ey = enemy.screenY || canvas.height * 0.3;
+                    // Electric sparks
+                    for (let j = 0; j < 25; j++) {
+                        const angle = Math.random() * Math.PI * 2;
                         state.particles.push({
-                            x: canvas.width / 2 + (enemy.x - state.viewAngle * 2) * enemy.z * 3,
-                            y: canvas.height * 0.45 + (canvas.height - canvas.height * 0.45) * enemy.z * 0.8,
-                            vx: (Math.random() - 0.5) * 20,
-                            vy: (Math.random() - 0.5) * 20 - 5,
-                            life: 60, maxLife: 60,
-                            color: ['#ff6b35', '#ffaa00', '#ff4444'][Math.floor(Math.random() * 3)]
+                            x: ex, y: ey,
+                            vx: Math.cos(angle) * (5 + Math.random() * 10),
+                            vy: Math.sin(angle) * (5 + Math.random() * 10),
+                            life: 30 + Math.random() * 20, maxLife: 50,
+                            color: ['#00ffff', '#0088ff', '#00aaff', '#ffffff', '#88ffff'][Math.floor(Math.random() * 5)],
+                            size: 2 + Math.random() * 4,
+                            isElectric: true
                         });
                     }
                     state.score += 100;
                     state.aliensKilled += 1;
                 });
                 state.enemies = [];
-                state.cameraShake = 15;
+                state.cameraShake = 20;
             }
         };
         const handleKeyUp = (e) => { keys[e.key.toLowerCase()] = false; };
@@ -626,14 +642,31 @@ export default function SpaceBattleGame({ onExit }) {
                     
                     if (Math.abs(laserX - screenX) < size/2 && 
                         Math.abs(laserY - screenY) < size/2) {
-                        // Explosion
-                        for (let j = 0; j < 30; j++) {
+                        // Fireball explosion
+                        for (let j = 0; j < 50; j++) {
+                            const angle = Math.random() * Math.PI * 2;
+                            const speed = 2 + Math.random() * 12;
                             state.particles.push({
                                 x: screenX, y: screenY,
-                                vx: (Math.random() - 0.5) * 15,
-                                vy: (Math.random() - 0.5) * 15 - 5,
-                                life: 40, maxLife: 40,
-                                color: enemy.color
+                                vx: Math.cos(angle) * speed,
+                                vy: Math.sin(angle) * speed - 3,
+                                life: 50 + Math.random() * 30, maxLife: 80,
+                                color: ['#ff4400', '#ff6600', '#ff8800', '#ffaa00', '#ffcc00', '#ffffff'][Math.floor(Math.random() * 6)],
+                                size: 3 + Math.random() * 8,
+                                isFireball: true
+                            });
+                        }
+                        // Add smoke particles
+                        for (let j = 0; j < 20; j++) {
+                            state.particles.push({
+                                x: screenX + (Math.random() - 0.5) * 30,
+                                y: screenY + (Math.random() - 0.5) * 30,
+                                vx: (Math.random() - 0.5) * 3,
+                                vy: -1 - Math.random() * 2,
+                                life: 60, maxLife: 60,
+                                color: '#444444',
+                                size: 10 + Math.random() * 15,
+                                isSmoke: true
                             });
                         }
                         state.lasers.splice(i, 1);
@@ -681,17 +714,97 @@ export default function SpaceBattleGame({ onExit }) {
                 return laser.progress < 1.2;
             });
 
+            // Update and draw wave effects (electronic bomb)
+            if (state.waveEffects) {
+                state.waveEffects = state.waveEffects.filter(wave => {
+                    wave.radius += wave.speed;
+                    wave.life--;
+                    const alpha = wave.life / wave.maxLife;
+                    
+                    // Draw multiple ripple rings
+                    for (let i = 0; i < 3; i++) {
+                        const ringRadius = wave.radius - i * 30;
+                        if (ringRadius > 0) {
+                            ctx.strokeStyle = `rgba(0, 200, 255, ${alpha * (1 - i * 0.3)})`;
+                            ctx.lineWidth = 4 - i;
+                            ctx.beginPath();
+                            ctx.arc(wave.x, wave.y, ringRadius, 0, Math.PI * 2);
+                            ctx.stroke();
+                            
+                            // Add electric arc segments
+                            ctx.strokeStyle = `rgba(150, 230, 255, ${alpha * 0.8})`;
+                            ctx.lineWidth = 2;
+                            for (let a = 0; a < 12; a++) {
+                                const arcAngle = (a / 12) * Math.PI * 2 + wave.radius * 0.02;
+                                const x1 = wave.x + Math.cos(arcAngle) * ringRadius;
+                                const y1 = wave.y + Math.sin(arcAngle) * ringRadius;
+                                const x2 = wave.x + Math.cos(arcAngle) * (ringRadius + 15 + Math.random() * 10);
+                                const y2 = wave.y + Math.sin(arcAngle) * (ringRadius + 15 + Math.random() * 10);
+                                ctx.beginPath();
+                                ctx.moveTo(x1, y1);
+                                ctx.lineTo(x2, y2);
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    return wave.life > 0 && wave.radius < wave.maxRadius;
+                });
+            }
+
             // Update and draw particles
             state.particles = state.particles.filter(p => {
                 p.x += p.vx;
                 p.y += p.vy;
-                p.vy += 0.3;
+                
+                if (p.isSmoke) {
+                    p.vx *= 0.98;
+                    p.vy *= 0.98;
+                    p.size *= 1.02;
+                } else if (p.isElectric) {
+                    p.vx *= 0.95;
+                    p.vy *= 0.95;
+                } else if (p.isFireball) {
+                    p.vy += 0.1;
+                    p.vx *= 0.98;
+                    p.size *= 0.97;
+                } else {
+                    p.vy += 0.3;
+                }
                 p.life--;
-                ctx.fillStyle = p.color || `rgba(255, 180, 80, ${p.life / p.maxLife})`;
-                ctx.globalAlpha = p.life / p.maxLife;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-                ctx.fill();
+                
+                const alpha = p.life / p.maxLife;
+                const size = p.size || 4;
+                
+                if (p.isSmoke) {
+                    ctx.fillStyle = `rgba(80, 80, 80, ${alpha * 0.5})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (p.isElectric) {
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = p.color;
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = alpha;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                } else if (p.isFireball) {
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = '#ff4400';
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = alpha;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                } else {
+                    ctx.fillStyle = p.color || `rgba(255, 180, 80, ${alpha})`;
+                    ctx.globalAlpha = alpha;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
                 ctx.globalAlpha = 1;
                 return p.life > 0;
             });
