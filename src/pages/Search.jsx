@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Search, Loader2, FileText, Lightbulb, ExternalLink, Brain, Map, BookOpen, Newspaper, Headphones, ChevronRight, Globe, ListTodo, Plus, Play, Clock, TrendingUp } from 'lucide-react';
+import { Search, Loader2, FileText, Lightbulb, ExternalLink, Brain, Map, BookOpen, Newspaper, Headphones, ChevronRight, Globe, ListTodo, Plus, Play, Clock, TrendingUp, Pause, Volume2, VolumeX, X, Sparkles, Send, GraduationCap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { menuItems } from '@/components/NavigationConfig';
+import { menuItems, LOGO_URL } from '@/components/NavigationConfig';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import ReactMarkdown from 'react-markdown';
 
 // In-app content definitions for searchable pages
 const IN_APP_CONTENT = {
@@ -88,14 +90,39 @@ export default function SearchPage() {
     const [loading, setLoading] = useState(false);
     const [searchedQuery, setSearchedQuery] = useState('');
     const [inAppResults, setInAppResults] = useState([]);
-    const [activeTab, setActiveTab] = useState('all');
+    const [activeTab, setActiveTab] = useState('news');
     const [tabResults, setTabResults] = useState({
         news: { loading: false, data: [] },
         pods: { loading: false, data: null },
         intelligence: { loading: false, data: null },
         learning: { loading: false, data: [] },
-        mindmaps: { loading: false, data: [] }
+        mindmaps: { loading: false, data: [] },
+        qwirey: { loading: false, data: null }
     });
+
+    // Pod Player State
+    const [podPlayer, setPodPlayer] = useState({
+        isGenerating: false,
+        isPlaying: false,
+        currentPod: null,
+        audio: null,
+        script: null,
+        progress: 0
+    });
+    const audioRef = useRef(null);
+
+    // MindMap State
+    const [mindmapData, setMindmapData] = useState(null);
+    const [mindmapLoading, setMindmapLoading] = useState(false);
+
+    // Learning State
+    const [learningData, setLearningData] = useState(null);
+    const [learningLoading, setLearningLoading] = useState(false);
+
+    // Qwirey State
+    const [qwireyPrompt, setQwireyPrompt] = useState('');
+    const [qwireyLoading, setQwireyLoading] = useState(false);
+    const [qwireyResult, setQwireyResult] = useState(null);
 
     // Filter matching pages from navigation
     const matchingPages = menuItems.filter(item => 
@@ -232,6 +259,13 @@ export default function SearchPage() {
         setSearchedQuery(searchQuery);
         setActiveTab('news');
         
+        // Reset embedded states
+        setPodPlayer({ isGenerating: false, isPlaying: false, currentPod: null, audio: null, script: null, progress: 0 });
+        setMindmapData(null);
+        setLearningData(null);
+        setQwireyResult(null);
+        setQwireyPrompt(searchQuery);
+        
         // Search in-app content first
         const appMatches = searchInAppContent(searchQuery);
         setInAppResults(appMatches);
@@ -288,8 +322,186 @@ export default function SearchPage() {
         }
     };
 
+    // Pod Generation & Player
+    const generatePod = async (episode) => {
+        setPodPlayer(prev => ({ ...prev, isGenerating: true, currentPod: episode }));
+        try {
+            // Generate script
+            const scriptResponse = await base44.integrations.Core.InvokeLLM({
+                prompt: `Write a 2-3 minute podcast script about: "${episode.title}". Description: ${episode.description}. Make it engaging and conversational.`,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        script: { type: "string" }
+                    }
+                }
+            });
+            
+            const script = scriptResponse?.script || `Welcome to this episode about ${episode.title}. ${episode.description}`;
+            
+            // Generate audio
+            const audioResponse = await base44.functions.invoke('elevenlabsTTS', {
+                text: script.substring(0, 4000),
+                voice_id: 'pNInz6obpgDQGcFmaJgB'
+            });
+            
+            if (audioResponse.data?.audio) {
+                const audioBlob = new Blob(
+                    [Uint8Array.from(atob(audioResponse.data.audio), c => c.charCodeAt(0))],
+                    { type: 'audio/mpeg' }
+                );
+                const audioUrl = URL.createObjectURL(audioBlob);
+                
+                if (audioRef.current) {
+                    audioRef.current.src = audioUrl;
+                    audioRef.current.play();
+                }
+                
+                setPodPlayer(prev => ({
+                    ...prev,
+                    isGenerating: false,
+                    isPlaying: true,
+                    audio: audioUrl,
+                    script
+                }));
+            }
+        } catch (error) {
+            console.error('Pod generation failed:', error);
+            setPodPlayer(prev => ({ ...prev, isGenerating: false }));
+        }
+    };
+
+    const togglePodPlayback = () => {
+        if (audioRef.current) {
+            if (podPlayer.isPlaying) {
+                audioRef.current.pause();
+            } else {
+                audioRef.current.play();
+            }
+            setPodPlayer(prev => ({ ...prev, isPlaying: !prev.isPlaying }));
+        }
+    };
+
+    const closePodPlayer = () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.src = '';
+        }
+        setPodPlayer({ isGenerating: false, isPlaying: false, currentPod: null, audio: null, script: null, progress: 0 });
+    };
+
+    // MindMap Generation
+    const generateMindmap = async (topic) => {
+        setMindmapLoading(true);
+        try {
+            const response = await base44.integrations.Core.InvokeLLM({
+                prompt: `Create a detailed mind map for: "${topic.title}". Include the central topic and 5-7 main branches, each with 2-3 sub-branches.`,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        centralTopic: { type: "string" },
+                        branches: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    name: { type: "string" },
+                                    color: { type: "string" },
+                                    children: { type: "array", items: { type: "string" } }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            setMindmapData(response);
+        } catch (error) {
+            console.error('Mindmap generation failed:', error);
+        } finally {
+            setMindmapLoading(false);
+        }
+    };
+
+    // Learning Island Generation
+    const generateLearning = async (module) => {
+        setLearningLoading(true);
+        try {
+            const response = await base44.integrations.Core.InvokeLLM({
+                prompt: `Create a learning module for: "${module.title}". Include 5 lessons with titles, descriptions, and key takeaways.`,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        moduleTitle: { type: "string" },
+                        description: { type: "string" },
+                        lessons: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    title: { type: "string" },
+                                    description: { type: "string" },
+                                    duration: { type: "string" },
+                                    keyTakeaways: { type: "array", items: { type: "string" } }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            setLearningData(response);
+        } catch (error) {
+            console.error('Learning generation failed:', error);
+        } finally {
+            setLearningLoading(false);
+        }
+    };
+
+    // Qwirey Chat
+    const handleQwireySubmit = async () => {
+        if (!qwireyPrompt.trim()) return;
+        setQwireyLoading(true);
+        try {
+            const response = await base44.integrations.Core.InvokeLLM({
+                prompt: qwireyPrompt,
+                add_context_from_internet: true,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        answer: { type: "string" },
+                        keyPoints: { type: "array", items: { type: "string" } },
+                        followUpQuestions: { type: "array", items: { type: "string" } }
+                    }
+                }
+            });
+            setQwireyResult(response);
+        } catch (error) {
+            console.error('Qwirey failed:', error);
+        } finally {
+            setQwireyLoading(false);
+        }
+    };
+
+    // Audio element for pod player
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.ontimeupdate = () => {
+                if (audioRef.current.duration) {
+                    setPodPlayer(prev => ({
+                        ...prev,
+                        progress: (audioRef.current.currentTime / audioRef.current.duration) * 100
+                    }));
+                }
+            };
+            audioRef.current.onended = () => {
+                setPodPlayer(prev => ({ ...prev, isPlaying: false, progress: 0 }));
+            };
+        }
+    }, []);
+
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+            <audio ref={audioRef} className="hidden" />
+            
             <div className="max-w-4xl mx-auto">
                 {/* Search Header */}
                 <div className="mb-8">
@@ -311,64 +523,48 @@ export default function SearchPage() {
                     </form>
                 </div>
 
-                {/* Quick Links to Pages */}
-                {matchingPages.length > 0 && query && (
-                    <div className="mb-6">
-                        <h3 className="text-sm font-medium text-gray-500 mb-3">Pages</h3>
-                        <div className="flex flex-wrap gap-2">
-                            {matchingPages.map((page) => (
-                                <Link
-                                    key={page.label}
-                                    to={page.href}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-all"
-                                >
-                                    <page.icon className="w-4 h-4 text-purple-600" />
-                                    <span className="text-gray-700">{page.label}</span>
-                                </Link>
-                            ))}
+                {/* Pod Player */}
+                {(podPlayer.currentPod || podPlayer.isGenerating) && (
+                    <div className="mb-6 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl p-4 text-white">
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                                    <Headphones className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold">{podPlayer.currentPod?.title}</h4>
+                                    <p className="text-sm text-white/70">
+                                        {podPlayer.isGenerating ? 'Generating audio...' : 'Now Playing'}
+                                    </p>
+                                </div>
+                            </div>
+                            <button onClick={closePodPlayer} className="p-2 hover:bg-white/20 rounded-lg">
+                                <X className="w-5 h-5" />
+                            </button>
                         </div>
-                    </div>
-                )}
-
-                {/* In-App Content Results */}
-                {inAppResults.length > 0 && !loading && (
-                    <div className="mb-6">
-                        <h3 className="text-sm font-medium text-gray-500 mb-3">In-App Features</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {inAppResults.map((item) => {
-                                const Icon = item.icon;
-                                return (
-                                    <div key={item.page} className="bg-white rounded-xl border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all overflow-hidden">
-                                        <Link
-                                            to={createPageUrl(item.page)}
-                                            className="flex items-center gap-4 p-4 group"
-                                        >
-                                            <div 
-                                                className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                                                style={{ backgroundColor: `${item.color}15` }}
-                                            >
-                                                <Icon className="w-6 h-6" style={{ color: item.color }} />
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h4 className="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">{item.name}</h4>
-                                                <p className="text-sm text-gray-500 truncate">{item.description}</p>
-                                            </div>
-                                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-500 group-hover:translate-x-1 transition-all flex-shrink-0" />
-                                        </Link>
-                                        {item.canCreate && (
-                                            <Link 
-                                                to={createPageUrl(item.page)}
-                                                className="flex items-center gap-2 px-4 py-2.5 border-t border-gray-100 text-sm font-medium hover:bg-purple-50 transition-colors"
-                                                style={{ color: item.color }}
-                                            >
-                                                <Plus className="w-4 h-4" />
-                                                {item.createLabel}
-                                            </Link>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
+                        {podPlayer.isGenerating ? (
+                            <div className="flex items-center gap-3">
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <span className="text-sm">Creating your personalized podcast...</span>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="h-1 bg-white/30 rounded-full mb-3">
+                                    <div 
+                                        className="h-full bg-white rounded-full transition-all"
+                                        style={{ width: `${podPlayer.progress}%` }}
+                                    />
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <button 
+                                        onClick={togglePodPlayback}
+                                        className="w-10 h-10 rounded-full bg-white text-pink-600 flex items-center justify-center hover:scale-105 transition-transform"
+                                    >
+                                        {podPlayer.isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 )}
 
@@ -403,7 +599,6 @@ export default function SearchPage() {
                             <TabsList className="w-full justify-start bg-white border border-gray-200 rounded-xl p-1 mb-4 flex-wrap h-auto gap-1">
                                 <TabsTrigger value="news" className="rounded-lg data-[state=active]:bg-red-600 data-[state=active]:text-white">
                                     <Newspaper className="w-4 h-4 mr-2" /> News
-                                    {tabResults.news.data?.length > 0 && <span className="ml-1 text-xs">({tabResults.news.data.length})</span>}
                                 </TabsTrigger>
                                 <TabsTrigger value="pods" className="rounded-lg data-[state=active]:bg-pink-600 data-[state=active]:text-white">
                                     <Headphones className="w-4 h-4 mr-2" /> Pods
@@ -411,11 +606,14 @@ export default function SearchPage() {
                                 <TabsTrigger value="mindmaps" className="rounded-lg data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
                                     <Brain className="w-4 h-4 mr-2" /> MindMaps
                                 </TabsTrigger>
+                                <TabsTrigger value="learning" className="rounded-lg data-[state=active]:bg-amber-600 data-[state=active]:text-white">
+                                    <GraduationCap className="w-4 h-4 mr-2" /> Learning
+                                </TabsTrigger>
                                 <TabsTrigger value="intelligence" className="rounded-lg data-[state=active]:bg-violet-600 data-[state=active]:text-white">
                                     <Lightbulb className="w-4 h-4 mr-2" /> Intelligence
                                 </TabsTrigger>
-                                <TabsTrigger value="learning" className="rounded-lg data-[state=active]:bg-amber-600 data-[state=active]:text-white">
-                                    <BookOpen className="w-4 h-4 mr-2" /> Learning
+                                <TabsTrigger value="qwirey" className="rounded-lg data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                                    <Sparkles className="w-4 h-4 mr-2" /> Qwirey
                                 </TabsTrigger>
                             </TabsList>
 
@@ -442,12 +640,9 @@ export default function SearchPage() {
                                 ) : (
                                     <div className="text-center py-12 text-gray-500">No news found for "{searchedQuery}"</div>
                                 )}
-                                <Link to={createPageUrl('News')} className="mt-4 inline-flex items-center gap-2 text-red-600 hover:text-red-700 font-medium">
-                                    View all news <ChevronRight className="w-4 h-4" />
-                                </Link>
                             </TabsContent>
 
-                            {/* Pods Tab */}
+                            {/* Pods Tab - Generate directly */}
                             <TabsContent value="pods">
                                 {tabResults.pods.loading ? (
                                     <div className="flex items-center justify-center py-12">
@@ -456,10 +651,13 @@ export default function SearchPage() {
                                 ) : tabResults.pods.data?.episodes?.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {tabResults.pods.data.episodes.map((episode, i) => (
-                                            <Link key={i} to={createPageUrl('SearchPods') + `?topic=${encodeURIComponent(episode.title)}`}
-                                               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-pink-300 transition-all group">
+                                            <div 
+                                                key={i}
+                                                onClick={() => generatePod(episode)}
+                                                className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-pink-300 transition-all cursor-pointer group"
+                                            >
                                                 <div className="flex items-start gap-3">
-                                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center flex-shrink-0">
+                                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                                                         <Play className="w-5 h-5 text-pink-600" />
                                                     </div>
                                                     <div className="flex-1 min-w-0">
@@ -473,10 +671,10 @@ export default function SearchPage() {
                                                 </div>
                                                 <div className="mt-3 pt-3 border-t border-gray-100">
                                                     <span className="text-pink-600 text-sm font-medium flex items-center gap-1">
-                                                        <Plus className="w-4 h-4" /> Generate this Pod
+                                                        <Play className="w-4 h-4" /> Generate & Play
                                                     </span>
                                                 </div>
-                                            </Link>
+                                            </div>
                                         ))}
                                     </div>
                                 ) : (
@@ -484,17 +682,61 @@ export default function SearchPage() {
                                 )}
                             </TabsContent>
 
-                            {/* MindMaps Tab */}
+                            {/* MindMaps Tab - Generate directly */}
                             <TabsContent value="mindmaps">
-                                {tabResults.mindmaps.loading ? (
+                                {mindmapData ? (
+                                    <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <h3 className="text-xl font-bold text-gray-900">{mindmapData.centralTopic}</h3>
+                                            <Button variant="outline" size="sm" onClick={() => setMindmapData(null)}>
+                                                <X className="w-4 h-4 mr-1" /> Close
+                                            </Button>
+                                        </div>
+                                        <div className="flex flex-wrap justify-center gap-4">
+                                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-center p-4 text-sm">
+                                                {mindmapData.centralTopic}
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+                                            {mindmapData.branches?.map((branch, i) => (
+                                                <div key={i} className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
+                                                    <h4 className="font-semibold text-gray-900 mb-2">{branch.name}</h4>
+                                                    <ul className="space-y-1">
+                                                        {branch.children?.map((child, j) => (
+                                                            <li key={j} className="text-sm text-gray-600 flex items-start gap-2">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
+                                                                {child}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="mt-4 text-center">
+                                            <Link to={createPageUrl('MindMap') + `?topic=${encodeURIComponent(mindmapData.centralTopic)}`}>
+                                                <Button className="bg-emerald-600 hover:bg-emerald-700">
+                                                    Open Full MindMap Editor <ChevronRight className="w-4 h-4 ml-1" />
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ) : mindmapLoading ? (
+                                    <div className="flex items-center justify-center py-12">
+                                        <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+                                        <span className="ml-3 text-gray-600">Generating mindmap...</span>
+                                    </div>
+                                ) : tabResults.mindmaps.loading ? (
                                     <div className="flex items-center justify-center py-12">
                                         <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
                                     </div>
                                 ) : tabResults.mindmaps.data?.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {tabResults.mindmaps.data.map((topic, i) => (
-                                            <Link key={i} to={createPageUrl('MindMap') + `?topic=${encodeURIComponent(topic.title)}`}
-                                               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-emerald-300 transition-all group">
+                                            <div 
+                                                key={i}
+                                                onClick={() => generateMindmap(topic)}
+                                                className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-emerald-300 transition-all cursor-pointer group"
+                                            >
                                                 <div className="flex items-start gap-3 mb-3">
                                                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-200 flex items-center justify-center flex-shrink-0">
                                                         <Brain className="w-5 h-5 text-emerald-600" />
@@ -513,14 +755,109 @@ export default function SearchPage() {
                                                 )}
                                                 <div className="pt-3 border-t border-gray-100">
                                                     <span className="text-emerald-600 text-sm font-medium flex items-center gap-1">
-                                                        <Plus className="w-4 h-4" /> Create MindMap
+                                                        <Brain className="w-4 h-4" /> Generate MindMap
                                                     </span>
                                                 </div>
-                                            </Link>
+                                            </div>
                                         ))}
                                     </div>
                                 ) : (
                                     <div className="text-center py-12 text-gray-500">No mindmap topics found</div>
+                                )}
+                            </TabsContent>
+
+                            {/* Learning Tab - Generate directly */}
+                            <TabsContent value="learning">
+                                {learningData ? (
+                                    <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <div>
+                                                <h3 className="text-xl font-bold text-gray-900">{learningData.moduleTitle}</h3>
+                                                <p className="text-gray-500">{learningData.description}</p>
+                                            </div>
+                                            <Button variant="outline" size="sm" onClick={() => setLearningData(null)}>
+                                                <X className="w-4 h-4 mr-1" /> Close
+                                            </Button>
+                                        </div>
+                                        <div className="space-y-4">
+                                            {learningData.lessons?.map((lesson, i) => (
+                                                <div key={i} className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold flex-shrink-0">
+                                                            {i + 1}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <h4 className="font-semibold text-gray-900">{lesson.title}</h4>
+                                                            <p className="text-sm text-gray-600 mb-2">{lesson.description}</p>
+                                                            <div className="flex items-center gap-2 mb-2">
+                                                                <Clock className="w-3 h-3 text-gray-400" />
+                                                                <span className="text-xs text-gray-500">{lesson.duration}</span>
+                                                            </div>
+                                                            {lesson.keyTakeaways?.length > 0 && (
+                                                                <div className="mt-2">
+                                                                    <p className="text-xs font-medium text-amber-700 mb-1">Key Takeaways:</p>
+                                                                    <ul className="space-y-1">
+                                                                        {lesson.keyTakeaways.map((takeaway, j) => (
+                                                                            <li key={j} className="text-xs text-gray-600 flex items-start gap-1">
+                                                                                <span className="text-amber-500">•</span> {takeaway}
+                                                                            </li>
+                                                                        ))}
+                                                                    </ul>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="mt-4 text-center">
+                                            <Link to={createPageUrl('Learning')}>
+                                                <Button className="bg-amber-600 hover:bg-amber-700">
+                                                    Open Learning Platform <ChevronRight className="w-4 h-4 ml-1" />
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ) : learningLoading ? (
+                                    <div className="flex items-center justify-center py-12">
+                                        <Loader2 className="w-8 h-8 text-amber-600 animate-spin" />
+                                        <span className="ml-3 text-gray-600">Generating learning module...</span>
+                                    </div>
+                                ) : tabResults.learning.loading ? (
+                                    <div className="flex items-center justify-center py-12">
+                                        <Loader2 className="w-8 h-8 text-amber-600 animate-spin" />
+                                    </div>
+                                ) : tabResults.learning.data?.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {tabResults.learning.data.map((module, i) => (
+                                            <div 
+                                                key={i}
+                                                onClick={() => generateLearning(module)}
+                                                className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-amber-300 transition-all cursor-pointer group"
+                                            >
+                                                <div className="flex items-start gap-3 mb-3">
+                                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-orange-200 flex items-center justify-center flex-shrink-0">
+                                                        <GraduationCap className="w-5 h-5 text-amber-600" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h4 className="font-semibold text-gray-900 group-hover:text-amber-600 line-clamp-2">{module.title}</h4>
+                                                        <p className="text-sm text-gray-500 line-clamp-2">{module.description}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2 mb-3">
+                                                    <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full">{module.difficulty}</span>
+                                                    <span className="text-xs text-gray-400 flex items-center gap-1"><Clock className="w-3 h-3" />{module.duration}</span>
+                                                </div>
+                                                <div className="pt-3 border-t border-gray-100">
+                                                    <span className="text-amber-600 text-sm font-medium flex items-center gap-1">
+                                                        <GraduationCap className="w-4 h-4" /> Generate Learning Island
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12 text-gray-500">No learning modules found</div>
                                 )}
                             </TabsContent>
 
@@ -581,41 +918,87 @@ export default function SearchPage() {
                                 )}
                             </TabsContent>
 
-                            {/* Learning Tab */}
-                            <TabsContent value="learning">
-                                {tabResults.learning.loading ? (
-                                    <div className="flex items-center justify-center py-12">
-                                        <Loader2 className="w-8 h-8 text-amber-600 animate-spin" />
+                            {/* Qwirey Tab */}
+                            <TabsContent value="qwirey">
+                                <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <img src={LOGO_URL} alt="Qwirey" className="w-10 h-10 rounded-xl" />
+                                        <div>
+                                            <h3 className="font-bold text-gray-900">Qwirey AI</h3>
+                                            <p className="text-sm text-gray-500">Ask anything about "{searchedQuery}"</p>
+                                        </div>
                                     </div>
-                                ) : tabResults.learning.data?.length > 0 ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        {tabResults.learning.data.map((module, i) => (
-                                            <Link key={i} to={createPageUrl('Learning')}
-                                               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-amber-300 transition-all group">
-                                                <div className="flex items-start gap-3 mb-3">
-                                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-orange-200 flex items-center justify-center flex-shrink-0">
-                                                        <BookOpen className="w-5 h-5 text-amber-600" />
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <h4 className="font-semibold text-gray-900 group-hover:text-amber-600 line-clamp-2">{module.title}</h4>
-                                                        <p className="text-sm text-gray-500 line-clamp-2">{module.description}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex gap-2 mb-3">
-                                                    <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full">{module.difficulty}</span>
-                                                    <span className="text-xs text-gray-400 flex items-center gap-1"><Clock className="w-3 h-3" />{module.duration}</span>
-                                                </div>
-                                                <div className="pt-3 border-t border-gray-100">
-                                                    <span className="text-amber-600 text-sm font-medium flex items-center gap-1">
-                                                        <Plus className="w-4 h-4" /> Start Learning
-                                                    </span>
-                                                </div>
-                                            </Link>
-                                        ))}
+                                    
+                                    <div className="flex gap-2 mb-4">
+                                        <input
+                                            type="text"
+                                            value={qwireyPrompt}
+                                            onChange={(e) => setQwireyPrompt(e.target.value)}
+                                            placeholder="Ask a follow-up question..."
+                                            className="flex-1 h-12 px-4 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none"
+                                            onKeyDown={(e) => e.key === 'Enter' && handleQwireySubmit()}
+                                        />
+                                        <Button 
+                                            onClick={handleQwireySubmit}
+                                            disabled={qwireyLoading}
+                                            className="bg-purple-600 hover:bg-purple-700 h-12 px-4"
+                                        >
+                                            {qwireyLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                                        </Button>
                                     </div>
-                                ) : (
-                                    <div className="text-center py-12 text-gray-500">No learning modules found</div>
-                                )}
+                                    
+                                    {qwireyResult && (
+                                        <div className="space-y-4">
+                                            <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                                                <div className="prose prose-sm max-w-none text-gray-700">
+                                                    <ReactMarkdown>{qwireyResult.answer}</ReactMarkdown>
+                                                </div>
+                                            </div>
+                                            
+                                            {qwireyResult.keyPoints?.length > 0 && (
+                                                <div className="bg-gray-50 rounded-xl p-4">
+                                                    <h4 className="font-semibold text-gray-900 mb-2">Key Points</h4>
+                                                    <ul className="space-y-2">
+                                                        {qwireyResult.keyPoints.map((point, i) => (
+                                                            <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                                                                <span className="w-5 h-5 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-medium flex-shrink-0">{i + 1}</span>
+                                                                {point}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+                                            
+                                            {qwireyResult.followUpQuestions?.length > 0 && (
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-gray-500 mb-2">Continue exploring</h4>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {qwireyResult.followUpQuestions.map((q, i) => (
+                                                            <button
+                                                                key={i}
+                                                                onClick={() => {
+                                                                    setQwireyPrompt(q);
+                                                                    handleQwireySubmit();
+                                                                }}
+                                                                className="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-full text-sm hover:bg-purple-100 transition-colors"
+                                                            >
+                                                                {q}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                    
+                                    <div className="mt-4 text-center">
+                                        <Link to={createPageUrl('Qwirey')}>
+                                            <Button variant="outline" className="text-purple-600 border-purple-200 hover:bg-purple-50">
+                                                Open Full Qwirey <ChevronRight className="w-4 h-4 ml-1" />
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                </div>
                             </TabsContent>
                         </Tabs>
 
