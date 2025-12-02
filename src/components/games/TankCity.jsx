@@ -769,7 +769,8 @@ export default function TankCity({ onExit }) {
             state.floatingTexts = state.floatingTexts.filter(ft => {
                 ft.y += ft.vy;
                 ft.life--;
-                return ft.life > 0 && ft.y > -100;
+                // Remove only when fully off the top of screen
+                return ft.y > -150;
             });
             
             // Process queue when current text is done
@@ -975,8 +976,8 @@ export default function TankCity({ onExit }) {
                 
                 // Perspective scale - starts large at bottom, shrinks toward top
                 const scale = Math.max(0.2, 1.2 - progress * 1.0);
-                // Fade out near top
-                const alpha = progress > 0.8 ? Math.max(0, 1 - (progress - 0.8) * 5) : 1;
+                // Fade out only when near very top of screen (y < 50)
+                const alpha = ft.y < 50 ? Math.max(0, ft.y / 50) : 1;
                 
                 ctx.save();
                 ctx.globalAlpha = alpha;
