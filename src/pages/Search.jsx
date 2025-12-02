@@ -531,39 +531,54 @@ export default function SearchPage() {
                                         <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
                                     </div>
                                 ) : tabResults.intelligence.data ? (
-                                    <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-                                        <h3 className="text-xl font-bold text-gray-900">{tabResults.intelligence.data.title}</h3>
-                                        <p className="text-gray-600">{tabResults.intelligence.data.overview}</p>
-                                        {tabResults.intelligence.data.keyFacts?.length > 0 && (
-                                            <div>
-                                                <h4 className="font-semibold text-gray-800 mb-2">Key Facts</h4>
-                                                <ul className="space-y-1">
-                                                    {tabResults.intelligence.data.keyFacts.map((fact, i) => (
-                                                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                                                            <TrendingUp className="w-4 h-4 text-violet-500 mt-0.5 flex-shrink-0" />
-                                                            {fact}
-                                                        </li>
+                                    <div className="space-y-4">
+                                        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+                                            <h3 className="text-xl font-bold text-gray-900">{tabResults.intelligence.data.title}</h3>
+                                            <p className="text-gray-600">{tabResults.intelligence.data.overview}</p>
+                                            {tabResults.intelligence.data.keyFacts?.length > 0 && (
+                                                <div>
+                                                    <h4 className="font-semibold text-gray-800 mb-2">Key Facts</h4>
+                                                    <ul className="space-y-1">
+                                                        {tabResults.intelligence.data.keyFacts.map((fact, i) => (
+                                                            <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                                                                <TrendingUp className="w-4 h-4 text-violet-500 mt-0.5 flex-shrink-0" />
+                                                                {fact}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+                                            {tabResults.intelligence.data.statistics?.length > 0 && (
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                                    {tabResults.intelligence.data.statistics.map((stat, i) => (
+                                                        <div key={i} className="bg-violet-50 rounded-lg p-3 text-center">
+                                                            <div className="text-lg font-bold text-violet-700">{stat.value}</div>
+                                                            <div className="text-xs text-gray-600">{stat.label}</div>
+                                                        </div>
                                                     ))}
-                                                </ul>
-                                            </div>
-                                        )}
-                                        {tabResults.intelligence.data.statistics?.length > 0 && (
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                                {tabResults.intelligence.data.statistics.map((stat, i) => (
-                                                    <div key={i} className="bg-violet-50 rounded-lg p-3 text-center">
-                                                        <div className="text-lg font-bold text-violet-700">{stat.value}</div>
-                                                        <div className="text-xs text-gray-600">{stat.label}</div>
-                                                    </div>
-                                                ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                        {tabResults.intelligence.data.relatedTopics?.length > 0 && (
+                                            <div>
+                                                <h4 className="text-sm font-medium text-gray-500 mb-3">Explore Related Topics</h4>
+                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                    {tabResults.intelligence.data.relatedTopics.map((topic, i) => (
+                                                        <Link key={i} to={createPageUrl('Intelligence')}
+                                                           className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-violet-300 transition-all group flex items-center gap-3">
+                                                            <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
+                                                                <Lightbulb className="w-5 h-5 text-violet-600" />
+                                                            </div>
+                                                            <span className="font-medium text-gray-900 group-hover:text-violet-600">{topic}</span>
+                                                        </Link>
+                                                    ))}
+                                                </div>
                                             </div>
                                         )}
                                     </div>
                                 ) : (
                                     <div className="text-center py-12 text-gray-500">No intelligence data found</div>
                                 )}
-                                <Link to={createPageUrl('Intelligence')} className="mt-4 inline-flex items-center gap-2 text-violet-600 hover:text-violet-700 font-medium">
-                                    Explore more <ChevronRight className="w-4 h-4" />
-                                </Link>
                             </TabsContent>
 
                             {/* Learning Tab */}
@@ -573,22 +588,27 @@ export default function SearchPage() {
                                         <Loader2 className="w-8 h-8 text-amber-600 animate-spin" />
                                     </div>
                                 ) : tabResults.learning.data?.length > 0 ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {tabResults.learning.data.map((module, i) => (
                                             <Link key={i} to={createPageUrl('Learning')}
-                                               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all group">
-                                                <div className="flex items-start gap-3">
-                                                    <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                                               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-amber-300 transition-all group">
+                                                <div className="flex items-start gap-3 mb-3">
+                                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-orange-200 flex items-center justify-center flex-shrink-0">
                                                         <BookOpen className="w-5 h-5 text-amber-600" />
                                                     </div>
-                                                    <div className="flex-1">
-                                                        <h4 className="font-semibold text-gray-900 group-hover:text-amber-600">{module.title}</h4>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h4 className="font-semibold text-gray-900 group-hover:text-amber-600 line-clamp-2">{module.title}</h4>
                                                         <p className="text-sm text-gray-500 line-clamp-2">{module.description}</p>
-                                                        <div className="flex gap-2 mt-2">
-                                                            <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded">{module.difficulty}</span>
-                                                            <span className="text-xs text-gray-400">{module.duration}</span>
-                                                        </div>
                                                     </div>
+                                                </div>
+                                                <div className="flex gap-2 mb-3">
+                                                    <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full">{module.difficulty}</span>
+                                                    <span className="text-xs text-gray-400 flex items-center gap-1"><Clock className="w-3 h-3" />{module.duration}</span>
+                                                </div>
+                                                <div className="pt-3 border-t border-gray-100">
+                                                    <span className="text-amber-600 text-sm font-medium flex items-center gap-1">
+                                                        <Plus className="w-4 h-4" /> Start Learning
+                                                    </span>
                                                 </div>
                                             </Link>
                                         ))}
@@ -596,9 +616,6 @@ export default function SearchPage() {
                                 ) : (
                                     <div className="text-center py-12 text-gray-500">No learning modules found</div>
                                 )}
-                                <Link to={createPageUrl('Learning')} className="mt-4 inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-medium">
-                                    View all courses <ChevronRight className="w-4 h-4" />
-                                </Link>
                             </TabsContent>
                         </Tabs>
 
