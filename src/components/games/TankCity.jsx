@@ -220,12 +220,15 @@ export default function TankCity({ onExit }) {
     };
 
     const nextLevel = async () => {
-        setLevel(prev => prev + 1);
+        const nextLevelNum = level + 1;
+        setLevel(nextLevelNum);
+        setWordsDestroyed(0);
+        setLives(3);
         setLoading(true);
         setScreen('loading');
         try {
             const result = await base44.integrations.Core.InvokeLLM({
-                prompt: `Generate vocabulary data for: "${currentTopic}" level ${level + 1}. Return 15 different terms than before. Format: { "words": [{ "primary": "term", "definition": "short definition" }] }`,
+                prompt: `Generate vocabulary data for: "${currentTopic}" level ${nextLevelNum}. Return 15 different terms than before. Format: { "words": [{ "primary": "term", "definition": "short definition" }] }`,
                 response_json_schema: {
                     type: "object",
                     properties: {
@@ -233,10 +236,10 @@ export default function TankCity({ onExit }) {
                     }
                 }
             });
-            setWordData(result?.words || []);
-            setTotalWords(result?.words?.length || 0);
-            setWordsDestroyed(0);
-            setEnemiesLeft(5 + level);
+            const words = result?.words || [];
+            setWordData(words);
+            setTotalWords(words.length);
+            setEnemiesLeft(5 + nextLevelNum - 1);
             setScreen('game');
         } catch (error) {
             setScreen('title');
@@ -1115,6 +1118,12 @@ export default function TankCity({ onExit }) {
             updateEnemies();
             updateBullets();
             updateParticles();
+            
+            // Check level complete after all updates
+            if (!state.levelComplete && state.enemiesLeft <= 0 && state.enemies.length === 0 && state.wordsDestroyed >= state.totalWords) {
+                state.levelComplete = true;
+            }
+            
             draw();
 
             animationFrameId = requestAnimationFrame(gameLoop);
