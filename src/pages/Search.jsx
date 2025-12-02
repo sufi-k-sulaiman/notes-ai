@@ -359,7 +359,7 @@ export default function SearchPage() {
                     </div>
                 )}
 
-                {/* Results */}
+                {/* Results with Tabs */}
                 {!loading && results && (
                     <div className="space-y-6">
                         {/* Summary */}
@@ -377,47 +377,186 @@ export default function SearchPage() {
                             </div>
                         )}
 
-                        {/* Search Results */}
-                        {results.results?.length > 0 && (
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-500 mb-3">
-                                    Found {results.results.length} results for "{searchedQuery}"
-                                </h3>
-                                <div className="space-y-3">
-                                    {results.results.map((result, i) => (
-                                        <div
-                                            key={i}
-                                            className="bg-white rounded-xl p-5 border border-gray-200 hover:border-purple-200 hover:shadow-md transition-all"
-                                        >
-                                            <div className="flex items-start gap-3">
-                                                <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-                                                    <FileText className="w-5 h-5 text-gray-500" />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <h4 className="font-semibold text-gray-900 mb-1">{result.title}</h4>
-                                                    <p className="text-gray-600 text-sm mb-2">{result.description}</p>
-                                                    {result.url && (
-                                                        <a
-                                                            href={result.url}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="inline-flex items-center gap-1 text-purple-600 hover:text-purple-700 text-sm font-medium"
-                                                        >
-                                                            Learn more <ExternalLink className="w-3 h-3" />
-                                                        </a>
-                                                    )}
-                                                </div>
-                                                {result.type && (
-                                                    <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                                                        {result.type}
-                                                    </span>
+                        {/* Tabbed Results */}
+                        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                            <TabsList className="w-full justify-start bg-white border border-gray-200 rounded-xl p-1 mb-4 flex-wrap h-auto gap-1">
+                                <TabsTrigger value="all" className="rounded-lg data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                                    <FileText className="w-4 h-4 mr-2" /> All
+                                </TabsTrigger>
+                                <TabsTrigger value="news" className="rounded-lg data-[state=active]:bg-red-600 data-[state=active]:text-white">
+                                    <Newspaper className="w-4 h-4 mr-2" /> News
+                                    {tabResults.news.data?.length > 0 && <span className="ml-1 text-xs">({tabResults.news.data.length})</span>}
+                                </TabsTrigger>
+                                <TabsTrigger value="pods" className="rounded-lg data-[state=active]:bg-pink-600 data-[state=active]:text-white">
+                                    <Headphones className="w-4 h-4 mr-2" /> Pods
+                                </TabsTrigger>
+                                <TabsTrigger value="intelligence" className="rounded-lg data-[state=active]:bg-violet-600 data-[state=active]:text-white">
+                                    <Lightbulb className="w-4 h-4 mr-2" /> Intelligence
+                                </TabsTrigger>
+                                <TabsTrigger value="learning" className="rounded-lg data-[state=active]:bg-amber-600 data-[state=active]:text-white">
+                                    <BookOpen className="w-4 h-4 mr-2" /> Learning
+                                </TabsTrigger>
+                            </TabsList>
+
+                            {/* All Results Tab */}
+                            <TabsContent value="all" className="space-y-3">
+                                {results.results?.length > 0 && results.results.map((result, i) => (
+                                    <div key={i} className="bg-white rounded-xl p-5 border border-gray-200 hover:border-purple-200 hover:shadow-md transition-all">
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                                <FileText className="w-5 h-5 text-gray-500" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <h4 className="font-semibold text-gray-900 mb-1">{result.title}</h4>
+                                                <p className="text-gray-600 text-sm mb-2">{result.description}</p>
+                                                {result.url && (
+                                                    <a href={result.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-purple-600 hover:text-purple-700 text-sm font-medium">
+                                                        Learn more <ExternalLink className="w-3 h-3" />
+                                                    </a>
                                                 )}
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                                    </div>
+                                ))}
+                            </TabsContent>
+
+                            {/* News Tab */}
+                            <TabsContent value="news">
+                                {tabResults.news.loading ? (
+                                    <div className="flex items-center justify-center py-12">
+                                        <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
+                                    </div>
+                                ) : tabResults.news.data?.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {tabResults.news.data.map((article, i) => (
+                                            <a key={i} href={article.url} target="_blank" rel="noopener noreferrer" 
+                                               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all group">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="text-xs font-medium px-2 py-1 bg-red-100 text-red-700 rounded-full">{article.source || 'News'}</span>
+                                                    {article.time && <span className="text-xs text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3" />{article.time}</span>}
+                                                </div>
+                                                <h4 className="font-semibold text-gray-900 group-hover:text-red-600 line-clamp-2 mb-2">{article.title}</h4>
+                                                <span className="text-red-600 text-sm font-medium flex items-center gap-1">Read more <ExternalLink className="w-3 h-3" /></span>
+                                            </a>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12 text-gray-500">No news found for "{searchedQuery}"</div>
+                                )}
+                                <Link to={createPageUrl('News')} className="mt-4 inline-flex items-center gap-2 text-red-600 hover:text-red-700 font-medium">
+                                    View all news <ChevronRight className="w-4 h-4" />
+                                </Link>
+                            </TabsContent>
+
+                            {/* Pods Tab */}
+                            <TabsContent value="pods">
+                                {tabResults.pods.loading ? (
+                                    <div className="flex items-center justify-center py-12">
+                                        <Loader2 className="w-8 h-8 text-pink-600 animate-spin" />
+                                    </div>
+                                ) : tabResults.pods.data?.episodes?.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {tabResults.pods.data.episodes.map((episode, i) => (
+                                            <Link key={i} to={createPageUrl('SearchPods') + `?topic=${encodeURIComponent(episode.title)}`}
+                                               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all group">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center flex-shrink-0">
+                                                        <Play className="w-5 h-5 text-pink-600" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <h4 className="font-semibold text-gray-900 group-hover:text-pink-600 line-clamp-1">{episode.title}</h4>
+                                                        <p className="text-sm text-gray-500 line-clamp-1">{episode.description}</p>
+                                                        <span className="text-xs text-gray-400">{episode.duration}</span>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12 text-gray-500">No podcasts found</div>
+                                )}
+                                <Link to={createPageUrl('SearchPods')} className="mt-4 inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 font-medium">
+                                    Create a podcast <ChevronRight className="w-4 h-4" />
+                                </Link>
+                            </TabsContent>
+
+                            {/* Intelligence Tab */}
+                            <TabsContent value="intelligence">
+                                {tabResults.intelligence.loading ? (
+                                    <div className="flex items-center justify-center py-12">
+                                        <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
+                                    </div>
+                                ) : tabResults.intelligence.data ? (
+                                    <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+                                        <h3 className="text-xl font-bold text-gray-900">{tabResults.intelligence.data.title}</h3>
+                                        <p className="text-gray-600">{tabResults.intelligence.data.overview}</p>
+                                        {tabResults.intelligence.data.keyFacts?.length > 0 && (
+                                            <div>
+                                                <h4 className="font-semibold text-gray-800 mb-2">Key Facts</h4>
+                                                <ul className="space-y-1">
+                                                    {tabResults.intelligence.data.keyFacts.map((fact, i) => (
+                                                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                                                            <TrendingUp className="w-4 h-4 text-violet-500 mt-0.5 flex-shrink-0" />
+                                                            {fact}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                        {tabResults.intelligence.data.statistics?.length > 0 && (
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                                {tabResults.intelligence.data.statistics.map((stat, i) => (
+                                                    <div key={i} className="bg-violet-50 rounded-lg p-3 text-center">
+                                                        <div className="text-lg font-bold text-violet-700">{stat.value}</div>
+                                                        <div className="text-xs text-gray-600">{stat.label}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12 text-gray-500">No intelligence data found</div>
+                                )}
+                                <Link to={createPageUrl('Intelligence')} className="mt-4 inline-flex items-center gap-2 text-violet-600 hover:text-violet-700 font-medium">
+                                    Explore more <ChevronRight className="w-4 h-4" />
+                                </Link>
+                            </TabsContent>
+
+                            {/* Learning Tab */}
+                            <TabsContent value="learning">
+                                {tabResults.learning.loading ? (
+                                    <div className="flex items-center justify-center py-12">
+                                        <Loader2 className="w-8 h-8 text-amber-600 animate-spin" />
+                                    </div>
+                                ) : tabResults.learning.data?.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {tabResults.learning.data.map((module, i) => (
+                                            <Link key={i} to={createPageUrl('Learning')}
+                                               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all group">
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                                                        <BookOpen className="w-5 h-5 text-amber-600" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <h4 className="font-semibold text-gray-900 group-hover:text-amber-600">{module.title}</h4>
+                                                        <p className="text-sm text-gray-500 line-clamp-2">{module.description}</p>
+                                                        <div className="flex gap-2 mt-2">
+                                                            <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded">{module.difficulty}</span>
+                                                            <span className="text-xs text-gray-400">{module.duration}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12 text-gray-500">No learning modules found</div>
+                                )}
+                                <Link to={createPageUrl('Learning')} className="mt-4 inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-medium">
+                                    View all courses <ChevronRight className="w-4 h-4" />
+                                </Link>
+                            </TabsContent>
+                        </Tabs>
 
                         {/* Suggestions */}
                         {results.suggestions?.length > 0 && (
