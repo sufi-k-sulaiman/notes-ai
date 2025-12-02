@@ -454,19 +454,27 @@ export default function SearchPage() {
                                         <Loader2 className="w-8 h-8 text-pink-600 animate-spin" />
                                     </div>
                                 ) : tabResults.pods.data?.episodes?.length > 0 ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {tabResults.pods.data.episodes.map((episode, i) => (
                                             <Link key={i} to={createPageUrl('SearchPods') + `?topic=${encodeURIComponent(episode.title)}`}
-                                               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all group">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center flex-shrink-0">
+                                               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-pink-300 transition-all group">
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center flex-shrink-0">
                                                         <Play className="w-5 h-5 text-pink-600" />
                                                     </div>
-                                                    <div className="flex-1">
-                                                        <h4 className="font-semibold text-gray-900 group-hover:text-pink-600 line-clamp-1">{episode.title}</h4>
-                                                        <p className="text-sm text-gray-500 line-clamp-1">{episode.description}</p>
-                                                        <span className="text-xs text-gray-400">{episode.duration}</span>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h4 className="font-semibold text-gray-900 group-hover:text-pink-600 line-clamp-2 mb-1">{episode.title}</h4>
+                                                        <p className="text-sm text-gray-500 line-clamp-2 mb-2">{episode.description}</p>
+                                                        <div className="flex items-center gap-2">
+                                                            <Clock className="w-3 h-3 text-gray-400" />
+                                                            <span className="text-xs text-gray-400">{episode.duration}</span>
+                                                        </div>
                                                     </div>
+                                                </div>
+                                                <div className="mt-3 pt-3 border-t border-gray-100">
+                                                    <span className="text-pink-600 text-sm font-medium flex items-center gap-1">
+                                                        <Plus className="w-4 h-4" /> Generate this Pod
+                                                    </span>
                                                 </div>
                                             </Link>
                                         ))}
@@ -474,9 +482,46 @@ export default function SearchPage() {
                                 ) : (
                                     <div className="text-center py-12 text-gray-500">No podcasts found</div>
                                 )}
-                                <Link to={createPageUrl('SearchPods')} className="mt-4 inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 font-medium">
-                                    Create a podcast <ChevronRight className="w-4 h-4" />
-                                </Link>
+                            </TabsContent>
+
+                            {/* MindMaps Tab */}
+                            <TabsContent value="mindmaps">
+                                {tabResults.mindmaps.loading ? (
+                                    <div className="flex items-center justify-center py-12">
+                                        <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+                                    </div>
+                                ) : tabResults.mindmaps.data?.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {tabResults.mindmaps.data.map((topic, i) => (
+                                            <Link key={i} to={createPageUrl('MindMap') + `?topic=${encodeURIComponent(topic.title)}`}
+                                               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-emerald-300 transition-all group">
+                                                <div className="flex items-start gap-3 mb-3">
+                                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-200 flex items-center justify-center flex-shrink-0">
+                                                        <Brain className="w-5 h-5 text-emerald-600" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h4 className="font-semibold text-gray-900 group-hover:text-emerald-600 line-clamp-2">{topic.title}</h4>
+                                                        <p className="text-sm text-gray-500 line-clamp-2">{topic.description}</p>
+                                                    </div>
+                                                </div>
+                                                {topic.subtopics?.length > 0 && (
+                                                    <div className="flex flex-wrap gap-1 mb-3">
+                                                        {topic.subtopics.slice(0, 4).map((sub, j) => (
+                                                            <span key={j} className="text-xs px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full">{sub}</span>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                                <div className="pt-3 border-t border-gray-100">
+                                                    <span className="text-emerald-600 text-sm font-medium flex items-center gap-1">
+                                                        <Plus className="w-4 h-4" /> Create MindMap
+                                                    </span>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12 text-gray-500">No mindmap topics found</div>
+                                )}
                             </TabsContent>
 
                             {/* Intelligence Tab */}
