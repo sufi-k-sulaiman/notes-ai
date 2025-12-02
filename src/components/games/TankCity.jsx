@@ -56,6 +56,11 @@ export default function TankCity({ onExit }) {
     const [enemiesLeft, setEnemiesLeft] = useState(5);
     const [wordsDestroyed, setWordsDestroyed] = useState(0);
     const [totalWords, setTotalWords] = useState(0);
+    const [level, setLevel] = useState(1);
+    const [quizQuestions, setQuizQuestions] = useState([]);
+    const [quizIndex, setQuizIndex] = useState(0);
+    const [quizScore, setQuizScore] = useState(0);
+    const [quizAnswered, setQuizAnswered] = useState(false);
     const [highScore, setHighScore] = useState(() => {
         const saved = localStorage.getItem('tankCityHighScore');
         return saved ? parseInt(saved) : 0;
@@ -152,9 +157,88 @@ export default function TankCity({ onExit }) {
             setWordData(words);
             setTotalWords(words.length);
             setCurrentTopic(topic);
+            setLevel(1);
             setScreen('game');
         } catch (error) {
             console.error('Failed to generate words:', error);
+            setScreen('title');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const generateQuiz = async (topic) => {
+        setScreen('loading');
+        try {
+            const result = await base44.integrations.Core.InvokeLLM({
+                prompt: `Generate 5 multiple choice quiz questions about "${topic}". Each question should have 4 options with one correct answer. Format: { "questions": [{ "question": "...", "options": ["A", "B", "C", "D"], "correct": 0 }] }`,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        questions: { 
+                            type: "array", 
+                            items: { 
+                                type: "object", 
+                                properties: { 
+                                    question: { type: "string" }, 
+                                    options: { type: "array", items: { type: "string" } },
+                                    correct: { type: "number" }
+                                } 
+                            } 
+                        }
+                    }
+                }
+            });
+            setQuizQuestions(result?.questions || []);
+            setQuizIndex(0);
+            setQuizScore(0);
+            setQuizAnswered(false);
+            setScreen('quiz');
+        } catch (error) {
+            console.error('Failed to generate quiz:', error);
+            nextLevel();
+        }
+    };
+
+    const handleQuizAnswer = (answerIndex) => {
+        if (quizAnswered) return;
+        setQuizAnswered(true);
+        const isCorrect = answerIndex === quizQuestions[quizIndex].correct;
+        if (isCorrect) {
+            setQuizScore(prev => prev + 1);
+            setScore(prev => prev + 50);
+        }
+        
+        setTimeout(() => {
+            if (quizIndex < quizQuestions.length - 1) {
+                setQuizIndex(prev => prev + 1);
+                setQuizAnswered(false);
+            } else {
+                nextLevel();
+            }
+        }, 1500);
+    };
+
+    const nextLevel = async () => {
+        setLevel(prev => prev + 1);
+        setLoading(true);
+        setScreen('loading');
+        try {
+            const result = await base44.integrations.Core.InvokeLLM({
+                prompt: `Generate vocabulary data for: "${currentTopic}" level ${level + 1}. Return 15 different terms than before. Format: { "words": [{ "primary": "term", "definition": "short definition" }] }`,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        words: { type: "array", items: { type: "object", properties: { primary: { type: "string" }, definition: { type: "string" } } } }
+                    }
+                }
+            });
+            setWordData(result?.words || []);
+            setTotalWords(result?.words?.length || 0);
+            setWordsDestroyed(0);
+            setEnemiesLeft(5 + level);
+            setScreen('game');
+        } catch (error) {
             setScreen('title');
         } finally {
             setLoading(false);
@@ -276,8 +360,8 @@ export default function TankCity({ onExit }) {
             floatingTexts: [],
             score: 0,
             lives: 3,
-            enemiesLeft: 5,
-            enemiesTotal: 5,
+            enemiesLeft: 5 + (level - 1),
+            enemiesTotal: 5 + (level - 1),
             shieldHealth: 3, // 3 layer shield
             wordsDestroyed: 0,
             totalWords: wordBricks.length,
@@ -286,6 +370,8 @@ export default function TankCity({ onExit }) {
             victory: false,
             paused: false,
             baseDestroyed: false,
+            levelComplete: false,
+            starOffset: 0,
         };
 
         setTotalWords(wordBricks.length);
@@ -638,7 +724,7 @@ export default function TankCity({ onExit }) {
                             setEnemiesLeft(state.enemiesLeft);
 
                             if (state.enemiesLeft <= 0 && state.enemies.length === 0) {
-                                state.victory = true;
+                                state.levelComplete = true;
                             }
                             return false;
                         }
@@ -704,19 +790,26 @@ export default function TankCity({ onExit }) {
             ctx.fillStyle = '#000011';
             ctx.fillRect(0, 0, w, h);
 
-            // Draw stars
+            // Draw moving stars
             if (!state.stars) {
                 state.stars = [];
-                for (let i = 0; i < 150; i++) {
+                for (let i = 0; i < 200; i++) {
                     state.stars.push({
                         x: Math.random() * w,
-                        y: Math.random() * h,
+                        y: Math.random() * h * 2,
                         size: Math.random() * 2 + 0.5,
-                        brightness: Math.random()
+                        brightness: Math.random(),
+                        speed: 0.5 + Math.random() * 1.5
                     });
                 }
             }
+            // Move stars down
             for (const star of state.stars) {
+                star.y += star.speed;
+                if (star.y > h) {
+                    star.y = -10;
+                    star.x = Math.random() * w;
+                }
                 const flicker = 0.5 + Math.sin(Date.now() * 0.003 + star.brightness * 10) * 0.3;
                 ctx.fillStyle = `rgba(255, 255, 255, ${flicker})`;
                 ctx.beginPath();
@@ -862,6 +955,8 @@ export default function TankCity({ onExit }) {
             ctx.shadowColor = '#000';
             ctx.fillText(`SCORE: ${state.score}`, 20, 40);
             ctx.fillText(`WORDS: ${state.wordsDestroyed}/${state.totalWords}`, 20, 70);
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillText(`LEVEL: ${level}`, 20, 100);
             
             ctx.textAlign = 'right';
             ctx.fillStyle = '#ef4444';
@@ -890,23 +985,56 @@ export default function TankCity({ onExit }) {
                 return;
             }
 
-            if (state.gameOver || state.victory) {
+            if (state.levelComplete) {
                 draw();
                 ctx.fillStyle = 'rgba(0,0,0,0.85)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                ctx.fillStyle = state.victory ? '#10b981' : '#ef4444';
+                ctx.fillStyle = '#10b981';
                 ctx.font = 'bold 56px Inter';
                 ctx.textAlign = 'center';
                 ctx.shadowBlur = 30;
-                ctx.shadowColor = state.victory ? '#10b981' : '#ef4444';
-                ctx.fillText(state.victory ? 'VICTORY!' : 'GAME OVER', canvas.width/2, canvas.height/2 - 60);
+                ctx.shadowColor = '#10b981';
+                ctx.fillText(`LEVEL ${level} COMPLETE!`, canvas.width/2, canvas.height/2 - 60);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 32px Inter';
+                ctx.shadowBlur = 0;
+                ctx.fillText(`Score: ${state.score}`, canvas.width/2, canvas.height/2 + 10);
+                
+                ctx.fillStyle = '#9ca3af';
+                ctx.font = '20px Inter';
+                ctx.fillText('Click to take the quiz!', canvas.width/2, canvas.height/2 + 80);
+
+                if (state.score > highScore) {
+                    localStorage.setItem('tankCityHighScore', state.score.toString());
+                    setHighScore(state.score);
+                }
+
+                canvas.onclick = () => {
+                    gameRunning = false;
+                    generateQuiz(currentTopic);
+                };
+                return;
+            }
+
+            if (state.gameOver) {
+                draw();
+                ctx.fillStyle = 'rgba(0,0,0,0.85)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#ef4444';
+                ctx.font = 'bold 56px Inter';
+                ctx.textAlign = 'center';
+                ctx.shadowBlur = 30;
+                ctx.shadowColor = '#ef4444';
+                ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2 - 60);
                 
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 32px Inter';
                 ctx.shadowBlur = 0;
                 ctx.fillText(`Final Score: ${state.score}`, canvas.width/2, canvas.height/2 + 10);
-                ctx.fillText(`Words Learned: ${state.wordsDestroyed}/${state.totalWords}`, canvas.width/2, canvas.height/2 + 50);
+                ctx.fillText(`Level Reached: ${level}`, canvas.width/2, canvas.height/2 + 50);
                 
                 ctx.fillStyle = '#9ca3af';
                 ctx.font = '20px Inter';
@@ -948,7 +1076,7 @@ export default function TankCity({ onExit }) {
             if (autoShootInterval) clearInterval(autoShootInterval);
             cancelAnimationFrame(animationFrameId);
         };
-    }, [screen, wordData, onExit, highScore]);
+    }, [screen, wordData, onExit, highScore, level, currentTopic]);
 
     const toggleFullscreen = async () => {
         try {
@@ -970,8 +1098,61 @@ export default function TankCity({ onExit }) {
             <div className="fixed inset-0 flex items-center justify-center bg-[#1a1a2e] z-[9999]">
                 <div className="text-center">
                     <Loader2 className="w-16 h-16 animate-spin mx-auto mb-4 text-green-500" />
-                    <h2 className="text-2xl font-bold mb-2 text-white">Generating Battle Arena...</h2>
-                    <p className="text-gray-400">AI is creating word targets for "{currentTopic}"</p>
+                    <h2 className="text-2xl font-bold mb-2 text-white">{level > 1 ? `Preparing Level ${level}...` : 'Generating Battle Arena...'}</h2>
+                    <p className="text-gray-400">AI is creating content for "{currentTopic}"</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Quiz screen
+    if (screen === 'quiz' && quizQuestions.length > 0) {
+        const currentQ = quizQuestions[quizIndex];
+        return (
+            <div className="fixed inset-0 flex items-center justify-center bg-[#1a1a2e] z-[9999] p-4">
+                <div className="max-w-2xl w-full">
+                    <div className="text-center mb-6">
+                        <img src={LOGO_URL} alt="Logo" className="w-12 h-12 mx-auto mb-2 rounded-xl" />
+                        <p className="text-purple-400 font-medium">{currentTopic}</p>
+                        <h2 className="text-2xl font-bold text-white">Level {level} Quiz</h2>
+                        <p className="text-gray-400">Question {quizIndex + 1} of {quizQuestions.length}</p>
+                    </div>
+                    
+                    <div className="bg-gray-800 rounded-2xl p-6 mb-4">
+                        <h3 className="text-xl text-white font-semibold mb-6">{currentQ.question}</h3>
+                        <div className="grid gap-3">
+                            {currentQ.options.map((option, i) => {
+                                let btnClass = "w-full p-4 rounded-xl text-left font-medium transition-all ";
+                                if (quizAnswered) {
+                                    if (i === currentQ.correct) {
+                                        btnClass += "bg-green-600 text-white";
+                                    } else {
+                                        btnClass += "bg-gray-700 text-gray-400";
+                                    }
+                                } else {
+                                    btnClass += "bg-gray-700 hover:bg-gray-600 text-white";
+                                }
+                                return (
+                                    <button
+                                        key={i}
+                                        onClick={() => handleQuizAnswer(i)}
+                                        disabled={quizAnswered}
+                                        className={btnClass}
+                                    >
+                                        <span className="inline-block w-8 h-8 rounded-full bg-gray-600 text-center leading-8 mr-3">
+                                            {String.fromCharCode(65 + i)}
+                                        </span>
+                                        {option}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center text-gray-400">
+                        <span>Score: {score}</span>
+                        <span>Quiz Score: {quizScore}/{quizIndex + (quizAnswered ? 1 : 0)}</span>
+                    </div>
                 </div>
             </div>
         );
@@ -990,7 +1171,8 @@ export default function TankCity({ onExit }) {
                         <X className="w-4 h-4 mr-1" /> Exit
                     </Button>
                 </div>
-                <div className="absolute top-4 left-4 bg-black/60 px-4 py-2 rounded-lg">
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/60 px-4 py-2 rounded-lg text-center">
+                    <img src={LOGO_URL} alt="Logo" className="w-8 h-8 mx-auto mb-1 rounded" />
                     <p className="text-white text-sm font-medium">{currentTopic}</p>
                 </div>
                 <div className="absolute bottom-4 left-4 bg-black/60 px-3 py-2 rounded-lg text-white text-xs">
