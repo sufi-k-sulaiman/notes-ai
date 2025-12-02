@@ -199,35 +199,48 @@ export default function TankCity({ onExit }) {
         const colors = ['#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899', '#06b6d4', '#a855f7'];
         let wordIndex = 0;
         
-        // Create maze-like word pattern
+        // Create proper maze pattern filling the screen
         const wordHeight = TILE * 0.6;
-        const wordSpacing = TILE * 0.4;
-        const mazeRows = Math.floor((canvas.height - TILE * 6) / (wordHeight + wordSpacing));
-        const startY = TILE;
+        const rowSpacing = TILE * 2; // More vertical spacing for maze corridors
+        const colSpacing = TILE * 0.5;
+        const mazeRows = Math.floor((canvas.height - TILE * 8) / rowSpacing);
+        const startY = TILE * 1.5;
         
         let wordIdx = 0;
         for (let row = 0; row < mazeRows && wordIdx < shuffledWords.length; row++) {
-            const y = startY + row * (wordHeight + wordSpacing);
-            let x = TILE + (row % 2) * TILE; // Offset alternate rows for maze effect
+            const y = startY + row * rowSpacing;
+            // Alternate pattern - offset every other row for maze corridors
+            const rowOffset = (row % 2) * TILE * 1.5;
+            // Skip some positions randomly to create gaps/corridors
+            const skipPattern = row % 3;
             
-            while (x < canvas.width - TILE * 3 && wordIdx < shuffledWords.length) {
-                const word = shuffledWords[wordIdx];
-                const wordWidth = Math.max(TILE, word.primary.length * 8 + 16);
-                
-                wordBricks.push({
-                    x: x,
-                    y: y,
-                    width: wordWidth,
-                    height: wordHeight,
-                    word: word.primary,
-                    definition: word.definition,
-                    health: 1,
-                    color: colors[wordIdx % colors.length],
-                    startY: y // Store original Y for animation
-                });
-                
-                x += wordWidth + wordSpacing;
-                wordIdx++;
+            let x = TILE + rowOffset;
+            let colCount = 0;
+            
+            while (x < canvas.width - TILE * 4 && wordIdx < shuffledWords.length) {
+                // Create gaps in the maze
+                if ((colCount + skipPattern) % 4 !== 0) {
+                    const word = shuffledWords[wordIdx];
+                    const wordWidth = Math.max(TILE * 1.2, word.primary.length * 9 + 20);
+                    
+                    wordBricks.push({
+                        x: x,
+                        y: y,
+                        width: wordWidth,
+                        height: wordHeight,
+                        word: word.primary,
+                        definition: word.definition,
+                        health: 1,
+                        color: colors[wordIdx % colors.length],
+                        startY: y
+                    });
+                    
+                    x += wordWidth + colSpacing;
+                    wordIdx++;
+                } else {
+                    x += TILE * 2; // Gap for corridor
+                }
+                colCount++;
             }
         }
 
