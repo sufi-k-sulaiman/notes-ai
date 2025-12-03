@@ -783,24 +783,50 @@ If exact reviews aren't available, find user opinions, comments, or discussions 
                 });
                 setResult(prev => ({ ...prev, tabledData: tabledResponse }));
             } else if (newFormat === 'reviews' && !result.reviewsData) {
-                const reviewsResponse = await base44.integrations.Core.InvokeLLM({
-                    prompt: `Search the internet and find REAL user reviews for "${currentPrompt}". Provide: a title, a brief intro (max 400 chars), and exactly 10 real user reviews each with: reviewer name (actual username if available), rating 1-10, actual review text (2-3 sentences from the real review), the date it was posted, and the source URL where the review was found. Focus on finding actual reviews from sites like Amazon, Yelp, Google Reviews, Reddit, Trustpilot, G2, or other review platforms.`,
-                    add_context_from_internet: true,
-                    response_json_schema: {
-                        type: "object",
-                        properties: {
-                            title: { type: "string" },
-                            intro: { type: "string" },
-                            reviews: { type: "array", items: { type: "object", properties: { 
-                                name: { type: "string" }, 
-                                rating: { type: "number" }, 
-                                text: { type: "string" }, 
-                                date: { type: "string" },
-                                source_url: { type: "string" }
-                            } } }
-                        }
+                const reviewsSchema = {
+                    type: "object",
+                    properties: {
+                        title: { type: "string" },
+                        intro: { type: "string" },
+                        reviews: { type: "array", items: { type: "object", properties: { 
+                            name: { type: "string" }, 
+                            rating: { type: "number" }, 
+                            text: { type: "string" }, 
+                            date: { type: "string" },
+                            source_url: { type: "string" }
+                        } } }
                     }
+                };
+                
+                let reviewsResponse = await base44.integrations.Core.InvokeLLM({
+                    prompt: `IMPORTANT: Search the web thoroughly for "${currentPrompt}" reviews. 
+                    
+Find and return EXACTLY 10 real user reviews from review sites like Amazon, Reddit, Trustpilot, G2, Yelp, Google Reviews, CNET, TechRadar, or any relevant review platform.
+
+Return:
+- title: A title like "Reviews for [product/service name]"
+- intro: A 2-3 sentence summary of the overall sentiment (max 400 chars)
+- reviews: Array of 10 reviews, each with:
+  - name: Reviewer username or name
+  - rating: Score from 1-10
+  - text: The actual review content (2-3 sentences)
+  - date: When it was posted
+  - source_url: The URL where this review was found`,
+                    add_context_from_internet: true,
+                    response_json_schema: reviewsSchema
                 });
+                
+                // Retry if no reviews found
+                if (!reviewsResponse?.reviews || reviewsResponse.reviews.length < 3) {
+                    reviewsResponse = await base44.integrations.Core.InvokeLLM({
+                        prompt: `Search for user reviews and opinions about "${currentPrompt}". Look on Reddit, Amazon, tech sites, forums, or any platform where people share experiences.
+
+I need 10 reviews with: title, intro, and reviews array (name, rating 1-10, text, date, source_url).`,
+                        add_context_from_internet: true,
+                        response_json_schema: reviewsSchema
+                    });
+                }
+                
                 setResult(prev => ({ ...prev, reviewsData: reviewsResponse }));
             } else if (newFormat === 'short' && !result.shortData) {
                 const shortResponse = await base44.integrations.Core.InvokeLLM({
