@@ -397,13 +397,17 @@ function ItemDetailView({ item, category, onNavigateToTopic }) {
             const [basicResponse, chartsResponse] = await Promise.all([
                 base44.integrations.Core.InvokeLLM({
                     prompt: `Provide intelligence data about "${item}" (${category?.name || 'general'}):
-1. Overview: 3-4 sentence description
-2. Key Facts: 5 interesting facts (short, under 100 chars each)
-3. Significance: Why it matters (2 sentences)
-4. Related Topics: 4 related concepts
-5. Current Research: Recent developments (2 sentences)
-6. Physical Properties: 3 key properties with brief descriptions
-7. Chemical Elements: 3 main elements/compounds with percentages`,
+                1. Overview: 3-4 sentence description
+                2. Key Facts: 5 interesting facts (short, under 100 chars each)
+                3. Significance: Why it matters (2 sentences)
+                4. Related Topics: 4 related concepts
+                5. Current Research: Recent developments (2 sentences)
+                6. Physical Properties: 3 key properties with brief descriptions
+                7. Chemical Elements: 3 main elements/compounds with percentages
+                8. Historical Timeline: 4 key historical events with year, title, and brief description
+                9. Applications: 4 common real-world applications with name and description
+                10. Challenges: 4 current challenges or considerations
+                11. Future Outlook: 2-3 sentences on future trends and predictions`,
                     add_context_from_internet: true,
                     response_json_schema: {
                         type: "object",
@@ -414,7 +418,11 @@ function ItemDetailView({ item, category, onNavigateToTopic }) {
                             relatedTopics: { type: "array", items: { type: "string" } },
                             currentResearch: { type: "string" },
                             physicalComposition: { type: "array", items: { type: "object", properties: { property: { type: "string" }, description: { type: "string" } } } },
-                            chemicalComposition: { type: "array", items: { type: "object", properties: { element: { type: "string" }, percentage: { type: "string" } } } }
+                            chemicalComposition: { type: "array", items: { type: "object", properties: { element: { type: "string" }, percentage: { type: "string" } } } },
+                            historicalTimeline: { type: "array", items: { type: "object", properties: { year: { type: "string" }, title: { type: "string" }, description: { type: "string" } } } },
+                            applications: { type: "array", items: { type: "object", properties: { name: { type: "string" }, description: { type: "string" } } } },
+                            challenges: { type: "array", items: { type: "string" } },
+                            futureOutlook: { type: "string" }
                         }
                     }
                 }),
