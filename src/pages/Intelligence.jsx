@@ -89,6 +89,76 @@ const CATEGORIES = {
         color: "#8B5CF6",
         gradient: "from-purple-500 to-indigo-500",
         items: ["Universe", "Galaxy", "Solar System", "Planets", "Asteroids", "Comets", "Black Holes", "Nebulae", "Constellations", "Exoplanets", "Supernovae", "Pulsars", "Quasars", "Dark Matter", "Dark Energy"]
+    },
+    Energy_Utilities: {
+        name: "Energy & Utilities",
+        icon: Zap,
+        color: "#EAB308",
+        gradient: "from-yellow-500 to-amber-500",
+        items: ["Oil & Gas", "Renewable Energy", "Solar Power", "Wind Energy", "Hydroelectric", "Geothermal", "Coal Mining", "Electric Utilities", "Gas Utilities", "Water Utilities", "Independent Power Producers", "Nuclear Energy"]
+    },
+    Materials_Manufacturing: {
+        name: "Materials & Manufacturing",
+        icon: Beaker,
+        color: "#64748B",
+        gradient: "from-slate-500 to-gray-600",
+        items: ["Chemicals", "Construction Materials", "Metals & Mining", "Paper & Forest Products", "Containers & Packaging", "Industrial Machinery", "Aerospace & Defense", "Building Products", "Steel Production", "Aluminum"]
+    },
+    Transportation_Infrastructure: {
+        name: "Transportation & Infrastructure",
+        icon: Globe,
+        color: "#0EA5E9",
+        gradient: "from-sky-500 to-blue-600",
+        items: ["Airlines", "Marine Shipping", "Road & Rail", "Logistics & Distribution", "Construction & Engineering", "Ports", "Airports", "Highways", "Public Transit", "Freight Services"]
+    },
+    Consumer_Goods_Retail: {
+        name: "Consumer Goods & Retail",
+        icon: Home,
+        color: "#EC4899",
+        gradient: "from-pink-500 to-rose-500",
+        items: ["Automobiles", "Consumer Electronics", "Appliances", "Textiles & Apparel", "Luxury Goods", "Food Retailing", "Specialty Retail", "E-commerce", "Household Products", "Personal Care", "Tobacco"]
+    },
+    Hospitality_Leisure: {
+        name: "Hospitality & Tourism",
+        icon: Star,
+        color: "#F97316",
+        gradient: "from-orange-500 to-red-500",
+        items: ["Hotels", "Restaurants", "Travel Agencies", "Tour Operators", "Entertainment", "Movies & Film", "Gaming", "Streaming Services", "Arts & Culture", "Recreation", "Theme Parks"]
+    },
+    Health_Life_Sciences: {
+        name: "Health & Life Sciences",
+        icon: Leaf,
+        color: "#14B8A6",
+        gradient: "from-teal-500 to-emerald-500",
+        items: ["Biotechnology", "Pharmaceuticals", "Medical Equipment", "Health Care Providers", "Hospitals", "Life Sciences Tools", "Clinical Research", "Medical Devices", "Diagnostics", "Genomics"]
+    },
+    Finance_Real_Estate: {
+        name: "Finance & Real Estate",
+        icon: Brain,
+        color: "#6366F1",
+        gradient: "from-indigo-500 to-violet-500",
+        items: ["Banks", "Insurance", "Capital Markets", "Investment Firms", "Brokerages", "Financial Services", "REITs", "Property Management", "Real Estate Development", "Mortgages", "Fintech"]
+    },
+    Technology_Communication: {
+        name: "Technology & Communication",
+        icon: Lightbulb,
+        color: "#A855F7",
+        gradient: "from-purple-500 to-fuchsia-500",
+        items: ["Software", "IT Services", "Hardware", "Semiconductors", "Telecommunications", "Media & Publishing", "Social Media", "Search Engines", "Cloud Computing", "Cybersecurity", "AI & Machine Learning"]
+    },
+    Agriculture_Food: {
+        name: "Agriculture & Food Systems",
+        icon: Leaf,
+        color: "#84CC16",
+        gradient: "from-lime-500 to-green-500",
+        items: ["Crop Production", "Livestock", "Fisheries", "Food Products", "Beverage Manufacturing", "Agricultural Services", "Farming Equipment", "Food Processing", "Organic Farming", "Agritech"]
+    },
+    Education_Government: {
+        name: "Education & Government",
+        icon: BookOpen,
+        color: "#0891B2",
+        gradient: "from-cyan-600 to-blue-600",
+        items: ["Schools", "Universities", "Training Services", "Government", "Public Administration", "NGOs", "Nonprofits", "Professional Services", "Consulting", "Legal Services", "Research Institutions"]
     }
 };
 
