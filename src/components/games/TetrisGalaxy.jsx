@@ -9,26 +9,26 @@ import {
 import { LOGO_URL } from '@/components/NavigationConfig';
 
 const TABS = [
-    { id: 'trending', label: 'Trending', color: 'from-cyan-500 to-blue-600' },
-    { id: 'ocean', label: 'Ocean Life', color: 'from-blue-500 to-teal-600' },
-    { id: 'science', label: 'Science', color: 'from-purple-500 to-indigo-600' },
-    { id: 'technology', label: 'Technology', color: 'from-green-500 to-emerald-600' },
-    { id: 'language', label: 'Language', color: 'from-orange-500 to-red-600' },
-    { id: 'history', label: 'History', color: 'from-amber-500 to-yellow-600' },
+    { id: 'trending', label: 'Trending', color: 'from-violet-500 to-purple-600' },
+    { id: 'ocean', label: 'Ocean Life', color: 'from-indigo-500 to-blue-600' },
+    { id: 'science', label: 'Science', color: 'from-purple-500 to-pink-600' },
+    { id: 'technology', label: 'Technology', color: 'from-blue-500 to-indigo-600' },
+    { id: 'language', label: 'Language', color: 'from-fuchsia-500 to-purple-600' },
+    { id: 'history', label: 'History', color: 'from-amber-500 to-orange-600' },
 ];
 
 const BOARD_WIDTH = 20; // 2x wider
 const BOARD_HEIGHT = 20;
 
-// Ocean-themed vibrant colors
+// Galaxy-themed vibrant colors matching app purple theme
 const PIECES = [
-    { shape: [[1,1,1,1]], color: '#00bcd4', glow: '#4dd0e1', name: 'I' },
-    { shape: [[1,1],[1,1]], color: '#ffeb3b', glow: '#fff176', name: 'O' },
-    { shape: [[0,1,0],[1,1,1]], color: '#e91e63', glow: '#f06292', name: 'T' },
-    { shape: [[0,1,1],[1,1,0]], color: '#4caf50', glow: '#81c784', name: 'S' },
-    { shape: [[1,1,0],[0,1,1]], color: '#f44336', glow: '#e57373', name: 'Z' },
-    { shape: [[1,0,0],[1,1,1]], color: '#9c27b0', glow: '#ba68c8', name: 'J' },
-    { shape: [[0,0,1],[1,1,1]], color: '#ff9800', glow: '#ffb74d', name: 'L' }
+    { shape: [[1,1,1,1]], color: '#8b5cf6', glow: '#a78bfa', name: 'I' },
+    { shape: [[1,1],[1,1]], color: '#f59e0b', glow: '#fbbf24', name: 'O' },
+    { shape: [[0,1,0],[1,1,1]], color: '#ec4899', glow: '#f472b6', name: 'T' },
+    { shape: [[0,1,1],[1,1,0]], color: '#10b981', glow: '#34d399', name: 'S' },
+    { shape: [[1,1,0],[0,1,1]], color: '#ef4444', glow: '#f87171', name: 'Z' },
+    { shape: [[1,0,0],[1,1,1]], color: '#6366f1', glow: '#818cf8', name: 'J' },
+    { shape: [[0,0,1],[1,1,1]], color: '#06b6d4', glow: '#22d3ee', name: 'L' }
 ];
 
 export default function TetrisGalaxy({ onExit }) {
@@ -157,225 +157,91 @@ export default function TetrisGalaxy({ onExit }) {
             return Math.floor(Math.min(maxHeight / BOARD_HEIGHT, maxWidth / BOARD_WIDTH));
         };
 
-        // Ocean background
-        const drawOceanBackground = () => {
-            // Deep ocean gradient
+        // Galaxy background
+        const drawGalaxyBackground = () => {
+            // Deep space gradient
             const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            grad.addColorStop(0, '#006994');
-            grad.addColorStop(0.3, '#0077a8');
-            grad.addColorStop(0.6, '#005f7f');
-            grad.addColorStop(1, '#003d52');
+            grad.addColorStop(0, '#1e1b4b');
+            grad.addColorStop(0.3, '#312e81');
+            grad.addColorStop(0.6, '#4c1d95');
+            grad.addColorStop(1, '#0f0a1f');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Light rays from top
-            ctx.globalAlpha = 0.1;
-            for (let i = 0; i < 8; i++) {
-                ctx.fillStyle = '#87ceeb';
-                ctx.beginPath();
-                const x = canvas.width * 0.1 + i * canvas.width * 0.12;
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x + 80, canvas.height);
-                ctx.lineTo(x + 40, canvas.height);
-                ctx.lineTo(x - 40, 0);
-                ctx.fill();
-            }
-            ctx.globalAlpha = 1;
-
-            // Sandy floor
-            const floorY = canvas.height - 80;
-            const sandGrad = ctx.createLinearGradient(0, floorY, 0, canvas.height);
-            sandGrad.addColorStop(0, '#d4a574');
-            sandGrad.addColorStop(1, '#c4956a');
-            ctx.fillStyle = sandGrad;
-            ctx.fillRect(0, floorY, canvas.width, 80);
-
-            // Seaweed
-            drawSeaweed(50, floorY, 1);
-            drawSeaweed(120, floorY, 0.8);
-            drawSeaweed(canvas.width - 80, floorY, 1.1);
-            drawSeaweed(canvas.width - 150, floorY, 0.9);
-
-            // Sea creatures
-            drawDolphin(100, 120, 0.7, Date.now());
-            drawDolphin(canvas.width - 150, 180, -0.6, Date.now() + 1000);
-            drawOctopus(60, canvas.height / 2, 0.5, Date.now());
-            drawFish(canvas.width - 100, canvas.height / 2 + 50, 0.4, '#ff6b6b');
-            drawFish(canvas.width - 60, canvas.height / 2 + 100, 0.3, '#ffd93d');
-            drawBubbles(Date.now());
-        };
-
-        const drawSeaweed = (x, floorY, scale) => {
-            ctx.save();
-            const time = Date.now() * 0.002;
-            for (let i = 0; i < 4; i++) {
-                ctx.fillStyle = i % 2 === 0 ? '#2d5a27' : '#3d7a37';
-                ctx.beginPath();
-                const sway = Math.sin(time + i * 0.5) * 10;
-                ctx.moveTo(x + i * 15, floorY);
-                ctx.quadraticCurveTo(
-                    x + i * 15 + sway, floorY - 80 * scale,
-                    x + i * 15 + sway * 1.5, floorY - 150 * scale
-                );
-                ctx.quadraticCurveTo(
-                    x + i * 15 + 10 + sway, floorY - 80 * scale,
-                    x + i * 15 + 8, floorY
-                );
-                ctx.fill();
-            }
-            ctx.restore();
-        };
-
-        const drawDolphin = (x, y, scale, timeOffset) => {
+            // Stars
             const time = Date.now() * 0.001;
-            const bobY = Math.sin(time + timeOffset * 0.001) * 15;
-            // Don't draw dolphin in the right panel area
-            if (x > canvas.width - 200) return;
-            ctx.save();
-            ctx.translate(x, y + bobY);
-            ctx.scale(scale, Math.abs(scale));
-            if (scale < 0) ctx.scale(-1, 1);
-
-            // Body
-            ctx.fillStyle = '#4a90a4';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 60, 25, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Head
-            ctx.beginPath();
-            ctx.ellipse(50, -5, 25, 18, 0.2, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Snout
-            ctx.beginPath();
-            ctx.ellipse(75, 0, 15, 8, 0.1, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Dorsal fin
-            ctx.beginPath();
-            ctx.moveTo(0, -25);
-            ctx.quadraticCurveTo(15, -50, 25, -25);
-            ctx.fill();
-
-            // Tail
-            ctx.beginPath();
-            ctx.moveTo(-60, 0);
-            ctx.quadraticCurveTo(-80, -20, -90, -15);
-            ctx.quadraticCurveTo(-75, 0, -90, 15);
-            ctx.quadraticCurveTo(-80, 20, -60, 0);
-            ctx.fill();
-
-            // Eye
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(60, -8, 4, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Belly
-            ctx.fillStyle = '#8fc4d4';
-            ctx.beginPath();
-            ctx.ellipse(20, 10, 40, 12, 0, 0, Math.PI);
-            ctx.fill();
-
-            ctx.restore();
-        };
-
-        const drawOctopus = (x, y, scale, timeOffset) => {
-            const time = Date.now() * 0.003;
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.scale(scale, scale);
-
-            // Head
-            ctx.fillStyle = '#e74c3c';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 50, 40, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Tentacles
-            for (let i = 0; i < 8; i++) {
-                const angle = (i / 8) * Math.PI + Math.PI * 0.1;
-                const wave = Math.sin(time + i) * 10;
-                ctx.beginPath();
-                ctx.moveTo(Math.cos(angle) * 40, Math.sin(angle) * 30 + 20);
-                ctx.quadraticCurveTo(
-                    Math.cos(angle) * 80 + wave, Math.sin(angle) * 60 + 40,
-                    Math.cos(angle) * 100 + wave * 2, Math.sin(angle) * 80 + 60
-                );
-                ctx.lineWidth = 12;
-                ctx.strokeStyle = '#e74c3c';
-                ctx.lineCap = 'round';
-                ctx.stroke();
-            }
-
-            // Eyes
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.ellipse(-15, -10, 12, 15, 0, 0, Math.PI * 2);
-            ctx.ellipse(15, -10, 12, 15, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(-15, -8, 6, 0, Math.PI * 2);
-            ctx.arc(15, -8, 6, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Smile
-            ctx.strokeStyle = '#c0392b';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(0, 10, 15, 0.2, Math.PI - 0.2);
-            ctx.stroke();
-
-            ctx.restore();
-        };
-
-        const drawFish = (x, y, scale, color) => {
-            const time = Date.now() * 0.005;
-            const swimX = Math.sin(time) * 20;
-            // Don't draw fish in the right panel area
-            if (x + swimX > canvas.width - 200) return;
-            ctx.save();
-            ctx.translate(x + swimX, y);
-            ctx.scale(scale, scale);
-
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 30, 20, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Tail
-            ctx.beginPath();
-            ctx.moveTo(-30, 0);
-            ctx.lineTo(-50, -15);
-            ctx.lineTo(-50, 15);
-            ctx.closePath();
-            ctx.fill();
-
-            // Eye
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.arc(15, -5, 8, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(17, -5, 4, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.restore();
-        };
-
-        const drawBubbles = (time) => {
-            ctx.fillStyle = 'rgba(255,255,255,0.3)';
-            for (let i = 0; i < 15; i++) {
-                const x = (i * 97 + time * 0.02) % canvas.width;
-                const y = canvas.height - ((time * 0.05 + i * 80) % canvas.height);
-                const size = 3 + (i % 5) * 2;
+            for (let i = 0; i < 100; i++) {
+                const x = (i * 47 + Math.sin(i) * 100) % canvas.width;
+                const y = (i * 31 + Math.cos(i) * 80) % canvas.height;
+                const twinkle = Math.sin(time + i) * 0.5 + 0.5;
+                const size = (i % 3) + 1;
+                ctx.fillStyle = `rgba(255,255,255,${0.3 + twinkle * 0.7})`;
                 ctx.beginPath();
                 ctx.arc(x, y, size, 0, Math.PI * 2);
                 ctx.fill();
             }
+
+            // Nebula clouds
+            ctx.globalAlpha = 0.15;
+            const nebulaGrad1 = ctx.createRadialGradient(canvas.width * 0.2, canvas.height * 0.3, 0, canvas.width * 0.2, canvas.height * 0.3, 200);
+            nebulaGrad1.addColorStop(0, '#a855f7');
+            nebulaGrad1.addColorStop(1, 'transparent');
+            ctx.fillStyle = nebulaGrad1;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const nebulaGrad2 = ctx.createRadialGradient(canvas.width * 0.8, canvas.height * 0.7, 0, canvas.width * 0.8, canvas.height * 0.7, 250);
+            nebulaGrad2.addColorStop(0, '#6366f1');
+            nebulaGrad2.addColorStop(1, 'transparent');
+            ctx.fillStyle = nebulaGrad2;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalAlpha = 1;
+
+            // Shooting stars occasionally
+            if (Math.sin(time * 0.5) > 0.98) {
+                ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                const sx = Math.random() * canvas.width;
+                ctx.moveTo(sx, 0);
+                ctx.lineTo(sx + 100, 100);
+                ctx.stroke();
+            }
+        };
+
+        // Floating planets/orbs in background
+        const drawPlanets = () => {
+            const time = Date.now() * 0.0005;
+
+            // Small planet 1
+            const p1x = 80 + Math.sin(time) * 20;
+            const p1y = 150 + Math.cos(time * 0.7) * 15;
+            const p1Grad = ctx.createRadialGradient(p1x - 10, p1y - 10, 0, p1x, p1y, 35);
+            p1Grad.addColorStop(0, '#a78bfa');
+            p1Grad.addColorStop(1, '#6d28d9');
+            ctx.fillStyle = p1Grad;
+            ctx.beginPath();
+            ctx.arc(p1x, p1y, 35, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Small planet 2
+            const p2x = canvas.width - 180 + Math.cos(time * 0.8) * 15;
+            const p2y = canvas.height - 200 + Math.sin(time * 0.6) * 20;
+            if (p2x < canvas.width - 200) {
+                const p2Grad = ctx.createRadialGradient(p2x - 8, p2y - 8, 0, p2x, p2y, 25);
+                p2Grad.addColorStop(0, '#f472b6');
+                p2Grad.addColorStop(1, '#be185d');
+                ctx.fillStyle = p2Grad;
+                ctx.beginPath();
+                ctx.arc(p2x, p2y, 25, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Rings around a planet
+            ctx.strokeStyle = 'rgba(167, 139, 250, 0.4)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.ellipse(p1x, p1y, 50, 15, 0.3, 0, Math.PI * 2);
+            ctx.stroke();
         };
 
         // Game state
@@ -664,13 +530,17 @@ export default function TetrisGalaxy({ onExit }) {
             const offsetX = Math.floor((canvas.width - gameWidth) / 2);
             const offsetY = Math.floor((canvas.height - gameHeight) / 2) + 30;
 
-            drawOceanBackground();
+            drawGalaxyBackground();
+            drawPlanets();
 
-            // Game board background
-            ctx.fillStyle = 'rgba(0,0,0,0.2)';
+            // Game board background with galaxy theme
+            ctx.fillStyle = 'rgba(30, 27, 75, 0.4)';
             ctx.beginPath();
             ctx.roundRect(offsetX - 8, offsetY - 8, gameWidth + 16, gameHeight + 16, 12);
             ctx.fill();
+            ctx.strokeStyle = 'rgba(167, 139, 250, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
 
             // Draw locked blocks
             for (let y = 0; y < BOARD_HEIGHT; y++) {
@@ -702,17 +572,17 @@ export default function TetrisGalaxy({ onExit }) {
             logoImg.src = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692729a5f5180fbd43f297e9/a1a505225_1cPublishing-logo.png';
             ctx.drawImage(logoImg, 20, headerY, 50, 50);
 
-            // Title
+            // Title with glow
+            ctx.shadowColor = '#a78bfa';
+            ctx.shadowBlur = 15;
             ctx.fillStyle = '#fff';
             ctx.font = 'bold 32px Arial';
             ctx.textAlign = 'left';
-            ctx.shadowColor = '#000';
-            ctx.shadowBlur = 10;
             ctx.fillText('TETRIS GALAXY', 80, headerY + 28);
             ctx.shadowBlur = 0;
 
             // Topic/Subject
-            ctx.fillStyle = '#4dd0e1';
+            ctx.fillStyle = '#c4b5fd';
             ctx.font = 'bold 18px Arial';
             ctx.fillText(`Topic: ${currentTopic || ''}`, 80, headerY + 52);
 
@@ -721,22 +591,28 @@ export default function TetrisGalaxy({ onExit }) {
             const panelY = offsetY;
             const panelWidth = 130;
 
-            // Panel background to block sea creatures
-            ctx.fillStyle = 'rgba(0,50,80,0.95)';
+            // Panel background with galaxy theme
+            const panelGrad = ctx.createLinearGradient(panelX, panelY, panelX, panelY + 340);
+            panelGrad.addColorStop(0, 'rgba(99, 102, 241, 0.3)');
+            panelGrad.addColorStop(1, 'rgba(139, 92, 246, 0.2)');
+            ctx.fillStyle = panelGrad;
             ctx.beginPath();
             ctx.roundRect(panelX - 5, panelY - 5, panelWidth + 10, 340, 15);
             ctx.fill();
+            ctx.strokeStyle = 'rgba(167, 139, 250, 0.5)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
 
             // Next piece box
-            ctx.fillStyle = 'rgba(0,30,50,0.9)';
+            ctx.fillStyle = 'rgba(30, 27, 75, 0.9)';
             ctx.beginPath();
             ctx.roundRect(panelX, panelY, panelWidth, 100, 12);
             ctx.fill();
-            ctx.strokeStyle = '#4dd0e1';
+            ctx.strokeStyle = '#a78bfa';
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            ctx.fillStyle = '#4dd0e1';
+            ctx.fillStyle = '#a78bfa';
             ctx.font = 'bold 16px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('NEXT', panelX + panelWidth/2, panelY + 20);
@@ -759,40 +635,40 @@ export default function TetrisGalaxy({ onExit }) {
             const statsY = panelY + 110;
 
             // Score
-            ctx.fillStyle = 'rgba(0,30,50,0.9)';
+            ctx.fillStyle = 'rgba(30, 27, 75, 0.9)';
             ctx.beginPath();
             ctx.roundRect(panelX, statsY, panelWidth, 55, 10);
             ctx.fill();
-            ctx.strokeStyle = '#ffeb3b';
+            ctx.strokeStyle = '#fbbf24';
             ctx.lineWidth = 2;
             ctx.stroke();
-            ctx.fillStyle = '#ffeb3b';
+            ctx.fillStyle = '#fbbf24';
             ctx.font = 'bold 12px Arial';
             ctx.fillText('SCORE', panelX + panelWidth/2, statsY + 18);
             ctx.font = 'bold 22px Arial';
             ctx.fillText(gameScore.toString(), panelX + panelWidth/2, statsY + 42);
 
             // Lines
-            ctx.fillStyle = 'rgba(0,30,50,0.9)';
+            ctx.fillStyle = 'rgba(30, 27, 75, 0.9)';
             ctx.beginPath();
             ctx.roundRect(panelX, statsY + 65, panelWidth, 55, 10);
             ctx.fill();
-            ctx.strokeStyle = '#4caf50';
+            ctx.strokeStyle = '#34d399';
             ctx.stroke();
-            ctx.fillStyle = '#4caf50';
+            ctx.fillStyle = '#34d399';
             ctx.font = 'bold 12px Arial';
             ctx.fillText('LINES', panelX + panelWidth/2, statsY + 83);
             ctx.font = 'bold 22px Arial';
             ctx.fillText(gameLines.toString(), panelX + panelWidth/2, statsY + 107);
 
             // Level
-            ctx.fillStyle = 'rgba(0,30,50,0.9)';
+            ctx.fillStyle = 'rgba(30, 27, 75, 0.9)';
             ctx.beginPath();
             ctx.roundRect(panelX, statsY + 130, panelWidth, 55, 10);
             ctx.fill();
-            ctx.strokeStyle = '#e91e63';
+            ctx.strokeStyle = '#f472b6';
             ctx.stroke();
-            ctx.fillStyle = '#e91e63';
+            ctx.fillStyle = '#f472b6';
             ctx.font = 'bold 12px Arial';
             ctx.fillText('LEVEL', panelX + panelWidth/2, statsY + 148);
             ctx.font = 'bold 22px Arial';
@@ -805,46 +681,55 @@ export default function TetrisGalaxy({ onExit }) {
                 const msgX = canvas.width / 2 - msgWidth / 2;
                 const msgY = canvas.height / 2 - msgHeight / 2;
 
-                ctx.fillStyle = 'rgba(0,0,0,0.9)';
+                ctx.fillStyle = 'rgba(30, 27, 75, 0.95)';
                 ctx.beginPath();
                 ctx.roundRect(msgX, msgY, msgWidth, msgHeight, 16);
                 ctx.fill();
-                ctx.strokeStyle = '#4dd0e1';
+                ctx.strokeStyle = '#a78bfa';
                 ctx.lineWidth = 3;
                 ctx.stroke();
 
-                ctx.fillStyle = '#4dd0e1';
+                ctx.shadowColor = '#a78bfa';
+                ctx.shadowBlur = 10;
+                ctx.fillStyle = '#a78bfa';
                 ctx.font = 'bold 24px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText('LINE CLEARED!', canvas.width / 2, msgY + 25);
+                ctx.shadowBlur = 0;
 
-                ctx.fillStyle = '#fff';
+                ctx.fillStyle = '#e9d5ff';
                 ctx.font = '16px Arial';
                 ctx.fillText(lineClearMessage, canvas.width / 2, msgY + 55);
             }
 
             // Pause/Game Over overlays
             if (paused && !gameOver) {
-                ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                ctx.fillStyle = 'rgba(30, 27, 75, 0.95)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#4dd0e1';
+                ctx.shadowColor = '#a78bfa';
+                ctx.shadowBlur = 20;
+                ctx.fillStyle = '#a78bfa';
                 ctx.font = 'bold 48px Arial';
                 ctx.textAlign = 'center';
                 ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
+                ctx.shadowBlur = 0;
             }
             if (gameOver) {
-                ctx.fillStyle = 'rgba(0,0,0,0.9)';
+                ctx.fillStyle = 'rgba(30, 27, 75, 0.95)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#f44336';
+                ctx.shadowColor = '#f472b6';
+                ctx.shadowBlur = 20;
+                ctx.fillStyle = '#f472b6';
                 ctx.font = 'bold 48px Arial';
                 ctx.textAlign = 'center';
                 ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 30);
+                ctx.shadowBlur = 0;
                 ctx.fillStyle = '#fff';
                 ctx.font = '24px Arial';
                 ctx.fillText(`Score: ${gameScore}  |  Lines: ${gameLines}`, canvas.width / 2, canvas.height / 2 + 20);
                 ctx.font = '16px Arial';
-                ctx.fillStyle = '#888';
+                ctx.fillStyle = '#c4b5fd';
                 ctx.fillText('Click to return', canvas.width / 2, canvas.height / 2 + 60);
             }
         };
@@ -894,11 +779,14 @@ export default function TetrisGalaxy({ onExit }) {
 
     if (screen === 'loading') {
         return (
-            <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-b from-cyan-900 to-blue-950 z-[9999]">
+            <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-b from-violet-900 via-purple-900 to-indigo-950 z-[9999]">
                 <div className="text-center">
-                    <Loader2 className="w-16 h-16 animate-spin mx-auto mb-4 text-cyan-400" />
-                    <h2 className="text-2xl font-bold mb-2 text-white">Diving into the Ocean...</h2>
-                    <p className="text-cyan-300">Generating vocabulary for "{currentTopic}"</p>
+                    <div className="relative">
+                        <div className="absolute inset-0 blur-xl bg-purple-500/30 rounded-full animate-pulse"></div>
+                        <Loader2 className="w-16 h-16 animate-spin mx-auto mb-4 text-purple-400 relative" />
+                    </div>
+                    <h2 className="text-2xl font-bold mb-2 text-white">Launching into the Galaxy...</h2>
+                    <p className="text-purple-300">Generating vocabulary for "{currentTopic}"</p>
                 </div>
             </div>
         );
@@ -909,10 +797,10 @@ export default function TetrisGalaxy({ onExit }) {
             <div className="fixed inset-0 z-[9999]">
                 <canvas ref={canvasRef} className="block w-full h-full touch-none" />
                 <div className="absolute top-4 right-4 flex gap-2">
-                    <Button onClick={toggleFullscreen} className="bg-cyan-600/80 hover:bg-cyan-700 backdrop-blur" size="sm">
+                    <Button onClick={toggleFullscreen} className="bg-purple-600/80 hover:bg-purple-700 backdrop-blur border border-purple-400/30" size="sm">
                         {fullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                     </Button>
-                    <Button onClick={() => setScreen('title')} className="bg-gray-600/80 hover:bg-gray-700 backdrop-blur" size="sm">
+                    <Button onClick={() => setScreen('title')} className="bg-indigo-600/80 hover:bg-indigo-700 backdrop-blur border border-indigo-400/30" size="sm">
                         <X className="w-4 h-4 mr-1" /> Exit
                     </Button>
                 </div>
@@ -926,47 +814,50 @@ export default function TetrisGalaxy({ onExit }) {
     };
 
     return (
-        <div className="fixed inset-0 bg-gradient-to-b from-cyan-50 to-blue-100 z-[9999] overflow-auto p-4">
-            <Button onClick={onExit} variant="ghost" className="absolute top-2 right-2 text-gray-500 hover:text-red-500 hover:bg-red-50">
+        <div className="fixed inset-0 bg-gradient-to-b from-slate-900 via-purple-900 to-indigo-950 z-[9999] overflow-auto p-4">
+            <Button onClick={onExit} variant="ghost" className="absolute top-2 right-2 text-purple-300 hover:text-white hover:bg-purple-800/50">
                 <X className="w-5 h-5" />
             </Button>
-            
+
             <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-4">
-                    <img src={LOGO_URL} alt="Logo" className="w-14 h-14 mx-auto mb-2 rounded-xl" />
-                    <h1 className="text-4xl font-black bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-1">TETRIS GALAXY</h1>
-                    <p className="text-blue-600">Stack Words • Learn Vocabulary • Ocean Adventure</p>
+                <div className="text-center mb-6">
+                    <div className="relative inline-block">
+                        <div className="absolute inset-0 blur-xl bg-purple-500/30 rounded-full"></div>
+                        <img src={LOGO_URL} alt="Logo" className="w-16 h-16 mx-auto mb-3 rounded-xl relative" />
+                    </div>
+                    <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent mb-2">TETRIS GALAXY</h1>
+                    <p className="text-purple-300">Stack Words • Learn Vocabulary • Explore the Cosmos</p>
                 </div>
 
-                <div className="bg-white rounded-xl border border-cyan-200 p-3 mb-4 shadow-lg">
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-purple-500/30 p-4 mb-6 shadow-2xl">
                     <div className="flex gap-3">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-300" />
                             <Input 
                                 placeholder="Enter any topic to learn..." 
                                 value={searchQuery} 
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyPress={(e) => { if (e.key === 'Enter' && searchQuery.trim()) handleStartGame('custom'); }}
-                                className="pl-12 h-12 bg-white border-gray-200 text-gray-900 rounded-xl" 
+                                className="pl-12 h-12 bg-white/10 border-purple-500/30 text-white placeholder:text-purple-300/50 rounded-xl focus:border-purple-400 focus:ring-purple-400/30" 
                             />
                         </div>
                         <Button 
                             onClick={() => searchQuery.trim() && handleStartGame('custom')} 
                             disabled={!searchQuery.trim() || loading}
-                            className="h-12 px-6 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl"
+                            className="h-12 px-6 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-purple-500/25"
                         >
-                            <Play className="w-4 h-4 mr-2" /> Dive In
+                            <Play className="w-4 h-4 mr-2" /> Launch
                         </Button>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4 shadow-lg">
-                    <div className="flex flex-wrap gap-2 mb-4">
+                <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-purple-500/20 p-5 mb-6 shadow-xl">
+                    <div className="flex flex-wrap gap-2 mb-5">
                         {TABS.map(tab => (
                             <Button 
                                 key={tab.id} 
                                 onClick={() => handleTabClick(tab.id)}
-                                className={`px-4 py-2 rounded-full text-sm font-medium ${activeTab === tab.id ? `bg-gradient-to-r ${tab.color} text-white` : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}
+                                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${activeTab === tab.id ? `bg-gradient-to-r ${tab.color} text-white shadow-lg` : 'bg-white/10 hover:bg-white/20 text-purple-200'}`}
                             >
                                 {tab.label}
                             </Button>
@@ -974,12 +865,12 @@ export default function TetrisGalaxy({ onExit }) {
                     </div>
 
                     {loadingTopics && !generatedTopics[activeTab]?.length ? (
-                        <div className="text-center py-8">
-                            <Loader2 className="w-10 h-10 animate-spin mx-auto mb-3 text-cyan-500" />
-                            <p className="text-gray-600">Loading topics...</p>
+                        <div className="text-center py-10">
+                            <Loader2 className="w-10 h-10 animate-spin mx-auto mb-3 text-purple-400" />
+                            <p className="text-purple-300">Loading topics...</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-3 gap-4">
                             {filteredTopics(generatedTopics[activeTab] || []).slice(0, 9).map((topic, i) => {
                                 const tabInfo = TABS.find(t => t.id === activeTab);
                                 const icons = [Sparkles, Globe, Cpu, Atom, Leaf, Brain, Lightbulb, TrendingUp, Target];
@@ -988,9 +879,9 @@ export default function TetrisGalaxy({ onExit }) {
                                     <button 
                                         key={topic.id || i} 
                                         onClick={() => handleStartGame(topic)} 
-                                        className={`h-28 text-left py-3 px-4 rounded-xl bg-gradient-to-br ${tabInfo?.color || 'from-cyan-500 to-blue-600'} hover:opacity-90 text-white transition-all hover:scale-[1.02] hover:shadow-lg`}
+                                        className={`h-32 text-left py-4 px-5 rounded-xl bg-gradient-to-br ${tabInfo?.color || 'from-purple-500 to-indigo-600'} hover:opacity-90 text-white transition-all hover:scale-[1.03] hover:shadow-xl hover:shadow-purple-500/20`}
                                     >
-                                        <TopicIcon className="w-5 h-5 text-white/70 mb-2" />
+                                        <TopicIcon className="w-6 h-6 text-white/80 mb-2" />
                                         <div className="text-sm font-bold line-clamp-2">{topic.label}</div>
                                         <div className="text-xs text-white/70 line-clamp-1 mt-1">{topic.description}</div>
                                     </button>
@@ -1000,18 +891,18 @@ export default function TetrisGalaxy({ onExit }) {
                     )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-4">
                     {[
-                        { icon: Target, title: 'Word Blocks', desc: 'Each piece shows a vocabulary word', bgColor: 'bg-cyan-100', iconColor: 'text-cyan-600' },
-                        { icon: Brain, title: 'Learn Definitions', desc: 'See meanings when lines clear', bgColor: 'bg-blue-100', iconColor: 'text-blue-600' },
-                        { icon: TrendingUp, title: 'Level Up', desc: 'Speed increases as you progress', bgColor: 'bg-indigo-100', iconColor: 'text-indigo-600' }
+                        { icon: Target, title: 'Word Blocks', desc: 'Each piece shows a vocabulary word', gradient: 'from-purple-500/20 to-purple-600/10', iconBg: 'bg-purple-500/30', iconColor: 'text-purple-300' },
+                        { icon: Brain, title: 'Learn Definitions', desc: 'See meanings when lines clear', gradient: 'from-indigo-500/20 to-indigo-600/10', iconBg: 'bg-indigo-500/30', iconColor: 'text-indigo-300' },
+                        { icon: TrendingUp, title: 'Level Up', desc: 'Speed increases as you progress', gradient: 'from-pink-500/20 to-pink-600/10', iconBg: 'bg-pink-500/30', iconColor: 'text-pink-300' }
                     ].map((item, i) => (
-                        <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 text-center shadow">
-                            <div className={`w-12 h-12 ${item.bgColor} rounded-lg mx-auto mb-2 flex items-center justify-center`}>
-                                <item.icon className={`w-6 h-6 ${item.iconColor}`} />
+                        <div key={i} className={`bg-gradient-to-br ${item.gradient} backdrop-blur border border-purple-500/20 rounded-xl p-5 text-center`}>
+                            <div className={`w-14 h-14 ${item.iconBg} rounded-xl mx-auto mb-3 flex items-center justify-center`}>
+                                <item.icon className={`w-7 h-7 ${item.iconColor}`} />
                             </div>
-                            <h3 className="text-gray-900 font-semibold text-sm mb-1">{item.title}</h3>
-                            <p className="text-gray-500 text-xs">{item.desc}</p>
+                            <h3 className="text-white font-semibold mb-1">{item.title}</h3>
+                            <p className="text-purple-300 text-sm">{item.desc}</p>
                         </div>
                     ))}
                 </div>
