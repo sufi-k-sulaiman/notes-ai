@@ -348,19 +348,19 @@ export default function TetrisGalaxy({ onExit }) {
             const pieceTopY = offsetY + piece.y * cellSize;
 
             // Position text above the piece with more spacing
-            const textY = pieceTopY - 45;
+            const textY = pieceTopY - 55;
             
             // Word first (no glow)
-            ctx.font = 'bold 22px Arial';
+            ctx.font = 'bold 28px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
             ctx.fillStyle = '#fff';
             ctx.fillText(piece.word, pieceCenterX, textY);
 
-            // Definition below the word
-            ctx.font = '13px Arial';
+            // Definition below the word - 2x bigger
+            ctx.font = '26px Arial';
             ctx.fillStyle = '#c4b5fd';
-            ctx.fillText(piece.definition, pieceCenterX, textY + 18);
+            ctx.fillText(piece.definition, pieceCenterX, textY + 32);
         };
 
         const shadeColor = (color, percent) => {
@@ -452,19 +452,25 @@ export default function TetrisGalaxy({ onExit }) {
                 setLines(gameLines);
                 setLevel(gameLevel);
 
-                // Create a paragraph from cleared words
+                // Create a meaningful paragraph using the cleared words
                 const uniqueAllWords = [...new Set(allClearedWords)];
                 if (uniqueAllWords.length > 0) {
-                    // Form a sentence/paragraph with the words
-                    if (uniqueAllWords.length === 1) {
-                        lineClearMessage = `You cleared "${uniqueAllWords[0]}" from the board!`;
-                    } else if (uniqueAllWords.length === 2) {
-                        lineClearMessage = `Great job! You cleared "${uniqueAllWords[0]}" and "${uniqueAllWords[1]}"!`;
+                    // Generate a creative paragraph that uses all the words naturally
+                    const wordCount = uniqueAllWords.length;
+                    if (wordCount === 1) {
+                        lineClearMessage = `The concept of ${uniqueAllWords[0]} represents a fundamental building block in understanding this topic.`;
+                    } else if (wordCount === 2) {
+                        lineClearMessage = `When we combine ${uniqueAllWords[0]} with ${uniqueAllWords[1]}, we unlock powerful new possibilities for innovation and growth.`;
+                    } else if (wordCount <= 4) {
+                        lineClearMessage = `In today's world, ${uniqueAllWords[0]} and ${uniqueAllWords[1]} work together with ${uniqueAllWords.slice(2).join(' and ')} to create transformative solutions.`;
                     } else {
-                        const lastWord = uniqueAllWords.pop();
-                        lineClearMessage = `Amazing! You cleared "${uniqueAllWords.join('", "')}" and "${lastWord}"!`;
+                        // For many words, create a flowing paragraph
+                        const mid = Math.floor(wordCount / 2);
+                        const firstHalf = uniqueAllWords.slice(0, mid);
+                        const secondHalf = uniqueAllWords.slice(mid);
+                        lineClearMessage = `The intersection of ${firstHalf.join(', ')} creates a foundation where ${secondHalf.join(', ')} can thrive and revolutionize how we approach complex challenges.`;
                     }
-                    lineClearTimer = 4000;
+                    lineClearTimer = 5000;
                 }
             }
         };
