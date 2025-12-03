@@ -411,6 +411,7 @@ export default function News() {
                                 onClick={() => {
                                     setSearchQuery(subtopic);
                                     setActiveSubtopic(subtopic);
+                                    updateUrl(activeCategory, subtopic);
                                     fetchNews(subtopic);
                                 }}
                                 className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
