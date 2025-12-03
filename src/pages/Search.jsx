@@ -891,11 +891,15 @@ export default function SearchPage() {
                                     <div className="flex items-center justify-center py-12">
                                         <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
                                     </div>
-                                ) : tabResults.intelligence.data ? (
+                                ) : tabResults.intelligence.data && (tabResults.intelligence.data.title || tabResults.intelligence.data.overview) ? (
                                     <div className="space-y-4">
                                         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-                                            <h3 className="text-xl font-bold text-gray-900">{tabResults.intelligence.data.title}</h3>
-                                            <p className="text-gray-600">{tabResults.intelligence.data.overview}</p>
+                                            {tabResults.intelligence.data.title && (
+                                                <h3 className="text-xl font-bold text-gray-900">{tabResults.intelligence.data.title}</h3>
+                                            )}
+                                            {tabResults.intelligence.data.overview && (
+                                                <p className="text-gray-600">{tabResults.intelligence.data.overview}</p>
+                                            )}
                                             {tabResults.intelligence.data.keyFacts?.length > 0 && (
                                                 <div>
                                                     <h4 className="font-semibold text-gray-800 mb-2">Key Facts</h4>
@@ -938,7 +942,17 @@ export default function SearchPage() {
                                         )}
                                     </div>
                                 ) : (
-                                    <div className="text-center py-12 text-gray-500">No intelligence data found</div>
+                                    <div className="text-center py-12">
+                                        <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center mx-auto mb-4">
+                                            <Lightbulb className="w-8 h-8 text-violet-600" />
+                                        </div>
+                                        <p className="text-gray-500 mb-4">Intelligence data is being processed</p>
+                                        <Link to={createPageUrl('Intelligence')}>
+                                            <Button className="bg-violet-600 hover:bg-violet-700">
+                                                Explore Intelligence Platform <ChevronRight className="w-4 h-4 ml-1" />
+                                            </Button>
+                                        </Link>
+                                    </div>
                                 )}
                             </TabsContent>
 
