@@ -160,6 +160,76 @@ const CATEGORIES = {
         color: "#0891B2",
         gradient: "from-cyan-600 to-blue-600",
         items: ["Schools", "Universities", "Training Services", "Government", "Public Administration", "NGOs", "Nonprofits", "Professional Services", "Consulting", "Legal Services", "Research Institutions"]
+    },
+    Designing_Building: {
+        name: "Designing & Building",
+        icon: Beaker,
+        color: "#7C3AED",
+        gradient: "from-violet-500 to-purple-600",
+        items: ["Mechanical Engineer", "Civil Engineer", "Electrical Engineer", "Structural Engineer", "Aerospace Engineer", "Automotive Engineer", "Industrial Designer", "Product Designer", "Fashion Designer", "Graphic Designer", "UX Designer", "Interior Designer", "Architect", "Tooling Engineer", "Manufacturing Engineer"]
+    },
+    Operating_Maintaining: {
+        name: "Operating & Maintaining",
+        icon: Zap,
+        color: "#DC2626",
+        gradient: "from-red-500 to-orange-500",
+        items: ["Power Plant Operator", "Utility Lineworker", "CNC Machinist", "Maintenance Technician", "Rail Technician", "Equipment Operator", "Nuclear Technician", "Mechanical Technician", "Electrical Technician", "Warehouse Worker", "Truck Driver", "Forklift Operator", "Delivery Driver", "Ground Crew Technician", "Packaging Operator"]
+    },
+    Analyzing_Evaluating: {
+        name: "Analyzing & Evaluating",
+        icon: Calculator,
+        color: "#0D9488",
+        gradient: "from-teal-500 to-cyan-500",
+        items: ["Financial Analyst", "Risk Analyst", "Credit Analyst", "Equity Analyst", "Budget Analyst", "Treasury Analyst", "Business Analyst", "Data Analyst", "Research Analyst", "Transportation Analyst", "Environmental Analyst", "Policy Analyst", "Energy Analyst", "Compliance Analyst", "Supply Chain Analyst"]
+    },
+    Managing_Leading: {
+        name: "Managing & Leading",
+        icon: Users,
+        color: "#2563EB",
+        gradient: "from-blue-600 to-indigo-600",
+        items: ["Plant Manager", "Operations Manager", "Production Supervisor", "Facilities Manager", "Distribution Manager", "Procurement Manager", "Warehouse Manager", "Property Manager", "Hotel Manager", "Safety Manager", "Project Manager", "Business Development Manager", "Sales Manager", "Account Manager", "Customer Success Manager"]
+    },
+    Researching_Innovating: {
+        name: "Researching & Innovating",
+        icon: FlaskConical,
+        color: "#059669",
+        gradient: "from-emerald-500 to-green-600",
+        items: ["Research Scientist", "Clinical Research Associate", "Laboratory Technician", "Biochemist", "Microbiologist", "Geneticist", "Neuroscientist", "Physicist", "Chemist", "Zoologist", "Botanist", "Climate Scientist", "Oceanographer", "Agricultural Scientist", "Food Scientist", "Materials Scientist", "Pharmacologist"]
+    },
+    Healthcare_Caring: {
+        name: "Healthcare & Caring",
+        icon: Heart,
+        color: "#E11D48",
+        gradient: "from-rose-500 to-pink-600",
+        items: ["Physician", "Surgeon", "Nurse", "Pharmacist", "Radiologist", "Dentist", "Optometrist", "Midwife", "Occupational Therapist", "Physical Therapist", "Paramedic", "Psychiatrist", "Psychologist", "Nutritionist", "Speech Therapist", "Veterinarian", "Public Health Specialist"]
+    },
+    Technology_Digital: {
+        name: "Technology & Digital Solutions",
+        icon: Cpu,
+        color: "#7C3AED",
+        gradient: "from-purple-600 to-violet-600",
+        items: ["Software Engineer", "Data Scientist", "AI/ML Engineer", "Web Developer", "Mobile App Developer", "Front-End Developer", "Back-End Developer", "Full-Stack Developer", "Cloud Architect", "DevOps Engineer", "Database Administrator", "Network Administrator", "IT Support Specialist", "Cybersecurity Analyst", "Business Intelligence Analyst"]
+    },
+    Customer_Service_Hospitality: {
+        name: "Customer Service & Hospitality",
+        icon: Star,
+        color: "#EA580C",
+        gradient: "from-orange-500 to-amber-500",
+        items: ["Retail Sales Associate", "Store Manager", "Merchandiser", "Customer Service Representative", "Concierge", "Call Center Agent", "Tour Guide", "Travel Agent", "Event Coordinator", "Waiter/Waitress", "Bartender", "Barista", "Housekeeping Supervisor", "Entertainment Host", "Fitness Trainer", "Spa Therapist"]
+    },
+    Creative_Media: {
+        name: "Creative & Media",
+        icon: Sparkles,
+        color: "#DB2777",
+        gradient: "from-pink-500 to-fuchsia-500",
+        items: ["Animator", "Illustrator", "Art Director", "Creative Director", "Film Director", "Music Producer", "Photographer", "Videographer", "Sound Engineer", "Screenwriter", "Actor", "Stage Manager", "Editor", "Journalist", "Blogger", "Podcaster", "Advertising Strategist", "Public Relations Specialist"]
+    },
+    Education_Govt_Nonprofit: {
+        name: "Education, Government & Nonprofit",
+        icon: GraduationCap,
+        color: "#4F46E5",
+        gradient: "from-indigo-500 to-blue-600",
+        items: ["Teacher", "University Professor", "Curriculum Developer", "School Principal", "Librarian", "Education Policy Advisor", "Academic Advisor", "Career Counselor", "Museum Curator", "Diplomat", "Legislative Assistant", "Community Outreach Coordinator", "Fundraising Specialist", "Human Rights Advocate", "NGO Field Officer", "Grant Writer", "Economist"]
     }
 };
 
