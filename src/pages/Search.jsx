@@ -619,7 +619,6 @@ export default function SearchPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-            <audio ref={audioRef} className="hidden" />
             
             <div className="max-w-4xl mx-auto">
                 {/* Search Header */}
@@ -642,50 +641,7 @@ export default function SearchPage() {
                     </form>
                 </div>
 
-                {/* Pod Player */}
-                {(podPlayer.currentPod || podPlayer.isGenerating) && (
-                    <div className="mb-6 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl p-4 text-white">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                                    <Headphones className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold">{podPlayer.currentPod?.title}</h4>
-                                    <p className="text-sm text-white/70">
-                                        {podPlayer.isGenerating ? 'Generating audio...' : 'Now Playing'}
-                                    </p>
-                                </div>
-                            </div>
-                            <button onClick={closePodPlayer} className="p-2 hover:bg-white/20 rounded-lg">
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
-                        {podPlayer.isGenerating ? (
-                            <div className="flex items-center gap-3">
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                                <span className="text-sm">Creating your personalized podcast...</span>
-                            </div>
-                        ) : (
-                            <>
-                                <div className="h-1 bg-white/30 rounded-full mb-3">
-                                    <div 
-                                        className="h-full bg-white rounded-full transition-all"
-                                        style={{ width: `${podPlayer.progress}%` }}
-                                    />
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <button 
-                                        onClick={togglePodPlayback}
-                                        className="w-10 h-10 rounded-full bg-white text-pink-600 flex items-center justify-center hover:scale-105 transition-transform"
-                                    >
-                                        {podPlayer.isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                )}
+
 
                 {/* Loading State */}
                 {loading && (
