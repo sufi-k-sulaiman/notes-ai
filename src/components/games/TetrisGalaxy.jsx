@@ -325,7 +325,7 @@ export default function TetrisGalaxy({ onExit }) {
             ctx.fill();
         };
 
-        // Draw word and definition next to falling piece - no background
+        // Draw word and definition above falling piece - no background
         const drawPieceWord = (piece, offsetX, offsetY, cellSize) => {
             if (!piece.word) return;
             
@@ -342,28 +342,28 @@ export default function TetrisGalaxy({ onExit }) {
                 });
             });
 
-            const pieceRightX = offsetX + (piece.x + maxX + 1) * cellSize;
-            const pieceCenterY = offsetY + (piece.y + (minY + maxY + 1) / 2) * cellSize;
+            const pieceCenterX = offsetX + (piece.x + (minX + maxX + 1) / 2) * cellSize;
+            const pieceTopY = offsetY + piece.y * cellSize;
 
-            // Position text to the right of the piece
-            const textX = pieceRightX + 25;
+            // Position text above the piece
+            const textY = pieceTopY - 15;
             
             // Word with glow effect - matching piece color
             ctx.shadowColor = piece.color;
             ctx.shadowBlur = 12;
-            ctx.font = 'bold 26px Arial';
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'middle';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
             ctx.fillStyle = '#fff';
-            ctx.fillText(piece.word, textX, pieceCenterY - 12);
+            ctx.fillText(piece.word, pieceCenterX, textY);
             ctx.shadowBlur = 0;
 
-            // Definition - white with subtle shadow
+            // Definition - above the word
             ctx.shadowColor = 'rgba(0,0,0,0.5)';
             ctx.shadowBlur = 4;
-            ctx.font = '16px Arial';
+            ctx.font = '14px Arial';
             ctx.fillStyle = '#e9d5ff';
-            ctx.fillText(piece.definition, textX, pieceCenterY + 14);
+            ctx.fillText(piece.definition, pieceCenterX, textY - 28);
             ctx.shadowBlur = 0;
         };
 
@@ -608,33 +608,27 @@ export default function TetrisGalaxy({ onExit }) {
             ctx.font = 'bold 28px Arial';
             ctx.fillText(gameLevel.toString(), panelX + panelWidth/2, statsY + 170);
 
-            // Line clear message in center of screen
+            // Line clear message in center of screen - no background/border
             if (lineClearMessage) {
-                const msgWidth = Math.min(gameWidth * 0.9, 500);
-                const msgHeight = 80;
-                const msgX = canvas.width / 2 - msgWidth / 2;
-                const msgY = canvas.height / 2 - msgHeight / 2;
-
-                ctx.fillStyle = 'rgba(30, 27, 75, 0.95)';
-                ctx.beginPath();
-                ctx.roundRect(msgX, msgY, msgWidth, msgHeight, 16);
-                ctx.fill();
-                ctx.strokeStyle = '#a78bfa';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
+                const padding = 40;
+                
                 ctx.shadowColor = '#a78bfa';
-                ctx.shadowBlur = 10;
-                ctx.fillStyle = '#a78bfa';
-                ctx.font = 'bold 24px Arial';
+                ctx.shadowBlur = 15;
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 28px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('LINE CLEARED!', canvas.width / 2, msgY + 25);
+                ctx.fillText('LINE CLEARED!', canvas.width / 2, canvas.height / 2 - 20);
                 ctx.shadowBlur = 0;
 
+                ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                ctx.shadowBlur = 4;
                 ctx.fillStyle = '#e9d5ff';
-                ctx.font = '16px Arial';
-                ctx.fillText(lineClearMessage, canvas.width / 2, msgY + 55);
+                ctx.font = '18px Arial';
+                // Wrap text with padding
+                const maxWidth = canvas.width - padding * 2;
+                ctx.fillText(lineClearMessage, canvas.width / 2, canvas.height / 2 + 15, maxWidth);
+                ctx.shadowBlur = 0;
             }
 
             // Pause/Game Over overlays
