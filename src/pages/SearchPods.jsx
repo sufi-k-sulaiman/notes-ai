@@ -658,9 +658,9 @@ export default function SearchPods() {
             const cleanText = cleanTextForSpeech(response || '');
 
             // Generate new audio for extended content using ElevenLabs
-            const ttsResponse = await base44.functions.invoke('elevenlabsTTS', {
+            const ttsResponse = await base44.functions.invoke('edgeTTS', {
                 text: cleanText,
-                voice_id: selectedVoice
+                lang: 'en-gb'
             });
 
             if (ttsResponse.data?.audio) {
