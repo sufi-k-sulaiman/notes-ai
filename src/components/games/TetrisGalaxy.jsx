@@ -347,8 +347,8 @@ export default function TetrisGalaxy({ onExit }) {
             const pieceCenterX = offsetX + (piece.x + (minX + maxX + 1) / 2) * cellSize;
             const pieceTopY = offsetY + piece.y * cellSize;
 
-            // Position text above the piece
-            const textY = pieceTopY - 10;
+            // Position text above the piece with more spacing
+            const textY = pieceTopY - 45;
             
             // Word first (no glow)
             ctx.font = 'bold 22px Arial';
@@ -360,7 +360,7 @@ export default function TetrisGalaxy({ onExit }) {
             // Definition below the word
             ctx.font = '13px Arial';
             ctx.fillStyle = '#c4b5fd';
-            ctx.fillText(piece.definition, pieceCenterX, textY + 16);
+            ctx.fillText(piece.definition, pieceCenterX, textY + 18);
         };
 
         const shadeColor = (color, percent) => {
@@ -452,10 +452,18 @@ export default function TetrisGalaxy({ onExit }) {
                 setLines(gameLines);
                 setLevel(gameLevel);
 
-                // Create nice message from cleared words
+                // Create a paragraph from cleared words
                 const uniqueAllWords = [...new Set(allClearedWords)];
                 if (uniqueAllWords.length > 0) {
-                    lineClearMessage = uniqueAllWords.slice(0, 4).join(' • ');
+                    // Form a sentence/paragraph with the words
+                    if (uniqueAllWords.length === 1) {
+                        lineClearMessage = `You cleared "${uniqueAllWords[0]}" from the board!`;
+                    } else if (uniqueAllWords.length === 2) {
+                        lineClearMessage = `Great job! You cleared "${uniqueAllWords[0]}" and "${uniqueAllWords[1]}"!`;
+                    } else {
+                        const lastWord = uniqueAllWords.pop();
+                        lineClearMessage = `Amazing! You cleared "${uniqueAllWords.join('", "')}" and "${lastWord}"!`;
+                    }
                     lineClearTimer = 4000;
                 }
             }
@@ -553,22 +561,19 @@ export default function TetrisGalaxy({ onExit }) {
                 drawPieceWord(currentPiece, offsetX, offsetY, CELL_SIZE);
             }
 
-            // Header with logo, title and topic - centered
+            // Header with logo, title and topic - centered (no glow)
             const headerY = 12;
             
-            // Logo
+            // Logo (no glow)
             const logoImg = new Image();
             logoImg.src = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692729a5f5180fbd43f297e9/a1a505225_1cPublishing-logo.png';
             ctx.drawImage(logoImg, 20, headerY, 45, 45);
 
-            // Title with glow - centered
-            ctx.shadowColor = '#a78bfa';
-            ctx.shadowBlur = 15;
+            // Title - no glow
             ctx.fillStyle = '#fff';
             ctx.font = 'bold 28px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('TETRIS GALAXY', canvas.width / 2, headerY + 22);
-            ctx.shadowBlur = 0;
 
             // Topic/Subject - centered below title with more spacing
             ctx.fillStyle = '#c4b5fd';
@@ -655,12 +660,28 @@ export default function TetrisGalaxy({ onExit }) {
                 ctx.font = 'bold 32px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('LINE CLEARED!', canvas.width / 2, msgCenterY - 30);
+                ctx.fillText('LINE CLEARED!', canvas.width / 2, msgCenterY - 40);
 
-                // Words in a nice format
-                ctx.fillStyle = '#c4b5fd';
-                ctx.font = '20px Arial';
-                ctx.fillText(lineClearMessage, canvas.width / 2, msgCenterY + 10);
+                // Paragraph with the words - wrap text
+                ctx.fillStyle = '#e9d5ff';
+                ctx.font = '18px Arial';
+                const maxWidth = canvas.width * 0.6;
+                const words = lineClearMessage.split(' ');
+                let line = '';
+                let lineY = msgCenterY + 5;
+                
+                for (let i = 0; i < words.length; i++) {
+                    const testLine = line + words[i] + ' ';
+                    const metrics = ctx.measureText(testLine);
+                    if (metrics.width > maxWidth && line !== '') {
+                        ctx.fillText(line.trim(), canvas.width / 2, lineY);
+                        line = words[i] + ' ';
+                        lineY += 26;
+                    } else {
+                        line = testLine;
+                    }
+                }
+                ctx.fillText(line.trim(), canvas.width / 2, lineY);
             }
 
             // Pause/Game Over overlays
