@@ -573,9 +573,9 @@ export default function SearchPods() {
             const remainingText = remainingSentences.join(' ');
             
             // Generate new audio with new voice using ElevenLabs
-            const ttsResponse = await base44.functions.invoke('elevenlabsTTS', {
+            const ttsResponse = await base44.functions.invoke('edgeTTS', {
                 text: remainingText,
-                voice_id: newVoice
+                lang: 'en-gb'
             });
             
             if (ttsResponse.data?.audio) {
