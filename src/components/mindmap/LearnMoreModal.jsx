@@ -384,7 +384,7 @@ For each document, provide the actual URL where it can be found.`,
                                                             Significance
                                                         </h3>
                                                         {data.overview?.significance?.map((para, i) => (
-                                                            <p key={i} className="text-gray-600 text-sm md:text-base leading-relaxed">{para}</p>
+                                                            <p key={i} className="text-gray-600 text-sm md:text-base leading-relaxed"><TextWithLinks text={para} /></p>
                                                         ))}
                                                     </div>
                                                 </>
