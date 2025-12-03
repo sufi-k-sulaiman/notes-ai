@@ -553,7 +553,7 @@ function ItemDetailView({ item, category, onNavigateToTopic }) {
                         <Globe className="w-5 h-5" style={{ color: category?.color }} />
                         Overview
                     </h3>
-                    <p className="text-gray-700 leading-relaxed">{data?.overview}</p>
+                    <p className="text-gray-700 leading-relaxed"><TextWithLinks text={data?.overview} /></p>
                 </div>
 
                 {/* Charts Section */}
