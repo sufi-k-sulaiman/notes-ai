@@ -4,7 +4,7 @@ import {
     Globe, Mountain, Leaf, Zap, Star, Home,
     Beaker, Calculator, FlaskConical, Users, Lightbulb, BookOpen, Atom, ExternalLink,
     Factory, Truck, ShoppingCart, Plane, Heart, Building, Cpu, Wheat, GraduationCap, Wrench,
-    Clock, AlertCircle, Rocket
+    Clock, AlertCircle, Rocket, Network
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
@@ -407,7 +407,10 @@ function ItemDetailView({ item, category, onNavigateToTopic }) {
                 8. Historical Timeline: 4 key historical events with year, title, and brief description
                 9. Applications: 4 common real-world applications with name and description
                 10. Challenges: 4 current challenges or considerations
-                11. Future Outlook: 2-3 sentences on future trends and predictions`,
+                11. Future Outlook: 2-3 sentences on future trends and predictions
+                12. Innovations: 4 recent innovations or breakthroughs with name and description
+                13. Tools: 4 key tools or technologies used with name and description
+                14. Systems: 4 related systems or frameworks with name and description`,
                     add_context_from_internet: true,
                     response_json_schema: {
                         type: "object",
@@ -422,10 +425,13 @@ function ItemDetailView({ item, category, onNavigateToTopic }) {
                             historicalTimeline: { type: "array", items: { type: "object", properties: { year: { type: "string" }, title: { type: "string" }, description: { type: "string" } } } },
                             applications: { type: "array", items: { type: "object", properties: { name: { type: "string" }, description: { type: "string" } } } },
                             challenges: { type: "array", items: { type: "string" } },
-                            futureOutlook: { type: "string" }
-                        }
-                    }
-                }),
+                            futureOutlook: { type: "string" },
+                            innovations: { type: "array", items: { type: "object", properties: { name: { type: "string" }, description: { type: "string" } } } },
+                            tools: { type: "array", items: { type: "object", properties: { name: { type: "string" }, description: { type: "string" } } } },
+                            systems: { type: "array", items: { type: "object", properties: { name: { type: "string" }, description: { type: "string" } } } }
+                            }
+                            }
+                            }),
                 base44.integrations.Core.InvokeLLM({
                     prompt: `For "${item}", provide numerical chart data:
 - distributionData: 4 items with name and value (numbers adding to 100)
@@ -787,10 +793,84 @@ function ItemDetailView({ item, category, onNavigateToTopic }) {
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {data.applications.map((app, i) => (
-                                <div key={i} className="p-4 rounded-lg border border-gray-100 hover:shadow-md transition-all" style={{ backgroundColor: `${category?.color}05` }}>
-                                    <h4 className="font-medium text-gray-900 mb-1">{app.name}</h4>
+                                <button 
+                                    key={i} 
+                                    onClick={() => onNavigateToTopic(app.name)}
+                                    className="p-4 rounded-lg border border-gray-100 hover:shadow-md hover:border-purple-300 transition-all text-left cursor-pointer group" 
+                                    style={{ backgroundColor: `${category?.color}05` }}
+                                >
+                                    <h4 className="font-medium text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">{app.name}</h4>
                                     <p className="text-sm text-gray-600">{app.description}</p>
-                                </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Innovations */}
+                {data?.innovations?.length > 0 && (
+                    <div className="bg-white rounded-xl border border-gray-200 p-5">
+                        <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                            <Rocket className="w-5 h-5" style={{ color: category?.color }} />
+                            Recent Innovations
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {data.innovations.map((innovation, i) => (
+                                <button 
+                                    key={i} 
+                                    onClick={() => onNavigateToTopic(innovation.name)}
+                                    className="p-4 rounded-lg border border-gray-100 hover:shadow-md hover:border-purple-300 transition-all text-left cursor-pointer group" 
+                                    style={{ backgroundColor: `${category?.color}05` }}
+                                >
+                                    <h4 className="font-medium text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">{innovation.name}</h4>
+                                    <p className="text-sm text-gray-600">{innovation.description}</p>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Tools */}
+                {data?.tools?.length > 0 && (
+                    <div className="bg-white rounded-xl border border-gray-200 p-5">
+                        <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                            <Wrench className="w-5 h-5" style={{ color: category?.color }} />
+                            Key Tools & Technologies
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {data.tools.map((tool, i) => (
+                                <button 
+                                    key={i} 
+                                    onClick={() => onNavigateToTopic(tool.name)}
+                                    className="p-4 rounded-lg border border-gray-100 hover:shadow-md hover:border-purple-300 transition-all text-left cursor-pointer group" 
+                                    style={{ backgroundColor: `${category?.color}05` }}
+                                >
+                                    <h4 className="font-medium text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">{tool.name}</h4>
+                                    <p className="text-sm text-gray-600">{tool.description}</p>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Systems */}
+                {data?.systems?.length > 0 && (
+                    <div className="bg-white rounded-xl border border-gray-200 p-5">
+                        <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                            <Network className="w-5 h-5" style={{ color: category?.color }} />
+                            Related Systems & Frameworks
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {data.systems.map((system, i) => (
+                                <button 
+                                    key={i} 
+                                    onClick={() => onNavigateToTopic(system.name)}
+                                    className="p-4 rounded-lg border border-gray-100 hover:shadow-md hover:border-purple-300 transition-all text-left cursor-pointer group" 
+                                    style={{ backgroundColor: `${category?.color}05` }}
+                                >
+                                    <h4 className="font-medium text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">{system.name}</h4>
+                                    <p className="text-sm text-gray-600">{system.description}</p>
+                                </button>
                             ))}
                         </div>
                     </div>
