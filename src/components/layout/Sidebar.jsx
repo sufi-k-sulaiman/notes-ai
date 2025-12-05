@@ -15,9 +15,9 @@ export default function Sidebar({ isOpen, activePage, onClose }) {
             {isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onClose} />}
             <aside className={`${isOpen ? 'w-48 md:w-64 translate-x-0' : 'w-0 -translate-x-full md:translate-x-0'} transition-all duration-300 overflow-y-auto overflow-x-hidden bg-white border-r border-gray-200 flex-shrink-0 fixed md:relative z-50 md:z-auto h-[calc(100vh-72px)] md:h-auto`}>
                 {/* Logo - visible only on mobile */}
-                <div className="md:hidden p-4 border-b border-gray-100">
+                <Link to="/" onClick={handleMobileClose} className="md:hidden p-4 border-b border-gray-100 block">
                     <img src={LOGO_URL} alt="Logo" className="h-10 w-auto" />
-                </div>
+                </Link>
                 <nav className="p-1 md:p-4 space-y-0.5 md:space-y-2">
                     {menuItems.map((item, index) => (
                         <Link
