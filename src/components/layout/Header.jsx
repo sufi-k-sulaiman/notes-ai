@@ -129,7 +129,7 @@ export default function Header({ title, sidebarOpen, setSidebarOpen, children, c
                     <div className="flex-1 flex md:hidden justify-end mr-2">
                         <div className="text-right">
                             <span className="text-lg font-bold text-gray-900">1cPublishing</span>
-                            <p className="text-xs font-medium text-purple-600">Artificial intelligence</p>
+                            <p className="text-xs font-medium text-purple-600">Agentic Ai</p>
                         </div>
                     </div>
                 )}
