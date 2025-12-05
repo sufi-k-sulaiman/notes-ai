@@ -1103,6 +1103,7 @@ I need 10 reviews with: title, intro, and reviews array (name, rating 1-10, text
                                                               <SelectItem value="technical">Technical</SelectItem>
                                                               <SelectItem value="journalistic">Journalistic</SelectItem>
                                                               <SelectItem value="creative">Creative</SelectItem>
+                                                              <SelectItem value="editorial">Editorial</SelectItem>
                                                           </SelectContent>
                                                       </Select>
                                                       {styleLoading && <Loader2 className="w-4 h-4 animate-spin text-purple-600" />}
