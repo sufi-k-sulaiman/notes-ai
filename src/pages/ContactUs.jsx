@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, MessageSquare, Headphones, Building2, Send, ArrowLeft, Loader2, ExternalLink } from 'lucide-react';
+import { Mail, MessageSquare, Headphones, Building2, Send, ArrowLeft, Loader2, ExternalLink, MapPin } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -204,6 +204,62 @@ export default function ContactUs() {
                     />
                 </div>
 
+                {/* Office Locations */}
+                <div className="mb-8">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Our Offices</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+                            <div className="flex items-start gap-3 mb-4">
+                                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                                    <MapPin className="w-5 h-5 text-purple-600" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-1">US Office</h3>
+                                    <p className="text-gray-600">United States</p>
+                                </div>
+                            </div>
+                            <p className="text-gray-700 leading-relaxed">
+                                1 Barbados Ave<br />
+                                Tampa, FL 33606<br />
+                                USA
+                            </p>
+                        </div>
+
+                        <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+                            <div className="flex items-start gap-3 mb-4">
+                                <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
+                                    <MapPin className="w-5 h-5 text-green-600" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-1">Canada Office</h3>
+                                    <p className="text-gray-600">Canada</p>
+                                </div>
+                            </div>
+                            <p className="text-gray-700 leading-relaxed">
+                                49 Courtman Rd<br />
+                                London N17 7HT<br />
+                                UK
+                            </p>
+                        </div>
+
+                        <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+                            <div className="flex items-start gap-3 mb-4">
+                                <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                    <MapPin className="w-5 h-5 text-blue-600" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-1">UK Office</h3>
+                                    <p className="text-gray-600">United Kingdom</p>
+                                </div>
+                            </div>
+                            <p className="text-gray-700 leading-relaxed">
+                                49 Courtman Rd<br />
+                                London N17 7HT<br />
+                                UK
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>
