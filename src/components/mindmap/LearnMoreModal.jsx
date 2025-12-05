@@ -298,19 +298,19 @@ For each document, provide the actual URL where it can be found.`,
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
                         <TabsList className="w-full justify-start rounded-none border-b bg-gray-50 p-0 h-auto grid grid-cols-5 md:flex md:overflow-x-auto">
                                                                     <TabsTrigger value="overview" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-2 md:py-3 px-1 md:px-4 gap-1 md:gap-2 text-[10px] md:text-sm flex-col md:flex-row">
-                                                                        <BookOpen className="w-3 h-3 md:w-4 md:h-4" /> <span>Overview</span>
+                                                                        <BookOpen className="w-6 h-6 md:w-4 md:h-4" /> <span>Overview</span>
                                                                     </TabsTrigger>
                                                                     <TabsTrigger value="professional" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-2 md:py-3 px-1 md:px-4 gap-1 md:gap-2 text-[10px] md:text-sm flex-col md:flex-row">
-                                                                        <Briefcase className="w-3 h-3 md:w-4 md:h-4" /> <span>Pro</span>
+                                                                        <Briefcase className="w-6 h-6 md:w-4 md:h-4" /> <span>Pro</span>
                                                                     </TabsTrigger>
                                                                     <TabsTrigger value="timeline" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-2 md:py-3 px-1 md:px-4 gap-1 md:gap-2 text-[10px] md:text-sm flex-col md:flex-row">
-                                                                        <Clock className="w-3 h-3 md:w-4 md:h-4" /> <span>Timeline</span>
+                                                                        <Clock className="w-6 h-6 md:w-4 md:h-4" /> <span>Timeline</span>
                                                                     </TabsTrigger>
                                                                     <TabsTrigger value="insights" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-2 md:py-3 px-1 md:px-4 gap-1 md:gap-2 text-[10px] md:text-sm flex-col md:flex-row">
-                                                                        <BarChart3 className="w-3 h-3 md:w-4 md:h-4" /> <span>Insights</span>
+                                                                        <BarChart3 className="w-6 h-6 md:w-4 md:h-4" /> <span>Insights</span>
                                                                     </TabsTrigger>
                                                                     <TabsTrigger value="documents" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-purple-600 py-2 md:py-3 px-1 md:px-4 gap-1 md:gap-2 text-[10px] md:text-sm flex-col md:flex-row">
-                                                                        <FileText className="w-3 h-3 md:w-4 md:h-4" /> <span>Docs</span>
+                                                                        <FileText className="w-6 h-6 md:w-4 md:h-4" /> <span>Docs</span>
                                                                     </TabsTrigger>
                                                                 </TabsList>
 
