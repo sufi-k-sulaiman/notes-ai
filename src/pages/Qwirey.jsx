@@ -1013,7 +1013,7 @@ I need 10 reviews with: title, intro, and reviews array (name, rating 1-10, text
                         
                         {/* Bottom row - Format buttons */}
                         {selectedModel === 'qwirey' && (
-                            <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1 h-12">
+                            <div className="grid grid-cols-3 md:flex md:items-center gap-1 bg-gray-100 rounded-xl p-1">
                                 {[
                                     { id: 'short', label: 'Short' },
                                     { id: 'long', label: 'Long' },
@@ -1026,7 +1026,7 @@ I need 10 reviews with: title, intro, and reviews array (name, rating 1-10, text
                                         key={format.id}
                                         onClick={() => handleFormatChange(format.id)}
                                         disabled={formatLoading}
-                                        className={`flex-1 h-10 rounded-lg text-xs font-medium transition-all ${
+                                        className={`md:flex-1 h-10 rounded-lg text-xs font-medium transition-all ${
                                             responseFormat === format.id
                                                 ? 'bg-white text-purple-700 shadow-sm border border-purple-400'
                                                 : 'text-gray-500 hover:text-gray-700'
