@@ -866,7 +866,7 @@ export default function TetrisGalaxy({ onExit }) {
                             <p className="text-purple-400">Loading topics...</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {filteredTopics(generatedTopics[activeTab] || []).slice(0, 9).map((topic, i) => {
                                 const tabInfo = TABS.find(t => t.id === activeTab);
                                 const icons = [Sparkles, Globe, Cpu, Atom, Leaf, Brain, Lightbulb, TrendingUp, Target];
@@ -887,7 +887,7 @@ export default function TetrisGalaxy({ onExit }) {
                     )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
                         { icon: Target, title: 'Word Blocks', desc: 'Each piece shows a vocabulary word', iconColor: 'text-purple-500', bgColor: 'bg-purple-100' },
                         { icon: Brain, title: 'Learn Definitions', desc: 'See meanings when lines clear', iconColor: 'text-violet-500', bgColor: 'bg-violet-100' },

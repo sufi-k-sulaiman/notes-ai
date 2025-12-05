@@ -1378,7 +1378,7 @@ export default function TankCity({ onExit }) {
                             <p className="text-gray-600">Loading topics...</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             {filteredTopics(generatedTopics[activeTab] || []).slice(0, 9).map((topic, i) => {
                                 const tabInfo = TABS.find(t => t.id === activeTab);
                                 const icons = [Sparkles, Globe, Cpu, Atom, Leaf, Brain, Lightbulb, TrendingUp, Target];
@@ -1399,7 +1399,7 @@ export default function TankCity({ onExit }) {
                     )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                         { icon: Target, title: 'Destroy Words', desc: 'Shoot word blocks to learn vocabulary', bgColor: 'bg-green-100', iconColor: 'text-green-600' },
                         { icon: Heart, title: 'Defend Base', desc: 'Protect your base from enemy tanks', bgColor: 'bg-red-100', iconColor: 'text-red-600' },
