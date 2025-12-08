@@ -952,6 +952,23 @@ export default function Markets() {
 
     useEffect(() => { loadInitialStocks(); }, []);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            if (loadingMore || !hasMore) return;
+            
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight;
+            const clientHeight = window.innerHeight;
+            
+            if (scrollTop + clientHeight >= scrollHeight - 500) {
+                loadMoreStocks();
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [loadingMore, hasMore, stocks.length]);
+
     const loadInitialStocks = async () => {
         setLoading(true);
         await loadMoreStocks(true);
@@ -1243,23 +1260,13 @@ Use real market data. Return ALL ${batch.length} stocks.`,
                     <div className="flex flex-col gap-3 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-4">
                         {filteredStocks.map((stock, i) => (<StockCard key={stock.ticker || i} stock={stock} onClick={handleStockClick} />))}
                     </div>
-                    
-                    {hasMore && !loading && (
+
+                    {loadingMore && (
                         <div className="flex justify-center mt-8">
-                            <Button
-                                onClick={() => loadMoreStocks()}
-                                disabled={loadingMore}
-                                className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl"
-                            >
-                                {loadingMore ? (
-                                    <>
-                                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                                        Loading...
-                                    </>
-                                ) : (
-                                    `Load More Stocks (${Math.min(20, STOCK_DATA.length - stocks.length)} more available)`
-                                )}
-                            </Button>
+                            <div className="flex items-center gap-2 text-purple-600">
+                                <RefreshCw className="w-5 h-5 animate-spin" />
+                                <span className="text-sm font-medium">Loading more stocks...</span>
+                            </div>
                         </div>
                     )}
                 </>
