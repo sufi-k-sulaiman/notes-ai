@@ -898,30 +898,41 @@ export default function Notes() {
                             </div>
                         </div>
                         <div className="flex items-center gap-2 w-full sm:w-auto">
-                            <div className="flex items-center bg-white/60 backdrop-blur-xl rounded-xl border border-white/80 shadow-sm p-1">
-                                <button
-                                    onClick={() => setViewMode('grid')}
-                                    className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
-                                >
-                                    <Grid3x3 className="w-4 h-4" />
-                                </button>
-                                <button
-                                    onClick={() => setViewMode('list')}
-                                    className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
-                                >
-                                    <List className="w-4 h-4" />
-                                </button>
-                                <button
-                                    onClick={() => setViewMode('title')}
-                                    className={`p-2 rounded-lg transition-all ${viewMode === 'title' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
-                                >
-                                    <AlignLeft className="w-4 h-4" />
-                                </button>
+                            <div className="relative flex-1 sm:w-64">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                <Input
+                                    placeholder="Search notes..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="pl-10 bg-white/60 backdrop-blur-xl border-white/80"
+                                />
                             </div>
-                            <Button onClick={() => openNewNote()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg flex-1 sm:flex-initial border-0">
-                                <Plus className="w-4 h-4 mr-2" /> New Note
-                            </Button>
-                        </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="flex items-center bg-white/60 backdrop-blur-xl rounded-xl border border-white/80 shadow-sm p-1">
+                                    <button
+                                        onClick={() => setViewMode('grid')}
+                                        className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
+                                    >
+                                        <Grid3x3 className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => setViewMode('list')}
+                                        className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
+                                    >
+                                        <List className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => setViewMode('title')}
+                                        className={`p-2 rounded-lg transition-all ${viewMode === 'title' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
+                                    >
+                                        <AlignLeft className="w-4 h-4" />
+                                    </button>
+                                </div>
+                                <Button onClick={() => openNewNote()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg border-0">
+                                    <Plus className="w-4 h-4 mr-2" /> New Note
+                                </Button>
+                            </div>
                     </div>
 
                     {/* Notes Grid */}
