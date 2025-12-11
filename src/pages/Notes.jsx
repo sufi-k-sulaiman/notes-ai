@@ -645,8 +645,7 @@ export default function Notes() {
             {toast && <Toast message={toast} onClose={() => setToast(null)} />}
 
             {/* AI Text Ribbon */}
-            {showAiTextModal && (
-                <div className="px-3 md:px-4 py-3 border-b border-purple-200/50 bg-gradient-to-r from-purple-50/60 to-indigo-50/60 backdrop-blur-xl">
+            <div className="px-3 md:px-4 py-3 border-b border-purple-200/50 bg-gradient-to-r from-purple-50/60 to-indigo-50/60 backdrop-blur-xl">
                     <div className="flex items-center justify-between mb-3">
                         <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-purple-900">
                             <Sparkles className="w-4 h-4 text-purple-600" /> Generate AI Text
@@ -695,8 +694,7 @@ export default function Notes() {
             )}
 
             {/* AI Code Ribbon */}
-            {showAiCodeModal && (
-                <div className="px-3 md:px-4 py-3 border-b border-emerald-200/50 bg-gradient-to-r from-emerald-50/60 to-green-50/60 backdrop-blur-xl">
+            <div className="px-3 md:px-4 py-3 border-b border-emerald-200/50 bg-gradient-to-r from-emerald-50/60 to-green-50/60 backdrop-blur-xl">
                     <div className="flex items-center justify-between mb-3">
                         <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-emerald-900">
                             <Code2 className="w-4 h-4 text-emerald-600" /> Generate AI Code
@@ -737,12 +735,10 @@ export default function Notes() {
                             {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Code2 className="w-3 h-3 mr-1" />}
                             Generate
                         </Button>
-                    </div>
-                </div>
-            )}
+                        </div>
+                        </div>
 
-                    {/* AI Image Ribbon */}
-                    {showAiImageModal && (
+                        {/* AI Image Ribbon */}
                         <div className="px-3 md:px-4 py-3 border-b border-pink-200/50 bg-gradient-to-r from-pink-50/60 to-rose-50/60 backdrop-blur-xl">
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-pink-900">
@@ -781,13 +777,11 @@ export default function Notes() {
                                     {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Image className="w-3 h-3 mr-1" />}
                                     Generate {imageCount}
                                 </Button>
-                            </div>
-                        </div>
-                    )}
+                                </div>
+                                </div>
 
-                    {/* Color Picker Ribbon */}
-                    {showColorPicker && (
-                        <div className="px-3 md:px-4 py-3 border-b border-orange-200/50 bg-gradient-to-r from-orange-50/60 to-amber-50/60 backdrop-blur-xl">
+                                {/* Color Picker Ribbon */}
+                                <div className="px-3 md:px-4 py-3 border-b border-orange-200/50 bg-gradient-to-r from-orange-50/60 to-amber-50/60 backdrop-blur-xl">
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-orange-900">
                                     <Palette className="w-4 h-4 text-orange-600" /> Color Picker
@@ -837,9 +831,8 @@ export default function Notes() {
                                         Background
                                     </Button>
                                 </div>
-                            </div>
-                        </div>
-                    )}
+                                </div>
+                                </div>
                 </>
                 );
                 }
