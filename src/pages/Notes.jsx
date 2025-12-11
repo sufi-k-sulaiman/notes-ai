@@ -542,7 +542,7 @@ export default function Notes() {
 
                                 <div className="relative">
                                     <Input
-                                        placeholder="Describe the image you want to create..."
+                                        placeholder="Describe the image"
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && generateAIImage()}
