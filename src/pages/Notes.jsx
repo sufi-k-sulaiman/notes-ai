@@ -567,38 +567,6 @@ export default function Notes() {
                                 }
                             `}</style>
                         </div>
-
-                        <div className="p-2 md:p-3 border-t border-gray-200/50 bg-gradient-to-r from-white/40 to-purple-50/40 backdrop-blur-xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
-                            <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-                                <Tag className="w-3 md:w-4 h-3 md:h-4 text-gray-400" />
-                                {noteTags.map((tag, i) => (
-                                    <span key={i} className="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 bg-purple-100/60 backdrop-blur-sm text-purple-700 rounded-lg border border-purple-200/50 flex items-center gap-1">
-                                        {tag}
-                                        <button onClick={() => setNoteTags(noteTags.filter((_, idx) => idx !== i))} className="hover:text-purple-900 text-sm">×</button>
-                                    </span>
-                                ))}
-                                <Input
-                                    placeholder="Add tag..."
-                                    className="w-20 md:w-24 h-6 md:h-7 text-[10px] md:text-xs bg-white/60 backdrop-blur-sm border-white/80"
-                                    onKeyDown={e => {
-                                        if (e.key === 'Enter' && e.target.value.trim()) {
-                                            setNoteTags([...noteTags, e.target.value.trim()]);
-                                            e.target.value = '';
-                                        }
-                                    }}
-                                />
-                            </div>
-                            {selectedNote && (
-                                <Button 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    className="text-red-500 hover:text-red-700 hover:bg-red-100/60 backdrop-blur-sm text-xs md:text-sm"
-                                    onClick={() => { deleteMutation.mutate(selectedNote.id); setShowEditor(false); }}
-                                >
-                                    <Trash2 className="w-3 md:w-4 h-3 md:h-4 mr-1" /> Delete
-                                </Button>
-                            )}
-                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
