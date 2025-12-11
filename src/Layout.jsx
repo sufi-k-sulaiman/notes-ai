@@ -3,7 +3,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 
 export default function Layout({ children }) {
     useEffect(() => {
-        // iOS viewport and PWA setup
+        // iOS and macOS viewport and PWA setup
         const metaTags = [
             { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover' },
             { name: 'apple-mobile-web-app-capable', content: 'yes' },
@@ -22,14 +22,21 @@ export default function Layout({ children }) {
             meta.content = content;
         });
 
-        // Prevent iOS Safari rubber band scrolling on body
+        // Prevent rubber band scrolling
         document.body.style.overscrollBehavior = 'none';
+        
+        // macOS fullscreen support
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        if (isMac && window.matchMedia('(display-mode: standalone)').matches) {
+            document.documentElement.style.height = '100vh';
+            document.body.style.height = '100vh';
+        }
     }, []);
 
     return (
         <ErrorBoundary fallbackMessage="There was an error loading this page.">
             <style>{`
-                /* iOS Safe Area Support */
+                /* iOS and macOS Safe Area Support */
                 :root {
                     --safe-area-inset-top: env(safe-area-inset-top);
                     --safe-area-inset-bottom: env(safe-area-inset-bottom);
@@ -37,19 +44,27 @@ export default function Layout({ children }) {
                     --safe-area-inset-right: env(safe-area-inset-right);
                 }
                 
-                /* Prevent iOS zoom on input focus */
+                /* Prevent zoom on input focus */
                 input, textarea, select {
                     font-size: 16px !important;
                 }
                 
-                /* iOS smooth scrolling */
+                /* Smooth scrolling */
                 * {
                     -webkit-overflow-scrolling: touch;
                 }
                 
-                /* Prevent iOS text size adjustment */
+                /* Prevent text size adjustment */
                 html {
                     -webkit-text-size-adjust: 100%;
+                }
+                
+                /* macOS fullscreen PWA support */
+                @media (display-mode: standalone) {
+                    html, body {
+                        height: 100vh;
+                        overflow: hidden;
+                    }
                 }
             `}</style>
             {children}
