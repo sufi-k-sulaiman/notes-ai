@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
     Plus, Search, FileText, Calendar, Tag, Trash2, 
     Save, X, Loader2, Maximize2, Minimize2, Sparkles, Image,
-    Clock, FileType, List
+    Clock, FileType, List, Grid3x3, AlignLeft
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -111,6 +111,7 @@ export default function Notes() {
     const [showAiImageModal, setShowAiImageModal] = useState(false);
     const [aiPrompt, setAiPrompt] = useState('');
     const [formatLoading, setFormatLoading] = useState(false);
+    const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', 'title'
     const queryClient = useQueryClient();
 
     const { data: notes = [], isLoading } = useQuery({
@@ -271,9 +272,31 @@ export default function Notes() {
                             <h1 className="text-xl md:text-3xl font-bold text-gray-900">Notes Ai</h1>
                             <p className="text-gray-600 text-xs md:text-sm">Generative text notes and images</p>
                         </div>
-                        <Button onClick={() => openNewNote()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg w-full sm:w-auto border-0">
-                            <Plus className="w-4 h-4 mr-2" /> New Note
-                        </Button>
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <div className="flex items-center bg-white/60 backdrop-blur-xl rounded-xl border border-white/80 shadow-sm p-1">
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
+                                >
+                                    <Grid3x3 className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('list')}
+                                    className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
+                                >
+                                    <List className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('title')}
+                                    className={`p-2 rounded-lg transition-all ${viewMode === 'title' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
+                                >
+                                    <AlignLeft className="w-4 h-4" />
+                                </button>
+                            </div>
+                            <Button onClick={() => openNewNote()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg flex-1 sm:flex-initial border-0">
+                                <Plus className="w-4 h-4 mr-2" /> New Note
+                            </Button>
+                        </div>
                     </div>
 
                     {/* Notes Grid */}
@@ -290,7 +313,7 @@ export default function Notes() {
                                 <Plus className="w-4 h-4 mr-2" /> Create Note
                             </Button>
                         </div>
-                    ) : (
+                    ) : viewMode === 'grid' ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
                             {filteredNotes.map(note => (
                                 <NoteCard 
@@ -301,7 +324,68 @@ export default function Notes() {
                                 />
                             ))}
                         </div>
-                        )}
+                    ) : viewMode === 'list' ? (
+                        <div className="space-y-2 md:space-y-3">
+                            {filteredNotes.map(note => {
+                                const content = note.content?.replace(/<[^>]*>/g, '') || '';
+                                const wordCount = note.word_count || content.split(/\s+/).filter(w => w).length || 0;
+                                return (
+                                    <div
+                                        key={note.id}
+                                        onClick={() => openNote(note)}
+                                        className="bg-white/60 backdrop-blur-xl rounded-xl md:rounded-2xl border border-white/80 p-3 md:p-4 cursor-pointer hover:shadow-xl hover:bg-white/80 hover:border-purple-300 transition-all shadow-lg flex items-start gap-3 md:gap-4"
+                                    >
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-bold text-gray-900 mb-1 text-sm md:text-base truncate">{note.title || 'Untitled'}</h3>
+                                            <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mb-2">{content.slice(0, 150) || 'No content'}</p>
+                                            <div className="flex items-center gap-2 md:gap-3 text-[10px] md:text-xs text-gray-500 flex-wrap">
+                                                <span className="flex items-center gap-1">
+                                                    <Clock className="w-3 h-3" />
+                                                    {formatDate(note.created_date)}
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <FileType className="w-3 h-3" />
+                                                    {wordCount} words
+                                                </span>
+                                                {note.tags && note.tags.length > 0 && (
+                                                    <div className="flex items-center gap-1">
+                                                        {note.tags.slice(0, 2).map((tag, i) => (
+                                                            <span key={i} className="text-[10px] px-1.5 py-0.5 bg-white/60 backdrop-blur-sm text-gray-700 rounded border border-white/80">{tag}</span>
+                                                        ))}
+                                                        {note.tags.length > 2 && <span className="text-gray-400">+{note.tags.length - 2}</span>}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="bg-white/60 backdrop-blur-xl rounded-xl md:rounded-2xl border border-white/80 shadow-lg divide-y divide-gray-200/50">
+                            {filteredNotes.map(note => (
+                                <div
+                                    key={note.id}
+                                    onClick={() => openNote(note)}
+                                    className="p-3 md:p-4 cursor-pointer hover:bg-white/80 transition-all flex items-center justify-between group"
+                                >
+                                    <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+                                        <FileText className="w-4 md:w-5 h-4 md:h-5 text-purple-600 flex-shrink-0" />
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-semibold text-gray-900 text-sm md:text-base truncate">{note.title || 'Untitled'}</h3>
+                                            <p className="text-xs text-gray-500">{formatDate(note.created_date)}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                                        {note.tags && note.tags.length > 0 && (
+                                            <span className="hidden sm:inline text-[10px] px-2 py-1 bg-purple-100/60 backdrop-blur-sm text-purple-700 rounded border border-purple-200/50">{note.tags[0]}</span>
+                                        )}
+                                        <span className="hidden md:inline text-[10px]">{note.word_count || 0} words</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
                         {/* Quick Start Templates */}
                         {!isLoading && filteredNotes.length > 0 && (
