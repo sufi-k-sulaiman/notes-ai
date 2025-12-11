@@ -326,19 +326,7 @@ export default function Notes() {
             <Dialog open={showEditor} onOpenChange={setShowEditor}>
                 <DialogContent className={`max-w-full w-full h-full max-h-full rounded-none md:max-w-4xl md:max-h-[90vh] md:rounded-3xl p-0 overflow-hidden transition-all bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl ${isFullscreen ? '!max-w-full !w-full !h-full !max-h-full !rounded-none' : ''}`}>
                     <div className={`flex flex-col h-full ${isFullscreen ? '' : 'md:h-[80vh]'}`}>
-                        <div className="flex items-center justify-between p-3 md:p-4 border-b border-gray-200/50 bg-gradient-to-r from-white/60 to-purple-50/60 backdrop-blur-xl">
-                            <Input
-                                placeholder="Note title..."
-                                value={noteTitle}
-                                onChange={e => setNoteTitle(e.target.value)}
-                                className="text-base md:text-lg font-semibold border-0 shadow-none focus-visible:ring-0 flex-1 bg-transparent"
-                            />
-                            <Button variant="ghost" size="icon" onClick={() => setShowEditor(false)} className="flex-shrink-0 hover:bg-white/60 ml-2">
-                                <X className="w-5 h-5" />
-                            </Button>
-                        </div>
-
-                        <div className="px-3 md:px-4 py-2 border-b border-gray-200/50 bg-white/40 backdrop-blur-xl flex items-center gap-1 md:gap-2 flex-wrap">
+                        <div className="px-3 md:px-4 py-2 md:py-3 border-b border-gray-200/50 bg-gradient-to-r from-white/60 to-purple-50/60 backdrop-blur-xl flex items-center gap-2 md:gap-3">
                             <Button onClick={() => setShowAiTextModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
                                 <Sparkles className="w-3.5 md:w-4 h-3.5 md:h-4 text-purple-600" />
                                 <span className="hidden sm:inline">AI Text</span>
@@ -351,15 +339,15 @@ export default function Notes() {
                                 {formatLoading ? <Loader2 className="w-3.5 md:w-4 h-3.5 md:h-4 animate-spin" /> : <FileText className="w-3.5 md:w-4 h-3.5 md:h-4 text-blue-600" />}
                                 <span className="hidden sm:inline">Format</span>
                             </Button>
-                            <div className="flex-1" />
                             <Button onClick={() => setIsFullscreen(!isFullscreen)} variant="ghost" size="sm" className="hover:bg-white/60 hidden md:flex">
                                 {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                             </Button>
-                            <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg gap-1 text-xs md:text-sm border-0 h-8">
+                            <div className="flex-1" />
+                            <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg gap-1.5 text-xs md:text-sm border-0 h-8 px-4">
                                 {(createMutation.isPending || updateMutation.isPending) ? (
                                     <>
                                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                        <span className="hidden sm:inline">Saving...</span>
+                                        <span>Saving...</span>
                                     </>
                                 ) : (
                                     <>
@@ -368,6 +356,18 @@ export default function Notes() {
                                     </>
                                 )}
                             </Button>
+                            <Button onClick={() => setShowEditor(false)} className="bg-purple-600 hover:bg-purple-700 text-white h-8 px-3">
+                                <X className="w-4 h-4" />
+                            </Button>
+                        </div>
+
+                        <div className="px-3 md:px-4 py-2 border-b border-gray-200/50 bg-white/30 backdrop-blur-xl">
+                            <Input
+                                placeholder="Note title..."
+                                value={noteTitle}
+                                onChange={e => setNoteTitle(e.target.value)}
+                                className="text-base md:text-lg font-semibold border-0 shadow-none focus-visible:ring-0 w-full bg-transparent placeholder:text-gray-400"
+                            />
                         </div>
 
                         <div className="flex-1 overflow-hidden">
