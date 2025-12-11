@@ -245,17 +245,27 @@ export default function Notes() {
         }
     };
 
+    const quillRef = React.useRef(null);
+
     const insertTable = () => {
-        let tableHtml = '<table style="width: 100%; border-collapse: collapse; margin: 16px 0;"><tbody>';
+        let tableHtml = '<table style="width: 100%; border-collapse: collapse; margin: 16px 0; border: 1px solid #ddd;"><tbody>';
         for (let i = 0; i < tableRows; i++) {
             tableHtml += '<tr>';
             for (let j = 0; j < tableCols; j++) {
-                tableHtml += `<td style="border: 1px solid #ddd; padding: 8px;">${i === 0 ? `Header ${j + 1}` : `Cell ${i}-${j + 1}`}</td>`;
+                tableHtml += `<td style="border: 1px solid #ddd; padding: 8px; min-width: 100px;">${i === 0 ? `Header ${j + 1}` : `Cell ${i}-${j + 1}`}</td>`;
             }
             tableHtml += '</tr>';
         }
-        tableHtml += '</tbody></table>';
-        setEditorContent(prev => prev + tableHtml);
+        tableHtml += '</tbody></table><p><br></p>';
+        
+        if (quillRef.current) {
+            const quill = quillRef.current.getEditor();
+            const range = quill.getSelection();
+            const position = range ? range.index : quill.getLength();
+            quill.clipboard.dangerouslyPasteHTML(position, tableHtml);
+        } else {
+            setEditorContent(prev => prev + tableHtml);
+        }
         setShowTablePopover(false);
     };
 
@@ -547,6 +557,7 @@ export default function Notes() {
 
                         <div className="flex-1 overflow-hidden relative">
                             <ReactQuill
+                                ref={quillRef}
                                 value={editorContent}
                                 onChange={setEditorContent}
                                 placeholder="Start writing..."
