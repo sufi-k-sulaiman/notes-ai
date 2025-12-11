@@ -861,7 +861,7 @@ export default function Notes() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4 mb-4 md:mb-6">
                         <div>
                             <h1 className="text-xl md:text-3xl font-bold text-gray-900">Notes Ai</h1>
-                            <p className="text-gray-600 text-xs md:text-sm">Generative text notes and images</p>
+                            <p className="text-gray-600 text-xs md:text-sm">Generative text, images and code</p>
                         </div>
                         <div className="flex items-center gap-2 w-full sm:w-auto">
                             <div className="flex items-center bg-white/60 backdrop-blur-xl rounded-xl border border-white/80 shadow-sm p-1">
