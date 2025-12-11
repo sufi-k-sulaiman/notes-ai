@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { 
     Plus, Search, FileText, Calendar, Tag, Trash2, 
     Save, X, Loader2, Maximize2, Minimize2, Sparkles, Image,
-    Clock, FileType, List, Grid3x3, AlignLeft, Table, Code2, ChevronDown, Palette
+    Clock, FileType, List, Grid3x3, AlignLeft, Table, Code2, ChevronDown, Palette,
+    Settings, Moon, Sun, User, Mail
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -38,7 +40,7 @@ function Toast({ message, onClose }) {
     );
 }
 
-function NoteCard({ note, onClick, formatDate }) {
+function NoteCard({ note, onClick, formatDate, darkMode }) {
     const content = note.content?.replace(/<[^>]*>/g, '') || '';
     const wordCount = note.word_count || content.split(/\s+/).filter(w => w).length || 0;
     const charCount = content.length || 0;
@@ -54,14 +56,20 @@ function NoteCard({ note, onClick, formatDate }) {
     return (
         <div
             onClick={() => onClick(note)}
-            className="bg-white/60 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/80 p-4 md:p-6 cursor-pointer hover:shadow-xl hover:bg-white/80 hover:border-purple-300 transition-all shadow-lg"
+            className={`backdrop-blur-xl rounded-2xl md:rounded-3xl border p-4 md:p-6 cursor-pointer hover:shadow-xl transition-all shadow-lg ${
+                darkMode 
+                    ? 'bg-gray-800/60 border-gray-700 hover:bg-gray-800/80 hover:border-purple-500' 
+                    : 'bg-white/60 border-white/80 hover:bg-white/80 hover:border-purple-300'
+            }`}
         >
-            <h3 className="font-bold text-gray-900 text-base md:text-lg line-clamp-2 mb-2 md:mb-3">{note.title || 'Untitled'}</h3>
-            <p className="text-xs md:text-sm text-gray-600 line-clamp-3 md:line-clamp-4 mb-3 md:mb-4 min-h-[60px] md:min-h-[80px] leading-relaxed">
+            <h3 className={`font-bold text-base md:text-lg line-clamp-2 mb-2 md:mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{note.title || 'Untitled'}</h3>
+            <p className={`text-xs md:text-sm line-clamp-3 md:line-clamp-4 mb-3 md:mb-4 min-h-[60px] md:min-h-[80px] leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 {content.slice(0, 200) || 'No content'}
             </p>
 
-            <div className="flex items-center justify-between text-[10px] md:text-xs text-gray-600 pt-2 md:pt-3 border-t border-gray-200/50">
+            <div className={`flex items-center justify-between text-[10px] md:text-xs pt-2 md:pt-3 border-t ${
+                darkMode ? 'text-gray-500 border-gray-700/50' : 'text-gray-600 border-gray-200/50'
+            }`}>
                 <div className="flex items-center gap-2 md:gap-4 flex-wrap">
                     <span className="flex items-center gap-1">
                         <FileType className="w-3 md:w-3.5 h-3 md:h-3.5" />
@@ -80,10 +88,14 @@ function NoteCard({ note, onClick, formatDate }) {
             {note.tags && note.tags.length > 0 && (
                 <div className="flex items-center gap-1 md:gap-1.5 mt-2 md:mt-3 flex-wrap">
                     {note.tags.slice(0, 3).map((tag, i) => (
-                        <span key={i} className="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 bg-white/60 backdrop-blur-sm text-gray-700 rounded-lg border border-white/80">{tag}</span>
+                        <span key={i} className={`text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 backdrop-blur-sm rounded-lg border ${
+                            darkMode 
+                                ? 'bg-gray-700/60 text-gray-300 border-gray-600' 
+                                : 'bg-white/60 text-gray-700 border-white/80'
+                        }`}>{tag}</span>
                     ))}
                     {note.tags.length > 3 && (
-                        <span className="text-[10px] md:text-xs text-gray-400">+{note.tags.length - 3}</span>
+                        <span className={`text-[10px] md:text-xs ${darkMode ? 'text-gray-600' : 'text-gray-400'}`}>+{note.tags.length - 3}</span>
                     )}
                 </div>
             )}
@@ -153,7 +165,21 @@ export default function Notes() {
     const [showLinkInput, setShowLinkInput] = useState(false);
     const [linkUrl, setLinkUrl] = useState('');
     const [uploadingImage, setUploadingImage] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
+    const [darkMode, setDarkMode] = useState(() => {
+        const saved = localStorage.getItem('notes-dark-mode');
+        return saved ? JSON.parse(saved) : false;
+    });
     const queryClient = useQueryClient();
+
+    useEffect(() => {
+        localStorage.setItem('notes-dark-mode', JSON.stringify(darkMode));
+        if (darkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [darkMode]);
 
     const closeAllTabs = () => {
         setShowAiTextModal(false);
@@ -887,50 +913,77 @@ export default function Notes() {
 
     return (
         <>
-            <div className="min-h-screen bg-white p-3 md:p-6">
+            <div className={`min-h-screen p-3 md:p-6 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
                     <div className="mb-4 md:mb-6">
                         {/* Logo and Title */}
-                        <div className="flex items-center gap-3 mb-3">
-                            <img 
-                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693a3e794fd471020431f334/7607f2d39_AppIcon.png" 
-                                alt="Notes AI" 
-                                className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-lg"
-                            />
-                            <div>
-                                <h1 className="text-xl md:text-3xl font-bold text-gray-900">Notes Ai</h1>
-                                <p className="text-gray-600 text-xs md:text-sm">Generative text, images and code</p>
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                                <img 
+                                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693a3e794fd471020431f334/7607f2d39_AppIcon.png" 
+                                    alt="Notes AI" 
+                                    className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-lg"
+                                />
+                                <div>
+                                    <h1 className={`text-xl md:text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Notes Ai</h1>
+                                    <p className={`text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Generative text, images and code</p>
+                                </div>
                             </div>
+                            <Button 
+                                onClick={() => setShowSettings(true)} 
+                                variant="ghost" 
+                                className={`${darkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
+                            >
+                                <Settings className="w-5 h-5" />
+                            </Button>
                         </div>
 
                         {/* Search Bar, View Mode and New Note Button */}
                         <div className="flex items-center gap-2">
                             <div className="relative flex-1">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
                                 <Input
                                     placeholder="Search notes..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-10 bg-white/60 backdrop-blur-xl border-gray-300 rounded-full focus:border-purple-500 focus:ring-purple-500 w-full"
+                                    className={`pl-10 backdrop-blur-xl rounded-full focus:border-purple-500 focus:ring-purple-500 w-full ${
+                                        darkMode 
+                                            ? 'bg-gray-800/60 border-gray-700 text-white placeholder:text-gray-500' 
+                                            : 'bg-white/60 border-gray-300'
+                                    }`}
                                 />
                             </div>
-                            <div className="flex items-center bg-white/60 backdrop-blur-xl rounded-xl border border-white/80 shadow-sm p-1">
+                            <div className={`flex items-center backdrop-blur-xl rounded-xl shadow-sm p-1 ${
+                                darkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/60 border-white/80'
+                            } border`}>
                                 <button
                                     onClick={() => setViewMode('grid')}
-                                    className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
+                                    className={`p-2 rounded-lg transition-all ${
+                                        viewMode === 'grid' 
+                                            ? 'bg-purple-500 text-white' 
+                                            : darkMode ? 'text-gray-400 hover:bg-gray-700/80' : 'text-gray-600 hover:bg-white/80'
+                                    }`}
                                 >
                                     <Grid3x3 className="w-4 h-4" />
                                 </button>
                                 <button
                                     onClick={() => setViewMode('list')}
-                                    className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
+                                    className={`p-2 rounded-lg transition-all ${
+                                        viewMode === 'list' 
+                                            ? 'bg-purple-500 text-white' 
+                                            : darkMode ? 'text-gray-400 hover:bg-gray-700/80' : 'text-gray-600 hover:bg-white/80'
+                                    }`}
                                 >
                                     <List className="w-4 h-4" />
                                 </button>
                                 <button
                                     onClick={() => setViewMode('title')}
-                                    className={`p-2 rounded-lg transition-all ${viewMode === 'title' ? 'bg-purple-500 text-white' : 'text-gray-600 hover:bg-white/80'}`}
+                                    className={`p-2 rounded-lg transition-all ${
+                                        viewMode === 'title' 
+                                            ? 'bg-purple-500 text-white' 
+                                            : darkMode ? 'text-gray-400 hover:bg-gray-700/80' : 'text-gray-600 hover:bg-white/80'
+                                    }`}
                                 >
                                     <AlignLeft className="w-4 h-4" />
                                 </button>
@@ -947,11 +1000,19 @@ export default function Notes() {
                             <Loader2 className="w-6 md:w-8 h-6 md:h-8 animate-spin text-purple-600" />
                         </div>
                     ) : filteredNotes.length === 0 ? (
-                        <div className="text-center py-12 md:py-20 bg-white/40 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/60 shadow-xl">
-                            <FileText className="w-12 md:w-16 h-12 md:h-16 text-gray-400 mx-auto mb-3 md:mb-4" />
-                            <h2 className="text-lg md:text-xl font-semibold text-gray-700 mb-2">No notes yet</h2>
-                            <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Create your first note or use a template</p>
-                            <Button onClick={() => openNewNote()} variant="outline" className="text-sm bg-white/60 backdrop-blur-md border-white/80 hover:bg-white/80">
+                        <div className={`text-center py-12 md:py-20 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-xl ${
+                            darkMode 
+                                ? 'bg-gray-800/40 border-gray-700' 
+                                : 'bg-white/40 border-white/60'
+                        } border`}>
+                            <FileText className={`w-12 md:w-16 h-12 md:h-16 mx-auto mb-3 md:mb-4 ${darkMode ? 'text-gray-600' : 'text-gray-400'}`} />
+                            <h2 className={`text-lg md:text-xl font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>No notes yet</h2>
+                            <p className={`text-sm md:text-base mb-3 md:mb-4 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Create your first note or use a template</p>
+                            <Button onClick={() => openNewNote()} variant="outline" className={`text-sm backdrop-blur-md ${
+                                darkMode 
+                                    ? 'bg-gray-700/60 border-gray-600 hover:bg-gray-700/80 text-gray-200' 
+                                    : 'bg-white/60 border-white/80 hover:bg-white/80'
+                            }`}>
                                 <Plus className="w-4 h-4 mr-2" /> Create Note
                             </Button>
                         </div>
@@ -963,6 +1024,7 @@ export default function Notes() {
                                     note={note} 
                                     onClick={openNote}
                                     formatDate={formatDate}
+                                    darkMode={darkMode}
                                 />
                             ))}
                         </div>
@@ -1056,6 +1118,67 @@ export default function Notes() {
                         </div>
 
             {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+            
+            {/* Settings Modal */}
+            <Dialog open={showSettings} onOpenChange={setShowSettings}>
+                <DialogContent className={`max-w-md ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
+                            <Settings className={`w-6 h-6 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
+                            <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Settings</h2>
+                        </div>
+
+                        {/* Profile Info */}
+                        <div className={`space-y-3 p-4 rounded-lg ${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
+                            <h3 className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Profile</h3>
+                            <div className="flex items-center gap-3">
+                                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${darkMode ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
+                                    <User className={`w-6 h-6 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
+                                </div>
+                                <div>
+                                    <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{user?.full_name || 'User'}</p>
+                                    <p className={`text-sm flex items-center gap-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                        <Mail className="w-3 h-3" />
+                                        {user?.email || 'user@example.com'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Theme Toggle */}
+                        <div className="space-y-3">
+                            <h3 className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Appearance</h3>
+                            <div className={`flex items-center justify-between p-4 rounded-lg ${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
+                                <div className="flex items-center gap-3">
+                                    {darkMode ? (
+                                        <Moon className="w-5 h-5 text-purple-400" />
+                                    ) : (
+                                        <Sun className="w-5 h-5 text-yellow-500" />
+                                    )}
+                                    <div>
+                                        <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>Dark Mode</p>
+                                        <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            {darkMode ? 'Dark theme enabled' : 'Light theme enabled'}
+                                        </p>
+                                    </div>
+                                </div>
+                                <Switch 
+                                    checked={darkMode} 
+                                    onCheckedChange={setDarkMode}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Close Button */}
+                        <Button 
+                            onClick={() => setShowSettings(false)} 
+                            className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
+                        >
+                            Close
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
                 </>
                 );
                 }
