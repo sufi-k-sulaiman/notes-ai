@@ -170,6 +170,10 @@ export default function Notes() {
         const saved = localStorage.getItem('notes-dark-mode');
         return saved ? JSON.parse(saved) : false;
     });
+    const [textSize, setTextSize] = useState(() => {
+        const saved = localStorage.getItem('notes-text-size');
+        return saved || 'medium';
+    });
     const queryClient = useQueryClient();
 
     useEffect(() => {
@@ -180,6 +184,16 @@ export default function Notes() {
             document.documentElement.classList.remove('dark');
         }
     }, [darkMode]);
+
+    useEffect(() => {
+        localStorage.setItem('notes-text-size', textSize);
+    }, [textSize]);
+
+    const getEditorFontSize = () => {
+        if (textSize === 'small') return '12px';
+        if (textSize === 'large') return '16px';
+        return '14px'; // medium
+    };
 
     const closeAllTabs = () => {
         setShowAiTextModal(false);
@@ -954,7 +968,7 @@ export default function Notes() {
                                 .notes-quill-responsive .ql-editor {
                                     background: ${darkMode ? '#0c0f1f' : 'rgba(255, 255, 255, 0.3)'} !important;
                                     backdrop-filter: blur(20px) !important;
-                                    font-size: 14px !important;
+                                    font-size: ${getEditorFontSize()} !important;
                                     padding: 12px !important;
                                     color: ${darkMode ? 'rgba(229, 231, 235, 0.9)' : 'inherit'} !important;
                                 }
@@ -1314,6 +1328,35 @@ export default function Notes() {
                                     checked={darkMode} 
                                     onCheckedChange={setDarkMode}
                                 />
+                            </div>
+
+                            {/* Text Size */}
+                            <div className="space-y-3">
+                                <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Text Size</p>
+                                <div className="grid grid-cols-3 gap-3">
+                                    {[
+                                        { id: 'small', label: 'Small', icon: 'Aa' },
+                                        { id: 'medium', label: 'Medium', icon: 'Aa' },
+                                        { id: 'large', label: 'Large', icon: 'Aa' }
+                                    ].map(size => (
+                                        <button
+                                            key={size.id}
+                                            onClick={() => setTextSize(size.id)}
+                                            className={`flex flex-col items-center justify-center p-4 rounded-xl transition-all ${
+                                                textSize === size.id
+                                                    ? 'bg-purple-500 border-2 border-purple-500 text-white'
+                                                    : darkMode
+                                                        ? 'bg-gray-700/50 border-2 border-gray-600 text-gray-300 hover:bg-gray-600'
+                                                        : 'bg-gray-50 border-2 border-gray-200 text-gray-700 hover:bg-gray-100'
+                                            }`}
+                                        >
+                                            <span className={`font-bold mb-1 ${
+                                                size.id === 'small' ? 'text-lg' : size.id === 'large' ? 'text-3xl' : 'text-2xl'
+                                            }`}>{size.icon}</span>
+                                            <span className="text-sm font-medium">{size.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
 
