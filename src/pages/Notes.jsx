@@ -248,25 +248,25 @@ export default function Notes() {
     const quillRef = React.useRef(null);
 
     const insertTable = () => {
-        let tableHtml = '<table cellpadding="8" cellspacing="0" border="1" style="width: 100%; border-collapse: collapse; margin: 16px 0; border: 2px solid #333;"><tbody>';
-        
+        let tableHtml = '<table style="width: 100%; border-collapse: collapse; margin: 16px 0; border: 2px solid #333;"><tbody>';
+
         // Header row
-        tableHtml += '<tr style="background-color: #f3f4f6;">';
+        tableHtml += '<tr>';
         for (let j = 0; j < tableCols; j++) {
             tableHtml += `<td style="border: 1px solid #333; padding: 12px; font-weight: bold; background-color: #f3f4f6;"><strong>Header ${j + 1}</strong></td>`;
         }
         tableHtml += '</tr>';
-        
+
         // Data rows
         for (let i = 1; i < tableRows; i++) {
             tableHtml += '<tr>';
             for (let j = 0; j < tableCols; j++) {
-                tableHtml += `<td style="border: 1px solid #333; padding: 12px;">Cell ${i}-${j + 1}</td>`;
+                tableHtml += `<td style="border: 1px solid #333; padding: 12px; background-color: #ffffff;">Cell ${i}-${j + 1}</td>`;
             }
             tableHtml += '</tr>';
         }
         tableHtml += '</tbody></table><p><br></p>';
-        
+
         if (quillRef.current) {
             const quill = quillRef.current.getEditor();
             const range = quill.getSelection();
@@ -490,7 +490,7 @@ export default function Notes() {
 
                         {/* Editor Modal */}
             <Dialog open={showEditor} onOpenChange={setShowEditor}>
-                <DialogContent className={`max-w-full w-full h-full max-h-full rounded-none md:max-w-4xl md:max-h-[90vh] md:rounded-3xl p-0 overflow-hidden transition-all bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl ${isFullscreen ? '!max-w-full !w-full !h-full !max-h-full !rounded-none' : ''}`} hideClose>
+                <DialogContent className={`max-w-full w-full h-full max-h-full rounded-none md:max-w-4xl md:max-h-[90vh] md:rounded-3xl p-0 overflow-hidden transition-all bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl ${isFullscreen ? '!max-w-full !w-full !h-full !max-h-full !rounded-none' : ''} [&_.ql-picker-options]:!z-[100000]`} hideClose>
                     <div className="flex flex-col h-full max-h-full">
                         <div className="px-3 md:px-4 py-2 md:py-3 border-b border-gray-200/50 bg-gradient-to-r from-white/60 to-purple-50/60 backdrop-blur-xl flex items-center gap-2 md:gap-3">
                             <Button onClick={() => setShowAiTextModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
@@ -606,10 +606,20 @@ export default function Notes() {
                                     border-collapse: collapse !important;
                                     width: 100% !important;
                                     margin: 16px 0 !important;
+                                    border: 2px solid #333 !important;
+                                    display: table !important;
+                                }
+                                .notes-quill-responsive .ql-editor table tbody {
+                                    display: table-row-group !important;
+                                }
+                                .notes-quill-responsive .ql-editor table tr {
+                                    display: table-row !important;
                                 }
                                 .notes-quill-responsive .ql-editor table td {
                                     border: 1px solid #333 !important;
                                     padding: 12px !important;
+                                    display: table-cell !important;
+                                    background-color: #ffffff !important;
                                 }
                                 .notes-quill-responsive .ql-editor table tr:first-child td {
                                     background-color: #f3f4f6 !important;
@@ -624,28 +634,25 @@ export default function Notes() {
                                 .notes-quill-responsive .ql-picker-label {
                                     color: rgba(55, 65, 81, 0.8) !important;
                                 }
-                                .notes-quill-responsive .ql-picker-options {
-                                    z-index: 99999 !important;
+                                .notes-quill-responsive .ql-picker-options,
+                                .ql-picker-options {
+                                    z-index: 100000 !important;
                                     background: white !important;
                                     border: 1px solid rgba(209, 213, 219, 0.5) !important;
                                     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
                                     border-radius: 8px !important;
                                     padding: 8px !important;
-                                }
-                                .notes-quill-responsive .ql-color-picker .ql-picker-options {
-                                    width: 252px !important;
-                                }
-                                .notes-quill-responsive .ql-picker.ql-expanded .ql-picker-options {
-                                    display: block !important;
-                                    z-index: 99999 !important;
-                                }
-                                .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
-                                    z-index: 99999 !important;
                                     position: absolute !important;
                                 }
-                                .ql-snow .ql-color-picker .ql-picker-options {
-                                    z-index: 99999 !important;
+                                .notes-quill-responsive .ql-color-picker .ql-picker-options,
+                                .ql-color-picker .ql-picker-options {
+                                    width: 252px !important;
                                     padding: 5px !important;
+                                }
+                                .notes-quill-responsive .ql-picker.ql-expanded .ql-picker-options,
+                                .ql-picker.ql-expanded .ql-picker-options {
+                                    display: block !important;
+                                    z-index: 100000 !important;
                                 }
                                 .notes-quill-responsive button:hover,
                                 .notes-quill-responsive button.ql-active {
