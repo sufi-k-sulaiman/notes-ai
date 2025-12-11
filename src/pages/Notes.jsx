@@ -1065,9 +1065,10 @@ export default function Notes() {
                             <Button 
                                 onClick={() => setShowSettings(true)} 
                                 variant="ghost" 
+                                size="lg"
                                 className={`${darkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
                             >
-                                <Settings className="w-8 h-8" />
+                                <Settings className="w-10 h-10" />
                             </Button>
                         </div>
 
