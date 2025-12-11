@@ -1059,6 +1059,7 @@ export default function Notes() {
                     </div>
                 </div>
             </div>
+            </>
         );
     }
 
