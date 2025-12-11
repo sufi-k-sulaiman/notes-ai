@@ -886,9 +886,16 @@ export default function Notes() {
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4 mb-4 md:mb-6">
-                        <div>
-                            <h1 className="text-xl md:text-3xl font-bold text-gray-900">Notes Ai</h1>
-                            <p className="text-gray-600 text-xs md:text-sm">Generative text, images and code</p>
+                        <div className="flex items-center gap-3">
+                            <img 
+                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693a3e794fd471020431f334/7607f2d39_AppIcon.png" 
+                                alt="Notes AI" 
+                                className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-lg"
+                            />
+                            <div>
+                                <h1 className="text-xl md:text-3xl font-bold text-gray-900">Notes Ai</h1>
+                                <p className="text-gray-600 text-xs md:text-sm">Generative text, images and code</p>
+                            </div>
                         </div>
                         <div className="flex items-center gap-2 w-full sm:w-auto">
                             <div className="flex items-center bg-white/60 backdrop-blur-xl rounded-xl border border-white/80 shadow-sm p-1">
