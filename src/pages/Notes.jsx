@@ -189,12 +189,22 @@ export default function Notes() {
         }
     };
 
+    const [selectedWritingStyle, setSelectedWritingStyle] = useState('creative');
+
     const generateAIText = async () => {
         if (!aiPrompt.trim()) return;
         setAiLoading(true);
         try {
+            const stylePrompts = {
+                persuasive: 'Write persuasive, compelling content that motivates and convinces readers about',
+                technical: 'Write technical, precise, and informative content with clear explanations about',
+                journalistic: 'Write journalistic, factual, and newsworthy content in an objective style about',
+                creative: 'Write creative, engaging, and imaginative content about',
+                editorial: 'Write editorial, opinionated content with strong viewpoints about'
+            };
+            
             const response = await base44.integrations.Core.InvokeLLM({ 
-                prompt: `Write detailed content about: ${aiPrompt}. Format it nicely with paragraphs.` 
+                prompt: `${stylePrompts[selectedWritingStyle]}: ${aiPrompt}. Format it nicely with paragraphs.` 
             });
             setEditorContent(prev => prev + '<p>' + response.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>');
             setShowAiTextModal(false);
@@ -601,6 +611,33 @@ export default function Notes() {
                     <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
                         <Sparkles className="w-4 md:w-5 h-4 md:h-5 text-purple-600" /> Generate AI Text
                     </h3>
+                    
+                    <div className="mb-4">
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Writing Style</label>
+                        <div className="grid grid-cols-1 gap-2">
+                            {[
+                                { id: 'persuasive', label: 'Persuasive', desc: 'Compelling and motivational' },
+                                { id: 'technical', label: 'Technical', desc: 'Precise and informative' },
+                                { id: 'journalistic', label: 'Journalistic', desc: 'Factual and objective' },
+                                { id: 'creative', label: 'Creative', desc: 'Engaging and imaginative' },
+                                { id: 'editorial', label: 'Editorial', desc: 'Opinionated viewpoints' }
+                            ].map(style => (
+                                <button
+                                    key={style.id}
+                                    onClick={() => setSelectedWritingStyle(style.id)}
+                                    className={`p-3 rounded-xl text-left transition-all ${
+                                        selectedWritingStyle === style.id
+                                            ? 'bg-purple-100 border-2 border-purple-500'
+                                            : 'bg-white/60 border-2 border-transparent hover:border-purple-200'
+                                    }`}
+                                >
+                                    <div className="font-semibold text-sm text-gray-900">{style.label}</div>
+                                    <div className="text-xs text-gray-600">{style.desc}</div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
                     <Input
                         placeholder="Describe what you want to write about..."
                         value={aiPrompt}
