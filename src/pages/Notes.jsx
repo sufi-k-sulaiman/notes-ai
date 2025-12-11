@@ -445,7 +445,7 @@ export default function Notes() {
 
     if (showEditor) {
         return (
-            <div className={`min-h-screen ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`}>
+            <div className={`min-h-screen ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`} style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
                 <div className="max-w-7xl mx-auto p-0 md:p-6">
                     <div className={`backdrop-blur-xl md:rounded-2xl md:rounded-3xl border-0 md:border shadow-xl overflow-hidden min-h-screen md:min-h-0 ${
                         darkMode 
@@ -1028,7 +1028,7 @@ export default function Notes() {
 
     return (
         <>
-            <div className={`min-h-screen p-3 md:p-6 ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`}>
+            <div className={`min-h-screen p-3 md:p-6 ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`} style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
                     <div className="mb-4 md:mb-6">
