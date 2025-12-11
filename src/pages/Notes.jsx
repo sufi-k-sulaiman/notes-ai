@@ -952,7 +952,7 @@ export default function Notes() {
                                     background: transparent !important;
                                 }
                                 .notes-quill-responsive .ql-editor {
-                                    background: ${darkMode ? 'rgba(31, 41, 55, 0.3)' : 'rgba(255, 255, 255, 0.3)'} !important;
+                                    background: ${darkMode ? '#0c0f1f' : 'rgba(255, 255, 255, 0.3)'} !important;
                                     backdrop-filter: blur(20px) !important;
                                     font-size: 14px !important;
                                     padding: 12px !important;
