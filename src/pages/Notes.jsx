@@ -466,7 +466,22 @@ export default function Notes() {
 
     if (showEditor) {
         return (
-            <div className={`min-h-screen ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`} style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+            <>
+            <style>{`
+                .notes-editor-container * {
+                    font-size: ${getGlobalFontSize()} !important;
+                }
+                .notes-editor-container h1 {
+                    font-size: ${textSize === 'small' ? '1.5rem' : textSize === 'large' ? '2rem' : '1.75rem'} !important;
+                }
+                .notes-editor-container h2 {
+                    font-size: ${textSize === 'small' ? '1.25rem' : textSize === 'large' ? '1.75rem' : '1.5rem'} !important;
+                }
+                .notes-editor-container h3 {
+                    font-size: ${textSize === 'small' ? '1.1rem' : textSize === 'large' ? '1.5rem' : '1.25rem'} !important;
+                }
+            `}</style>
+            <div className={`notes-editor-container min-h-screen ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`} style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
                 <div className="max-w-7xl mx-auto p-0 md:p-6">
                     <div className={`backdrop-blur-xl md:rounded-2xl md:rounded-3xl border-0 md:border shadow-xl overflow-hidden min-h-screen md:min-h-0 ${
                         darkMode 
