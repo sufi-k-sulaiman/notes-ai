@@ -645,8 +645,7 @@ export default function Notes() {
             {toast && <Toast message={toast} onClose={() => setToast(null)} />}
 
             {/* AI Text Modal */}
-            {showAiTextModal && (
-                <Dialog open={showAiTextModal} onOpenChange={setShowAiTextModal}>
+            <Dialog open={showAiTextModal} onOpenChange={setShowAiTextModal}>
                     <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
                         <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
                             <Sparkles className="w-4 md:w-5 h-4 md:h-5 text-purple-600" /> Generate AI Text
@@ -697,8 +696,7 @@ export default function Notes() {
             )}
 
             {/* AI Code Modal */}
-            {showAiCodeModal && (
-                <Dialog open={showAiCodeModal} onOpenChange={setShowAiCodeModal}>
+            <Dialog open={showAiCodeModal} onOpenChange={setShowAiCodeModal}>
                     <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
                         <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
                             <Code2 className="w-4 md:w-5 h-4 md:h-5 text-emerald-600" /> Generate AI Code
@@ -742,12 +740,10 @@ export default function Notes() {
                             </Button>
                         </div>
                     </DialogContent>
-                </Dialog>
-            )}
+                    </Dialog>
 
-            {/* AI Image Modal */}
-            {showAiImageModal && (
-                <Dialog open={showAiImageModal} onOpenChange={setShowAiImageModal}>
+                    {/* AI Image Modal */}
+                    <Dialog open={showAiImageModal} onOpenChange={setShowAiImageModal}>
                     <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
                         <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
                             <Image className="w-4 md:w-5 h-4 md:h-5 text-pink-600" /> Generate AI Image
@@ -788,11 +784,9 @@ export default function Notes() {
                             </Button>
                         </div>
                     </DialogContent>
-                </Dialog>
-            )}
+                    </Dialog>
 
-                {/* Color Picker Modal */}
-                {showColorPicker && (
+                    {/* Color Picker Modal */}
                     <ColorPickerModal
                     isOpen={showColorPicker}
                     onClose={() => setShowColorPicker(false)}
@@ -807,7 +801,6 @@ export default function Notes() {
                         }
                     }}
                     />
-                )}
                 </>
                 );
                 }
