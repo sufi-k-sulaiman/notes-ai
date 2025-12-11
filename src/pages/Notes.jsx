@@ -176,6 +176,7 @@ export default function Notes() {
     });
     const [editingName, setEditingName] = useState(false);
     const [newName, setNewName] = useState('');
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const queryClient = useQueryClient();
 
     useEffect(() => {
@@ -577,6 +578,15 @@ export default function Notes() {
                                 <span className="hidden sm:inline">Color</span>
                             </button>
                             <div className="flex-1" />
+                            {selectedNote && (
+                                <Button 
+                                    onClick={() => setShowDeleteConfirm(true)} 
+                                    className="bg-red-600 hover:bg-red-700 text-white gap-1.5 text-xs md:text-sm border-0 min-h-[40px] px-4"
+                                >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                    <span className="hidden sm:inline">Delete</span>
+                                </Button>
+                            )}
                             <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg gap-1.5 text-xs md:text-sm border-0 min-h-[40px] px-4">
                                 {(createMutation.isPending || updateMutation.isPending) ? (
                                     <>
@@ -1323,7 +1333,50 @@ export default function Notes() {
                         </div>
 
             {toast && <Toast message={toast} onClose={() => setToast(null)} />}
-            
+
+            {/* Delete Confirmation Modal */}
+            <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                <DialogContent className={`max-w-md ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                                <Trash2 className="w-6 h-6 text-red-600" />
+                            </div>
+                            <div>
+                                <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Delete Note?</h2>
+                                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>This action cannot be undone</p>
+                            </div>
+                        </div>
+
+                        <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
+                            <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{noteTitle || 'Untitled Note'}</p>
+                        </div>
+
+                        <div className="flex gap-3">
+                            <Button 
+                                onClick={() => setShowDeleteConfirm(false)} 
+                                variant="outline"
+                                className="flex-1"
+                            >
+                                Cancel
+                            </Button>
+                            <Button 
+                                onClick={() => {
+                                    if (selectedNote) {
+                                        deleteMutation.mutate(selectedNote.id);
+                                        setShowDeleteConfirm(false);
+                                        setShowEditor(false);
+                                    }
+                                }}
+                                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                            >
+                                Delete Note
+                            </Button>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
             {/* Settings Modal */}
             <Dialog open={showSettings} onOpenChange={setShowSettings}>
                 <DialogContent className={`max-w-md w-full h-full sm:h-auto sm:max-h-[90vh] m-0 sm:m-4 rounded-none sm:rounded-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
