@@ -575,7 +575,8 @@ export default function Notes() {
                                 modules={{
                                     toolbar: [
                                         ['bold', 'italic', 'underline'],
-                                        [{ 'color': [] }, { 'background': [] }],
+                                        [{ 'color': ['#000000', '#e60000', '#ff9900', '#ffff00', '#008a00', '#0066cc', '#9933ff', '#ffffff', '#facccc', '#ffebcc', '#ffffcc', '#cce8cc', '#cce0f5', '#ebd6ff', '#bbbbbb', '#f06666', '#ffc266', '#ffff66', '#66b966', '#66a3e0', '#c285ff', '#888888', '#a10000', '#b26b00', '#b2b200', '#006100', '#0047b2', '#6b24b2', '#444444', '#5c0000', '#663d00', '#666600', '#003700', '#002966', '#3d1466'] }, 
+                                         { 'background': ['#000000', '#e60000', '#ff9900', '#ffff00', '#008a00', '#0066cc', '#9933ff', '#ffffff', '#facccc', '#ffebcc', '#ffffcc', '#cce8cc', '#cce0f5', '#ebd6ff', '#bbbbbb', '#f06666', '#ffc266', '#ffff66', '#66b966', '#66a3e0', '#c285ff', '#888888', '#a10000', '#b26b00', '#b2b200', '#006100', '#0047b2', '#6b24b2', '#444444', '#5c0000', '#663d00', '#666600', '#003700', '#002966', '#3d1466'] }],
                                         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                                         [{ 'header': [1, 2, 3, false] }],
                                         ['link', 'image'],
@@ -622,6 +623,21 @@ export default function Notes() {
                                 }
                                 .notes-quill-responsive .ql-picker-label {
                                     color: rgba(55, 65, 81, 0.8) !important;
+                                }
+                                .notes-quill-responsive .ql-picker-options {
+                                    z-index: 99999 !important;
+                                    background: white !important;
+                                    border: 1px solid rgba(209, 213, 219, 0.5) !important;
+                                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+                                    border-radius: 8px !important;
+                                    padding: 8px !important;
+                                }
+                                .notes-quill-responsive .ql-color-picker .ql-picker-options {
+                                    width: 252px !important;
+                                }
+                                .notes-quill-responsive .ql-picker.ql-expanded .ql-picker-options {
+                                    display: block !important;
+                                    z-index: 99999 !important;
                                 }
                                 .notes-quill-responsive button:hover,
                                 .notes-quill-responsive button.ql-active {
