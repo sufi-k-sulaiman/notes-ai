@@ -248,11 +248,20 @@ export default function Notes() {
     const quillRef = React.useRef(null);
 
     const insertTable = () => {
-        let tableHtml = '<table style="width: 100%; border-collapse: collapse; margin: 16px 0; border: 1px solid #ddd;"><tbody>';
-        for (let i = 0; i < tableRows; i++) {
+        let tableHtml = '<table cellpadding="8" cellspacing="0" border="1" style="width: 100%; border-collapse: collapse; margin: 16px 0; border: 2px solid #333;"><tbody>';
+        
+        // Header row
+        tableHtml += '<tr style="background-color: #f3f4f6;">';
+        for (let j = 0; j < tableCols; j++) {
+            tableHtml += `<td style="border: 1px solid #333; padding: 12px; font-weight: bold; background-color: #f3f4f6;"><strong>Header ${j + 1}</strong></td>`;
+        }
+        tableHtml += '</tr>';
+        
+        // Data rows
+        for (let i = 1; i < tableRows; i++) {
             tableHtml += '<tr>';
             for (let j = 0; j < tableCols; j++) {
-                tableHtml += `<td style="border: 1px solid #ddd; padding: 8px; min-width: 100px;">${i === 0 ? `Header ${j + 1}` : `Cell ${i}-${j + 1}`}</td>`;
+                tableHtml += `<td style="border: 1px solid #333; padding: 12px;">Cell ${i}-${j + 1}</td>`;
             }
             tableHtml += '</tr>';
         }
