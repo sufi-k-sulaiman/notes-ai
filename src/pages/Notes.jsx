@@ -454,7 +454,7 @@ export default function Notes() {
                     }`}>
                         <div className={`px-2 md:px-4 py-2 md:py-3 border-b backdrop-blur-3xl shadow-lg flex items-center gap-1 md:gap-3 ${
                             darkMode 
-                                ? 'border-gray-700 bg-gray-800/10' 
+                                ? 'border-gray-700 bg-[#0c0f1f]' 
                                 : 'border-white/20 bg-white/10'
                         }`}>
                             <button 
@@ -557,7 +557,7 @@ export default function Notes() {
                         {showAiTextModal && (
                             <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
                                 darkMode 
-                                    ? 'border-gray-700 bg-gray-800/30' 
+                                    ? 'border-gray-700 bg-[#0c0f1f]' 
                                     : 'border-white/20 bg-white/30'
                             }`}>
                                 <div className="flex items-center justify-between mb-3">
@@ -617,7 +617,7 @@ export default function Notes() {
                         {showAiImageModal && (
                             <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
                                 darkMode 
-                                    ? 'border-gray-700 bg-gray-800/30' 
+                                    ? 'border-gray-700 bg-[#0c0f1f]' 
                                     : 'border-white/20 bg-white/30'
                             }`}>
                                 <div className="flex items-center justify-between mb-3">
@@ -671,7 +671,7 @@ export default function Notes() {
                         {showAiCodeModal && (
                             <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
                                 darkMode 
-                                    ? 'border-gray-700 bg-gray-800/30' 
+                                    ? 'border-gray-700 bg-[#0c0f1f]' 
                                     : 'border-white/20 bg-white/30'
                             }`}>
                                 <div className="flex items-center justify-between mb-3">
@@ -728,7 +728,7 @@ export default function Notes() {
                         {showColorPicker && (
                             <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
                                 darkMode 
-                                    ? 'border-gray-700 bg-gray-800/30' 
+                                    ? 'border-gray-700 bg-[#0c0f1f]' 
                                     : 'border-white/20 bg-white/30'
                             }`}>
                                 <div className="flex items-center justify-between mb-3">
@@ -785,7 +785,7 @@ export default function Notes() {
                         {showFormatModal && (
                             <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
                                 darkMode 
-                                    ? 'border-gray-700 bg-gray-800/30' 
+                                    ? 'border-gray-700 bg-[#0c0f1f]' 
                                     : 'border-white/20 bg-white/30'
                             }`}>
                                 <div className="flex items-center justify-between mb-3">
@@ -910,7 +910,7 @@ export default function Notes() {
 
                         <div className={`px-3 md:px-4 py-2 border-b backdrop-blur-xl ${
                             darkMode 
-                                ? 'border-gray-700/50 bg-gray-800/30' 
+                                ? 'border-gray-700/50 bg-[#0c0f1f]' 
                                 : 'border-gray-200/50 bg-white/30'
                         }`}>
                             <Input
