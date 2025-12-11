@@ -600,6 +600,19 @@ export default function Notes() {
                                 .notes-quill-responsive .ql-editor::before {
                                     color: rgba(107, 114, 128, 0.6) !important;
                                 }
+                                .notes-quill-responsive .ql-editor table {
+                                    border-collapse: collapse !important;
+                                    width: 100% !important;
+                                    margin: 16px 0 !important;
+                                }
+                                .notes-quill-responsive .ql-editor table td {
+                                    border: 1px solid #333 !important;
+                                    padding: 12px !important;
+                                }
+                                .notes-quill-responsive .ql-editor table tr:first-child td {
+                                    background-color: #f3f4f6 !important;
+                                    font-weight: bold !important;
+                                }
                                 .notes-quill-responsive .ql-stroke {
                                     stroke: rgba(55, 65, 81, 0.7) !important;
                                 }
