@@ -388,62 +388,62 @@ export default function Notes() {
     if (showEditor) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
-                <div className="max-w-7xl mx-auto p-3 md:p-6">
-                    <div className="bg-white/60 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/80 shadow-xl overflow-hidden">
-                        <div className="px-3 md:px-4 py-2 md:py-3 border-b border-white/20 bg-white/10 backdrop-blur-3xl shadow-lg flex items-center gap-2 md:gap-3">
+                <div className="max-w-7xl mx-auto p-0 md:p-6">
+                    <div className="bg-white/60 backdrop-blur-xl md:rounded-2xl md:rounded-3xl border-0 md:border md:border-white/80 shadow-xl overflow-hidden min-h-screen md:min-h-0">
+                        <div className="px-2 md:px-4 py-2 md:py-3 border-b border-white/20 bg-white/10 backdrop-blur-3xl shadow-lg flex items-center gap-1 md:gap-3">
                             <button 
                                 onClick={() => { closeAllTabs(); setShowFormatModal(true); }} 
-                                className={`flex items-center gap-1.5 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
                                     showFormatModal 
                                         ? 'bg-white/40 backdrop-blur-xl border-b-2 border-indigo-500 text-indigo-700 shadow-md' 
                                         : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
-                                <AlignLeft className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                                <AlignLeft className="w-5 h-5" />
                                 <span className="hidden sm:inline">Format</span>
                             </button>
                             <button 
                                 onClick={() => { closeAllTabs(); setShowAiTextModal(true); }} 
-                                className={`flex items-center gap-1.5 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
                                     showAiTextModal 
                                         ? 'bg-white/40 backdrop-blur-xl border-b-2 border-purple-500 text-purple-700 shadow-md' 
                                         : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
-                                <Sparkles className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                                <Sparkles className="w-5 h-5" />
                                 <span className="hidden sm:inline">Ai Text</span>
                             </button>
                             <button 
                                 onClick={() => { closeAllTabs(); setShowAiImageModal(true); }} 
-                                className={`flex items-center gap-1.5 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
                                     showAiImageModal 
                                         ? 'bg-white/40 backdrop-blur-xl border-b-2 border-pink-500 text-pink-700 shadow-md' 
                                         : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
-                                <Image className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                                <Image className="w-5 h-5" />
                                 <span className="hidden sm:inline">Ai Image</span>
                             </button>
                             <button 
                                 onClick={() => { closeAllTabs(); setShowAiCodeModal(true); }} 
-                                className={`flex items-center gap-1.5 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
                                     showAiCodeModal 
                                         ? 'bg-white/40 backdrop-blur-xl border-b-2 border-emerald-500 text-emerald-700 shadow-md' 
                                         : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
-                                <Code2 className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                                <Code2 className="w-5 h-5" />
                                 <span className="hidden sm:inline">Ai Code</span>
                             </button>
                             <button 
                                 onClick={() => { closeAllTabs(); setColorPickerMode('text'); setShowColorPicker(true); }} 
-                                className={`flex items-center gap-1.5 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
                                     showColorPicker 
                                         ? 'bg-white/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-700 shadow-md' 
                                         : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
-                                <Palette className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                                <Palette className="w-5 h-5" />
                                 <span className="hidden sm:inline">Color</span>
                             </button>
                             <div className="flex-1" />
