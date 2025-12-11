@@ -931,7 +931,7 @@ export default function Notes() {
                                 </button>
                             </div>
                             <Button onClick={() => openNewNote()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg border-0">
-                                <Plus className="w-4 h-4 mr-2" /> New Note
+                                <Plus className="w-4 h-4 md:mr-2" /> <span className="hidden md:inline">New Note</span>
                             </Button>
                         </div>
                     </div>
