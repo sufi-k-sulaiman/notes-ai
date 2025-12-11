@@ -904,7 +904,7 @@ export default function Notes() {
                                     placeholder="Search notes..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-10 bg-white/60 backdrop-blur-xl border-white/80 rounded-full focus:border-purple-500 focus:ring-purple-500"
+                                    className="pl-10 bg-white/60 backdrop-blur-xl border-gray-300 rounded-full focus:border-purple-500 focus:ring-purple-500"
                                 />
                             </div>
                             </div>
