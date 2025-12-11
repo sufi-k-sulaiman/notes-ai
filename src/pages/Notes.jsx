@@ -510,6 +510,22 @@ export default function Notes() {
                                     background: rgba(147, 51, 234, 0.15) !important;
                                     border-radius: 6px !important;
                                 }
+                                .ql-tooltip {
+                                    z-index: 99999 !important;
+                                    background: white !important;
+                                    border: 1px solid rgba(209, 213, 219, 0.5) !important;
+                                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+                                    border-radius: 8px !important;
+                                }
+                                .ql-tooltip input {
+                                    border: 1px solid rgba(209, 213, 219, 0.5) !important;
+                                    border-radius: 6px !important;
+                                    padding: 6px 10px !important;
+                                }
+                                .ql-tooltip .ql-action,
+                                .ql-tooltip .ql-remove {
+                                    border-radius: 6px !important;
+                                }
                                 @media (max-width: 768px) {
                                     .notes-quill-responsive .ql-toolbar {
                                         padding: 6px !important;
