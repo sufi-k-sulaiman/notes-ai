@@ -445,16 +445,28 @@ export default function Notes() {
 
     if (showEditor) {
         return (
-            <div className="min-h-screen bg-white">
+            <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
                 <div className="max-w-7xl mx-auto p-0 md:p-6">
-                    <div className="bg-white/60 backdrop-blur-xl md:rounded-2xl md:rounded-3xl border-0 md:border md:border-white/80 shadow-xl overflow-hidden min-h-screen md:min-h-0">
-                        <div className="px-2 md:px-4 py-2 md:py-3 border-b border-white/20 bg-white/10 backdrop-blur-3xl shadow-lg flex items-center gap-1 md:gap-3">
+                    <div className={`backdrop-blur-xl md:rounded-2xl md:rounded-3xl border-0 md:border shadow-xl overflow-hidden min-h-screen md:min-h-0 ${
+                        darkMode 
+                            ? 'bg-gray-800/60 md:border-gray-700' 
+                            : 'bg-white/60 md:border-white/80'
+                    }`}>
+                        <div className={`px-2 md:px-4 py-2 md:py-3 border-b backdrop-blur-3xl shadow-lg flex items-center gap-1 md:gap-3 ${
+                            darkMode 
+                                ? 'border-gray-700 bg-gray-800/10' 
+                                : 'border-white/20 bg-white/10'
+                        }`}>
                             <button 
                                 onClick={() => { closeAllTabs(); setShowFormatModal(true); }} 
                                 className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
                                     showFormatModal 
-                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-indigo-500 text-indigo-700 shadow-md' 
-                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                        ? darkMode 
+                                            ? 'bg-gray-700/40 backdrop-blur-xl border-b-2 border-indigo-500 text-indigo-400 shadow-md' 
+                                            : 'bg-white/40 backdrop-blur-xl border-b-2 border-indigo-500 text-indigo-700 shadow-md'
+                                        : darkMode 
+                                            ? 'bg-gray-800/10 backdrop-blur-md text-gray-400 hover:bg-gray-700/20' 
+                                            : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
                                 <AlignLeft className="w-5 h-5" />
@@ -464,8 +476,12 @@ export default function Notes() {
                                 onClick={() => { closeAllTabs(); setShowAiTextModal(true); }} 
                                 className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
                                     showAiTextModal 
-                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-purple-500 text-purple-700 shadow-md' 
-                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                        ? darkMode 
+                                            ? 'bg-gray-700/40 backdrop-blur-xl border-b-2 border-purple-500 text-purple-400 shadow-md' 
+                                            : 'bg-white/40 backdrop-blur-xl border-b-2 border-purple-500 text-purple-700 shadow-md'
+                                        : darkMode 
+                                            ? 'bg-gray-800/10 backdrop-blur-md text-gray-400 hover:bg-gray-700/20' 
+                                            : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
                                 <Sparkles className="w-5 h-5" />
@@ -475,8 +491,12 @@ export default function Notes() {
                                 onClick={() => { closeAllTabs(); setShowAiImageModal(true); }} 
                                 className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
                                     showAiImageModal 
-                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-pink-500 text-pink-700 shadow-md' 
-                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                        ? darkMode 
+                                            ? 'bg-gray-700/40 backdrop-blur-xl border-b-2 border-pink-500 text-pink-400 shadow-md' 
+                                            : 'bg-white/40 backdrop-blur-xl border-b-2 border-pink-500 text-pink-700 shadow-md'
+                                        : darkMode 
+                                            ? 'bg-gray-800/10 backdrop-blur-md text-gray-400 hover:bg-gray-700/20' 
+                                            : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
                                 <Image className="w-5 h-5" />
@@ -486,8 +506,12 @@ export default function Notes() {
                                 onClick={() => { closeAllTabs(); setShowAiCodeModal(true); }} 
                                 className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
                                     showAiCodeModal 
-                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-emerald-500 text-emerald-700 shadow-md' 
-                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                        ? darkMode 
+                                            ? 'bg-gray-700/40 backdrop-blur-xl border-b-2 border-emerald-500 text-emerald-400 shadow-md' 
+                                            : 'bg-white/40 backdrop-blur-xl border-b-2 border-emerald-500 text-emerald-700 shadow-md'
+                                        : darkMode 
+                                            ? 'bg-gray-800/10 backdrop-blur-md text-gray-400 hover:bg-gray-700/20' 
+                                            : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
                                 <Code2 className="w-5 h-5" />
@@ -497,8 +521,12 @@ export default function Notes() {
                                 onClick={() => { closeAllTabs(); setColorPickerMode('text'); setShowColorPicker(true); }} 
                                 className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
                                     showColorPicker 
-                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-700 shadow-md' 
-                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                        ? darkMode 
+                                            ? 'bg-gray-700/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-400 shadow-md' 
+                                            : 'bg-white/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-700 shadow-md'
+                                        : darkMode 
+                                            ? 'bg-gray-800/10 backdrop-blur-md text-gray-400 hover:bg-gray-700/20' 
+                                            : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
                                 <Palette className="w-5 h-5" />
@@ -518,17 +546,23 @@ export default function Notes() {
                                     </>
                                 )}
                             </Button>
-                            <Button onClick={() => setShowEditor(false)} className="bg-purple-600 hover:bg-purple-700 text-white min-h-[40px] min-w-[40px] p-0">
+                            <Button onClick={() => setShowEditor(false)} className={`text-white min-h-[40px] min-w-[40px] p-0 ${
+                                darkMode ? 'bg-purple-500 hover:bg-purple-600' : 'bg-purple-600 hover:bg-purple-700'
+                            }`}>
                                 <X className="w-4 h-4" />
                             </Button>
                         </div>
 
                         {/* AI Text Tab */}
                         {showAiTextModal && (
-                            <div className="px-3 md:px-4 py-3 border-b border-white/20 bg-white/30 backdrop-blur-3xl shadow-inner">
+                            <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
+                                darkMode 
+                                    ? 'border-gray-700 bg-gray-800/30' 
+                                    : 'border-white/20 bg-white/30'
+                            }`}>
                                 <div className="flex items-center justify-between mb-3">
-                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-purple-700">
-                                        <Sparkles className="w-4 h-4 text-purple-600" /> Generate AI Text
+                                    <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-purple-400' : 'text-purple-700'}`}>
+                                        <Sparkles className={`w-4 h-4 ${darkMode ? 'text-purple-500' : 'text-purple-600'}`} /> Generate AI Text
                                     </h3>
                                 </div>
                                 
@@ -546,7 +580,9 @@ export default function Notes() {
                                             className={`px-4 py-2 rounded-lg text-base font-medium transition-all ${
                                                 selectedWritingStyle === style.id
                                                     ? 'bg-purple-500 text-white'
-                                                    : 'bg-white/60 text-gray-700 hover:bg-purple-100'
+                                                    : darkMode 
+                                                        ? 'bg-gray-700/60 text-gray-300 hover:bg-gray-600' 
+                                                        : 'bg-white/60 text-gray-700 hover:bg-purple-100'
                                             }`}
                                         >
                                             {style.label}
@@ -560,7 +596,11 @@ export default function Notes() {
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && generateAIText()}
-                                        className="text-sm bg-white/60 backdrop-blur-sm border border-gray-300 rounded-full pr-28 pl-6 h-12 shadow-sm"
+                                        className={`text-sm backdrop-blur-sm border rounded-full pr-28 pl-6 h-12 shadow-sm ${
+                                            darkMode 
+                                                ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
+                                                : 'bg-white/60 border-gray-300'
+                                        }`}
                                     />
                                     <Button 
                                         onClick={generateAIText} 
@@ -575,10 +615,14 @@ export default function Notes() {
 
                         {/* AI Image Tab */}
                         {showAiImageModal && (
-                            <div className="px-3 md:px-4 py-3 border-b border-white/20 bg-white/30 backdrop-blur-3xl shadow-inner">
+                            <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
+                                darkMode 
+                                    ? 'border-gray-700 bg-gray-800/30' 
+                                    : 'border-white/20 bg-white/30'
+                            }`}>
                                 <div className="flex items-center justify-between mb-3">
-                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-pink-700">
-                                        <Image className="w-4 h-4 text-pink-600" /> Generate AI Image
+                                    <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-pink-400' : 'text-pink-700'}`}>
+                                        <Image className={`w-4 h-4 ${darkMode ? 'text-pink-500' : 'text-pink-600'}`} /> Generate AI Image
                                     </h3>
                                 </div>
 
@@ -590,7 +634,9 @@ export default function Notes() {
                                             className={`px-5 py-2 rounded-lg text-lg font-semibold transition-all ${
                                                 imageCount === count
                                                     ? 'bg-pink-500 text-white'
-                                                    : 'bg-white/60 text-gray-700 hover:bg-pink-100'
+                                                    : darkMode 
+                                                        ? 'bg-gray-700/60 text-gray-300 hover:bg-gray-600' 
+                                                        : 'bg-white/60 text-gray-700 hover:bg-pink-100'
                                             }`}
                                         >
                                             {count}
@@ -604,7 +650,11 @@ export default function Notes() {
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && generateAIImage()}
-                                        className="text-sm bg-white/60 backdrop-blur-sm border border-gray-300 rounded-full pr-32 pl-6 h-12 shadow-sm"
+                                        className={`text-sm backdrop-blur-sm border rounded-full pr-32 pl-6 h-12 shadow-sm ${
+                                            darkMode 
+                                                ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
+                                                : 'bg-white/60 border-gray-300'
+                                        }`}
                                     />
                                     <Button 
                                         onClick={generateAIImage} 
@@ -619,10 +669,14 @@ export default function Notes() {
 
                         {/* AI Code Tab */}
                         {showAiCodeModal && (
-                            <div className="px-3 md:px-4 py-3 border-b border-white/20 bg-white/30 backdrop-blur-3xl shadow-inner">
+                            <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
+                                darkMode 
+                                    ? 'border-gray-700 bg-gray-800/30' 
+                                    : 'border-white/20 bg-white/30'
+                            }`}>
                                 <div className="flex items-center justify-between mb-3">
-                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-emerald-700">
-                                        <Code2 className="w-4 h-4 text-emerald-600" /> Generate AI Code
+                                    <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-emerald-400' : 'text-emerald-700'}`}>
+                                        <Code2 className={`w-4 h-4 ${darkMode ? 'text-emerald-500' : 'text-emerald-600'}`} /> Generate AI Code
                                     </h3>
                                 </div>
                                 
@@ -637,7 +691,9 @@ export default function Notes() {
                                             className={`px-4 py-2 rounded-md text-base font-semibold transition-all ${
                                                 selectedLanguage === lang
                                                     ? 'bg-emerald-500 text-white'
-                                                    : 'bg-white/60 text-gray-700 hover:bg-emerald-100'
+                                                    : darkMode 
+                                                        ? 'bg-gray-700/60 text-gray-300 hover:bg-gray-600' 
+                                                        : 'bg-white/60 text-gray-700 hover:bg-emerald-100'
                                             }`}
                                         >
                                             {lang}
@@ -651,7 +707,11 @@ export default function Notes() {
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && generateAICode()}
-                                        className="text-sm bg-white/60 backdrop-blur-sm border border-gray-300 rounded-full pr-28 pl-6 h-12 shadow-sm"
+                                        className={`text-sm backdrop-blur-sm border rounded-full pr-28 pl-6 h-12 shadow-sm ${
+                                            darkMode 
+                                                ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
+                                                : 'bg-white/60 border-gray-300'
+                                        }`}
                                     />
                                     <Button 
                                         onClick={generateAICode} 
@@ -666,10 +726,14 @@ export default function Notes() {
 
                         {/* Color Picker Tab */}
                         {showColorPicker && (
-                            <div className="px-3 md:px-4 py-3 border-b border-white/20 bg-white/30 backdrop-blur-3xl shadow-inner">
+                            <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
+                                darkMode 
+                                    ? 'border-gray-700 bg-gray-800/30' 
+                                    : 'border-white/20 bg-white/30'
+                            }`}>
                                 <div className="flex items-center justify-between mb-3">
-                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-orange-700">
-                                        <Palette className="w-4 h-4 text-orange-600" /> Color Picker
+                                    <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-orange-400' : 'text-orange-700'}`}>
+                                        <Palette className={`w-4 h-4 ${darkMode ? 'text-orange-500' : 'text-orange-600'}`} /> Color Picker
                                     </h3>
                                 </div>
 
@@ -719,10 +783,14 @@ export default function Notes() {
 
                         {/* Format Tab */}
                         {showFormatModal && (
-                            <div className="px-3 md:px-4 py-3 border-b border-white/20 bg-white/30 backdrop-blur-3xl shadow-inner">
+                            <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
+                                darkMode 
+                                    ? 'border-gray-700 bg-gray-800/30' 
+                                    : 'border-white/20 bg-white/30'
+                            }`}>
                                 <div className="flex items-center justify-between mb-3">
-                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-indigo-700">
-                                        <AlignLeft className="w-4 h-4 text-indigo-600" /> Text Formatting
+                                    <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-indigo-400' : 'text-indigo-700'}`}>
+                                        <AlignLeft className={`w-4 h-4 ${darkMode ? 'text-indigo-500' : 'text-indigo-600'}`} /> Text Formatting
                                     </h3>
                                 </div>
 
@@ -730,47 +798,75 @@ export default function Notes() {
                                     <div className="flex flex-wrap items-center gap-1.5">
                                         <button
                                             onClick={() => quillRef.current?.getEditor().format('bold', !quillRef.current?.getEditor().getFormat().bold)}
-                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-base font-semibold transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                            className={`px-3.5 py-2.5 rounded-lg text-base font-semibold transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                                darkMode 
+                                                    ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
+                                                    : 'bg-white/60 hover:bg-white/80 border-gray-300'
+                                            }`}
                                         >
                                             <strong>B</strong>
                                         </button>
                                         <button
                                             onClick={() => quillRef.current?.getEditor().format('italic', !quillRef.current?.getEditor().getFormat().italic)}
-                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-base italic transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                            className={`px-3.5 py-2.5 rounded-lg text-base italic transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                                darkMode 
+                                                    ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
+                                                    : 'bg-white/60 hover:bg-white/80 border-gray-300'
+                                            }`}
                                         >
                                             I
                                         </button>
                                         <button
                                             onClick={() => quillRef.current?.getEditor().format('underline', !quillRef.current?.getEditor().getFormat().underline)}
-                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-base underline transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                            className={`px-3.5 py-2.5 rounded-lg text-base underline transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                                darkMode 
+                                                    ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
+                                                    : 'bg-white/60 hover:bg-white/80 border-gray-300'
+                                            }`}
                                         >
                                             U
                                         </button>
-                                        <div className="w-px h-8 bg-gray-300 mx-1"></div>
+                                        <div className={`w-px h-8 mx-1 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
                                         <button
                                             onClick={() => quillRef.current?.getEditor().format('list', 'bullet')}
-                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                            className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                                darkMode 
+                                                    ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
+                                                    : 'bg-white/60 hover:bg-white/80 border-gray-300'
+                                            }`}
                                         >
                                             • List
                                         </button>
                                         <button
                                             onClick={() => quillRef.current?.getEditor().format('list', 'ordered')}
-                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                            className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                                darkMode 
+                                                    ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
+                                                    : 'bg-white/60 hover:bg-white/80 border-gray-300'
+                                            }`}
                                         >
                                             1. List
                                         </button>
-                                        <div className="w-px h-8 bg-gray-300 mx-1"></div>
+                                        <div className={`w-px h-8 mx-1 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
                                         <button
                                             onClick={handleAddLink}
-                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                            className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                                darkMode 
+                                                    ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
+                                                    : 'bg-white/60 hover:bg-white/80 border-gray-300'
+                                            }`}
                                         >
                                             🔗 Link
                                         </button>
-                                        <label className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300 cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center">
+                                        <label className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                            darkMode 
+                                                ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
+                                                : 'bg-white/60 hover:bg-white/80 border-gray-300'
+                                        }`}>
                                             {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : '🖼️ Image'}
                                             <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                                         </label>
-                                        <div className="w-px h-8 bg-gray-300 mx-1"></div>
+                                        <div className={`w-px h-8 mx-1 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
                                         <Button
                                             onClick={formatContent}
                                             disabled={formatLoading}
@@ -781,19 +877,29 @@ export default function Notes() {
                                     </div>
 
                                     {showLinkInput && (
-                                        <div className="flex items-center gap-2 p-3 bg-white/80 rounded-lg border border-indigo-200">
+                                        <div className={`flex items-center gap-2 p-3 rounded-lg border ${
+                                            darkMode 
+                                                ? 'bg-gray-700/80 border-indigo-500/50' 
+                                                : 'bg-white/80 border-indigo-200'
+                                        }`}>
                                             <Input
                                                 placeholder="Enter URL (https://...)"
                                                 value={linkUrl}
                                                 onChange={(e) => setLinkUrl(e.target.value)}
                                                 onKeyDown={(e) => e.key === 'Enter' && applyLink()}
-                                                className="flex-1 h-10"
+                                                className={`flex-1 h-10 ${
+                                                    darkMode 
+                                                        ? 'bg-gray-800 border-gray-600 text-white' 
+                                                        : ''
+                                                }`}
                                                 autoFocus
                                             />
                                             <Button onClick={applyLink} size="sm" className="bg-indigo-600 hover:bg-indigo-700 min-h-[40px]">
                                                 Add
                                             </Button>
-                                            <Button onClick={() => { setShowLinkInput(false); setLinkUrl(''); }} size="sm" variant="ghost" className="min-h-[40px]">
+                                            <Button onClick={() => { setShowLinkInput(false); setLinkUrl(''); }} size="sm" variant="ghost" className={`min-h-[40px] ${
+                                                darkMode ? 'hover:bg-gray-600' : ''
+                                            }`}>
                                                 <X className="w-4 h-4" />
                                             </Button>
                                         </div>
@@ -802,12 +908,20 @@ export default function Notes() {
                             </div>
                         )}
 
-                        <div className="px-3 md:px-4 py-2 border-b border-gray-200/50 bg-white/30 backdrop-blur-xl">
+                        <div className={`px-3 md:px-4 py-2 border-b backdrop-blur-xl ${
+                            darkMode 
+                                ? 'border-gray-700/50 bg-gray-800/30' 
+                                : 'border-gray-200/50 bg-white/30'
+                        }`}>
                             <Input
                                 placeholder="Note title..."
                                 value={noteTitle}
                                 onChange={e => setNoteTitle(e.target.value)}
-                                className="text-sm font-semibold border-0 shadow-none focus-visible:ring-0 w-full bg-transparent placeholder:text-gray-400 px-0"
+                                className={`text-sm font-semibold border-0 shadow-none focus-visible:ring-0 w-full bg-transparent px-0 ${
+                                    darkMode 
+                                        ? 'text-white placeholder:text-gray-500' 
+                                        : 'placeholder:text-gray-400'
+                                }`}
                             />
                         </div>
 
@@ -838,13 +952,14 @@ export default function Notes() {
                                     background: transparent !important;
                                 }
                                 .notes-quill-responsive .ql-editor {
-                                    background: rgba(255, 255, 255, 0.3) !important;
+                                    background: ${darkMode ? 'rgba(31, 41, 55, 0.3)' : 'rgba(255, 255, 255, 0.3)'} !important;
                                     backdrop-filter: blur(20px) !important;
                                     font-size: 14px !important;
                                     padding: 12px !important;
+                                    color: ${darkMode ? 'rgba(229, 231, 235, 0.9)' : 'inherit'} !important;
                                 }
                                 .notes-quill-responsive .ql-editor::before {
-                                    color: rgba(107, 114, 128, 0.6) !important;
+                                    color: ${darkMode ? 'rgba(156, 163, 175, 0.6)' : 'rgba(107, 114, 128, 0.6)'} !important;
                                 }
                                 .notes-quill-responsive .ql-editor table {
                                     border-collapse: collapse !important;
