@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 
@@ -107,7 +107,7 @@ export default function Notes() {
     const [editorContent, setEditorContent] = useState('');
     const [noteTitle, setNoteTitle] = useState('');
     const [noteTags, setNoteTags] = useState([]);
-    const [isFullscreen, setIsFullscreen] = useState(false);
+
     const [toast, setToast] = useState(null);
     const [aiLoading, setAiLoading] = useState(false);
     const [showAiTextModal, setShowAiTextModal] = useState(false);
@@ -340,6 +340,185 @@ export default function Notes() {
         return () => window.removeEventListener('headerSearchChange', handleHeaderSearch);
     }, []);
 
+    if (showEditor) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
+                <div className="max-w-7xl mx-auto p-3 md:p-6">
+                    <div className="bg-white/60 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/80 shadow-xl overflow-hidden">
+                        <div className="px-3 md:px-4 py-2 md:py-3 border-b border-gray-200/50 bg-gradient-to-r from-white/60 to-purple-50/60 backdrop-blur-xl flex items-center gap-2 md:gap-3">
+                            <Button onClick={() => setShowAiTextModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
+                                <Sparkles className="w-3.5 md:w-4 h-3.5 md:h-4 text-purple-600" />
+                                <span className="hidden sm:inline">Ai Text</span>
+                            </Button>
+                            <Button onClick={() => setShowAiImageModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
+                                <Image className="w-3.5 md:w-4 h-3.5 md:h-4 text-pink-600" />
+                                <span className="hidden sm:inline">Ai Image</span>
+                            </Button>
+                            <Button onClick={() => setShowAiCodeModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
+                                <Code2 className="w-3.5 md:w-4 h-3.5 md:h-4 text-emerald-600" />
+                                <span className="hidden sm:inline">Ai Code</span>
+                            </Button>
+                            <Button onClick={() => { setColorPickerMode('text'); setShowColorPicker(true); }} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
+                                <Palette className="w-3.5 md:w-4 h-3.5 md:h-4 text-orange-600" />
+                                <span className="hidden sm:inline">Color</span>
+                            </Button>
+                            <Button onClick={formatContent} disabled={formatLoading} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
+                                {formatLoading ? <Loader2 className="w-3.5 md:w-4 h-3.5 md:h-4 animate-spin" /> : <FileText className="w-3.5 md:w-4 h-3.5 md:h-4 text-blue-600" />}
+                                <span className="hidden sm:inline">Format</span>
+                            </Button>
+                            <Popover open={showTablePopover} onOpenChange={setShowTablePopover}>
+                                <PopoverTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
+                                        <Table className="w-3.5 md:w-4 h-3.5 md:h-4 text-indigo-600" />
+                                        <span className="hidden sm:inline">Table</span>
+                                        <ChevronDown className="w-3 h-3" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-72 bg-white/90 backdrop-blur-xl border-white/80 shadow-xl">
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-700 mb-2 block">Columns: {tableCols}</label>
+                                            <Slider value={[tableCols]} onValueChange={(v) => setTableCols(v[0])} min={2} max={8} step={1} className="mb-2" />
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-700 mb-2 block">Rows: {tableRows}</label>
+                                            <Slider value={[tableRows]} onValueChange={(v) => setTableRows(v[0])} min={2} max={10} step={1} className="mb-2" />
+                                        </div>
+                                        <Button onClick={insertTable} className="w-full bg-indigo-600 hover:bg-indigo-700">
+                                            Insert {tableCols}x{tableRows} Table
+                                        </Button>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                            <div className="flex-1" />
+                            <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg gap-1.5 text-xs md:text-sm border-0 h-8 px-4">
+                                {(createMutation.isPending || updateMutation.isPending) ? (
+                                    <>
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                        <span>Saving...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="w-3.5 h-3.5" />
+                                        <span>Save</span>
+                                    </>
+                                )}
+                            </Button>
+                            <Button onClick={() => setShowEditor(false)} className="bg-purple-600 hover:bg-purple-700 text-white h-8 px-3">
+                                <X className="w-4 h-4" />
+                            </Button>
+                        </div>
+
+                        <div className="px-3 md:px-4 py-2 border-b border-gray-200/50 bg-white/30 backdrop-blur-xl">
+                            <Input
+                                placeholder="Note title..."
+                                value={noteTitle}
+                                onChange={e => setNoteTitle(e.target.value)}
+                                className="text-base md:text-lg font-semibold border-0 shadow-none focus-visible:ring-0 w-full bg-transparent placeholder:text-gray-400"
+                            />
+                        </div>
+
+                        <div className="relative" style={{ height: 'calc(100vh - 200px)' }}>
+                            <ReactQuill
+                                ref={quillRef}
+                                value={editorContent}
+                                onChange={setEditorContent}
+                                placeholder="Start writing..."
+                                className="h-full notes-quill-responsive"
+                                theme="snow"
+                                modules={{
+                                    toolbar: [
+                                        ['bold', 'italic', 'underline'],
+                                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                        [{ 'header': [1, 2, 3, false] }],
+                                        ['link', 'image'],
+                                        ['clean']
+                                    ],
+                                }}
+                            />
+                            <style>{`
+                                .notes-quill-responsive .ql-toolbar {
+                                    background: rgba(255, 255, 255, 0.4) !important;
+                                    backdrop-filter: blur(20px) !important;
+                                    border: none !important;
+                                    border-bottom: 1px solid rgba(209, 213, 219, 0.3) !important;
+                                }
+                                .notes-quill-responsive .ql-container {
+                                    border: none !important;
+                                    background: transparent !important;
+                                }
+                                .notes-quill-responsive .ql-editor {
+                                    background: rgba(255, 255, 255, 0.3) !important;
+                                    backdrop-filter: blur(20px) !important;
+                                }
+                                .notes-quill-responsive .ql-editor::before {
+                                    color: rgba(107, 114, 128, 0.6) !important;
+                                }
+                                .notes-quill-responsive .ql-editor table {
+                                    border-collapse: collapse !important;
+                                    width: 100% !important;
+                                    margin: 16px 0 !important;
+                                    border: 2px solid #333 !important;
+                                    display: table !important;
+                                }
+                                .notes-quill-responsive .ql-editor table tbody {
+                                    display: table-row-group !important;
+                                }
+                                .notes-quill-responsive .ql-editor table tr {
+                                    display: table-row !important;
+                                }
+                                .notes-quill-responsive .ql-editor table td {
+                                    border: 1px solid #333 !important;
+                                    padding: 12px !important;
+                                    display: table-cell !important;
+                                    background-color: #ffffff !important;
+                                }
+                                .notes-quill-responsive .ql-editor table tr:first-child td {
+                                    background-color: #f3f4f6 !important;
+                                    font-weight: bold !important;
+                                }
+                                .notes-quill-responsive .ql-stroke {
+                                    stroke: rgba(55, 65, 81, 0.7) !important;
+                                }
+                                .notes-quill-responsive .ql-fill {
+                                    fill: rgba(55, 65, 81, 0.7) !important;
+                                }
+                                .notes-quill-responsive .ql-picker-label {
+                                    color: rgba(55, 65, 81, 0.8) !important;
+                                }
+                                .notes-quill-responsive button:hover,
+                                .notes-quill-responsive button.ql-active {
+                                    background: rgba(147, 51, 234, 0.15) !important;
+                                    border-radius: 6px !important;
+                                }
+                                @media (max-width: 768px) {
+                                    .notes-quill-responsive .ql-toolbar {
+                                        padding: 6px !important;
+                                    }
+                                    .notes-quill-responsive .ql-toolbar button {
+                                        width: 24px !important;
+                                        height: 24px !important;
+                                        padding: 2px 4px !important;
+                                    }
+                                    .notes-quill-responsive .ql-toolbar .ql-picker-label {
+                                        padding: 2px 4px !important;
+                                        font-size: 12px !important;
+                                    }
+                                    .notes-quill-responsive .ql-container {
+                                        font-size: 14px !important;
+                                    }
+                                    .notes-quill-responsive .ql-editor {
+                                        padding: 12px !important;
+                                    }
+                                }
+                            `}</style>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <>
             <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 p-3 md:p-6">
@@ -490,230 +669,6 @@ export default function Notes() {
                         )}
                         </div>
                         </div>
-
-                        {/* Editor Modal */}
-            <Dialog open={showEditor} onOpenChange={setShowEditor}>
-                <DialogContent className={`max-w-full w-full h-full max-h-full rounded-none md:max-w-4xl md:max-h-[90vh] md:rounded-3xl p-0 overflow-hidden transition-all bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl ${isFullscreen ? '!max-w-full !w-full !h-full !max-h-full !rounded-none' : ''} [&_.ql-picker-options]:!z-[100000]`} hideClose>
-                    <div className="flex flex-col h-full max-h-full">
-                        <div className="px-3 md:px-4 py-2 md:py-3 border-b border-gray-200/50 bg-gradient-to-r from-white/60 to-purple-50/60 backdrop-blur-xl flex items-center gap-2 md:gap-3">
-                            <Button onClick={() => setShowAiTextModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                <Sparkles className="w-3.5 md:w-4 h-3.5 md:h-4 text-purple-600" />
-                                <span className="hidden sm:inline">Ai Text</span>
-                            </Button>
-                            <Button onClick={() => setShowAiImageModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                <Image className="w-3.5 md:w-4 h-3.5 md:h-4 text-pink-600" />
-                                <span className="hidden sm:inline">Ai Image</span>
-                            </Button>
-                            <Button onClick={() => setShowAiCodeModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                <Code2 className="w-3.5 md:w-4 h-3.5 md:h-4 text-emerald-600" />
-                                <span className="hidden sm:inline">Ai Code</span>
-                            </Button>
-                            <Button onClick={() => { setColorPickerMode('text'); setShowColorPicker(true); }} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                <Palette className="w-3.5 md:w-4 h-3.5 md:h-4 text-orange-600" />
-                                <span className="hidden sm:inline">Color</span>
-                            </Button>
-                            <Button onClick={formatContent} disabled={formatLoading} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                {formatLoading ? <Loader2 className="w-3.5 md:w-4 h-3.5 md:h-4 animate-spin" /> : <FileText className="w-3.5 md:w-4 h-3.5 md:h-4 text-blue-600" />}
-                                <span className="hidden sm:inline">Format</span>
-                            </Button>
-                            <Popover open={showTablePopover} onOpenChange={setShowTablePopover}>
-                                <PopoverTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                        <Table className="w-3.5 md:w-4 h-3.5 md:h-4 text-indigo-600" />
-                                        <span className="hidden sm:inline">Table</span>
-                                        <ChevronDown className="w-3 h-3" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-72 bg-white/90 backdrop-blur-xl border-white/80 shadow-xl">
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="text-sm font-medium text-gray-700 mb-2 block">Columns: {tableCols}</label>
-                                            <Slider value={[tableCols]} onValueChange={(v) => setTableCols(v[0])} min={2} max={8} step={1} className="mb-2" />
-                                        </div>
-                                        <div>
-                                            <label className="text-sm font-medium text-gray-700 mb-2 block">Rows: {tableRows}</label>
-                                            <Slider value={[tableRows]} onValueChange={(v) => setTableRows(v[0])} min={2} max={10} step={1} className="mb-2" />
-                                        </div>
-                                        <Button onClick={insertTable} className="w-full bg-indigo-600 hover:bg-indigo-700">
-                                            Insert {tableCols}x{tableRows} Table
-                                        </Button>
-                                    </div>
-                                </PopoverContent>
-                            </Popover>
-                            <Button onClick={() => setIsFullscreen(!isFullscreen)} variant="ghost" size="sm" className="hover:bg-white/60 hidden md:flex">
-                                {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                            </Button>
-                            <div className="flex-1" />
-                            <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg gap-1.5 text-xs md:text-sm border-0 h-8 px-4">
-                                {(createMutation.isPending || updateMutation.isPending) ? (
-                                    <>
-                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                        <span>Saving...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Save className="w-3.5 h-3.5" />
-                                        <span>Save</span>
-                                    </>
-                                )}
-                            </Button>
-                            <Button onClick={() => setShowEditor(false)} className="bg-purple-600 hover:bg-purple-700 text-white h-8 px-3">
-                                <X className="w-4 h-4" />
-                            </Button>
-                        </div>
-
-                        <div className="px-3 md:px-4 py-2 border-b border-gray-200/50 bg-white/30 backdrop-blur-xl">
-                            <Input
-                                placeholder="Note title..."
-                                value={noteTitle}
-                                onChange={e => setNoteTitle(e.target.value)}
-                                className="text-base md:text-lg font-semibold border-0 shadow-none focus-visible:ring-0 w-full bg-transparent placeholder:text-gray-400"
-                            />
-                        </div>
-
-                        <div className="flex-1 overflow-hidden relative">
-                            <ReactQuill
-                                ref={quillRef}
-                                value={editorContent}
-                                onChange={setEditorContent}
-                                placeholder="Start writing..."
-                                className="h-full notes-quill-responsive"
-                                theme="snow"
-                                modules={{
-                                    toolbar: [
-                                        ['bold', 'italic', 'underline'],
-                                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                        [{ 'header': [1, 2, 3, false] }],
-                                        ['link', 'image'],
-                                        ['clean']
-                                    ],
-                                }}
-                            />
-                            <style>{`
-                                .notes-quill-responsive .ql-toolbar {
-                                    background: rgba(255, 255, 255, 0.4) !important;
-                                    backdrop-filter: blur(20px) !important;
-                                    border: none !important;
-                                    border-bottom: 1px solid rgba(209, 213, 219, 0.3) !important;
-                                }
-                                .notes-quill-responsive .ql-container {
-                                    border: none !important;
-                                    background: transparent !important;
-                                }
-                                .notes-quill-responsive .ql-editor {
-                                    background: rgba(255, 255, 255, 0.3) !important;
-                                    backdrop-filter: blur(20px) !important;
-                                }
-                                .notes-quill-responsive .ql-editor::before {
-                                    color: rgba(107, 114, 128, 0.6) !important;
-                                }
-                                .notes-quill-responsive .ql-editor table {
-                                    border-collapse: collapse !important;
-                                    width: 100% !important;
-                                    margin: 16px 0 !important;
-                                    border: 2px solid #333 !important;
-                                    display: table !important;
-                                }
-                                .notes-quill-responsive .ql-editor table tbody {
-                                    display: table-row-group !important;
-                                }
-                                .notes-quill-responsive .ql-editor table tr {
-                                    display: table-row !important;
-                                }
-                                .notes-quill-responsive .ql-editor table td {
-                                    border: 1px solid #333 !important;
-                                    padding: 12px !important;
-                                    display: table-cell !important;
-                                    background-color: #ffffff !important;
-                                }
-                                .notes-quill-responsive .ql-editor table tr:first-child td {
-                                    background-color: #f3f4f6 !important;
-                                    font-weight: bold !important;
-                                }
-                                .notes-quill-responsive .ql-stroke {
-                                    stroke: rgba(55, 65, 81, 0.7) !important;
-                                }
-                                .notes-quill-responsive .ql-fill {
-                                    fill: rgba(55, 65, 81, 0.7) !important;
-                                }
-                                .notes-quill-responsive .ql-picker-label {
-                                    color: rgba(55, 65, 81, 0.8) !important;
-                                }
-                                .notes-quill-responsive .ql-picker-options,
-                                .ql-picker-options {
-                                    z-index: 100000 !important;
-                                    background: white !important;
-                                    border: 1px solid rgba(209, 213, 219, 0.5) !important;
-                                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-                                    border-radius: 8px !important;
-                                    padding: 8px !important;
-                                    position: absolute !important;
-                                }
-                                .notes-quill-responsive .ql-color-picker .ql-picker-options,
-                                .ql-color-picker .ql-picker-options {
-                                    width: 252px !important;
-                                    padding: 5px !important;
-                                }
-                                .notes-quill-responsive .ql-picker.ql-expanded .ql-picker-options,
-                                .ql-picker.ql-expanded .ql-picker-options {
-                                    display: block !important;
-                                    z-index: 100000 !important;
-                                }
-                                .notes-quill-responsive button:hover,
-                                .notes-quill-responsive button.ql-active {
-                                    background: rgba(147, 51, 234, 0.15) !important;
-                                    border-radius: 6px !important;
-                                }
-                                .ql-tooltip {
-                                    z-index: 99999 !important;
-                                    background: white !important;
-                                    border: 1px solid rgba(209, 213, 219, 0.5) !important;
-                                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-                                    border-radius: 8px !important;
-                                    position: fixed !important;
-                                    left: 50% !important;
-                                    top: 50% !important;
-                                    transform: translate(-50%, -50%) !important;
-                                }
-                                .ql-tooltip input {
-                                    border: 1px solid rgba(209, 213, 219, 0.5) !important;
-                                    border-radius: 6px !important;
-                                    padding: 6px 10px !important;
-                                    min-width: 250px !important;
-                                }
-                                .ql-tooltip .ql-action,
-                                .ql-tooltip .ql-remove {
-                                    border-radius: 6px !important;
-                                }
-                                .ql-editing .ql-tooltip {
-                                    left: 50% !important;
-                                    top: 50% !important;
-                                }
-                                @media (max-width: 768px) {
-                                    .notes-quill-responsive .ql-toolbar {
-                                        padding: 6px !important;
-                                    }
-                                    .notes-quill-responsive .ql-toolbar button {
-                                        width: 24px !important;
-                                        height: 24px !important;
-                                        padding: 2px 4px !important;
-                                    }
-                                    .notes-quill-responsive .ql-toolbar .ql-picker-label {
-                                        padding: 2px 4px !important;
-                                        font-size: 12px !important;
-                                    }
-                                    .notes-quill-responsive .ql-container {
-                                        font-size: 14px !important;
-                                    }
-                                    .notes-quill-responsive .ql-editor {
-                                        padding: 12px !important;
-                                    }
-                                }
-                            `}</style>
-                        </div>
-                    </div>
-                </DialogContent>
-            </Dialog>
 
             {toast && <Toast message={toast} onClose={() => setToast(null)} />}
 
