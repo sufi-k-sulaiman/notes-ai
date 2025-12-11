@@ -174,6 +174,8 @@ export default function Notes() {
         const saved = localStorage.getItem('notes-text-size');
         return saved || 'medium';
     });
+    const [editingName, setEditingName] = useState(false);
+    const [newName, setNewName] = useState('');
     const queryClient = useQueryClient();
 
     useEffect(() => {
@@ -1097,14 +1099,19 @@ export default function Notes() {
                                     <p className={`text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Generative text, images and code</p>
                                 </div>
                             </div>
-                            <Button 
-                                onClick={() => setShowSettings(true)} 
-                                variant="ghost" 
-                                size="lg"
-                                className={`${darkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
-                            >
-                                <Settings className="w-10 h-10" />
-                            </Button>
+                            <div className="flex items-center gap-3">
+                                <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    {user?.full_name || 'User'}
+                                </p>
+                                <Button 
+                                    onClick={() => setShowSettings(true)} 
+                                    variant="ghost" 
+                                    size="lg"
+                                    className={`${darkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
+                                >
+                                    <Settings className="w-20 h-20" />
+                                </Button>
+                            </div>
                         </div>
 
                         {/* Search Bar, View Mode and New Note Button */}
@@ -1333,12 +1340,59 @@ export default function Notes() {
                                 <div className={`w-12 h-12 rounded-full flex items-center justify-center ${darkMode ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
                                     <User className={`w-6 h-6 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
                                 </div>
-                                <div>
-                                    <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{user?.full_name || 'User'}</p>
-                                    <p className={`text-sm flex items-center gap-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                        <Mail className="w-3 h-3" />
-                                        {user?.email || 'user@example.com'}
-                                    </p>
+                                <div className="flex-1">
+                                    {editingName ? (
+                                        <div className="flex items-center gap-2">
+                                            <Input
+                                                value={newName}
+                                                onChange={(e) => setNewName(e.target.value)}
+                                                className={`h-8 ${darkMode ? 'bg-gray-800 border-gray-600' : ''}`}
+                                                autoFocus
+                                            />
+                                            <Button 
+                                                size="sm" 
+                                                onClick={async () => {
+                                                    if (newName.trim()) {
+                                                        await base44.auth.updateMe({ full_name: newName.trim() });
+                                                        queryClient.invalidateQueries({ queryKey: ['user'] });
+                                                        setEditingName(false);
+                                                    }
+                                                }}
+                                                className="h-8 bg-purple-600 hover:bg-purple-700"
+                                            >
+                                                Save
+                                            </Button>
+                                            <Button 
+                                                size="sm" 
+                                                variant="ghost"
+                                                onClick={() => setEditingName(false)}
+                                                className="h-8"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{user?.full_name || 'User'}</p>
+                                                <p className={`text-sm flex items-center gap-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                    <Mail className="w-3 h-3" />
+                                                    {user?.email || 'user@example.com'}
+                                                </p>
+                                            </div>
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                onClick={() => {
+                                                    setNewName(user?.full_name || '');
+                                                    setEditingName(true);
+                                                }}
+                                                className={`${darkMode ? 'hover:bg-gray-600' : ''}`}
+                                            >
+                                                Edit
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
