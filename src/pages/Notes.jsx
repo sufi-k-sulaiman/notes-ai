@@ -120,6 +120,8 @@ export default function Notes() {
     const [tableRows, setTableRows] = useState(3);
     const [tableCols, setTableCols] = useState(3);
     const [showTablePopover, setShowTablePopover] = useState(false);
+    const [showColorPicker, setShowColorPicker] = useState(false);
+    const [colorPickerMode, setColorPickerMode] = useState('text'); // 'text' or 'background'
     const queryClient = useQueryClient();
 
     const { data: notes = [], isLoading } = useQuery({
@@ -505,6 +507,10 @@ export default function Notes() {
                                 <Code2 className="w-3.5 md:w-4 h-3.5 md:h-4 text-emerald-600" />
                                 <span className="hidden sm:inline">Ai Code</span>
                             </Button>
+                            <Button onClick={() => { setColorPickerMode('text'); setShowColorPicker(true); }} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
+                                <Palette className="w-3.5 md:w-4 h-3.5 md:h-4 text-orange-600" />
+                                <span className="hidden sm:inline">Color</span>
+                            </Button>
                             <Button onClick={formatContent} disabled={formatLoading} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
                                 {formatLoading ? <Loader2 className="w-3.5 md:w-4 h-3.5 md:h-4 animate-spin" /> : <FileText className="w-3.5 md:w-4 h-3.5 md:h-4 text-blue-600" />}
                                 <span className="hidden sm:inline">Format</span>
@@ -851,7 +857,23 @@ export default function Notes() {
                         </Button>
                     </div>
                 </DialogContent>
-            </Dialog>
-        </>
-    );
-}
+                </Dialog>
+
+                {/* Color Picker Modal */}
+                <ColorPickerModal
+                isOpen={showColorPicker}
+                onClose={() => setShowColorPicker(false)}
+                onSelectColor={(color) => {
+                    if (quillRef.current) {
+                        const quill = quillRef.current.getEditor();
+                        if (colorPickerMode === 'text') {
+                            quill.format('color', color);
+                        } else {
+                            quill.format('background', color);
+                        }
+                    }
+                }}
+                />
+                </>
+                );
+                }
