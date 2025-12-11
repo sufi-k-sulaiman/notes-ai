@@ -1042,8 +1042,8 @@ export default function Notes() {
 
     return (
         <>
-            <div className={`min-h-screen p-3 md:p-6 ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`} style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
-                <div className="max-w-7xl mx-auto">
+            <div className={`min-h-screen p-3 md:p-6 xl:p-0 ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`} style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
+                <div className="max-w-7xl xl:max-w-none mx-auto xl:mx-0">
                     {/* Header */}
                     <div className="mb-4 md:mb-6">
                         {/* Logo and Title */}
