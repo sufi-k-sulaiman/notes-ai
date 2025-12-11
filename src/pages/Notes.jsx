@@ -646,7 +646,7 @@ export default function Notes() {
 
             {/* AI Text Modal */}
             <Dialog open={showAiTextModal} onOpenChange={setShowAiTextModal}>
-                <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
+                <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl z-[9999]">
                     <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
                         <Sparkles className="w-4 md:w-5 h-4 md:h-5 text-purple-600" /> Generate AI Text
                     </h3>
@@ -696,7 +696,7 @@ export default function Notes() {
 
             {/* AI Code Modal */}
             <Dialog open={showAiCodeModal} onOpenChange={setShowAiCodeModal}>
-                <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
+                <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl z-[9999]">
                     <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
                         <Code2 className="w-4 md:w-5 h-4 md:h-5 text-emerald-600" /> Generate AI Code
                     </h3>
@@ -743,7 +743,7 @@ export default function Notes() {
 
             {/* AI Image Modal */}
             <Dialog open={showAiImageModal} onOpenChange={setShowAiImageModal}>
-                <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
+                <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl z-[9999]">
                     <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
                         <Image className="w-4 md:w-5 h-4 md:h-5 text-pink-600" /> Generate AI Image
                     </h3>
