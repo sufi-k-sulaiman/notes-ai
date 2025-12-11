@@ -187,6 +187,13 @@ export default function Notes() {
 
     useEffect(() => {
         localStorage.setItem('notes-text-size', textSize);
+        // Update Quill editor font size dynamically
+        if (quillRef.current) {
+            const editor = quillRef.current.getEditor();
+            const container = editor.container;
+            const fontSize = textSize === 'small' ? '12px' : textSize === 'large' ? '16px' : '14px';
+            container.querySelector('.ql-editor').style.fontSize = fontSize;
+        }
     }, [textSize]);
 
     const getEditorFontSize = () => {
