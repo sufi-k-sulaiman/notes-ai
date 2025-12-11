@@ -1237,7 +1237,7 @@ export default function Notes() {
                     )}
 
                         {/* Quick Start Templates */}
-                        {!isLoading && filteredNotes.length > 0 && (
+                        {!isLoading && (
                         <div className={`backdrop-blur-xl rounded-2xl md:rounded-3xl border shadow-xl p-3 md:p-5 mt-6 ${
                             darkMode 
                                 ? 'bg-gray-800/40 border-gray-700' 
