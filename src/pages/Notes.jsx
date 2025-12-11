@@ -345,23 +345,51 @@ export default function Notes() {
             <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
                 <div className="max-w-7xl mx-auto p-3 md:p-6">
                     <div className="bg-white/60 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/80 shadow-xl overflow-hidden">
-                        <div className="px-3 md:px-4 py-2 md:py-3 border-b border-gray-200/50 bg-gradient-to-r from-white/60 to-purple-50/60 backdrop-blur-xl flex items-center gap-2 md:gap-3">
-                            <Button onClick={() => setShowAiTextModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                <Sparkles className="w-3.5 md:w-4 h-3.5 md:h-4 text-purple-600" />
+                        <div className="px-3 md:px-4 py-2 md:py-3 border-b border-white/20 bg-white/10 backdrop-blur-3xl shadow-lg flex items-center gap-2 md:gap-3">
+                            <button 
+                                onClick={() => setShowAiTextModal(!showAiTextModal)} 
+                                className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                    showAiTextModal 
+                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-purple-500 text-purple-700 shadow-md' 
+                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Sparkles className="w-3.5 md:w-4 h-3.5 md:h-4 inline" />
                                 <span className="hidden sm:inline">Ai Text</span>
-                            </Button>
-                            <Button onClick={() => setShowAiImageModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                <Image className="w-3.5 md:w-4 h-3.5 md:h-4 text-pink-600" />
+                            </button>
+                            <button 
+                                onClick={() => setShowAiImageModal(!showAiImageModal)} 
+                                className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                    showAiImageModal 
+                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-pink-500 text-pink-700 shadow-md' 
+                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Image className="w-3.5 md:w-4 h-3.5 md:h-4 inline" />
                                 <span className="hidden sm:inline">Ai Image</span>
-                            </Button>
-                            <Button onClick={() => setShowAiCodeModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                <Code2 className="w-3.5 md:w-4 h-3.5 md:h-4 text-emerald-600" />
+                            </button>
+                            <button 
+                                onClick={() => setShowAiCodeModal(!showAiCodeModal)} 
+                                className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                    showAiCodeModal 
+                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-emerald-500 text-emerald-700 shadow-md' 
+                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Code2 className="w-3.5 md:w-4 h-3.5 md:h-4 inline" />
                                 <span className="hidden sm:inline">Ai Code</span>
-                            </Button>
-                            <Button onClick={() => { setColorPickerMode('text'); setShowColorPicker(true); }} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                <Palette className="w-3.5 md:w-4 h-3.5 md:h-4 text-orange-600" />
+                            </button>
+                            <button 
+                                onClick={() => { setColorPickerMode('text'); setShowColorPicker(!showColorPicker); }} 
+                                className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                    showColorPicker 
+                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-700 shadow-md' 
+                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Palette className="w-3.5 md:w-4 h-3.5 md:h-4 inline" />
                                 <span className="hidden sm:inline">Color</span>
-                            </Button>
+                            </button>
                             <div className="flex-1" />
                             <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg gap-1.5 text-xs md:text-sm border-0 h-8 px-4">
                                 {(createMutation.isPending || updateMutation.isPending) ? (
@@ -381,16 +409,13 @@ export default function Notes() {
                             </Button>
                         </div>
 
-                        {/* AI Text Ribbon */}
+                        {/* AI Text Tab */}
                         {showAiTextModal && (
-                            <div className="px-3 md:px-4 py-3 border-b border-purple-200/50 bg-gradient-to-r from-purple-50/60 to-indigo-50/60 backdrop-blur-xl">
+                            <div className="px-3 md:px-4 py-3 border-b border-white/20 bg-white/30 backdrop-blur-3xl shadow-inner">
                                 <div className="flex items-center justify-between mb-3">
-                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-purple-900">
+                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-purple-700">
                                         <Sparkles className="w-4 h-4 text-purple-600" /> Generate AI Text
                                     </h3>
-                                    <Button variant="ghost" size="sm" onClick={() => { setShowAiTextModal(false); setAiPrompt(''); }} className="h-7 w-7 p-0">
-                                        <X className="w-4 h-4" />
-                                    </Button>
                                 </div>
                                 
                                 <div className="flex flex-wrap gap-2 mb-3">
@@ -431,16 +456,13 @@ export default function Notes() {
                             </div>
                         )}
 
-                        {/* AI Image Ribbon */}
+                        {/* AI Image Tab */}
                         {showAiImageModal && (
-                            <div className="px-3 md:px-4 py-3 border-b border-pink-200/50 bg-gradient-to-r from-pink-50/60 to-rose-50/60 backdrop-blur-xl">
+                            <div className="px-3 md:px-4 py-3 border-b border-white/20 bg-white/30 backdrop-blur-3xl shadow-inner">
                                 <div className="flex items-center justify-between mb-3">
-                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-pink-900">
+                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-pink-700">
                                         <Image className="w-4 h-4 text-pink-600" /> Generate AI Image
                                     </h3>
-                                    <Button variant="ghost" size="sm" onClick={() => { setShowAiImageModal(false); setAiPrompt(''); }} className="h-7 w-7 p-0">
-                                        <X className="w-4 h-4" />
-                                    </Button>
                                 </div>
 
                                 <div className="flex gap-2 mb-3">
@@ -475,16 +497,13 @@ export default function Notes() {
                             </div>
                         )}
 
-                        {/* AI Code Ribbon */}
+                        {/* AI Code Tab */}
                         {showAiCodeModal && (
-                            <div className="px-3 md:px-4 py-3 border-b border-emerald-200/50 bg-gradient-to-r from-emerald-50/60 to-green-50/60 backdrop-blur-xl">
+                            <div className="px-3 md:px-4 py-3 border-b border-white/20 bg-white/30 backdrop-blur-3xl shadow-inner">
                                 <div className="flex items-center justify-between mb-3">
-                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-emerald-900">
+                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-emerald-700">
                                         <Code2 className="w-4 h-4 text-emerald-600" /> Generate AI Code
                                     </h3>
-                                    <Button variant="ghost" size="sm" onClick={() => { setShowAiCodeModal(false); setAiPrompt(''); }} className="h-7 w-7 p-0">
-                                        <X className="w-4 h-4" />
-                                    </Button>
                                 </div>
                                 
                                 <div className="flex flex-wrap gap-1.5 mb-3">
@@ -522,16 +541,13 @@ export default function Notes() {
                             </div>
                         )}
 
-                        {/* Color Picker Ribbon */}
+                        {/* Color Picker Tab */}
                         {showColorPicker && (
-                            <div className="px-3 md:px-4 py-3 border-b border-orange-200/50 bg-gradient-to-r from-orange-50/60 to-amber-50/60 backdrop-blur-xl">
+                            <div className="px-3 md:px-4 py-3 border-b border-white/20 bg-white/30 backdrop-blur-3xl shadow-inner">
                                 <div className="flex items-center justify-between mb-3">
-                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-orange-900">
+                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-orange-700">
                                         <Palette className="w-4 h-4 text-orange-600" /> Color Picker
                                     </h3>
-                                    <Button variant="ghost" size="sm" onClick={() => setShowColorPicker(false)} className="h-7 w-7 p-0">
-                                        <X className="w-4 h-4" />
-                                    </Button>
                                 </div>
 
                                 <div className="flex items-center gap-3">
