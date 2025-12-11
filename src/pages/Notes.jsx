@@ -414,7 +414,7 @@ export default function Notes() {
 
     if (showEditor) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
+            <div className="min-h-screen bg-white">
                 <div className="max-w-7xl mx-auto p-0 md:p-6">
                     <div className="bg-white/60 backdrop-blur-xl md:rounded-2xl md:rounded-3xl border-0 md:border md:border-white/80 shadow-xl overflow-hidden min-h-screen md:min-h-0">
                         <div className="px-2 md:px-4 py-2 md:py-3 border-b border-white/20 bg-white/10 backdrop-blur-3xl shadow-lg flex items-center gap-1 md:gap-3">
@@ -882,7 +882,7 @@ export default function Notes() {
 
     return (
         <>
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 p-3 md:p-6">
+            <div className="min-h-screen bg-white p-3 md:p-6">
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4 mb-4 md:mb-6">
