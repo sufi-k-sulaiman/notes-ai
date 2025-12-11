@@ -362,7 +362,7 @@ export default function Notes() {
                                         </>
                                     )}
                                 </Button>
-                                <Button variant="ghost" size="icon" onClick={() => setShowEditor(false)} className="flex-shrink-0">
+                                <Button variant="ghost" size="icon" onClick={() => setShowEditor(false)} className="flex-shrink-0 hover:bg-white/60">
                                     <X className="w-4 md:w-5 h-4 md:h-5" />
                                 </Button>
                             </div>
@@ -386,6 +386,37 @@ export default function Notes() {
                                 }}
                             />
                             <style>{`
+                                .notes-quill-responsive .ql-toolbar {
+                                    background: rgba(255, 255, 255, 0.4) !important;
+                                    backdrop-filter: blur(20px) !important;
+                                    border: none !important;
+                                    border-bottom: 1px solid rgba(209, 213, 219, 0.3) !important;
+                                }
+                                .notes-quill-responsive .ql-container {
+                                    border: none !important;
+                                    background: transparent !important;
+                                }
+                                .notes-quill-responsive .ql-editor {
+                                    background: rgba(255, 255, 255, 0.3) !important;
+                                    backdrop-filter: blur(20px) !important;
+                                }
+                                .notes-quill-responsive .ql-editor::before {
+                                    color: rgba(107, 114, 128, 0.6) !important;
+                                }
+                                .notes-quill-responsive .ql-stroke {
+                                    stroke: rgba(55, 65, 81, 0.7) !important;
+                                }
+                                .notes-quill-responsive .ql-fill {
+                                    fill: rgba(55, 65, 81, 0.7) !important;
+                                }
+                                .notes-quill-responsive .ql-picker-label {
+                                    color: rgba(55, 65, 81, 0.8) !important;
+                                }
+                                .notes-quill-responsive button:hover,
+                                .notes-quill-responsive button.ql-active {
+                                    background: rgba(147, 51, 234, 0.15) !important;
+                                    border-radius: 6px !important;
+                                }
                                 @media (max-width: 768px) {
                                     .notes-quill-responsive .ql-toolbar {
                                         padding: 6px !important;
