@@ -458,9 +458,9 @@ export default function Notes() {
     };
 
     const getGlobalFontSize = () => {
-        if (textSize === 'small') return '13px';
-        if (textSize === 'large') return '18px';
-        return '15px';
+        if (textSize === 'small') return '16px';
+        if (textSize === 'large') return '20px';
+        return '18px';
     };
 
     // Listen for header search changes
