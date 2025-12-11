@@ -276,23 +276,6 @@ export default function Notes() {
                         </Button>
                     </div>
 
-                    {/* Quick Start Templates */}
-                    <div className="bg-white/40 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/60 shadow-xl p-3 md:p-5 mb-4 md:mb-6">
-                        <h2 className="text-purple-700 font-semibold mb-3 md:mb-4 text-sm md:text-base">Quick Start Templates</h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
-                            {TEMPLATES.map(t => (
-                                <button
-                                    key={t.id}
-                                    onClick={() => openNewNote(t)}
-                                    className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-xl md:rounded-2xl bg-white/60 backdrop-blur-md hover:bg-white/80 border border-white/80 hover:border-purple-200 text-left transition-all shadow-sm hover:shadow-md"
-                                >
-                                    <t.icon className="w-4 md:w-5 h-4 md:h-5" style={{ color: t.color }} />
-                                    <span className="font-medium text-gray-800 text-xs md:text-sm">{t.name}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
                     {/* Notes Grid */}
                     {isLoading ? (
                         <div className="flex items-center justify-center py-12 md:py-20">
@@ -318,11 +301,30 @@ export default function Notes() {
                                 />
                             ))}
                         </div>
-                    )}
-                </div>
-            </div>
+                        )}
 
-            {/* Editor Modal */}
+                        {/* Quick Start Templates */}
+                        {!isLoading && filteredNotes.length > 0 && (
+                        <div className="bg-white/40 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/60 shadow-xl p-3 md:p-5 mt-6">
+                        <h2 className="text-purple-700 font-semibold mb-3 md:mb-4 text-sm md:text-base">Quick Start Templates</h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
+                            {TEMPLATES.map(t => (
+                                <button
+                                    key={t.id}
+                                    onClick={() => openNewNote(t)}
+                                    className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-xl md:rounded-2xl bg-white/60 backdrop-blur-md hover:bg-white/80 border border-white/80 hover:border-purple-200 text-left transition-all shadow-sm hover:shadow-md"
+                                >
+                                    <t.icon className="w-4 md:w-5 h-4 md:h-5" style={{ color: t.color }} />
+                                    <span className="font-medium text-gray-800 text-xs md:text-sm">{t.name}</span>
+                                </button>
+                            ))}
+                        </div>
+                        </div>
+                        )}
+                        </div>
+                        </div>
+
+                        {/* Editor Modal */}
             <Dialog open={showEditor} onOpenChange={setShowEditor}>
                 <DialogContent className={`max-w-full w-full h-full max-h-full rounded-none md:max-w-4xl md:max-h-[90vh] md:rounded-3xl p-0 overflow-hidden transition-all bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl ${isFullscreen ? '!max-w-full !w-full !h-full !max-h-full !rounded-none' : ''}`}>
                     <div className={`flex flex-col h-full ${isFullscreen ? '' : 'md:h-[80vh]'}`}>
