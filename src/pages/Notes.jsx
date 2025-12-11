@@ -749,7 +749,7 @@ export default function Notes() {
                                 placeholder="Note title..."
                                 value={noteTitle}
                                 onChange={e => setNoteTitle(e.target.value)}
-                                className="text-base md:text-lg font-semibold border-0 shadow-none focus-visible:ring-0 w-full bg-transparent placeholder:text-gray-400"
+                                className="text-sm font-semibold border-0 shadow-none focus-visible:ring-0 w-full bg-transparent placeholder:text-gray-400 px-0"
                             />
                         </div>
 
@@ -782,6 +782,8 @@ export default function Notes() {
                                 .notes-quill-responsive .ql-editor {
                                     background: rgba(255, 255, 255, 0.3) !important;
                                     backdrop-filter: blur(20px) !important;
+                                    font-size: 14px !important;
+                                    padding: 12px !important;
                                 }
                                 .notes-quill-responsive .ql-editor::before {
                                     color: rgba(107, 114, 128, 0.6) !important;
