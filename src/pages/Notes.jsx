@@ -457,6 +457,12 @@ export default function Notes() {
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
 
+    const getGlobalFontSize = () => {
+        if (textSize === 'small') return '13px';
+        if (textSize === 'large') return '18px';
+        return '15px';
+    };
+
     // Listen for header search changes
     useEffect(() => {
         const handleHeaderSearch = (e) => setSearchQuery(e.detail || '');
