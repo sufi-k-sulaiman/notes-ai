@@ -123,7 +123,16 @@ export default function Notes() {
     const [showTablePopover, setShowTablePopover] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [colorPickerMode, setColorPickerMode] = useState('text'); // 'text' or 'background'
+    const [showFormatModal, setShowFormatModal] = useState(false);
     const queryClient = useQueryClient();
+
+    const closeAllTabs = () => {
+        setShowAiTextModal(false);
+        setShowAiImageModal(false);
+        setShowAiCodeModal(false);
+        setShowColorPicker(false);
+        setShowFormatModal(false);
+    };
 
     const { data: notes = [], isLoading } = useQuery({
         queryKey: ['notes'],
@@ -347,7 +356,7 @@ export default function Notes() {
                     <div className="bg-white/60 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/80 shadow-xl overflow-hidden">
                         <div className="px-3 md:px-4 py-2 md:py-3 border-b border-white/20 bg-white/10 backdrop-blur-3xl shadow-lg flex items-center gap-2 md:gap-3">
                             <button 
-                                onClick={() => setShowAiTextModal(!showAiTextModal)} 
+                                onClick={() => { closeAllTabs(); setShowAiTextModal(true); }} 
                                 className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
                                     showAiTextModal 
                                         ? 'bg-white/40 backdrop-blur-xl border-b-2 border-purple-500 text-purple-700 shadow-md' 
@@ -358,7 +367,7 @@ export default function Notes() {
                                 <span className="hidden sm:inline">Ai Text</span>
                             </button>
                             <button 
-                                onClick={() => setShowAiImageModal(!showAiImageModal)} 
+                                onClick={() => { closeAllTabs(); setShowAiImageModal(true); }} 
                                 className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
                                     showAiImageModal 
                                         ? 'bg-white/40 backdrop-blur-xl border-b-2 border-pink-500 text-pink-700 shadow-md' 
@@ -369,7 +378,7 @@ export default function Notes() {
                                 <span className="hidden sm:inline">Ai Image</span>
                             </button>
                             <button 
-                                onClick={() => setShowAiCodeModal(!showAiCodeModal)} 
+                                onClick={() => { closeAllTabs(); setShowAiCodeModal(true); }} 
                                 className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
                                     showAiCodeModal 
                                         ? 'bg-white/40 backdrop-blur-xl border-b-2 border-emerald-500 text-emerald-700 shadow-md' 
@@ -380,7 +389,7 @@ export default function Notes() {
                                 <span className="hidden sm:inline">Ai Code</span>
                             </button>
                             <button 
-                                onClick={() => { setColorPickerMode('text'); setShowColorPicker(!showColorPicker); }} 
+                                onClick={() => { closeAllTabs(); setColorPickerMode('text'); setShowColorPicker(true); }} 
                                 className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
                                     showColorPicker 
                                         ? 'bg-white/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-700 shadow-md' 
@@ -389,6 +398,17 @@ export default function Notes() {
                             >
                                 <Palette className="w-3.5 md:w-4 h-3.5 md:h-4 inline" />
                                 <span className="hidden sm:inline">Color</span>
+                            </button>
+                            <button 
+                                onClick={() => { closeAllTabs(); setShowFormatModal(true); }} 
+                                className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                    showFormatModal 
+                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-indigo-500 text-indigo-700 shadow-md' 
+                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <AlignLeft className="w-3.5 md:w-4 h-3.5 md:h-4 inline" />
+                                <span className="hidden sm:inline">Format</span>
                             </button>
                             <div className="flex-1" />
                             <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg gap-1.5 text-xs md:text-sm border-0 h-8 px-4">
@@ -440,17 +460,20 @@ export default function Notes() {
                                     ))}
                                 </div>
                 
-                                <div className="flex gap-2">
+                                <div className="relative">
                                     <Input
                                         placeholder="Describe what you want to write about..."
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && generateAIText()}
-                                        className="text-sm bg-white/60 backdrop-blur-sm border-white/80 flex-1"
+                                        className="text-sm bg-white/60 backdrop-blur-sm border border-gray-300 rounded-full pr-28 pl-6 h-12 shadow-sm"
                                     />
-                                    <Button onClick={generateAIText} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-xs px-4">
-                                        {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
-                                        Generate
+                                    <Button 
+                                        onClick={generateAIText} 
+                                        disabled={aiLoading || !aiPrompt.trim()} 
+                                        className="absolute right-1 top-1 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full h-10 px-5 text-sm font-medium"
+                                    >
+                                        {aiLoading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Generating...</> : <><Sparkles className="w-4 h-4 mr-1" /> Generate</>}
                                     </Button>
                                 </div>
                             </div>
@@ -481,17 +504,20 @@ export default function Notes() {
                                     ))}
                                 </div>
 
-                                <div className="flex gap-2">
+                                <div className="relative">
                                     <Input
                                         placeholder="Describe the image you want to create..."
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && generateAIImage()}
-                                        className="text-sm bg-white/60 backdrop-blur-sm border-white/80 flex-1"
+                                        className="text-sm bg-white/60 backdrop-blur-sm border border-gray-300 rounded-full pr-32 pl-6 h-12 shadow-sm"
                                     />
-                                    <Button onClick={generateAIImage} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-xs px-4">
-                                        {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Image className="w-3 h-3 mr-1" />}
-                                        Generate {imageCount}
+                                    <Button 
+                                        onClick={generateAIImage} 
+                                        disabled={aiLoading || !aiPrompt.trim()} 
+                                        className="absolute right-1 top-1 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white rounded-full h-10 px-5 text-sm font-medium"
+                                    >
+                                        {aiLoading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Generating...</> : <><Image className="w-4 h-4 mr-1" /> Generate {imageCount}</>}
                                     </Button>
                                 </div>
                             </div>
@@ -525,17 +551,20 @@ export default function Notes() {
                                     ))}
                                 </div>
 
-                                <div className="flex gap-2">
+                                <div className="relative">
                                     <Input
                                         placeholder="Describe the code you need..."
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && generateAICode()}
-                                        className="text-sm bg-white/60 backdrop-blur-sm border-white/80 flex-1"
+                                        className="text-sm bg-white/60 backdrop-blur-sm border border-gray-300 rounded-full pr-28 pl-6 h-12 shadow-sm"
                                     />
-                                    <Button onClick={generateAICode} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-xs px-4">
-                                        {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Code2 className="w-3 h-3 mr-1" />}
-                                        Generate
+                                    <Button 
+                                        onClick={generateAICode} 
+                                        disabled={aiLoading || !aiPrompt.trim()} 
+                                        className="absolute right-1 top-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-full h-10 px-5 text-sm font-medium"
+                                    >
+                                        {aiLoading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Generating...</> : <><Code2 className="w-4 h-4 mr-1" /> Generate</>}
                                     </Button>
                                 </div>
                             </div>
@@ -590,6 +619,78 @@ export default function Notes() {
                                             Background
                                         </Button>
                                     </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Format Tab */}
+                        {showFormatModal && (
+                            <div className="px-3 md:px-4 py-3 border-b border-white/20 bg-white/30 backdrop-blur-3xl shadow-inner">
+                                <div className="flex items-center justify-between mb-3">
+                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-indigo-700">
+                                        <AlignLeft className="w-4 h-4 text-indigo-600" /> Text Formatting
+                                    </h3>
+                                </div>
+
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <button
+                                        onClick={() => quillRef.current?.getEditor().format('bold', !quillRef.current?.getEditor().getFormat().bold)}
+                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm font-semibold transition-all border border-gray-300"
+                                    >
+                                        <strong>B</strong>
+                                    </button>
+                                    <button
+                                        onClick={() => quillRef.current?.getEditor().format('italic', !quillRef.current?.getEditor().getFormat().italic)}
+                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm italic transition-all border border-gray-300"
+                                    >
+                                        I
+                                    </button>
+                                    <button
+                                        onClick={() => quillRef.current?.getEditor().format('underline', !quillRef.current?.getEditor().getFormat().underline)}
+                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm underline transition-all border border-gray-300"
+                                    >
+                                        U
+                                    </button>
+                                    <div className="w-px h-6 bg-gray-300"></div>
+                                    <button
+                                        onClick={() => quillRef.current?.getEditor().format('header', 1)}
+                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm font-bold transition-all border border-gray-300"
+                                    >
+                                        H1
+                                    </button>
+                                    <button
+                                        onClick={() => quillRef.current?.getEditor().format('header', 2)}
+                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm font-bold transition-all border border-gray-300"
+                                    >
+                                        H2
+                                    </button>
+                                    <button
+                                        onClick={() => quillRef.current?.getEditor().format('header', 3)}
+                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm font-bold transition-all border border-gray-300"
+                                    >
+                                        H3
+                                    </button>
+                                    <div className="w-px h-6 bg-gray-300"></div>
+                                    <button
+                                        onClick={() => quillRef.current?.getEditor().format('list', 'bullet')}
+                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300"
+                                    >
+                                        • List
+                                    </button>
+                                    <button
+                                        onClick={() => quillRef.current?.getEditor().format('list', 'ordered')}
+                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300"
+                                    >
+                                        1. List
+                                    </button>
+                                    <div className="w-px h-6 bg-gray-300"></div>
+                                    <Button
+                                        onClick={formatContent}
+                                        disabled={formatLoading}
+                                        className="bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white rounded-lg px-4 py-2 text-sm"
+                                    >
+                                        {formatLoading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Formatting...</> : <><Sparkles className="w-4 h-4 mr-1" /> AI Format</>}
+                                    </Button>
                                 </div>
                             </div>
                         )}
