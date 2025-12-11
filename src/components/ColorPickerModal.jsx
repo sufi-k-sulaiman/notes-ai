@@ -30,15 +30,15 @@ export default function ColorPickerModal({ isOpen, onClose, onSelectColor, curre
         if (!canvas) return;
         
         const ctx = canvas.getContext('2d');
-        const size = 280;
+        const size = 350;
         const centerX = size / 2;
         const centerY = size / 2;
         const radius = size / 2 - 10;
 
         // Draw color wheel
-        for (let angle = 0; angle < 360; angle += 1) {
+        for (let angle = 0; angle < 360; angle += 0.5) {
             const startAngle = (angle - 90) * Math.PI / 180;
-            const endAngle = (angle + 1 - 90) * Math.PI / 180;
+            const endAngle = (angle + 0.5 - 90) * Math.PI / 180;
 
             for (let r = 0; r < radius; r += 1) {
                 const ratio = r / radius;
@@ -49,14 +49,14 @@ export default function ColorPickerModal({ isOpen, onClose, onSelectColor, curre
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, r, startAngle, endAngle);
                 ctx.strokeStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-                ctx.lineWidth = 1.5;
+                ctx.lineWidth = 2;
                 ctx.stroke();
             }
         }
 
         // Draw white center circle
         ctx.beginPath();
-        ctx.arc(centerX, centerY, 25, 0, Math.PI * 2);
+        ctx.arc(centerX, centerY, 30, 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
         ctx.fill();
     }, []);
@@ -111,27 +111,27 @@ export default function ColorPickerModal({ isOpen, onClose, onSelectColor, curre
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-md bg-white rounded-2xl p-6 border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Color Picker</h3>
+            <DialogContent className="max-w-4xl bg-white rounded-2xl p-8 border-gray-200">
+                <div className="flex items-start justify-between mb-6">
+                    <h3 className="text-2xl font-bold text-gray-900">Color Picker</h3>
                     <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
-                        <X className="w-4 h-4" />
+                        <X className="w-5 h-5" />
                     </Button>
                 </div>
 
-                <div className="flex gap-6">
-                    {/* Color Wheel */}
-                    <div className="relative">
+                <div className="flex gap-8 items-start">
+                    {/* Color Wheel - Left Side */}
+                    <div className="relative flex-shrink-0">
                         <canvas
                             ref={canvasRef}
-                            width={280}
-                            height={280}
+                            width={350}
+                            height={350}
                             onClick={handleCanvasClick}
                             className="cursor-crosshair rounded-full"
                         />
                         <button
                             onClick={handleEyeDropper}
-                            className="absolute -top-2 -right-2 bg-white rounded-full p-3 shadow-lg hover:bg-gray-50 border border-gray-200"
+                            className="absolute top-4 right-4 bg-white rounded-full p-3 shadow-xl hover:bg-gray-50 border border-gray-200"
                             title="Pick color from screen"
                         >
                             <Pipette className="w-5 h-5 text-gray-700" />
@@ -139,44 +139,43 @@ export default function ColorPickerModal({ isOpen, onClose, onSelectColor, curre
                     </div>
 
                     {/* Right Panel */}
-                    <div className="flex-1 flex flex-col gap-4">
+                    <div className="flex-1 flex flex-col gap-6">
                         {/* HEX Input */}
-                        <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <div className="bg-white border-2 border-gray-300 rounded-lg px-3 py-1.5 text-sm font-semibold text-gray-700">
-                                    HEX
-                                </div>
-                                <div className="flex-1 bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-lg px-4 py-2 text-white font-mono font-bold">
-                                    <Input
-                                        value={hexValue}
-                                        onChange={(e) => handleHexChange(e.target.value)}
-                                        className="bg-transparent border-0 text-white placeholder:text-white/70 p-0 h-auto font-mono font-bold focus-visible:ring-0"
-                                        maxLength={6}
-                                    />
-                                </div>
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white border-2 border-gray-300 rounded-xl px-5 py-3 text-lg font-bold text-gray-700">
+                                HEX
+                            </div>
+                            <div className="flex-1 bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-2xl px-6 py-3 text-white">
+                                <Input
+                                    value={hexValue}
+                                    onChange={(e) => handleHexChange(e.target.value)}
+                                    className="bg-transparent border-0 text-white text-xl placeholder:text-white/70 p-0 h-auto font-mono font-bold focus-visible:ring-0"
+                                    maxLength={6}
+                                />
                             </div>
                         </div>
 
-                        {/* Recent Colors */}
-                        <div className="grid grid-cols-6 gap-2">
+                        {/* Recent Colors - 3x2 Grid */}
+                        <div className="grid grid-cols-3 gap-3">
                             {recentColors.map((color, i) => (
                                 <button
                                     key={i}
                                     onClick={() => setSelectedColor(color)}
-                                    className="w-10 h-10 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform"
+                                    className="w-16 h-16 rounded-full border-4 border-gray-300 hover:scale-110 transition-transform shadow-lg"
                                     style={{ backgroundColor: color }}
                                 />
                             ))}
                         </div>
 
                         {/* RGB Sliders */}
-                        <div className="space-y-3">
+                        <div className="space-y-4">
+                            {/* R Slider */}
                             <div>
-                                <div className="flex items-center gap-2 mb-1">
-                                    <div className="bg-white border-2 border-gray-300 rounded-lg w-10 h-8 flex items-center justify-center text-sm font-bold text-gray-700">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="bg-white border-2 border-gray-300 rounded-xl w-14 h-12 flex items-center justify-center text-xl font-bold text-gray-700">
                                         R
                                     </div>
-                                    <div className="flex-1 bg-gray-800 rounded-lg px-4 py-2 text-white font-bold text-center">
+                                    <div className="flex-1 bg-gray-800 rounded-2xl px-6 py-3 text-white font-bold text-xl text-center">
                                         {rgb.r}
                                     </div>
                                 </div>
@@ -185,16 +184,17 @@ export default function ColorPickerModal({ isOpen, onClose, onSelectColor, curre
                                     onValueChange={(val) => handleRgbChange('r', val)}
                                     max={255}
                                     step={1}
-                                    className="[&_.relative]:bg-gradient-to-r [&_.relative]:from-black [&_.relative]:to-red-500"
+                                    className="[&_.relative]:h-2 [&_.relative]:bg-gradient-to-r [&_.relative]:from-black [&_.relative]:to-red-500 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5 [&_[role=slider]]:border-4 [&_[role=slider]]:border-white [&_[role=slider]]:shadow-lg"
                                 />
                             </div>
 
+                            {/* G Slider */}
                             <div>
-                                <div className="flex items-center gap-2 mb-1">
-                                    <div className="bg-white border-2 border-gray-300 rounded-lg w-10 h-8 flex items-center justify-center text-sm font-bold text-gray-700">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="bg-white border-2 border-gray-300 rounded-xl w-14 h-12 flex items-center justify-center text-xl font-bold text-gray-700">
                                         G
                                     </div>
-                                    <div className="flex-1 bg-gray-800 rounded-lg px-4 py-2 text-white font-bold text-center">
+                                    <div className="flex-1 bg-gray-800 rounded-2xl px-6 py-3 text-white font-bold text-xl text-center">
                                         {rgb.g}
                                     </div>
                                 </div>
@@ -203,16 +203,17 @@ export default function ColorPickerModal({ isOpen, onClose, onSelectColor, curre
                                     onValueChange={(val) => handleRgbChange('g', val)}
                                     max={255}
                                     step={1}
-                                    className="[&_.relative]:bg-gradient-to-r [&_.relative]:from-black [&_.relative]:to-green-500"
+                                    className="[&_.relative]:h-2 [&_.relative]:bg-gradient-to-r [&_.relative]:from-black [&_.relative]:to-green-500 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5 [&_[role=slider]]:border-4 [&_[role=slider]]:border-white [&_[role=slider]]:shadow-lg"
                                 />
                             </div>
 
+                            {/* B Slider */}
                             <div>
-                                <div className="flex items-center gap-2 mb-1">
-                                    <div className="bg-white border-2 border-gray-300 rounded-lg w-10 h-8 flex items-center justify-center text-sm font-bold text-gray-700">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="bg-white border-2 border-gray-300 rounded-xl w-14 h-12 flex items-center justify-center text-xl font-bold text-gray-700">
                                         B
                                     </div>
-                                    <div className="flex-1 bg-gray-800 rounded-lg px-4 py-2 text-white font-bold text-center">
+                                    <div className="flex-1 bg-gray-800 rounded-2xl px-6 py-3 text-white font-bold text-xl text-center">
                                         {rgb.b}
                                     </div>
                                 </div>
@@ -221,7 +222,7 @@ export default function ColorPickerModal({ isOpen, onClose, onSelectColor, curre
                                     onValueChange={(val) => handleRgbChange('b', val)}
                                     max={255}
                                     step={1}
-                                    className="[&_.relative]:bg-gradient-to-r [&_.relative]:from-black [&_.relative]:to-blue-500"
+                                    className="[&_.relative]:h-2 [&_.relative]:bg-gradient-to-r [&_.relative]:from-black [&_.relative]:to-blue-500 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5 [&_[role=slider]]:border-4 [&_[role=slider]]:border-white [&_[role=slider]]:shadow-lg"
                                 />
                             </div>
                         </div>
@@ -229,7 +230,7 @@ export default function ColorPickerModal({ isOpen, onClose, onSelectColor, curre
                         {/* Apply Button */}
                         <Button
                             onClick={handleApply}
-                            className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold"
+                            className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold text-lg py-6 rounded-2xl"
                         >
                             Apply Color
                         </Button>
