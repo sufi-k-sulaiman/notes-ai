@@ -1353,9 +1353,14 @@ export default function Notes() {
                                                 size="sm" 
                                                 onClick={async () => {
                                                     if (newName.trim()) {
-                                                        await base44.auth.updateMe({ full_name: newName.trim() });
-                                                        queryClient.invalidateQueries({ queryKey: ['user'] });
-                                                        setEditingName(false);
+                                                        try {
+                                                            await base44.auth.updateMe({ full_name: newName.trim() });
+                                                            await queryClient.invalidateQueries({ queryKey: ['user'] });
+                                                            await queryClient.refetchQueries({ queryKey: ['user'] });
+                                                            setEditingName(false);
+                                                        } catch (error) {
+                                                            console.error('Failed to update name:', error);
+                                                        }
                                                     }
                                                 }}
                                                 className="h-8 bg-purple-600 hover:bg-purple-700"
