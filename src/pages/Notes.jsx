@@ -485,7 +485,7 @@ export default function Notes() {
                                         <button
                                             key={style.id}
                                             onClick={() => setSelectedWritingStyle(style.id)}
-                                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                                            className={`px-4 py-2 rounded-lg text-base font-medium transition-all ${
                                                 selectedWritingStyle === style.id
                                                     ? 'bg-purple-500 text-white'
                                                     : 'bg-white/60 text-gray-700 hover:bg-purple-100'
@@ -529,7 +529,7 @@ export default function Notes() {
                                         <button
                                             key={count}
                                             onClick={() => setImageCount(count)}
-                                            className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                                            className={`px-5 py-2 rounded-lg text-lg font-semibold transition-all ${
                                                 imageCount === count
                                                     ? 'bg-pink-500 text-white'
                                                     : 'bg-white/60 text-gray-700 hover:bg-pink-100'
@@ -568,7 +568,7 @@ export default function Notes() {
                                     </h3>
                                 </div>
                                 
-                                <div className="flex flex-wrap gap-1.5 mb-3">
+                                <div className="flex flex-wrap gap-2 mb-3">
                                     {[
                                         'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#',
                                         'Ruby', 'PHP', 'Go', 'Rust', 'Swift', 'Kotlin'
@@ -576,7 +576,7 @@ export default function Notes() {
                                         <button
                                             key={lang}
                                             onClick={() => setSelectedLanguage(lang)}
-                                            className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
+                                            className={`px-4 py-2 rounded-md text-base font-semibold transition-all ${
                                                 selectedLanguage === lang
                                                     ? 'bg-emerald-500 text-white'
                                                     : 'bg-white/60 text-gray-700 hover:bg-emerald-100'
