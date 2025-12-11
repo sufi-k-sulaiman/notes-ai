@@ -1036,7 +1036,10 @@ export default function Notes() {
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3">
                                 <img 
-                                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693a3e794fd471020431f334/7607f2d39_AppIcon.png" 
+                                    src={darkMode 
+                                        ? "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693a3e794fd471020431f334/b7a3334f5_AppIcon1.png"
+                                        : "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693a3e794fd471020431f334/7607f2d39_AppIcon.png"
+                                    }
                                     alt="Notes AI" 
                                     className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-lg"
                                 />
