@@ -366,10 +366,9 @@ export default function Notes() {
                             {filteredNotes.map(note => (
                                 <div
                                     key={note.id}
-                                    onClick={() => openNote(note)}
                                     className="p-3 md:p-4 cursor-pointer hover:bg-white/80 transition-all flex items-center justify-between group"
                                 >
-                                    <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+                                    <div onClick={() => openNote(note)} className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
                                         <FileText className="w-4 md:w-5 h-4 md:h-5 text-purple-600 flex-shrink-0" />
                                         <div className="flex-1 min-w-0">
                                             <h3 className="font-semibold text-gray-900 text-sm md:text-base truncate">{note.title || 'Untitled'}</h3>
@@ -381,6 +380,12 @@ export default function Notes() {
                                             <span className="hidden sm:inline text-[10px] px-2 py-1 bg-purple-100/60 backdrop-blur-sm text-purple-700 rounded border border-purple-200/50">{note.tags[0]}</span>
                                         )}
                                         <span className="hidden md:inline text-[10px]">{note.word_count || 0} words</span>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(note.id); }}
+                                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-red-100 rounded-lg text-red-500 hover:text-red-700"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
                                     </div>
                                 </div>
                             ))}
