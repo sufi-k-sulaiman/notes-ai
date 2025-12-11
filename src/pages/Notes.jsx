@@ -899,19 +899,17 @@ export default function Notes() {
                             </div>
                         </div>
 
-                        {/* Search Bar */}
-                        <div className="relative mb-3">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <Input
-                                placeholder="Search notes..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10 bg-white/60 backdrop-blur-xl border-gray-300 rounded-full focus:border-purple-500 focus:ring-purple-500 w-full"
-                            />
-                        </div>
-
-                        {/* View Mode and New Note Button */}
-                        <div className="flex items-center justify-between gap-2">
+                        {/* Search Bar, View Mode and New Note Button */}
+                        <div className="flex items-center gap-2">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                <Input
+                                    placeholder="Search notes..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="pl-10 bg-white/60 backdrop-blur-xl border-gray-300 rounded-full focus:border-purple-500 focus:ring-purple-500 w-full"
+                                />
+                            </div>
                             <div className="flex items-center bg-white/60 backdrop-blur-xl rounded-xl border border-white/80 shadow-sm p-1">
                                 <button
                                     onClick={() => setViewMode('grid')}
