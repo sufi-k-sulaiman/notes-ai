@@ -498,7 +498,7 @@ export default function Notes() {
                 
                                 <div className="relative">
                                     <Input
-                                        placeholder="Describe what you want to write about..."
+                                        placeholder="Describe what text"
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && generateAIText()}
