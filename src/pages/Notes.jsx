@@ -62,8 +62,8 @@ function NoteCard({ note, onClick, formatDate, darkMode }) {
                     : 'bg-white/60 border-white/80 hover:bg-white/80 hover:border-purple-300'
             }`}
         >
-            <h3 className={`font-bold text-base md:text-lg line-clamp-2 mb-2 md:mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{note.title || 'Untitled'}</h3>
-            <p className={`text-xs md:text-sm line-clamp-3 md:line-clamp-4 mb-3 md:mb-4 min-h-[60px] md:min-h-[80px] leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <h3 className={`note-card-content font-bold text-base md:text-lg line-clamp-2 mb-2 md:mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{note.title || 'Untitled'}</h3>
+            <p className={`note-card-content text-xs md:text-sm line-clamp-3 md:line-clamp-4 mb-3 md:mb-4 min-h-[60px] md:min-h-[80px] leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 {content.slice(0, 200) || 'No content'}
             </p>
 
@@ -1072,7 +1072,8 @@ export default function Notes() {
     return (
         <>
             <style>{`
-                .notes-app-container * {
+                /* Only apply to note card content, not header/metadata */
+                .notes-app-container .note-card-content {
                     font-size: ${getGlobalFontSize()} !important;
                 }
                 .notes-app-container h1 {
@@ -1083,34 +1084,6 @@ export default function Notes() {
                 }
                 .notes-app-container h3 {
                     font-size: ${textSize === 'small' ? '1.25rem' : textSize === 'large' ? '1.75rem' : '1.5rem'} !important;
-                }
-                .notes-app-container .text-xs {
-                    font-size: ${textSize === 'small' ? '13px' : textSize === 'large' ? '16px' : '14px'} !important;
-                }
-                .notes-app-container .text-sm {
-                    font-size: ${textSize === 'small' ? '15px' : textSize === 'large' ? '18px' : '16px'} !important;
-                }
-                .notes-app-container .text-base {
-                    font-size: ${textSize === 'small' ? '16px' : textSize === 'large' ? '20px' : '18px'} !important;
-                }
-                .notes-app-container .text-lg {
-                    font-size: ${textSize === 'small' ? '18px' : textSize === 'large' ? '22px' : '20px'} !important;
-                }
-                .notes-app-container .text-xl {
-                    font-size: ${textSize === 'small' ? '20px' : textSize === 'large' ? '26px' : '22px'} !important;
-                }
-                .notes-app-container .text-2xl {
-                    font-size: ${textSize === 'small' ? '24px' : textSize === 'large' ? '30px' : '26px'} !important;
-                }
-                .notes-app-container .text-3xl {
-                    font-size: ${textSize === 'small' ? '28px' : textSize === 'large' ? '34px' : '30px'} !important;
-                }
-                /* Keep logo and metadata at original sizes */
-                .notes-app-container h1.text-xl,
-                .notes-app-container h1.md\\:text-3xl,
-                .notes-app-container p.text-xs.md\\:text-sm,
-                .notes-app-container .text-\\[10px\\].md\\:text-xs {
-                    font-size: inherit !important;
                 }
             `}</style>
             <div className={`notes-app-container min-h-screen p-3 md:p-6 xl:p-0 ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`} style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
@@ -1248,8 +1221,8 @@ export default function Notes() {
                                         }`}
                                     >
                                         <div className="flex-1 min-w-0">
-                                            <h3 className={`font-bold mb-1 text-sm md:text-base truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>{note.title || 'Untitled'}</h3>
-                                            <p className={`text-xs md:text-sm line-clamp-2 mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{content.slice(0, 150) || 'No content'}</p>
+                                            <h3 className={`note-card-content font-bold mb-1 text-sm md:text-base truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>{note.title || 'Untitled'}</h3>
+                                            <p className={`note-card-content text-xs md:text-sm line-clamp-2 mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{content.slice(0, 150) || 'No content'}</p>
                                             <div className={`flex items-center gap-2 md:gap-3 text-[10px] md:text-xs flex-wrap ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                                                 <span className="flex items-center gap-1">
                                                     <Clock className="w-3 h-3" />
@@ -1293,7 +1266,7 @@ export default function Notes() {
                                     <div onClick={() => openNote(note)} className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
                                         <FileText className={`w-4 md:w-5 h-4 md:h-5 flex-shrink-0 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
                                         <div className="flex-1 min-w-0">
-                                            <h3 className={`font-semibold text-sm md:text-base truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>{note.title || 'Untitled'}</h3>
+                                            <h3 className={`note-card-content font-semibold text-sm md:text-base truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>{note.title || 'Untitled'}</h3>
                                             <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{formatDate(note.created_date)}</p>
                                         </div>
                                     </div>
