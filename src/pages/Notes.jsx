@@ -420,11 +420,11 @@ export default function Notes() {
                         <div className="px-3 md:px-4 py-2 md:py-3 border-b border-gray-200/50 bg-gradient-to-r from-white/60 to-purple-50/60 backdrop-blur-xl flex items-center gap-2 md:gap-3">
                             <Button onClick={() => setShowAiTextModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
                                 <Sparkles className="w-3.5 md:w-4 h-3.5 md:h-4 text-purple-600" />
-                                <span className="hidden sm:inline">AI Text</span>
+                                <span className="hidden sm:inline">Ai Text</span>
                             </Button>
                             <Button onClick={() => setShowAiImageModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
                                 <Image className="w-3.5 md:w-4 h-3.5 md:h-4 text-pink-600" />
-                                <span className="hidden sm:inline">Image</span>
+                                <span className="hidden sm:inline">Ai Image</span>
                             </Button>
                             <Button onClick={formatContent} disabled={formatLoading} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
                                 {formatLoading ? <Loader2 className="w-3.5 md:w-4 h-3.5 md:h-4 animate-spin" /> : <FileText className="w-3.5 md:w-4 h-3.5 md:h-4 text-blue-600" />}
