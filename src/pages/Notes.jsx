@@ -690,11 +690,10 @@ export default function Notes() {
                             Generate
                         </Button>
                     </div>
-                </div>
-            )}
+                    </div>
 
-            {/* AI Code Ribbon */}
-            <div className="px-3 md:px-4 py-3 border-b border-emerald-200/50 bg-gradient-to-r from-emerald-50/60 to-green-50/60 backdrop-blur-xl">
+                    {/* AI Code Ribbon */}
+                    <div className="px-3 md:px-4 py-3 border-b border-emerald-200/50 bg-gradient-to-r from-emerald-50/60 to-green-50/60 backdrop-blur-xl">
                     <div className="flex items-center justify-between mb-3">
                         <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-emerald-900">
                             <Code2 className="w-4 h-4 text-emerald-600" /> Generate AI Code
