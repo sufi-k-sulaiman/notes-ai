@@ -381,6 +381,203 @@ export default function Notes() {
                             </Button>
                         </div>
 
+                        {/* AI Text Ribbon */}
+                        {showAiTextModal && (
+                            <div className="px-3 md:px-4 py-3 border-b border-purple-200/50 bg-gradient-to-r from-purple-50/60 to-indigo-50/60 backdrop-blur-xl">
+                                <div className="flex items-center justify-between mb-3">
+                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-purple-900">
+                                        <Sparkles className="w-4 h-4 text-purple-600" /> Generate AI Text
+                                    </h3>
+                                    <Button variant="ghost" size="sm" onClick={() => { setShowAiTextModal(false); setAiPrompt(''); }} className="h-7 w-7 p-0">
+                                        <X className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                                
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                    {[
+                                        { id: 'persuasive', label: 'Persuasive' },
+                                        { id: 'technical', label: 'Technical' },
+                                        { id: 'journalistic', label: 'Journalistic' },
+                                        { id: 'creative', label: 'Creative' },
+                                        { id: 'editorial', label: 'Editorial' }
+                                    ].map(style => (
+                                        <button
+                                            key={style.id}
+                                            onClick={() => setSelectedWritingStyle(style.id)}
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                                                selectedWritingStyle === style.id
+                                                    ? 'bg-purple-500 text-white'
+                                                    : 'bg-white/60 text-gray-700 hover:bg-purple-100'
+                                            }`}
+                                        >
+                                            {style.label}
+                                        </button>
+                                    ))}
+                                </div>
+                
+                                <div className="flex gap-2">
+                                    <Input
+                                        placeholder="Describe what you want to write about..."
+                                        value={aiPrompt}
+                                        onChange={e => setAiPrompt(e.target.value)}
+                                        onKeyDown={e => e.key === 'Enter' && generateAIText()}
+                                        className="text-sm bg-white/60 backdrop-blur-sm border-white/80 flex-1"
+                                    />
+                                    <Button onClick={generateAIText} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-xs px-4">
+                                        {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                                        Generate
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* AI Image Ribbon */}
+                        {showAiImageModal && (
+                            <div className="px-3 md:px-4 py-3 border-b border-pink-200/50 bg-gradient-to-r from-pink-50/60 to-rose-50/60 backdrop-blur-xl">
+                                <div className="flex items-center justify-between mb-3">
+                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-pink-900">
+                                        <Image className="w-4 h-4 text-pink-600" /> Generate AI Image
+                                    </h3>
+                                    <Button variant="ghost" size="sm" onClick={() => { setShowAiImageModal(false); setAiPrompt(''); }} className="h-7 w-7 p-0">
+                                        <X className="w-4 h-4" />
+                                    </Button>
+                                </div>
+
+                                <div className="flex gap-2 mb-3">
+                                    {[2, 4, 6, 8].map(count => (
+                                        <button
+                                            key={count}
+                                            onClick={() => setImageCount(count)}
+                                            className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                                                imageCount === count
+                                                    ? 'bg-pink-500 text-white'
+                                                    : 'bg-white/60 text-gray-700 hover:bg-pink-100'
+                                            }`}
+                                        >
+                                            {count}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <Input
+                                        placeholder="Describe the image you want to create..."
+                                        value={aiPrompt}
+                                        onChange={e => setAiPrompt(e.target.value)}
+                                        onKeyDown={e => e.key === 'Enter' && generateAIImage()}
+                                        className="text-sm bg-white/60 backdrop-blur-sm border-white/80 flex-1"
+                                    />
+                                    <Button onClick={generateAIImage} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-xs px-4">
+                                        {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Image className="w-3 h-3 mr-1" />}
+                                        Generate {imageCount}
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* AI Code Ribbon */}
+                        {showAiCodeModal && (
+                            <div className="px-3 md:px-4 py-3 border-b border-emerald-200/50 bg-gradient-to-r from-emerald-50/60 to-green-50/60 backdrop-blur-xl">
+                                <div className="flex items-center justify-between mb-3">
+                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-emerald-900">
+                                        <Code2 className="w-4 h-4 text-emerald-600" /> Generate AI Code
+                                    </h3>
+                                    <Button variant="ghost" size="sm" onClick={() => { setShowAiCodeModal(false); setAiPrompt(''); }} className="h-7 w-7 p-0">
+                                        <X className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                                
+                                <div className="flex flex-wrap gap-1.5 mb-3">
+                                    {[
+                                        'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#',
+                                        'Ruby', 'PHP', 'Go', 'Rust', 'Swift', 'Kotlin'
+                                    ].map(lang => (
+                                        <button
+                                            key={lang}
+                                            onClick={() => setSelectedLanguage(lang)}
+                                            className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
+                                                selectedLanguage === lang
+                                                    ? 'bg-emerald-500 text-white'
+                                                    : 'bg-white/60 text-gray-700 hover:bg-emerald-100'
+                                            }`}
+                                        >
+                                            {lang}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <Input
+                                        placeholder="Describe the code you need..."
+                                        value={aiPrompt}
+                                        onChange={e => setAiPrompt(e.target.value)}
+                                        onKeyDown={e => e.key === 'Enter' && generateAICode()}
+                                        className="text-sm bg-white/60 backdrop-blur-sm border-white/80 flex-1"
+                                    />
+                                    <Button onClick={generateAICode} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-xs px-4">
+                                        {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Code2 className="w-3 h-3 mr-1" />}
+                                        Generate
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Color Picker Ribbon */}
+                        {showColorPicker && (
+                            <div className="px-3 md:px-4 py-3 border-b border-orange-200/50 bg-gradient-to-r from-orange-50/60 to-amber-50/60 backdrop-blur-xl">
+                                <div className="flex items-center justify-between mb-3">
+                                    <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-orange-900">
+                                        <Palette className="w-4 h-4 text-orange-600" /> Color Picker
+                                    </h3>
+                                    <Button variant="ghost" size="sm" onClick={() => setShowColorPicker(false)} className="h-7 w-7 p-0">
+                                        <X className="w-4 h-4" />
+                                    </Button>
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="flex-1">
+                                        <div className="flex gap-2 flex-wrap">
+                                            {['#000000', '#dc2626', '#ea580c', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e', '#ffffff'].map(c => (
+                                                <button
+                                                    key={c}
+                                                    onClick={() => {
+                                                        if (quillRef.current) {
+                                                            const quill = quillRef.current.getEditor();
+                                                            if (colorPickerMode === 'text') {
+                                                                quill.format('color', c);
+                                                            } else {
+                                                                quill.format('background', c);
+                                                            }
+                                                        }
+                                                    }}
+                                                    className="w-8 h-8 rounded-lg border-2 border-gray-300 hover:scale-110 transition-transform"
+                                                    style={{ backgroundColor: c }}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            onClick={() => setColorPickerMode('text')}
+                                            variant={colorPickerMode === 'text' ? 'default' : 'outline'}
+                                            size="sm"
+                                            className="text-xs"
+                                        >
+                                            Text
+                                        </Button>
+                                        <Button
+                                            onClick={() => setColorPickerMode('background')}
+                                            variant={colorPickerMode === 'background' ? 'default' : 'outline'}
+                                            size="sm"
+                                            className="text-xs"
+                                        >
+                                            Background
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="px-3 md:px-4 py-2 border-b border-gray-200/50 bg-white/30 backdrop-blur-xl">
                             <Input
                                 placeholder="Note title..."
@@ -643,195 +840,6 @@ export default function Notes() {
                         </div>
 
             {toast && <Toast message={toast} onClose={() => setToast(null)} />}
-
-            {/* AI Text Ribbon */}
-            <div className="px-3 md:px-4 py-3 border-b border-purple-200/50 bg-gradient-to-r from-purple-50/60 to-indigo-50/60 backdrop-blur-xl">
-                    <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-purple-900">
-                            <Sparkles className="w-4 h-4 text-purple-600" /> Generate AI Text
-                        </h3>
-                        <Button variant="ghost" size="sm" onClick={() => { setShowAiTextModal(false); setAiPrompt(''); }} className="h-7 w-7 p-0">
-                            <X className="w-4 h-4" />
-                        </Button>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 mb-3">
-                        {[
-                            { id: 'persuasive', label: 'Persuasive' },
-                            { id: 'technical', label: 'Technical' },
-                            { id: 'journalistic', label: 'Journalistic' },
-                            { id: 'creative', label: 'Creative' },
-                            { id: 'editorial', label: 'Editorial' }
-                        ].map(style => (
-                            <button
-                                key={style.id}
-                                onClick={() => setSelectedWritingStyle(style.id)}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                                    selectedWritingStyle === style.id
-                                        ? 'bg-purple-500 text-white'
-                                        : 'bg-white/60 text-gray-700 hover:bg-purple-100'
-                                }`}
-                            >
-                                {style.label}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="flex gap-2">
-                        <Input
-                            placeholder="Describe what you want to write about..."
-                            value={aiPrompt}
-                            onChange={e => setAiPrompt(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && generateAIText()}
-                            className="text-sm bg-white/60 backdrop-blur-sm border-white/80 flex-1"
-                        />
-                        <Button onClick={generateAIText} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-xs px-4">
-                            {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
-                            Generate
-                        </Button>
-                    </div>
-                    </div>
-
-                    {/* AI Code Ribbon */}
-                    <div className="px-3 md:px-4 py-3 border-b border-emerald-200/50 bg-gradient-to-r from-emerald-50/60 to-green-50/60 backdrop-blur-xl">
-                    <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-emerald-900">
-                            <Code2 className="w-4 h-4 text-emerald-600" /> Generate AI Code
-                        </h3>
-                        <Button variant="ghost" size="sm" onClick={() => { setShowAiCodeModal(false); setAiPrompt(''); }} className="h-7 w-7 p-0">
-                            <X className="w-4 h-4" />
-                        </Button>
-                    </div>
-
-                    <div className="flex flex-wrap gap-1.5 mb-3">
-                        {[
-                            'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#',
-                            'Ruby', 'PHP', 'Go', 'Rust', 'Swift', 'Kotlin'
-                        ].map(lang => (
-                            <button
-                                key={lang}
-                                onClick={() => setSelectedLanguage(lang)}
-                                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                                    selectedLanguage === lang
-                                        ? 'bg-emerald-500 text-white'
-                                        : 'bg-white/60 text-gray-700 hover:bg-emerald-100'
-                                }`}
-                            >
-                                {lang}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="flex gap-2">
-                        <Input
-                            placeholder="Describe the code you need..."
-                            value={aiPrompt}
-                            onChange={e => setAiPrompt(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && generateAICode()}
-                            className="text-sm bg-white/60 backdrop-blur-sm border-white/80 flex-1"
-                        />
-                        <Button onClick={generateAICode} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-xs px-4">
-                            {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Code2 className="w-3 h-3 mr-1" />}
-                            Generate
-                        </Button>
-                        </div>
-                        </div>
-
-                        {/* AI Image Ribbon */}
-                        <div className="px-3 md:px-4 py-3 border-b border-pink-200/50 bg-gradient-to-r from-pink-50/60 to-rose-50/60 backdrop-blur-xl">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-pink-900">
-                                    <Image className="w-4 h-4 text-pink-600" /> Generate AI Image
-                                </h3>
-                                <Button variant="ghost" size="sm" onClick={() => { setShowAiImageModal(false); setAiPrompt(''); }} className="h-7 w-7 p-0">
-                                    <X className="w-4 h-4" />
-                                </Button>
-                            </div>
-
-                            <div className="flex gap-2 mb-3">
-                                {[2, 4, 6, 8].map(count => (
-                                    <button
-                                        key={count}
-                                        onClick={() => setImageCount(count)}
-                                        className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                                            imageCount === count
-                                                ? 'bg-pink-500 text-white'
-                                                : 'bg-white/60 text-gray-700 hover:bg-pink-100'
-                                        }`}
-                                    >
-                                        {count}
-                                    </button>
-                                ))}
-                            </div>
-
-                            <div className="flex gap-2">
-                                <Input
-                                    placeholder="Describe the image you want to create..."
-                                    value={aiPrompt}
-                                    onChange={e => setAiPrompt(e.target.value)}
-                                    onKeyDown={e => e.key === 'Enter' && generateAIImage()}
-                                    className="text-sm bg-white/60 backdrop-blur-sm border-white/80 flex-1"
-                                />
-                                <Button onClick={generateAIImage} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-xs px-4">
-                                    {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Image className="w-3 h-3 mr-1" />}
-                                    Generate {imageCount}
-                                </Button>
-                                </div>
-                                </div>
-
-                                {/* Color Picker Ribbon */}
-                                <div className="px-3 md:px-4 py-3 border-b border-orange-200/50 bg-gradient-to-r from-orange-50/60 to-amber-50/60 backdrop-blur-xl">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm md:text-base font-semibold flex items-center gap-2 text-orange-900">
-                                    <Palette className="w-4 h-4 text-orange-600" /> Color Picker
-                                </h3>
-                                <Button variant="ghost" size="sm" onClick={() => setShowColorPicker(false)} className="h-7 w-7 p-0">
-                                    <X className="w-4 h-4" />
-                                </Button>
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                                <div className="flex-1">
-                                    <div className="flex gap-2 flex-wrap">
-                                        {['#000000', '#dc2626', '#ea580c', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e', '#ffffff'].map(c => (
-                                            <button
-                                                key={c}
-                                                onClick={() => {
-                                                    if (quillRef.current) {
-                                                        const quill = quillRef.current.getEditor();
-                                                        if (colorPickerMode === 'text') {
-                                                            quill.format('color', c);
-                                                        } else {
-                                                            quill.format('background', c);
-                                                        }
-                                                    }
-                                                }}
-                                                className="w-8 h-8 rounded-lg border-2 border-gray-300 hover:scale-110 transition-transform"
-                                                style={{ backgroundColor: c }}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="flex gap-2">
-                                    <Button
-                                        onClick={() => setColorPickerMode('text')}
-                                        variant={colorPickerMode === 'text' ? 'default' : 'outline'}
-                                        size="sm"
-                                        className="text-xs"
-                                    >
-                                        Text
-                                    </Button>
-                                    <Button
-                                        onClick={() => setColorPickerMode('background')}
-                                        variant={colorPickerMode === 'background' ? 'default' : 'outline'}
-                                        size="sm"
-                                        className="text-xs"
-                                    >
-                                        Background
-                                    </Button>
-                                </div>
-                                </div>
-                                </div>
                 </>
                 );
                 }
