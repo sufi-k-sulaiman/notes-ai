@@ -645,161 +645,169 @@ export default function Notes() {
             {toast && <Toast message={toast} onClose={() => setToast(null)} />}
 
             {/* AI Text Modal */}
-            <Dialog open={showAiTextModal} onOpenChange={setShowAiTextModal}>
-                <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
-                    <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
-                        <Sparkles className="w-4 md:w-5 h-4 md:h-5 text-purple-600" /> Generate AI Text
-                    </h3>
-                    
-                    <div className="mb-4">
-                        <label className="text-sm font-medium text-gray-700 mb-2 block">Writing Style</label>
-                        <div className="grid grid-cols-1 gap-2">
-                            {[
-                                { id: 'persuasive', label: 'Persuasive', desc: 'Compelling and motivational' },
-                                { id: 'technical', label: 'Technical', desc: 'Precise and informative' },
-                                { id: 'journalistic', label: 'Journalistic', desc: 'Factual and objective' },
-                                { id: 'creative', label: 'Creative', desc: 'Engaging and imaginative' },
-                                { id: 'editorial', label: 'Editorial', desc: 'Opinionated viewpoints' }
-                            ].map(style => (
-                                <button
-                                    key={style.id}
-                                    onClick={() => setSelectedWritingStyle(style.id)}
-                                    className={`p-3 rounded-xl text-left transition-all ${
-                                        selectedWritingStyle === style.id
-                                            ? 'bg-purple-100 border-2 border-purple-500'
-                                            : 'bg-white/60 border-2 border-transparent hover:border-purple-200'
-                                    }`}
-                                >
-                                    <div className="font-semibold text-sm text-gray-900">{style.label}</div>
-                                    <div className="text-xs text-gray-600">{style.desc}</div>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+            {showAiTextModal && (
+                <Dialog open={showAiTextModal} onOpenChange={setShowAiTextModal}>
+                    <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
+                        <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
+                            <Sparkles className="w-4 md:w-5 h-4 md:h-5 text-purple-600" /> Generate AI Text
+                        </h3>
 
-                    <Input
-                        placeholder="Describe what you want to write about..."
-                        value={aiPrompt}
-                        onChange={e => setAiPrompt(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && generateAIText()}
-                        className="text-sm md:text-base bg-white/60 backdrop-blur-sm border-white/80"
-                    />
-                    <div className="flex justify-end gap-2 mt-4">
-                        <Button variant="outline" onClick={() => { setShowAiTextModal(false); setAiPrompt(''); }} className="text-xs md:text-sm bg-white/60 backdrop-blur-md border-white/80 hover:bg-white/80">Cancel</Button>
-                        <Button onClick={generateAIText} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg text-xs md:text-sm border-0">
-                            {aiLoading ? <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin mr-2" /> : <Sparkles className="w-3 md:w-4 h-3 md:h-4 mr-2" />}
-                            Generate
-                        </Button>
-                    </div>
-                </DialogContent>
-            </Dialog>
+                        <div className="mb-4">
+                            <label className="text-sm font-medium text-gray-700 mb-2 block">Writing Style</label>
+                            <div className="grid grid-cols-1 gap-2">
+                                {[
+                                    { id: 'persuasive', label: 'Persuasive', desc: 'Compelling and motivational' },
+                                    { id: 'technical', label: 'Technical', desc: 'Precise and informative' },
+                                    { id: 'journalistic', label: 'Journalistic', desc: 'Factual and objective' },
+                                    { id: 'creative', label: 'Creative', desc: 'Engaging and imaginative' },
+                                    { id: 'editorial', label: 'Editorial', desc: 'Opinionated viewpoints' }
+                                ].map(style => (
+                                    <button
+                                        key={style.id}
+                                        onClick={() => setSelectedWritingStyle(style.id)}
+                                        className={`p-3 rounded-xl text-left transition-all ${
+                                            selectedWritingStyle === style.id
+                                                ? 'bg-purple-100 border-2 border-purple-500'
+                                                : 'bg-white/60 border-2 border-transparent hover:border-purple-200'
+                                        }`}
+                                    >
+                                        <div className="font-semibold text-sm text-gray-900">{style.label}</div>
+                                        <div className="text-xs text-gray-600">{style.desc}</div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <Input
+                            placeholder="Describe what you want to write about..."
+                            value={aiPrompt}
+                            onChange={e => setAiPrompt(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && generateAIText()}
+                            className="text-sm md:text-base bg-white/60 backdrop-blur-sm border-white/80"
+                        />
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button variant="outline" onClick={() => { setShowAiTextModal(false); setAiPrompt(''); }} className="text-xs md:text-sm bg-white/60 backdrop-blur-md border-white/80 hover:bg-white/80">Cancel</Button>
+                            <Button onClick={generateAIText} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg text-xs md:text-sm border-0">
+                                {aiLoading ? <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin mr-2" /> : <Sparkles className="w-3 md:w-4 h-3 md:h-4 mr-2" />}
+                                Generate
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            )}
 
             {/* AI Code Modal */}
-            <Dialog open={showAiCodeModal} onOpenChange={setShowAiCodeModal}>
-                <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
-                    <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
-                        <Code2 className="w-4 md:w-5 h-4 md:h-5 text-emerald-600" /> Generate AI Code
-                    </h3>
-                    
-                    <div className="mb-4">
-                        <label className="text-sm font-medium text-gray-700 mb-2 block">Programming Language</label>
-                        <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto">
-                            {[
-                                'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#',
-                                'Ruby', 'PHP', 'Go', 'Rust', 'Swift', 'Kotlin',
-                                'SQL', 'HTML', 'CSS', 'React', 'Vue', 'Angular'
-                            ].map(lang => (
-                                <button
-                                    key={lang}
-                                    onClick={() => setSelectedLanguage(lang)}
-                                    className={`py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
-                                        selectedLanguage === lang
-                                            ? 'bg-emerald-500 text-white'
-                                            : 'bg-white/60 text-gray-700 hover:bg-emerald-100'
-                                    }`}
-                                >
-                                    {lang}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+            {showAiCodeModal && (
+                <Dialog open={showAiCodeModal} onOpenChange={setShowAiCodeModal}>
+                    <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
+                        <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
+                            <Code2 className="w-4 md:w-5 h-4 md:h-5 text-emerald-600" /> Generate AI Code
+                        </h3>
 
-                    <Input
-                        placeholder="Describe the code you need..."
-                        value={aiPrompt}
-                        onChange={e => setAiPrompt(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && generateAICode()}
-                        className="text-sm md:text-base bg-white/60 backdrop-blur-sm border-white/80"
-                    />
-                    <div className="flex justify-end gap-2 mt-4">
-                        <Button variant="outline" onClick={() => { setShowAiCodeModal(false); setAiPrompt(''); }} className="text-xs md:text-sm bg-white/60 backdrop-blur-md border-white/80 hover:bg-white/80">Cancel</Button>
-                        <Button onClick={generateAICode} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 backdrop-blur-xl shadow-lg text-xs md:text-sm border-0">
-                            {aiLoading ? <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin mr-2" /> : <Code2 className="w-3 md:w-4 h-3 md:h-4 mr-2" />}
-                            Generate
-                        </Button>
-                    </div>
-                </DialogContent>
-            </Dialog>
+                        <div className="mb-4">
+                            <label className="text-sm font-medium text-gray-700 mb-2 block">Programming Language</label>
+                            <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto">
+                                {[
+                                    'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#',
+                                    'Ruby', 'PHP', 'Go', 'Rust', 'Swift', 'Kotlin',
+                                    'SQL', 'HTML', 'CSS', 'React', 'Vue', 'Angular'
+                                ].map(lang => (
+                                    <button
+                                        key={lang}
+                                        onClick={() => setSelectedLanguage(lang)}
+                                        className={`py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
+                                            selectedLanguage === lang
+                                                ? 'bg-emerald-500 text-white'
+                                                : 'bg-white/60 text-gray-700 hover:bg-emerald-100'
+                                        }`}
+                                    >
+                                        {lang}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <Input
+                            placeholder="Describe the code you need..."
+                            value={aiPrompt}
+                            onChange={e => setAiPrompt(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && generateAICode()}
+                            className="text-sm md:text-base bg-white/60 backdrop-blur-sm border-white/80"
+                        />
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button variant="outline" onClick={() => { setShowAiCodeModal(false); setAiPrompt(''); }} className="text-xs md:text-sm bg-white/60 backdrop-blur-md border-white/80 hover:bg-white/80">Cancel</Button>
+                            <Button onClick={generateAICode} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 backdrop-blur-xl shadow-lg text-xs md:text-sm border-0">
+                                {aiLoading ? <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin mr-2" /> : <Code2 className="w-3 md:w-4 h-3 md:h-4 mr-2" />}
+                                Generate
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            )}
 
             {/* AI Image Modal */}
-            <Dialog open={showAiImageModal} onOpenChange={setShowAiImageModal}>
-                <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
-                    <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
-                        <Image className="w-4 md:w-5 h-4 md:h-5 text-pink-600" /> Generate AI Image
-                    </h3>
-                    
-                    <div className="mb-4">
-                        <label className="text-sm font-medium text-gray-700 mb-2 block">Number of Images</label>
-                        <div className="flex gap-2">
-                            {[2, 4, 6, 8].map(count => (
-                                <button
-                                    key={count}
-                                    onClick={() => setImageCount(count)}
-                                    className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${
-                                        imageCount === count
-                                            ? 'bg-pink-500 text-white'
-                                            : 'bg-white/60 text-gray-700 hover:bg-pink-100'
-                                    }`}
-                                >
-                                    {count}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+            {showAiImageModal && (
+                <Dialog open={showAiImageModal} onOpenChange={setShowAiImageModal}>
+                    <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
+                        <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
+                            <Image className="w-4 md:w-5 h-4 md:h-5 text-pink-600" /> Generate AI Image
+                        </h3>
 
-                    <Input
-                        placeholder="Describe the image you want to create..."
-                        value={aiPrompt}
-                        onChange={e => setAiPrompt(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && generateAIImage()}
-                        className="text-sm md:text-base bg-white/60 backdrop-blur-sm border-white/80"
-                    />
-                    <p className="text-[10px] md:text-xs text-gray-600 mt-2">Be descriptive for better results. Takes 5-10 seconds per image.</p>
-                    <div className="flex justify-end gap-2 mt-4">
-                        <Button variant="outline" onClick={() => { setShowAiImageModal(false); setAiPrompt(''); }} className="text-xs md:text-sm bg-white/60 backdrop-blur-md border-white/80 hover:bg-white/80">Cancel</Button>
-                        <Button onClick={generateAIImage} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 backdrop-blur-xl shadow-lg text-xs md:text-sm border-0">
-                            {aiLoading ? <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin mr-2" /> : <Image className="w-3 md:w-4 h-3 md:h-4 mr-2" />}
-                            Generate {imageCount}
-                        </Button>
-                    </div>
-                </DialogContent>
+                        <div className="mb-4">
+                            <label className="text-sm font-medium text-gray-700 mb-2 block">Number of Images</label>
+                            <div className="flex gap-2">
+                                {[2, 4, 6, 8].map(count => (
+                                    <button
+                                        key={count}
+                                        onClick={() => setImageCount(count)}
+                                        className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${
+                                            imageCount === count
+                                                ? 'bg-pink-500 text-white'
+                                                : 'bg-white/60 text-gray-700 hover:bg-pink-100'
+                                        }`}
+                                    >
+                                        {count}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <Input
+                            placeholder="Describe the image you want to create..."
+                            value={aiPrompt}
+                            onChange={e => setAiPrompt(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && generateAIImage()}
+                            className="text-sm md:text-base bg-white/60 backdrop-blur-sm border-white/80"
+                        />
+                        <p className="text-[10px] md:text-xs text-gray-600 mt-2">Be descriptive for better results. Takes 5-10 seconds per image.</p>
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button variant="outline" onClick={() => { setShowAiImageModal(false); setAiPrompt(''); }} className="text-xs md:text-sm bg-white/60 backdrop-blur-md border-white/80 hover:bg-white/80">Cancel</Button>
+                            <Button onClick={generateAIImage} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 backdrop-blur-xl shadow-lg text-xs md:text-sm border-0">
+                                {aiLoading ? <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin mr-2" /> : <Image className="w-3 md:w-4 h-3 md:h-4 mr-2" />}
+                                Generate {imageCount}
+                            </Button>
+                        </div>
+                    </DialogContent>
                 </Dialog>
+            )}
 
                 {/* Color Picker Modal */}
-                <ColorPickerModal
-                isOpen={showColorPicker}
-                onClose={() => setShowColorPicker(false)}
-                onSelectColor={(color) => {
-                    if (quillRef.current) {
-                        const quill = quillRef.current.getEditor();
-                        if (colorPickerMode === 'text') {
-                            quill.format('color', color);
-                        } else {
-                            quill.format('background', color);
+                {showColorPicker && (
+                    <ColorPickerModal
+                    isOpen={showColorPicker}
+                    onClose={() => setShowColorPicker(false)}
+                    onSelectColor={(color) => {
+                        if (quillRef.current) {
+                            const quill = quillRef.current.getEditor();
+                            if (colorPickerMode === 'text') {
+                                quill.format('color', color);
+                            } else {
+                                quill.format('background', color);
+                            }
                         }
-                    }
-                }}
-                />
+                    }}
+                    />
+                )}
                 </>
                 );
                 }
