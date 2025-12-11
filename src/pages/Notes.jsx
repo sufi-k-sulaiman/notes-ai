@@ -1096,7 +1096,7 @@ export default function Notes() {
                                 />
                                 <div>
                                     <h1 className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`} style={{ fontSize: '1.55rem' }}>Notes Ai</h1>
-                                    <p className={`text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Generative text, images and code</p>
+                                    <p className={`text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Text, images and code</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
