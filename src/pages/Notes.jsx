@@ -163,9 +163,15 @@ export default function Notes() {
         setShowFormatModal(false);
     };
 
+    const { data: user } = useQuery({
+        queryKey: ['user'],
+        queryFn: () => base44.auth.me(),
+    });
+
     const { data: notes = [], isLoading } = useQuery({
-        queryKey: ['notes'],
-        queryFn: () => base44.entities.Note.list('-created_date'),
+        queryKey: ['notes', user?.email],
+        queryFn: () => base44.entities.Note.filter({ created_by: user.email }, '-created_date'),
+        enabled: !!user?.email,
     });
 
     const createMutation = useMutation({
