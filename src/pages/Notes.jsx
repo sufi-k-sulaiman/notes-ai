@@ -1105,6 +1105,13 @@ export default function Notes() {
                 .notes-app-container .text-3xl {
                     font-size: ${textSize === 'small' ? '28px' : textSize === 'large' ? '34px' : '30px'} !important;
                 }
+                /* Keep logo and metadata at original sizes */
+                .notes-app-container h1.text-xl,
+                .notes-app-container h1.md\\:text-3xl,
+                .notes-app-container p.text-xs.md\\:text-sm,
+                .notes-app-container .text-\\[10px\\].md\\:text-xs {
+                    font-size: inherit !important;
+                }
             `}</style>
             <div className={`notes-app-container min-h-screen p-3 md:p-6 xl:p-0 ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`} style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
                 <div className="max-w-7xl xl:max-w-none mx-auto xl:mx-0">
