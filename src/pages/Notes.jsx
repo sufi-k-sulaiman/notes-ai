@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
     Plus, Search, FileText, Calendar, Tag, Trash2, 
     Save, X, Loader2, Maximize2, Minimize2, Sparkles, Image,
-    Clock, FileType, List, Grid3x3, AlignLeft, Table, Code2, ChevronDown
+    Clock, FileType, List, Grid3x3, AlignLeft, Table, Code2, ChevronDown, Palette
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import ColorPickerModal from '@/components/ColorPickerModal';
 
 const TEMPLATES = [
     { id: 'daily', name: 'Daily', icon: Calendar, color: '#6B4EE6', content: '<h2>Daily Journal - ' + new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + '</h2><h3>🎯 Top 3 Goals for Today</h3><ul><li>Complete the most important task</li><li>Make progress on key project</li><li>Connect with someone meaningful</li></ul><h3>📝 Schedule & Time Blocks</h3><table style="width: 100%; border-collapse: collapse;"><tbody><tr><td style="border: 1px solid #333; padding: 8px; background-color: #f3f4f6;"><strong>Time</strong></td><td style="border: 1px solid #333; padding: 8px; background-color: #f3f4f6;"><strong>Activity</strong></td></tr><tr><td style="border: 1px solid #333; padding: 8px;">9:00 AM</td><td style="border: 1px solid #333; padding: 8px;">Morning routine & planning</td></tr><tr><td style="border: 1px solid #333; padding: 8px;">10:00 AM</td><td style="border: 1px solid #333; padding: 8px;">Deep work session</td></tr></tbody></table><h3>💭 Notes & Thoughts</h3><p>Capture ideas, learnings, and observations throughout the day...</p><h3>🌟 Evening Reflection</h3><p><strong>What went well:</strong></p><p><strong>What could improve:</strong></p><p><strong>Grateful for:</strong></p>' },
