@@ -124,6 +124,9 @@ export default function Notes() {
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [colorPickerMode, setColorPickerMode] = useState('text'); // 'text' or 'background'
     const [showFormatModal, setShowFormatModal] = useState(true);
+    const [showLinkInput, setShowLinkInput] = useState(false);
+    const [linkUrl, setLinkUrl] = useState('');
+    const [uploadingImage, setUploadingImage] = useState(false);
     const queryClient = useQueryClient();
 
     const closeAllTabs = () => {
@@ -332,6 +335,39 @@ export default function Notes() {
         }
     };
 
+    const handleAddLink = () => {
+        const quill = quillRef.current?.getEditor();
+        const selection = quill?.getSelection();
+        if (selection && selection.length > 0) {
+            setShowLinkInput(true);
+        }
+    };
+
+    const applyLink = () => {
+        if (!linkUrl.trim()) return;
+        const quill = quillRef.current?.getEditor();
+        quill?.format('link', linkUrl);
+        setShowLinkInput(false);
+        setLinkUrl('');
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setUploadingImage(true);
+        try {
+            const { file_url } = await base44.integrations.Core.UploadFile({ file });
+            const quill = quillRef.current?.getEditor();
+            const range = quill?.getSelection();
+            quill?.insertEmbed(range?.index || 0, 'image', file_url);
+        } catch (error) {
+            console.error('Image upload failed:', error);
+        } finally {
+            setUploadingImage(false);
+            e.target.value = '';
+        }
+    };
+
     const filteredNotes = notes.filter(n => 
         n.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         n.content?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -411,20 +447,20 @@ export default function Notes() {
                                 <span className="hidden sm:inline">Color</span>
                             </button>
                             <div className="flex-1" />
-                            <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg gap-1.5 text-xs md:text-sm border-0 h-8 px-4">
+                            <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg gap-1.5 text-xs md:text-sm border-0 min-h-[40px] px-4">
                                 {(createMutation.isPending || updateMutation.isPending) ? (
                                     <>
                                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                        <span>Saving...</span>
+                                        <span className="hidden sm:inline">Saving...</span>
                                     </>
                                 ) : (
                                     <>
                                         <Save className="w-3.5 h-3.5" />
-                                        <span>Save</span>
+                                        <span className="hidden sm:inline">Save</span>
                                     </>
                                 )}
                             </Button>
-                            <Button onClick={() => setShowEditor(false)} className="bg-purple-600 hover:bg-purple-700 text-white h-8 px-3">
+                            <Button onClick={() => setShowEditor(false)} className="bg-purple-600 hover:bg-purple-700 text-white min-h-[40px] min-w-[40px] p-0">
                                 <X className="w-4 h-4" />
                             </Button>
                         </div>
@@ -632,69 +668,78 @@ export default function Notes() {
                                     </h3>
                                 </div>
 
-                                <div className="flex flex-wrap items-center gap-2">
-                                    <button
-                                        onClick={() => quillRef.current?.getEditor().format('bold', !quillRef.current?.getEditor().getFormat().bold)}
-                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm font-semibold transition-all border border-gray-300"
-                                    >
-                                        <strong>B</strong>
-                                    </button>
-                                    <button
-                                        onClick={() => quillRef.current?.getEditor().format('italic', !quillRef.current?.getEditor().getFormat().italic)}
-                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm italic transition-all border border-gray-300"
-                                    >
-                                        I
-                                    </button>
-                                    <button
-                                        onClick={() => quillRef.current?.getEditor().format('underline', !quillRef.current?.getEditor().getFormat().underline)}
-                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm underline transition-all border border-gray-300"
-                                    >
-                                        U
-                                    </button>
-                                    <div className="w-px h-6 bg-gray-300"></div>
-                                    <button
-                                        onClick={() => quillRef.current?.getEditor().format('list', 'bullet')}
-                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300"
-                                    >
-                                        • List
-                                    </button>
-                                    <button
-                                        onClick={() => quillRef.current?.getEditor().format('list', 'ordered')}
-                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300"
-                                    >
-                                        1. List
-                                    </button>
-                                    <div className="w-px h-6 bg-gray-300"></div>
-                                    <button
-                                        onClick={() => {
-                                            const url = prompt('Enter URL:');
-                                            if (url) quillRef.current?.getEditor().format('link', url);
-                                        }}
-                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300"
-                                    >
-                                        🔗 Link
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            const url = prompt('Enter image URL:');
-                                            if (url) {
-                                                const quill = quillRef.current?.getEditor();
-                                                const range = quill.getSelection();
-                                                quill.insertEmbed(range.index, 'image', url);
-                                            }
-                                        }}
-                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300"
-                                    >
-                                        🖼️ Image
-                                    </button>
-                                    <div className="w-px h-6 bg-gray-300"></div>
-                                    <Button
-                                        onClick={formatContent}
-                                        disabled={formatLoading}
-                                        className="bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white rounded-lg px-4 py-2 text-sm"
-                                    >
-                                        {formatLoading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Formatting...</> : <><Sparkles className="w-4 h-4 mr-1" /> AI Format</>}
-                                    </Button>
+                                <div className="space-y-3">
+                                    <div className="flex flex-wrap items-center gap-1.5">
+                                        <button
+                                            onClick={() => quillRef.current?.getEditor().format('bold', !quillRef.current?.getEditor().getFormat().bold)}
+                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-base font-semibold transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                        >
+                                            <strong>B</strong>
+                                        </button>
+                                        <button
+                                            onClick={() => quillRef.current?.getEditor().format('italic', !quillRef.current?.getEditor().getFormat().italic)}
+                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-base italic transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                        >
+                                            I
+                                        </button>
+                                        <button
+                                            onClick={() => quillRef.current?.getEditor().format('underline', !quillRef.current?.getEditor().getFormat().underline)}
+                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-base underline transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                        >
+                                            U
+                                        </button>
+                                        <div className="w-px h-8 bg-gray-300 mx-1"></div>
+                                        <button
+                                            onClick={() => quillRef.current?.getEditor().format('list', 'bullet')}
+                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                        >
+                                            • List
+                                        </button>
+                                        <button
+                                            onClick={() => quillRef.current?.getEditor().format('list', 'ordered')}
+                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                        >
+                                            1. List
+                                        </button>
+                                        <div className="w-px h-8 bg-gray-300 mx-1"></div>
+                                        <button
+                                            onClick={handleAddLink}
+                                            className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                        >
+                                            🔗 Link
+                                        </button>
+                                        <label className="px-3.5 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300 cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center">
+                                            {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : '🖼️ Image'}
+                                            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                                        </label>
+                                        <div className="w-px h-8 bg-gray-300 mx-1"></div>
+                                        <Button
+                                            onClick={formatContent}
+                                            disabled={formatLoading}
+                                            className="bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white rounded-lg px-4 py-2.5 text-sm min-h-[44px]"
+                                        >
+                                            {formatLoading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Formatting...</> : <><Sparkles className="w-4 h-4 mr-1" /> AI Format</>}
+                                        </Button>
+                                    </div>
+
+                                    {showLinkInput && (
+                                        <div className="flex items-center gap-2 p-3 bg-white/80 rounded-lg border border-indigo-200">
+                                            <Input
+                                                placeholder="Enter URL (https://...)"
+                                                value={linkUrl}
+                                                onChange={(e) => setLinkUrl(e.target.value)}
+                                                onKeyDown={(e) => e.key === 'Enter' && applyLink()}
+                                                className="flex-1 h-10"
+                                                autoFocus
+                                            />
+                                            <Button onClick={applyLink} size="sm" className="bg-indigo-600 hover:bg-indigo-700 min-h-[40px]">
+                                                Add
+                                            </Button>
+                                            <Button onClick={() => { setShowLinkInput(false); setLinkUrl(''); }} size="sm" variant="ghost" className="min-h-[40px]">
+                                                <X className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
