@@ -607,6 +607,44 @@ export default function Notes() {
                             </Button>
                         </div>
 
+                        {/* Delete Confirmation Ribbon */}
+                        {showDeleteRibbon && (
+                            <div className="px-3 md:px-4 py-3 border-b bg-red-600 text-white shadow-lg">
+                                <div className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-3">
+                                        <Trash2 className="w-5 h-5" />
+                                        <div>
+                                            <p className="font-semibold">Delete "{noteTitle || 'Untitled Note'}"?</p>
+                                            <p className="text-xs text-red-100">This action cannot be undone</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Button 
+                                            onClick={() => setShowDeleteRibbon(false)}
+                                            variant="outline"
+                                            className="bg-white/20 hover:bg-white/30 text-white border-white/40 min-h-[36px]"
+                                            size="sm"
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button 
+                                            onClick={() => {
+                                                if (selectedNote) {
+                                                    deleteMutation.mutate(selectedNote.id);
+                                                    setShowDeleteRibbon(false);
+                                                    setShowEditor(false);
+                                                }
+                                            }}
+                                            className="bg-white hover:bg-red-50 text-red-600 min-h-[36px]"
+                                            size="sm"
+                                        >
+                                            Delete Note
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* AI Text Tab */}
                         {showAiTextModal && (
                             <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
