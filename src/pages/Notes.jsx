@@ -1069,12 +1069,6 @@ export default function Notes() {
         );
     }
 
-    const getGlobalFontSize = () => {
-        if (textSize === 'small') return '13px';
-        if (textSize === 'large') return '18px';
-        return '15px';
-    };
-
     return (
         <>
             <style>{`
