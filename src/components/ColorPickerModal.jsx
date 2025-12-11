@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X } from 'lucide-react';
 import { HexColorPicker } from 'react-colorful';
-import 'react-colorful/dist/index.css';
 
 export default function ColorPickerModal({ isOpen, onClose, onSelectColor, currentColor = '#000000' }) {
     const [color, setColor] = useState(currentColor);
