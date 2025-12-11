@@ -191,15 +191,15 @@ export default function Notes() {
         if (quillRef.current) {
             const editor = quillRef.current.getEditor();
             const container = editor.container;
-            const fontSize = textSize === 'small' ? '12px' : textSize === 'large' ? '16px' : '14px';
+            const fontSize = textSize === 'small' ? '13px' : textSize === 'large' ? '18px' : '15px';
             container.querySelector('.ql-editor').style.fontSize = fontSize;
         }
     }, [textSize]);
 
     const getEditorFontSize = () => {
-        if (textSize === 'small') return '12px';
-        if (textSize === 'large') return '16px';
-        return '14px'; // medium
+        if (textSize === 'small') return '13px';
+        if (textSize === 'large') return '18px';
+        return '15px'; // medium
     };
 
     const closeAllTabs = () => {
