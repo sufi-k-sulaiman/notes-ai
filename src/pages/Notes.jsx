@@ -268,8 +268,8 @@ export default function Notes() {
                     {/* Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4 mb-4 md:mb-6">
                         <div>
-                            <h1 className="text-xl md:text-3xl font-bold text-gray-900">Ai Generative Notes</h1>
-                            <p className="text-gray-600 text-xs md:text-sm">Create and organize your notes</p>
+                            <h1 className="text-xl md:text-3xl font-bold text-gray-900">Notes Ai</h1>
+                            <p className="text-gray-600 text-xs md:text-sm">Generative text notes and images</p>
                         </div>
                         <Button onClick={() => openNewNote()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg w-full sm:w-auto border-0">
                             <Plus className="w-4 h-4 mr-2" /> New Note
