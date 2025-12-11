@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
     Plus, Search, FileText, Calendar, Tag, Trash2, 
     Save, X, Loader2, Maximize2, Minimize2, Sparkles, Image,
-    Clock, FileType, List, Grid3x3, AlignLeft
+    Clock, FileType, List, Grid3x3, AlignLeft, Table
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -112,6 +112,7 @@ export default function Notes() {
     const [aiPrompt, setAiPrompt] = useState('');
     const [formatLoading, setFormatLoading] = useState(false);
     const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', 'title'
+    const [imageCount, setImageCount] = useState(2);
     const queryClient = useQueryClient();
 
     const { data: notes = [], isLoading } = useQuery({
@@ -220,8 +221,14 @@ export default function Notes() {
         if (!aiPrompt.trim()) return;
         setAiLoading(true);
         try {
-            const { url } = await base44.integrations.Core.GenerateImage({ prompt: aiPrompt });
-            setEditorContent(prev => prev + `<p><img src="${url}" alt="${aiPrompt}" style="max-width: 100%; border-radius: 8px;" /></p>`);
+            const promises = Array(imageCount).fill(null).map(() => 
+                base44.integrations.Core.GenerateImage({ prompt: aiPrompt })
+            );
+            const results = await Promise.all(promises);
+            const imagesHtml = results.map(({ url }) => 
+                `<img src="${url}" alt="${aiPrompt}" style="max-width: ${imageCount > 2 ? '48%' : '100%'}; border-radius: 8px; margin: 4px;" />`
+            ).join('');
+            setEditorContent(prev => prev + `<p>${imagesHtml}</p>`);
             setShowAiImageModal(false);
             setAiPrompt('');
         } catch (e) {
@@ -229,6 +236,33 @@ export default function Notes() {
         } finally {
             setAiLoading(false);
         }
+    };
+
+    const insertTable = () => {
+        const tableHtml = `
+            <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid #ddd; padding: 8px; background: #f3f4f6;">Header 1</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; background: #f3f4f6;">Header 2</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; background: #f3f4f6;">Header 3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 1</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 2</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 3</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 4</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 5</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 6</td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+        setEditorContent(prev => prev + tableHtml);
     };
 
     const formatContent = async () => {
@@ -440,6 +474,10 @@ export default function Notes() {
                                 {formatLoading ? <Loader2 className="w-3.5 md:w-4 h-3.5 md:h-4 animate-spin" /> : <FileText className="w-3.5 md:w-4 h-3.5 md:h-4 text-blue-600" />}
                                 <span className="hidden sm:inline">Format</span>
                             </Button>
+                            <Button onClick={insertTable} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
+                                <Table className="w-3.5 md:w-4 h-3.5 md:h-4 text-emerald-600" />
+                                <span className="hidden sm:inline">Table</span>
+                            </Button>
                             <Button onClick={() => setIsFullscreen(!isFullscreen)} variant="ghost" size="sm" className="hover:bg-white/60 hidden md:flex">
                                 {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                             </Button>
@@ -629,6 +667,26 @@ export default function Notes() {
                     <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
                         <Image className="w-4 md:w-5 h-4 md:h-5 text-pink-600" /> Generate AI Image
                     </h3>
+                    
+                    <div className="mb-4">
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Number of Images</label>
+                        <div className="flex gap-2">
+                            {[2, 4, 6, 8].map(count => (
+                                <button
+                                    key={count}
+                                    onClick={() => setImageCount(count)}
+                                    className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${
+                                        imageCount === count
+                                            ? 'bg-pink-500 text-white'
+                                            : 'bg-white/60 text-gray-700 hover:bg-pink-100'
+                                    }`}
+                                >
+                                    {count}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
                     <Input
                         placeholder="Describe the image you want to create..."
                         value={aiPrompt}
@@ -636,12 +694,12 @@ export default function Notes() {
                         onKeyDown={e => e.key === 'Enter' && generateAIImage()}
                         className="text-sm md:text-base bg-white/60 backdrop-blur-sm border-white/80"
                     />
-                    <p className="text-[10px] md:text-xs text-gray-600 mt-2">Be descriptive for better results. Takes 5-10 seconds.</p>
+                    <p className="text-[10px] md:text-xs text-gray-600 mt-2">Be descriptive for better results. Takes 5-10 seconds per image.</p>
                     <div className="flex justify-end gap-2 mt-4">
                         <Button variant="outline" onClick={() => { setShowAiImageModal(false); setAiPrompt(''); }} className="text-xs md:text-sm bg-white/60 backdrop-blur-md border-white/80 hover:bg-white/80">Cancel</Button>
                         <Button onClick={generateAIImage} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 backdrop-blur-xl shadow-lg text-xs md:text-sm border-0">
                             {aiLoading ? <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin mr-2" /> : <Image className="w-3 md:w-4 h-3 md:h-4 mr-2" />}
-                            Generate
+                            Generate {imageCount}
                         </Button>
                     </div>
                 </DialogContent>
