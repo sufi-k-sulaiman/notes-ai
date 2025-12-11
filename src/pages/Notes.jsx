@@ -1076,15 +1076,6 @@ export default function Notes() {
                 .notes-app-container .note-card-content {
                     font-size: ${getGlobalFontSize()} !important;
                 }
-                .notes-app-container h1 {
-                    font-size: ${textSize === 'small' ? '1.75rem' : textSize === 'large' ? '2.25rem' : '2rem'} !important;
-                }
-                .notes-app-container h2 {
-                    font-size: ${textSize === 'small' ? '1.5rem' : textSize === 'large' ? '2rem' : '1.75rem'} !important;
-                }
-                .notes-app-container h3 {
-                    font-size: ${textSize === 'small' ? '1.25rem' : textSize === 'large' ? '1.75rem' : '1.5rem'} !important;
-                }
             `}</style>
             <div className={`notes-app-container min-h-screen p-3 md:p-6 xl:p-0 ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`} style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
                 <div className="max-w-7xl xl:max-w-none mx-auto xl:mx-0">
