@@ -691,9 +691,8 @@ export default function Notes() {
                                 Generate
                             </Button>
                         </div>
-                    </DialogContent>
-                </Dialog>
-            )}
+                        </DialogContent>
+                        </Dialog>
 
             {/* AI Code Modal */}
             <Dialog open={showAiCodeModal} onOpenChange={setShowAiCodeModal}>
