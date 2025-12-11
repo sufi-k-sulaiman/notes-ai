@@ -639,6 +639,14 @@ export default function Notes() {
                                     display: block !important;
                                     z-index: 99999 !important;
                                 }
+                                .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+                                    z-index: 99999 !important;
+                                    position: absolute !important;
+                                }
+                                .ql-snow .ql-color-picker .ql-picker-options {
+                                    z-index: 99999 !important;
+                                    padding: 5px !important;
+                                }
                                 .notes-quill-responsive button:hover,
                                 .notes-quill-responsive button.ql-active {
                                     background: rgba(147, 51, 234, 0.15) !important;
