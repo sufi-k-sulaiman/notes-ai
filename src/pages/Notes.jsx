@@ -123,7 +123,7 @@ export default function Notes() {
     const [showTablePopover, setShowTablePopover] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [colorPickerMode, setColorPickerMode] = useState('text'); // 'text' or 'background'
-    const [showFormatModal, setShowFormatModal] = useState(false);
+    const [showFormatModal, setShowFormatModal] = useState(true);
     const queryClient = useQueryClient();
 
     const closeAllTabs = () => {
@@ -356,59 +356,59 @@ export default function Notes() {
                     <div className="bg-white/60 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/80 shadow-xl overflow-hidden">
                         <div className="px-3 md:px-4 py-2 md:py-3 border-b border-white/20 bg-white/10 backdrop-blur-3xl shadow-lg flex items-center gap-2 md:gap-3">
                             <button 
-                                onClick={() => { closeAllTabs(); setShowAiTextModal(true); }} 
-                                className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
-                                    showAiTextModal 
-                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-purple-500 text-purple-700 shadow-md' 
-                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
-                                }`}
-                            >
-                                <Sparkles className="w-3.5 md:w-4 h-3.5 md:h-4 inline" />
-                                <span className="hidden sm:inline">Ai Text</span>
-                            </button>
-                            <button 
-                                onClick={() => { closeAllTabs(); setShowAiImageModal(true); }} 
-                                className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
-                                    showAiImageModal 
-                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-pink-500 text-pink-700 shadow-md' 
-                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
-                                }`}
-                            >
-                                <Image className="w-3.5 md:w-4 h-3.5 md:h-4 inline" />
-                                <span className="hidden sm:inline">Ai Image</span>
-                            </button>
-                            <button 
-                                onClick={() => { closeAllTabs(); setShowAiCodeModal(true); }} 
-                                className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
-                                    showAiCodeModal 
-                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-emerald-500 text-emerald-700 shadow-md' 
-                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
-                                }`}
-                            >
-                                <Code2 className="w-3.5 md:w-4 h-3.5 md:h-4 inline" />
-                                <span className="hidden sm:inline">Ai Code</span>
-                            </button>
-                            <button 
-                                onClick={() => { closeAllTabs(); setColorPickerMode('text'); setShowColorPicker(true); }} 
-                                className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
-                                    showColorPicker 
-                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-700 shadow-md' 
-                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
-                                }`}
-                            >
-                                <Palette className="w-3.5 md:w-4 h-3.5 md:h-4 inline" />
-                                <span className="hidden sm:inline">Color</span>
-                            </button>
-                            <button 
                                 onClick={() => { closeAllTabs(); setShowFormatModal(true); }} 
-                                className={`gap-1 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                className={`flex items-center gap-1.5 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
                                     showFormatModal 
                                         ? 'bg-white/40 backdrop-blur-xl border-b-2 border-indigo-500 text-indigo-700 shadow-md' 
                                         : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
-                                <AlignLeft className="w-3.5 md:w-4 h-3.5 md:h-4 inline" />
+                                <AlignLeft className="w-3.5 md:w-4 h-3.5 md:h-4" />
                                 <span className="hidden sm:inline">Format</span>
+                            </button>
+                            <button 
+                                onClick={() => { closeAllTabs(); setShowAiTextModal(true); }} 
+                                className={`flex items-center gap-1.5 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                    showAiTextModal 
+                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-purple-500 text-purple-700 shadow-md' 
+                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Sparkles className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                                <span className="hidden sm:inline">Ai Text</span>
+                            </button>
+                            <button 
+                                onClick={() => { closeAllTabs(); setShowAiImageModal(true); }} 
+                                className={`flex items-center gap-1.5 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                    showAiImageModal 
+                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-pink-500 text-pink-700 shadow-md' 
+                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Image className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                                <span className="hidden sm:inline">Ai Image</span>
+                            </button>
+                            <button 
+                                onClick={() => { closeAllTabs(); setShowAiCodeModal(true); }} 
+                                className={`flex items-center gap-1.5 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                    showAiCodeModal 
+                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-emerald-500 text-emerald-700 shadow-md' 
+                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Code2 className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                                <span className="hidden sm:inline">Ai Code</span>
+                            </button>
+                            <button 
+                                onClick={() => { closeAllTabs(); setColorPickerMode('text'); setShowColorPicker(true); }} 
+                                className={`flex items-center gap-1.5 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-t-lg transition-all ${
+                                    showColorPicker 
+                                        ? 'bg-white/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-700 shadow-md' 
+                                        : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Palette className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                                <span className="hidden sm:inline">Color</span>
                             </button>
                             <div className="flex-1" />
                             <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg gap-1.5 text-xs md:text-sm border-0 h-8 px-4">
@@ -653,25 +653,6 @@ export default function Notes() {
                                     </button>
                                     <div className="w-px h-6 bg-gray-300"></div>
                                     <button
-                                        onClick={() => quillRef.current?.getEditor().format('header', 1)}
-                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm font-bold transition-all border border-gray-300"
-                                    >
-                                        H1
-                                    </button>
-                                    <button
-                                        onClick={() => quillRef.current?.getEditor().format('header', 2)}
-                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm font-bold transition-all border border-gray-300"
-                                    >
-                                        H2
-                                    </button>
-                                    <button
-                                        onClick={() => quillRef.current?.getEditor().format('header', 3)}
-                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm font-bold transition-all border border-gray-300"
-                                    >
-                                        H3
-                                    </button>
-                                    <div className="w-px h-6 bg-gray-300"></div>
-                                    <button
                                         onClick={() => quillRef.current?.getEditor().format('list', 'bullet')}
                                         className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300"
                                     >
@@ -682,6 +663,29 @@ export default function Notes() {
                                         className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300"
                                     >
                                         1. List
+                                    </button>
+                                    <div className="w-px h-6 bg-gray-300"></div>
+                                    <button
+                                        onClick={() => {
+                                            const url = prompt('Enter URL:');
+                                            if (url) quillRef.current?.getEditor().format('link', url);
+                                        }}
+                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300"
+                                    >
+                                        🔗 Link
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            const url = prompt('Enter image URL:');
+                                            if (url) {
+                                                const quill = quillRef.current?.getEditor();
+                                                const range = quill.getSelection();
+                                                quill.insertEmbed(range.index, 'image', url);
+                                            }
+                                        }}
+                                        className="px-3 py-2 bg-white/60 hover:bg-white/80 rounded-lg text-sm transition-all border border-gray-300"
+                                    >
+                                        🖼️ Image
                                     </button>
                                     <div className="w-px h-6 bg-gray-300"></div>
                                     <Button
@@ -724,10 +728,7 @@ export default function Notes() {
                             />
                             <style>{`
                                 .notes-quill-responsive .ql-toolbar {
-                                    background: rgba(255, 255, 255, 0.4) !important;
-                                    backdrop-filter: blur(20px) !important;
-                                    border: none !important;
-                                    border-bottom: 1px solid rgba(209, 213, 219, 0.3) !important;
+                                    display: none !important;
                                 }
                                 .notes-quill-responsive .ql-container {
                                     border: none !important;
