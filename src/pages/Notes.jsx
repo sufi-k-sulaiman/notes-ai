@@ -461,7 +461,7 @@ export default function Notes() {
                             />
                         </div>
 
-                        <div className="flex-1 overflow-hidden">
+                        <div className="flex-1 overflow-hidden relative">
                             <ReactQuill
                                 value={editorContent}
                                 onChange={setEditorContent}
@@ -516,15 +516,24 @@ export default function Notes() {
                                     border: 1px solid rgba(209, 213, 219, 0.5) !important;
                                     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
                                     border-radius: 8px !important;
+                                    position: fixed !important;
+                                    left: 50% !important;
+                                    top: 50% !important;
+                                    transform: translate(-50%, -50%) !important;
                                 }
                                 .ql-tooltip input {
                                     border: 1px solid rgba(209, 213, 219, 0.5) !important;
                                     border-radius: 6px !important;
                                     padding: 6px 10px !important;
+                                    min-width: 250px !important;
                                 }
                                 .ql-tooltip .ql-action,
                                 .ql-tooltip .ql-remove {
                                     border-radius: 6px !important;
+                                }
+                                .ql-editing .ql-tooltip {
+                                    left: 50% !important;
+                                    top: 50% !important;
                                 }
                                 @media (max-width: 768px) {
                                     .notes-quill-responsive .ql-toolbar {
