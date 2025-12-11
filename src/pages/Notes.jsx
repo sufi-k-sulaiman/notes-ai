@@ -575,6 +575,7 @@ export default function Notes() {
                                 modules={{
                                     toolbar: [
                                         ['bold', 'italic', 'underline'],
+                                        [{ 'color': [] }, { 'background': [] }],
                                         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                                         [{ 'header': [1, 2, 3, false] }],
                                         ['link', 'image'],
