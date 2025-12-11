@@ -1,12 +1,33 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Pipette, X } from 'lucide-react';
 
+// Hexagonal color palette similar to w3schools
+const COLOR_PALETTE = [
+    // Row 1 - Dark blues/purples
+    ['#1a2639', '#2c3e50', '#34495e', '#2980b9', '#3498db', '#5dade2', '#85c1e9'],
+    // Row 2 - Blues/cyans
+    ['#154360', '#1f618d', '#2874a6', '#3498db', '#5dade2', '#85c1e9', '#aed6f1'],
+    // Row 3 - Teals/greens
+    ['#0b5345', '#117a65', '#16a085', '#1abc9c', '#48c9b0', '#76d7c4', '#a2d9ce'],
+    // Row 4 - Greens
+    ['#145a32', '#1e8449', '#229954', '#27ae60', '#52be80', '#7dcea0', '#a9dfbf'],
+    // Row 5 - Yellows/greens
+    ['#7d6608', '#9a7d0a', '#b7950b', '#d4ac0d', '#f1c40f', '#f4d03f', '#f7dc6f'],
+    // Row 6 - Oranges
+    ['#784212', '#935116', '#af601a', '#ca6f1e', '#e67e22', '#eb984e', '#f0b27a'],
+    // Row 7 - Reds/pinks
+    ['#641e16', '#7b241c', '#922b21', '#a93226', '#c0392b', '#cd6155', '#d98880'],
+    // Row 8 - Purples/magentas
+    ['#4a235a', '#5b2c6f', '#6c3483', '#7d3c98', '#8e44ad', '#a569bd', '#bb8fce'],
+    // Row 9 - Grays
+    ['#212121', '#424242', '#616161', '#757575', '#9e9e9e', '#bdbdbd', '#e0e0e0'],
+];
+
 export default function ColorPickerModal({ isOpen, onClose, onSelectColor, currentColor = '#000000' }) {
-    const canvasRef = useRef(null);
     const [selectedColor, setSelectedColor] = useState(currentColor);
     const [hexValue, setHexValue] = useState(currentColor.replace('#', '').toUpperCase());
     const [rgb, setRgb] = useState({ r: 0, g: 0, b: 0 });
@@ -25,52 +46,7 @@ export default function ColorPickerModal({ isOpen, onClose, onSelectColor, curre
         setHexValue(color.toUpperCase());
     }, [selectedColor]);
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        const size = 350;
-        const centerX = size / 2;
-        const centerY = size / 2;
-        const radius = size / 2 - 10;
 
-        // Draw color wheel
-        for (let angle = 0; angle < 360; angle += 0.5) {
-            const startAngle = (angle - 90) * Math.PI / 180;
-            const endAngle = (angle + 0.5 - 90) * Math.PI / 180;
-
-            for (let r = 0; r < radius; r += 1) {
-                const ratio = r / radius;
-                const hue = angle;
-                const saturation = ratio * 100;
-                const lightness = 50 + (1 - ratio) * 50;
-
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, r, startAngle, endAngle);
-                ctx.strokeStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-        }
-
-        // Draw white center circle
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, 30, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff';
-        ctx.fill();
-    }, []);
-
-    const handleCanvasClick = (e) => {
-        const canvas = canvasRef.current;
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const ctx = canvas.getContext('2d');
-        const pixel = ctx.getImageData(x, y, 1, 1).data;
-        const hex = `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1).toUpperCase()}`;
-        setSelectedColor(hex);
-    };
 
     const handleRgbChange = (channel, value) => {
         const newRgb = { ...rgb, [channel]: value[0] };
@@ -120,22 +96,41 @@ export default function ColorPickerModal({ isOpen, onClose, onSelectColor, curre
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start pb-4">
-                    {/* Color Wheel */}
+                    {/* Hexagonal Color Picker */}
                     <div className="relative flex-shrink-0">
-                        <canvas
-                            ref={canvasRef}
-                            width={350}
-                            height={350}
-                            onClick={handleCanvasClick}
-                            className="cursor-crosshair rounded-full w-[280px] h-[280px] md:w-[350px] md:h-[350px]"
-                            style={{ touchAction: 'none' }}
-                        />
+                        <div className="bg-gray-50 rounded-2xl p-4 md:p-6 shadow-inner">
+                            <div className="space-y-1">
+                                {COLOR_PALETTE.map((row, rowIndex) => (
+                                    <div key={rowIndex} className="flex justify-center gap-1" style={{ marginLeft: rowIndex % 2 === 1 ? '20px' : '0' }}>
+                                        {row.map((color, colIndex) => (
+                                            <button
+                                                key={`${rowIndex}-${colIndex}`}
+                                                onClick={() => setSelectedColor(color)}
+                                                className="hexagon-button relative group"
+                                                style={{ 
+                                                    width: '32px',
+                                                    height: '32px',
+                                                    backgroundColor: color,
+                                                    clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
+                                                    transition: 'all 0.2s'
+                                                }}
+                                                title={color}
+                                            >
+                                                {selectedColor === color && (
+                                                    <div className="absolute inset-0 border-2 border-white shadow-lg" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }} />
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                         <button
                             onClick={handleEyeDropper}
-                            className="absolute top-2 right-2 md:top-4 md:right-4 bg-white rounded-full p-3 md:p-3 shadow-xl hover:bg-gray-50 border border-gray-200 touch-manipulation"
+                            className="absolute top-2 right-2 bg-white rounded-full p-2 md:p-3 shadow-xl hover:bg-gray-50 border border-gray-200 touch-manipulation"
                             title="Pick color from screen"
                         >
-                            <Pipette className="w-5 h-5 text-gray-700" />
+                            <Pipette className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
                         </button>
                     </div>
 
