@@ -935,7 +935,7 @@ export default function Notes() {
                                 variant="ghost" 
                                 className={`${darkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900'}`}
                             >
-                                <Settings className="w-5 h-5" />
+                                <Settings className="w-8 h-8" />
                             </Button>
                         </div>
 
@@ -1037,12 +1037,16 @@ export default function Notes() {
                                     <div
                                         key={note.id}
                                         onClick={() => openNote(note)}
-                                        className="bg-white/60 backdrop-blur-xl rounded-xl md:rounded-2xl border border-white/80 p-3 md:p-4 cursor-pointer hover:shadow-xl hover:bg-white/80 hover:border-purple-300 transition-all shadow-lg flex items-start gap-3 md:gap-4"
+                                        className={`backdrop-blur-xl rounded-xl md:rounded-2xl border p-3 md:p-4 cursor-pointer hover:shadow-xl transition-all shadow-lg flex items-start gap-3 md:gap-4 ${
+                                            darkMode 
+                                                ? 'bg-gray-800/60 border-gray-700 hover:bg-gray-800/80 hover:border-purple-500' 
+                                                : 'bg-white/60 border-white/80 hover:bg-white/80 hover:border-purple-300'
+                                        }`}
                                     >
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="font-bold text-gray-900 mb-1 text-sm md:text-base truncate">{note.title || 'Untitled'}</h3>
-                                            <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mb-2">{content.slice(0, 150) || 'No content'}</p>
-                                            <div className="flex items-center gap-2 md:gap-3 text-[10px] md:text-xs text-gray-500 flex-wrap">
+                                            <h3 className={`font-bold mb-1 text-sm md:text-base truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>{note.title || 'Untitled'}</h3>
+                                            <p className={`text-xs md:text-sm line-clamp-2 mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{content.slice(0, 150) || 'No content'}</p>
+                                            <div className={`flex items-center gap-2 md:gap-3 text-[10px] md:text-xs flex-wrap ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                                                 <span className="flex items-center gap-1">
                                                     <Clock className="w-3 h-3" />
                                                     {formatDate(note.created_date)}
@@ -1054,9 +1058,13 @@ export default function Notes() {
                                                 {note.tags && note.tags.length > 0 && (
                                                     <div className="flex items-center gap-1">
                                                         {note.tags.slice(0, 2).map((tag, i) => (
-                                                            <span key={i} className="text-[10px] px-1.5 py-0.5 bg-white/60 backdrop-blur-sm text-gray-700 rounded border border-white/80">{tag}</span>
+                                                            <span key={i} className={`text-[10px] px-1.5 py-0.5 backdrop-blur-sm rounded border ${
+                                                                darkMode 
+                                                                    ? 'bg-gray-700/60 text-gray-300 border-gray-600' 
+                                                                    : 'bg-white/60 text-gray-700 border-white/80'
+                                                            }`}>{tag}</span>
                                                         ))}
-                                                        {note.tags.length > 2 && <span className="text-gray-400">+{note.tags.length - 2}</span>}
+                                                        {note.tags.length > 2 && <span className={darkMode ? 'text-gray-600' : 'text-gray-400'}>+{note.tags.length - 2}</span>}
                                                     </div>
                                                 )}
                                             </div>
@@ -1066,27 +1074,41 @@ export default function Notes() {
                             })}
                         </div>
                     ) : (
-                        <div className="bg-white/60 backdrop-blur-xl rounded-xl md:rounded-2xl border border-white/80 shadow-lg divide-y divide-gray-200/50">
+                        <div className={`backdrop-blur-xl rounded-xl md:rounded-2xl border shadow-lg divide-y ${
+                            darkMode 
+                                ? 'bg-gray-800/60 border-gray-700 divide-gray-700/50' 
+                                : 'bg-white/60 border-white/80 divide-gray-200/50'
+                        }`}>
                             {filteredNotes.map(note => (
                                 <div
                                     key={note.id}
-                                    className="p-3 md:p-4 cursor-pointer hover:bg-white/80 transition-all flex items-center justify-between group"
+                                    className={`p-3 md:p-4 cursor-pointer transition-all flex items-center justify-between group ${
+                                        darkMode ? 'hover:bg-gray-700/80' : 'hover:bg-white/80'
+                                    }`}
                                 >
                                     <div onClick={() => openNote(note)} className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
-                                        <FileText className="w-4 md:w-5 h-4 md:h-5 text-purple-600 flex-shrink-0" />
+                                        <FileText className={`w-4 md:w-5 h-4 md:h-5 flex-shrink-0 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="font-semibold text-gray-900 text-sm md:text-base truncate">{note.title || 'Untitled'}</h3>
-                                            <p className="text-xs text-gray-500">{formatDate(note.created_date)}</p>
+                                            <h3 className={`font-semibold text-sm md:text-base truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>{note.title || 'Untitled'}</h3>
+                                            <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{formatDate(note.created_date)}</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                                    <div className={`flex items-center gap-2 text-xs ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                                         {note.tags && note.tags.length > 0 && (
-                                            <span className="hidden sm:inline text-[10px] px-2 py-1 bg-purple-100/60 backdrop-blur-sm text-purple-700 rounded border border-purple-200/50">{note.tags[0]}</span>
+                                            <span className={`hidden sm:inline text-[10px] px-2 py-1 backdrop-blur-sm rounded border ${
+                                                darkMode 
+                                                    ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' 
+                                                    : 'bg-purple-100/60 text-purple-700 border-purple-200/50'
+                                            }`}>{note.tags[0]}</span>
                                         )}
                                         <span className="hidden md:inline text-[10px]">{note.word_count || 0} words</span>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(note.id); }}
-                                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-red-100 rounded-lg text-red-500 hover:text-red-700"
+                                            className={`opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg ${
+                                                darkMode 
+                                                    ? 'hover:bg-red-500/20 text-red-400 hover:text-red-300' 
+                                                    : 'hover:bg-red-100 text-red-500 hover:text-red-700'
+                                            }`}
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>
@@ -1098,17 +1120,25 @@ export default function Notes() {
 
                         {/* Quick Start Templates */}
                         {!isLoading && filteredNotes.length > 0 && (
-                        <div className="bg-white/40 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/60 shadow-xl p-3 md:p-5 mt-6">
-                        <h2 className="text-purple-700 font-semibold mb-3 md:mb-4 text-sm md:text-base">Quick Start Templates</h2>
+                        <div className={`backdrop-blur-xl rounded-2xl md:rounded-3xl border shadow-xl p-3 md:p-5 mt-6 ${
+                            darkMode 
+                                ? 'bg-gray-800/40 border-gray-700' 
+                                : 'bg-white/40 border-white/60'
+                        }`}>
+                        <h2 className={`font-semibold mb-3 md:mb-4 text-sm md:text-base ${darkMode ? 'text-purple-400' : 'text-purple-700'}`}>Quick Start Templates</h2>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
                             {TEMPLATES.map(t => (
                                 <button
                                     key={t.id}
                                     onClick={() => openNewNote(t)}
-                                    className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-xl md:rounded-2xl bg-white/60 backdrop-blur-md hover:bg-white/80 border border-white/80 hover:border-purple-200 text-left transition-all shadow-sm hover:shadow-md"
+                                    className={`flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-xl md:rounded-2xl backdrop-blur-md border text-left transition-all shadow-sm hover:shadow-md ${
+                                        darkMode 
+                                            ? 'bg-gray-700/60 hover:bg-gray-700/80 border-gray-600 hover:border-purple-500' 
+                                            : 'bg-white/60 hover:bg-white/80 border-white/80 hover:border-purple-200'
+                                    }`}
                                 >
                                     <t.icon className="w-4 md:w-5 h-4 md:h-5" style={{ color: t.color }} />
-                                    <span className="font-medium text-gray-800 text-xs md:text-sm">{t.name}</span>
+                                    <span className={`font-medium text-xs md:text-sm ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{t.name}</span>
                                 </button>
                             ))}
                         </div>
@@ -1168,6 +1198,15 @@ export default function Notes() {
                                 />
                             </div>
                         </div>
+
+                        {/* Logout Button */}
+                        <Button 
+                            onClick={() => base44.auth.logout()} 
+                            variant="outline"
+                            className={`w-full ${darkMode ? 'border-red-500/50 text-red-400 hover:bg-red-500/10' : 'border-red-300 text-red-600 hover:bg-red-50'}`}
+                        >
+                            Logout
+                        </Button>
 
                         {/* Close Button */}
                         <Button 
