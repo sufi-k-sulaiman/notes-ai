@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { 
     Plus, Search, FileText, Calendar, Tag, Trash2, 
     Save, X, Loader2, Maximize2, Minimize2, Sparkles, Image,
-    Clock, FileType, List, Grid3x3, AlignLeft, Table
+    Clock, FileType, List, Grid3x3, AlignLeft, Table, Code2, ChevronDown
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
 
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -113,6 +115,11 @@ export default function Notes() {
     const [formatLoading, setFormatLoading] = useState(false);
     const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', 'title'
     const [imageCount, setImageCount] = useState(2);
+    const [showAiCodeModal, setShowAiCodeModal] = useState(false);
+    const [selectedLanguage, setSelectedLanguage] = useState('javascript');
+    const [tableRows, setTableRows] = useState(3);
+    const [tableCols, setTableCols] = useState(3);
+    const [showTablePopover, setShowTablePopover] = useState(false);
     const queryClient = useQueryClient();
 
     const { data: notes = [], isLoading } = useQuery({
@@ -239,30 +246,35 @@ export default function Notes() {
     };
 
     const insertTable = () => {
-        const tableHtml = `
-            <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
-                <thead>
-                    <tr>
-                        <th style="border: 1px solid #ddd; padding: 8px; background: #f3f4f6;">Header 1</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; background: #f3f4f6;">Header 2</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; background: #f3f4f6;">Header 3</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 1</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 2</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 3</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 4</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 5</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Cell 6</td>
-                    </tr>
-                </tbody>
-            </table>
-        `;
+        let tableHtml = '<table style="width: 100%; border-collapse: collapse; margin: 16px 0;"><tbody>';
+        for (let i = 0; i < tableRows; i++) {
+            tableHtml += '<tr>';
+            for (let j = 0; j < tableCols; j++) {
+                tableHtml += `<td style="border: 1px solid #ddd; padding: 8px;">${i === 0 ? `Header ${j + 1}` : `Cell ${i}-${j + 1}`}</td>`;
+            }
+            tableHtml += '</tr>';
+        }
+        tableHtml += '</tbody></table>';
         setEditorContent(prev => prev + tableHtml);
+        setShowTablePopover(false);
+    };
+
+    const generateAICode = async () => {
+        if (!aiPrompt.trim()) return;
+        setAiLoading(true);
+        try {
+            const response = await base44.integrations.Core.InvokeLLM({ 
+                prompt: `Write ${selectedLanguage} code for: ${aiPrompt}. Return only the code with proper syntax highlighting comments. Be concise and production-ready.` 
+            });
+            const codeBlock = `<pre style="background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 8px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;"><code>${response.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+            setEditorContent(prev => prev + codeBlock);
+            setShowAiCodeModal(false);
+            setAiPrompt('');
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setAiLoading(false);
+        }
     };
 
     const formatContent = async () => {
@@ -470,14 +482,38 @@ export default function Notes() {
                                 <Image className="w-3.5 md:w-4 h-3.5 md:h-4 text-pink-600" />
                                 <span className="hidden sm:inline">Ai Image</span>
                             </Button>
+                            <Button onClick={() => setShowAiCodeModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
+                                <Code2 className="w-3.5 md:w-4 h-3.5 md:h-4 text-emerald-600" />
+                                <span className="hidden sm:inline">Ai Code</span>
+                            </Button>
                             <Button onClick={formatContent} disabled={formatLoading} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
                                 {formatLoading ? <Loader2 className="w-3.5 md:w-4 h-3.5 md:h-4 animate-spin" /> : <FileText className="w-3.5 md:w-4 h-3.5 md:h-4 text-blue-600" />}
                                 <span className="hidden sm:inline">Format</span>
                             </Button>
-                            <Button onClick={insertTable} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                <Table className="w-3.5 md:w-4 h-3.5 md:h-4 text-emerald-600" />
-                                <span className="hidden sm:inline">Table</span>
-                            </Button>
+                            <Popover open={showTablePopover} onOpenChange={setShowTablePopover}>
+                                <PopoverTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
+                                        <Table className="w-3.5 md:w-4 h-3.5 md:h-4 text-indigo-600" />
+                                        <span className="hidden sm:inline">Table</span>
+                                        <ChevronDown className="w-3 h-3" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-72 bg-white/90 backdrop-blur-xl border-white/80 shadow-xl">
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-700 mb-2 block">Columns: {tableCols}</label>
+                                            <Slider value={[tableCols]} onValueChange={(v) => setTableCols(v[0])} min={2} max={8} step={1} className="mb-2" />
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-700 mb-2 block">Rows: {tableRows}</label>
+                                            <Slider value={[tableRows]} onValueChange={(v) => setTableRows(v[0])} min={2} max={10} step={1} className="mb-2" />
+                                        </div>
+                                        <Button onClick={insertTable} className="w-full bg-indigo-600 hover:bg-indigo-700">
+                                            Insert {tableCols}x{tableRows} Table
+                                        </Button>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
                             <Button onClick={() => setIsFullscreen(!isFullscreen)} variant="ghost" size="sm" className="hover:bg-white/60 hidden md:flex">
                                 {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                             </Button>
@@ -655,6 +691,53 @@ export default function Notes() {
                         <Button variant="outline" onClick={() => { setShowAiTextModal(false); setAiPrompt(''); }} className="text-xs md:text-sm bg-white/60 backdrop-blur-md border-white/80 hover:bg-white/80">Cancel</Button>
                         <Button onClick={generateAIText} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg text-xs md:text-sm border-0">
                             {aiLoading ? <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin mr-2" /> : <Sparkles className="w-3 md:w-4 h-3 md:h-4 mr-2" />}
+                            Generate
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* AI Code Modal */}
+            <Dialog open={showAiCodeModal} onOpenChange={setShowAiCodeModal}>
+                <DialogContent className="max-w-md mx-2 md:mx-0 bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl rounded-3xl">
+                    <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
+                        <Code2 className="w-4 md:w-5 h-4 md:h-5 text-emerald-600" /> Generate AI Code
+                    </h3>
+                    
+                    <div className="mb-4">
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Programming Language</label>
+                        <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto">
+                            {[
+                                'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#',
+                                'Ruby', 'PHP', 'Go', 'Rust', 'Swift', 'Kotlin',
+                                'SQL', 'HTML', 'CSS', 'React', 'Vue', 'Angular'
+                            ].map(lang => (
+                                <button
+                                    key={lang}
+                                    onClick={() => setSelectedLanguage(lang)}
+                                    className={`py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
+                                        selectedLanguage === lang
+                                            ? 'bg-emerald-500 text-white'
+                                            : 'bg-white/60 text-gray-700 hover:bg-emerald-100'
+                                    }`}
+                                >
+                                    {lang}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <Input
+                        placeholder="Describe the code you need..."
+                        value={aiPrompt}
+                        onChange={e => setAiPrompt(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && generateAICode()}
+                        className="text-sm md:text-base bg-white/60 backdrop-blur-sm border-white/80"
+                    />
+                    <div className="flex justify-end gap-2 mt-4">
+                        <Button variant="outline" onClick={() => { setShowAiCodeModal(false); setAiPrompt(''); }} className="text-xs md:text-sm bg-white/60 backdrop-blur-md border-white/80 hover:bg-white/80">Cancel</Button>
+                        <Button onClick={generateAICode} disabled={aiLoading || !aiPrompt.trim()} className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 backdrop-blur-xl shadow-lg text-xs md:text-sm border-0">
+                            {aiLoading ? <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin mr-2" /> : <Code2 className="w-3 md:w-4 h-3 md:h-4 mr-2" />}
                             Generate
                         </Button>
                     </div>
