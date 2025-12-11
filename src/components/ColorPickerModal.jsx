@@ -15,7 +15,7 @@ export default function ColorPickerModal({ isOpen, onClose, onSelectColor, curre
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-[320px] bg-white rounded-2xl p-6 border border-gray-200 shadow-2xl z-[9999]">
+            <DialogContent className="max-w-[320px] bg-white rounded-2xl p-6 border border-gray-200 shadow-2xl">
                 <div className="flex items-start justify-between mb-4">
                     <h3 className="text-lg font-bold text-gray-900">Color Picker</h3>
                     <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 hover:bg-gray-100">
