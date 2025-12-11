@@ -471,8 +471,8 @@ export default function Notes() {
 
                         {/* Editor Modal */}
             <Dialog open={showEditor} onOpenChange={setShowEditor}>
-                <DialogContent className={`max-w-full w-full h-full max-h-full rounded-none md:max-w-4xl md:max-h-[90vh] md:rounded-3xl p-0 overflow-hidden transition-all bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl ${isFullscreen ? '!max-w-full !w-full !h-full !max-h-full !rounded-none' : ''}`} hideClose>
-                    <div className={`flex flex-col h-full ${isFullscreen ? '' : 'md:h-[80vh]'}`}>
+                <DialogContent className={`max-w-full w-full h-full max-h-full rounded-none md:max-w-4xl md:max-h-[90vh] md:rounded-3xl p-0 overflow-y-auto transition-all bg-white/80 backdrop-blur-3xl border-white/60 shadow-2xl ${isFullscreen ? '!max-w-full !w-full !h-full !max-h-full !rounded-none' : ''}`} hideClose>
+                    <div className="flex flex-col min-h-full">
                         <div className="px-3 md:px-4 py-2 md:py-3 border-b border-gray-200/50 bg-gradient-to-r from-white/60 to-purple-50/60 backdrop-blur-xl flex items-center gap-2 md:gap-3">
                             <Button onClick={() => setShowAiTextModal(true)} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
                                 <Sparkles className="w-3.5 md:w-4 h-3.5 md:h-4 text-purple-600" />
@@ -545,12 +545,13 @@ export default function Notes() {
                             />
                         </div>
 
-                        <div className="flex-1 overflow-hidden relative">
+                        <div className="relative" style={{ minHeight: '400px' }}>
                             <ReactQuill
                                 value={editorContent}
                                 onChange={setEditorContent}
                                 placeholder="Start writing..."
-                                className="h-full notes-quill-responsive"
+                                className="notes-quill-responsive"
+                                style={{ height: '400px' }}
                                 theme="snow"
                                 modules={{
                                     toolbar: [
