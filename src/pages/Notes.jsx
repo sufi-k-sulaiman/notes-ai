@@ -1269,7 +1269,7 @@ export default function Notes() {
             
             {/* Settings Modal */}
             <Dialog open={showSettings} onOpenChange={setShowSettings}>
-                <DialogContent className={`max-w-md ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+                <DialogContent className={`max-w-md w-full h-full sm:h-auto sm:max-h-[90vh] m-0 sm:m-4 rounded-none sm:rounded-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
                     <div className="space-y-6">
                         <div className="flex items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
                             <Settings className={`w-6 h-6 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
