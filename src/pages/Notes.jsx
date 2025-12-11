@@ -43,36 +43,36 @@ function NoteCard({ note, onClick, formatDate }) {
     return (
         <div
             onClick={() => onClick(note)}
-            className="bg-white rounded-xl border border-gray-200 p-6 cursor-pointer hover:shadow-md hover:border-purple-200 transition-all"
+            className="bg-white rounded-lg md:rounded-xl border border-gray-200 p-4 md:p-6 cursor-pointer hover:shadow-md hover:border-purple-200 transition-all"
         >
-            <h3 className="font-bold text-gray-900 mb-3 text-lg line-clamp-2">{note.title || 'Untitled'}</h3>
-            <p className="text-sm text-gray-600 line-clamp-4 mb-4 min-h-[80px] leading-relaxed">
+            <h3 className="font-bold text-gray-900 mb-2 md:mb-3 text-base md:text-lg line-clamp-2">{note.title || 'Untitled'}</h3>
+            <p className="text-xs md:text-sm text-gray-600 line-clamp-3 md:line-clamp-4 mb-3 md:mb-4 min-h-[60px] md:min-h-[80px] leading-relaxed">
                 {content.slice(0, 200) || 'No content'}
             </p>
             
-            <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
-                <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1.5">
-                        <FileType className="w-3.5 h-3.5" />
+            <div className="flex items-center justify-between text-[10px] md:text-xs text-gray-500 pt-2 md:pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-2 md:gap-4 flex-wrap">
+                    <span className="flex items-center gap-1">
+                        <FileType className="w-3 md:w-3.5 h-3 md:h-3.5" />
                         {wordCount} words
                     </span>
-                    <span className="flex items-center gap-1.5">
+                    <span className="hidden sm:flex items-center gap-1">
                         {charCount} chars
                     </span>
-                    <span className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5" />
+                    <span className="flex items-center gap-1">
+                        <Clock className="w-3 md:w-3.5 h-3 md:h-3.5" />
                         {formatDate(note.created_date)}
                     </span>
                 </div>
             </div>
             
             {note.tags && note.tags.length > 0 && (
-                <div className="flex items-center gap-1.5 mt-3 flex-wrap">
+                <div className="flex items-center gap-1 md:gap-1.5 mt-2 md:mt-3 flex-wrap">
                     {note.tags.slice(0, 3).map((tag, i) => (
-                        <span key={i} className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">{tag}</span>
+                        <span key={i} className="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 bg-gray-100 text-gray-600 rounded">{tag}</span>
                     ))}
                     {note.tags.length > 3 && (
-                        <span className="text-xs text-gray-400">+{note.tags.length - 3}</span>
+                        <span className="text-[10px] md:text-xs text-gray-400">+{note.tags.length - 3}</span>
                     )}
                 </div>
             )}
@@ -263,31 +263,31 @@ export default function Notes() {
 
     return (
         <>
-            <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+            <div className="min-h-screen bg-gray-50 p-3 md:p-6">
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4 mb-4 md:mb-6">
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Ai Generative Notes</h1>
-                            <p className="text-gray-500 text-sm">Create and organize your notes</p>
+                            <h1 className="text-xl md:text-3xl font-bold text-gray-900">Ai Generative Notes</h1>
+                            <p className="text-gray-500 text-xs md:text-sm">Create and organize your notes</p>
                         </div>
-                        <Button onClick={() => openNewNote()} className="bg-purple-600 hover:bg-purple-700">
+                        <Button onClick={() => openNewNote()} className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto">
                             <Plus className="w-4 h-4 mr-2" /> New Note
                         </Button>
                     </div>
 
                     {/* Quick Start Templates */}
-                    <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
-                        <h2 className="text-purple-600 font-semibold mb-4">Quick Start Templates</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <div className="bg-white rounded-lg md:rounded-xl border border-gray-200 p-3 md:p-5 mb-4 md:mb-6">
+                        <h2 className="text-purple-600 font-semibold mb-3 md:mb-4 text-sm md:text-base">Quick Start Templates</h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
                             {TEMPLATES.map(t => (
                                 <button
                                     key={t.id}
                                     onClick={() => openNewNote(t)}
-                                    className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-purple-50 border border-gray-100 hover:border-purple-200 text-left transition-all"
+                                    className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-lg md:rounded-xl bg-gray-50 hover:bg-purple-50 border border-gray-100 hover:border-purple-200 text-left transition-all"
                                 >
-                                    <t.icon className="w-5 h-5" style={{ color: t.color }} />
-                                    <span className="font-medium text-gray-700">{t.name}</span>
+                                    <t.icon className="w-4 md:w-5 h-4 md:h-5" style={{ color: t.color }} />
+                                    <span className="font-medium text-gray-700 text-xs md:text-sm">{t.name}</span>
                                 </button>
                             ))}
                         </div>
@@ -295,20 +295,20 @@ export default function Notes() {
 
                     {/* Notes Grid */}
                     {isLoading ? (
-                        <div className="flex items-center justify-center py-20">
-                            <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+                        <div className="flex items-center justify-center py-12 md:py-20">
+                            <Loader2 className="w-6 md:w-8 h-6 md:h-8 animate-spin text-purple-600" />
                         </div>
                     ) : filteredNotes.length === 0 ? (
-                        <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
-                            <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                            <h2 className="text-xl font-semibold text-gray-600 mb-2">No notes yet</h2>
-                            <p className="text-gray-500 mb-4">Create your first note or use a template</p>
-                            <Button onClick={() => openNewNote()} variant="outline">
+                        <div className="text-center py-12 md:py-20 bg-white rounded-lg md:rounded-xl border border-gray-200">
+                            <FileText className="w-12 md:w-16 h-12 md:h-16 text-gray-300 mx-auto mb-3 md:mb-4" />
+                            <h2 className="text-lg md:text-xl font-semibold text-gray-600 mb-2">No notes yet</h2>
+                            <p className="text-sm md:text-base text-gray-500 mb-3 md:mb-4">Create your first note or use a template</p>
+                            <Button onClick={() => openNewNote()} variant="outline" className="text-sm">
                                 <Plus className="w-4 h-4 mr-2" /> Create Note
                             </Button>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
                             {filteredNotes.map(note => (
                                 <NoteCard 
                                     key={note.id} 
@@ -326,44 +326,44 @@ export default function Notes() {
             <Dialog open={showEditor} onOpenChange={setShowEditor}>
                 <DialogContent className={`max-w-full w-full h-full max-h-full rounded-none md:max-w-4xl md:max-h-[90vh] md:rounded-lg p-0 overflow-hidden transition-all ${isFullscreen ? '!max-w-full !w-full !h-full !max-h-full !rounded-none' : ''}`}>
                     <div className={`flex flex-col h-full ${isFullscreen ? '' : 'md:h-[80vh]'}`}>
-                        <div className="flex items-center justify-between p-4 border-b bg-white">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 md:p-4 border-b bg-white gap-2">
                             <Input
                                 placeholder="Note title..."
                                 value={noteTitle}
                                 onChange={e => setNoteTitle(e.target.value)}
-                                className="text-lg font-semibold border-0 shadow-none focus-visible:ring-0 max-w-md"
+                                className="text-base md:text-lg font-semibold border-0 shadow-none focus-visible:ring-0 w-full sm:max-w-md"
                             />
-                            <div className="flex items-center gap-2">
-                                <Button onClick={() => setShowAiTextModal(true)} variant="outline" size="sm" className="gap-2">
-                                    <Sparkles className="w-4 h-4 text-purple-600" />
-                                    AI Text
+                            <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+                                <Button onClick={() => setShowAiTextModal(true)} variant="outline" size="sm" className="gap-1 md:gap-2 text-xs md:text-sm flex-1 sm:flex-none">
+                                    <Sparkles className="w-3 md:w-4 h-3 md:h-4 text-purple-600" />
+                                    <span className="hidden sm:inline">AI Text</span>
                                 </Button>
-                                <Button onClick={() => setShowAiImageModal(true)} variant="outline" size="sm" className="gap-2">
-                                    <Image className="w-4 h-4 text-pink-600" />
-                                    AI Image
+                                <Button onClick={() => setShowAiImageModal(true)} variant="outline" size="sm" className="gap-1 md:gap-2 text-xs md:text-sm flex-1 sm:flex-none">
+                                    <Image className="w-3 md:w-4 h-3 md:h-4 text-pink-600" />
+                                    <span className="hidden sm:inline">Image</span>
                                 </Button>
-                                <Button onClick={formatContent} disabled={formatLoading} variant="outline" size="sm" className="gap-2">
+                                <Button onClick={formatContent} disabled={formatLoading} variant="outline" size="sm" className="gap-1 md:gap-2 text-xs md:text-sm hidden sm:flex">
                                     {formatLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4 text-blue-600" />}
                                     Format
                                 </Button>
-                                <Button onClick={() => setIsFullscreen(!isFullscreen)} variant="ghost" size="icon">
+                                <Button onClick={() => setIsFullscreen(!isFullscreen)} variant="ghost" size="icon" className="hidden sm:flex">
                                     {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                                 </Button>
-                                <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-purple-600 hover:bg-purple-700 gap-2 min-w-[100px]">
+                                <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-purple-600 hover:bg-purple-700 gap-1 md:gap-2 flex-1 sm:flex-none text-xs md:text-sm">
                                     {(createMutation.isPending || updateMutation.isPending) ? (
                                         <>
-                                            <Loader2 className="w-4 h-4 animate-spin" />
-                                            Saving...
+                                            <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin" />
+                                            <span className="hidden sm:inline">Saving...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <Save className="w-4 h-4" />
+                                            <Save className="w-3 md:w-4 h-3 md:h-4" />
                                             Save
                                         </>
                                     )}
                                 </Button>
-                                <Button variant="ghost" size="icon" onClick={() => setShowEditor(false)}>
-                                    <X className="w-5 h-5" />
+                                <Button variant="ghost" size="icon" onClick={() => setShowEditor(false)} className="flex-shrink-0">
+                                    <X className="w-4 md:w-5 h-4 md:h-5" />
                                 </Button>
                             </div>
                         </div>
@@ -373,7 +373,7 @@ export default function Notes() {
                                 value={editorContent}
                                 onChange={setEditorContent}
                                 placeholder="Start writing..."
-                                className="h-full"
+                                className="h-full notes-quill-responsive"
                                 theme="snow"
                                 modules={{
                                     toolbar: [
@@ -385,20 +385,42 @@ export default function Notes() {
                                     ],
                                 }}
                             />
+                            <style>{`
+                                @media (max-width: 768px) {
+                                    .notes-quill-responsive .ql-toolbar {
+                                        padding: 6px !important;
+                                    }
+                                    .notes-quill-responsive .ql-toolbar button {
+                                        width: 24px !important;
+                                        height: 24px !important;
+                                        padding: 2px 4px !important;
+                                    }
+                                    .notes-quill-responsive .ql-toolbar .ql-picker-label {
+                                        padding: 2px 4px !important;
+                                        font-size: 12px !important;
+                                    }
+                                    .notes-quill-responsive .ql-container {
+                                        font-size: 14px !important;
+                                    }
+                                    .notes-quill-responsive .ql-editor {
+                                        padding: 12px !important;
+                                    }
+                                }
+                            `}</style>
                         </div>
 
-                        <div className="p-3 border-t bg-gray-50 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <Tag className="w-4 h-4 text-gray-400" />
+                        <div className="p-2 md:p-3 border-t bg-gray-50 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+                            <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+                                <Tag className="w-3 md:w-4 h-3 md:h-4 text-gray-400" />
                                 {noteTags.map((tag, i) => (
-                                    <span key={i} className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded flex items-center gap-1">
+                                    <span key={i} className="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 bg-purple-100 text-purple-700 rounded flex items-center gap-1">
                                         {tag}
-                                        <button onClick={() => setNoteTags(noteTags.filter((_, idx) => idx !== i))} className="hover:text-purple-900">×</button>
+                                        <button onClick={() => setNoteTags(noteTags.filter((_, idx) => idx !== i))} className="hover:text-purple-900 text-sm">×</button>
                                     </span>
                                 ))}
                                 <Input
                                     placeholder="Add tag..."
-                                    className="w-24 h-7 text-xs"
+                                    className="w-20 md:w-24 h-6 md:h-7 text-[10px] md:text-xs"
                                     onKeyDown={e => {
                                         if (e.key === 'Enter' && e.target.value.trim()) {
                                             setNoteTags([...noteTags, e.target.value.trim()]);
@@ -411,10 +433,10 @@ export default function Notes() {
                                 <Button 
                                     variant="ghost" 
                                     size="sm" 
-                                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                    className="text-red-500 hover:text-red-700 hover:bg-red-50 text-xs md:text-sm"
                                     onClick={() => { deleteMutation.mutate(selectedNote.id); setShowEditor(false); }}
                                 >
-                                    <Trash2 className="w-4 h-4 mr-1" /> Delete
+                                    <Trash2 className="w-3 md:w-4 h-3 md:h-4 mr-1" /> Delete
                                 </Button>
                             )}
                         </div>
@@ -426,20 +448,21 @@ export default function Notes() {
 
             {/* AI Text Modal */}
             <Dialog open={showAiTextModal} onOpenChange={setShowAiTextModal}>
-                <DialogContent className="max-w-md">
-                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-purple-600" /> Generate AI Text
+                <DialogContent className="max-w-md mx-2 md:mx-0">
+                    <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
+                        <Sparkles className="w-4 md:w-5 h-4 md:h-5 text-purple-600" /> Generate AI Text
                     </h3>
                     <Input
                         placeholder="Describe what you want to write about..."
                         value={aiPrompt}
                         onChange={e => setAiPrompt(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && generateAIText()}
+                        className="text-sm md:text-base"
                     />
                     <div className="flex justify-end gap-2 mt-4">
-                        <Button variant="outline" onClick={() => { setShowAiTextModal(false); setAiPrompt(''); }}>Cancel</Button>
-                        <Button onClick={generateAIText} disabled={aiLoading || !aiPrompt.trim()} className="bg-purple-600 hover:bg-purple-700">
-                            {aiLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                        <Button variant="outline" onClick={() => { setShowAiTextModal(false); setAiPrompt(''); }} className="text-xs md:text-sm">Cancel</Button>
+                        <Button onClick={generateAIText} disabled={aiLoading || !aiPrompt.trim()} className="bg-purple-600 hover:bg-purple-700 text-xs md:text-sm">
+                            {aiLoading ? <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin mr-2" /> : <Sparkles className="w-3 md:w-4 h-3 md:h-4 mr-2" />}
                             Generate
                         </Button>
                     </div>
@@ -448,21 +471,22 @@ export default function Notes() {
 
             {/* AI Image Modal */}
             <Dialog open={showAiImageModal} onOpenChange={setShowAiImageModal}>
-                <DialogContent className="max-w-md">
-                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <Image className="w-5 h-5 text-pink-600" /> Generate AI Image
+                <DialogContent className="max-w-md mx-2 md:mx-0">
+                    <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
+                        <Image className="w-4 md:w-5 h-4 md:h-5 text-pink-600" /> Generate AI Image
                     </h3>
                     <Input
                         placeholder="Describe the image you want to create..."
                         value={aiPrompt}
                         onChange={e => setAiPrompt(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && generateAIImage()}
+                        className="text-sm md:text-base"
                     />
-                    <p className="text-xs text-gray-500 mt-2">Be descriptive for better results. Takes 5-10 seconds.</p>
+                    <p className="text-[10px] md:text-xs text-gray-500 mt-2">Be descriptive for better results. Takes 5-10 seconds.</p>
                     <div className="flex justify-end gap-2 mt-4">
-                        <Button variant="outline" onClick={() => { setShowAiImageModal(false); setAiPrompt(''); }}>Cancel</Button>
-                        <Button onClick={generateAIImage} disabled={aiLoading || !aiPrompt.trim()} className="bg-pink-600 hover:bg-pink-700">
-                            {aiLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Image className="w-4 h-4 mr-2" />}
+                        <Button variant="outline" onClick={() => { setShowAiImageModal(false); setAiPrompt(''); }} className="text-xs md:text-sm">Cancel</Button>
+                        <Button onClick={generateAIImage} disabled={aiLoading || !aiPrompt.trim()} className="bg-pink-600 hover:bg-pink-700 text-xs md:text-sm">
+                            {aiLoading ? <Loader2 className="w-3 md:w-4 h-3 md:h-4 animate-spin mr-2" /> : <Image className="w-3 md:w-4 h-3 md:h-4 mr-2" />}
                             Generate
                         </Button>
                     </div>
