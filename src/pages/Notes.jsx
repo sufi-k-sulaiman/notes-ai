@@ -42,13 +42,40 @@ function NoteCard({ note, onClick, formatDate }) {
     const content = note.content?.replace(/<[^>]*>/g, '') || '';
     const wordCount = note.word_count || content.split(/\s+/).filter(w => w).length || 0;
     const charCount = content.length || 0;
-    
+
+    // Extract image URLs from content
+    const imageRegex = /<img[^>]+src="([^">]+)"/g;
+    const images = [];
+    let match;
+    while ((match = imageRegex.exec(note.content || '')) !== null) {
+        images.push(match[1]);
+    }
+
     return (
         <div
             onClick={() => onClick(note)}
             className="bg-white/60 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/80 p-4 md:p-6 cursor-pointer hover:shadow-xl hover:bg-white/80 hover:border-purple-300 transition-all shadow-lg"
         >
-            <h3 className="font-bold text-gray-900 mb-2 md:mb-3 text-base md:text-lg line-clamp-2">{note.title || 'Untitled'}</h3>
+            <div className="flex items-start justify-between gap-3 mb-2 md:mb-3">
+                <h3 className="font-bold text-gray-900 text-base md:text-lg line-clamp-2 flex-1">{note.title || 'Untitled'}</h3>
+                {images.length > 0 && (
+                    <div className="flex gap-1 flex-shrink-0">
+                        {images.slice(0, 3).map((img, i) => (
+                            <img 
+                                key={i} 
+                                src={img} 
+                                alt="" 
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-lg object-cover border border-gray-200"
+                            />
+                        ))}
+                        {images.length > 3 && (
+                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-purple-100 flex items-center justify-center text-xs font-semibold text-purple-600">
+                                +{images.length - 3}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
             <p className="text-xs md:text-sm text-gray-600 line-clamp-3 md:line-clamp-4 mb-3 md:mb-4 min-h-[60px] md:min-h-[80px] leading-relaxed">
                 {content.slice(0, 200) || 'No content'}
             </p>
