@@ -1093,7 +1093,7 @@ export default function Notes() {
                                     className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-lg"
                                 />
                                 <div>
-                                    <h1 className={`text-xl md:text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Notes Ai</h1>
+                                    <h1 className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`} style={{ fontSize: '1.55rem' }}>Notes Ai</h1>
                                     <p className={`text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Generative text, images and code</p>
                                 </div>
                             </div>
