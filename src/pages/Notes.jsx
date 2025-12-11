@@ -362,34 +362,6 @@ export default function Notes() {
                                 <Palette className="w-3.5 md:w-4 h-3.5 md:h-4 text-orange-600" />
                                 <span className="hidden sm:inline">Color</span>
                             </Button>
-                            <Button onClick={formatContent} disabled={formatLoading} variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                {formatLoading ? <Loader2 className="w-3.5 md:w-4 h-3.5 md:h-4 animate-spin" /> : <FileText className="w-3.5 md:w-4 h-3.5 md:h-4 text-blue-600" />}
-                                <span className="hidden sm:inline">Format</span>
-                            </Button>
-                            <Popover open={showTablePopover} onOpenChange={setShowTablePopover}>
-                                <PopoverTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="gap-1 text-xs md:text-sm hover:bg-white/60">
-                                        <Table className="w-3.5 md:w-4 h-3.5 md:h-4 text-indigo-600" />
-                                        <span className="hidden sm:inline">Table</span>
-                                        <ChevronDown className="w-3 h-3" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-72 bg-white/90 backdrop-blur-xl border-white/80 shadow-xl">
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="text-sm font-medium text-gray-700 mb-2 block">Columns: {tableCols}</label>
-                                            <Slider value={[tableCols]} onValueChange={(v) => setTableCols(v[0])} min={2} max={8} step={1} className="mb-2" />
-                                        </div>
-                                        <div>
-                                            <label className="text-sm font-medium text-gray-700 mb-2 block">Rows: {tableRows}</label>
-                                            <Slider value={[tableRows]} onValueChange={(v) => setTableRows(v[0])} min={2} max={10} step={1} className="mb-2" />
-                                        </div>
-                                        <Button onClick={insertTable} className="w-full bg-indigo-600 hover:bg-indigo-700">
-                                            Insert {tableCols}x{tableRows} Table
-                                        </Button>
-                                    </div>
-                                </PopoverContent>
-                            </Popover>
                             <div className="flex-1" />
                             <Button onClick={saveNote} disabled={createMutation.isPending || updateMutation.isPending} className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 backdrop-blur-xl shadow-lg gap-1.5 text-xs md:text-sm border-0 h-8 px-4">
                                 {(createMutation.isPending || updateMutation.isPending) ? (
