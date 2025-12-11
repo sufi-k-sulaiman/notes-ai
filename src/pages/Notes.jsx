@@ -191,15 +191,15 @@ export default function Notes() {
         if (quillRef.current) {
             const editor = quillRef.current.getEditor();
             const container = editor.container;
-            const fontSize = textSize === 'small' ? '13px' : textSize === 'large' ? '18px' : '15px';
+            const fontSize = textSize === 'small' ? '14px' : textSize === 'large' ? '18px' : '16px';
             container.querySelector('.ql-editor').style.fontSize = fontSize;
         }
     }, [textSize]);
 
     const getEditorFontSize = () => {
-        if (textSize === 'small') return '13px';
+        if (textSize === 'small') return '14px';
         if (textSize === 'large') return '18px';
-        return '15px'; // medium
+        return '16px'; // medium
     };
 
     const closeAllTabs = () => {
@@ -478,13 +478,13 @@ export default function Notes() {
                     font-size: ${getGlobalFontSize()} !important;
                 }
                 .notes-editor-container h1 {
-                    font-size: ${textSize === 'small' ? '1.5rem' : textSize === 'large' ? '2rem' : '1.75rem'} !important;
+                    font-size: ${textSize === 'small' ? '1.75rem' : textSize === 'large' ? '2.25rem' : '2rem'} !important;
                 }
                 .notes-editor-container h2 {
-                    font-size: ${textSize === 'small' ? '1.25rem' : textSize === 'large' ? '1.75rem' : '1.5rem'} !important;
+                    font-size: ${textSize === 'small' ? '1.5rem' : textSize === 'large' ? '2rem' : '1.75rem'} !important;
                 }
                 .notes-editor-container h3 {
-                    font-size: ${textSize === 'small' ? '1.1rem' : textSize === 'large' ? '1.5rem' : '1.25rem'} !important;
+                    font-size: ${textSize === 'small' ? '1.25rem' : textSize === 'large' ? '1.75rem' : '1.5rem'} !important;
                 }
             `}</style>
             <div className={`notes-editor-container min-h-screen ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`} style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
@@ -1076,19 +1076,19 @@ export default function Notes() {
                     font-size: ${getGlobalFontSize()} !important;
                 }
                 .notes-app-container h1 {
-                    font-size: ${textSize === 'small' ? '1.5rem' : textSize === 'large' ? '2rem' : '1.75rem'} !important;
+                    font-size: ${textSize === 'small' ? '1.75rem' : textSize === 'large' ? '2.25rem' : '2rem'} !important;
                 }
                 .notes-app-container h2 {
-                    font-size: ${textSize === 'small' ? '1.25rem' : textSize === 'large' ? '1.75rem' : '1.5rem'} !important;
+                    font-size: ${textSize === 'small' ? '1.5rem' : textSize === 'large' ? '2rem' : '1.75rem'} !important;
                 }
                 .notes-app-container h3 {
-                    font-size: ${textSize === 'small' ? '1.1rem' : textSize === 'large' ? '1.5rem' : '1.25rem'} !important;
+                    font-size: ${textSize === 'small' ? '1.25rem' : textSize === 'large' ? '1.75rem' : '1.5rem'} !important;
                 }
                 .notes-app-container .text-xs {
-                    font-size: ${textSize === 'small' ? '10px' : textSize === 'large' ? '14px' : '12px'} !important;
+                    font-size: ${textSize === 'small' ? '11px' : textSize === 'large' ? '14px' : '12px'} !important;
                 }
                 .notes-app-container .text-sm {
-                    font-size: ${textSize === 'small' ? '12px' : textSize === 'large' ? '16px' : '14px'} !important;
+                    font-size: ${textSize === 'small' ? '13px' : textSize === 'large' ? '16px' : '14px'} !important;
                 }
                 .notes-app-container .text-base {
                     font-size: ${textSize === 'small' ? '14px' : textSize === 'large' ? '18px' : '16px'} !important;
@@ -1100,10 +1100,10 @@ export default function Notes() {
                     font-size: ${textSize === 'small' ? '18px' : textSize === 'large' ? '24px' : '20px'} !important;
                 }
                 .notes-app-container .text-2xl {
-                    font-size: ${textSize === 'small' ? '20px' : textSize === 'large' ? '28px' : '24px'} !important;
+                    font-size: ${textSize === 'small' ? '22px' : textSize === 'large' ? '28px' : '24px'} !important;
                 }
                 .notes-app-container .text-3xl {
-                    font-size: ${textSize === 'small' ? '24px' : textSize === 'large' ? '32px' : '28px'} !important;
+                    font-size: ${textSize === 'small' ? '26px' : textSize === 'large' ? '32px' : '28px'} !important;
                 }
             `}</style>
             <div className={`notes-app-container min-h-screen p-3 md:p-6 xl:p-0 ${darkMode ? 'bg-[#0c0f1f]' : 'bg-white'}`} style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
