@@ -1390,44 +1390,68 @@ export default function Notes() {
                                 </div>
                                 <div className="flex-1">
                                     {editingName ? (
-                                        <div className="flex items-center gap-2">
+                                        <div className="space-y-2">
                                             <Input
-                                                value={newName}
-                                                onChange={(e) => setNewName(e.target.value)}
+                                                placeholder="First name"
+                                                value={newName.split('|')[0] || ''}
+                                                onChange={(e) => {
+                                                    const parts = newName.split('|');
+                                                    setNewName(`${e.target.value}|${parts[1] || ''}`);
+                                                }}
                                                 className={`h-8 ${darkMode ? 'bg-gray-800 border-gray-600' : ''}`}
                                                 autoFocus
                                             />
-                                            <Button 
-                                                size="sm" 
-                                                onClick={async () => {
-                                                    if (newName.trim()) {
-                                                        try {
-                                                            await base44.auth.updateMe({ full_name: newName.trim() });
-                                                            await queryClient.invalidateQueries({ queryKey: ['user'] });
-                                                            await queryClient.refetchQueries({ queryKey: ['user'] });
-                                                            setEditingName(false);
-                                                        } catch (error) {
-                                                            console.error('Failed to update name:', error);
-                                                        }
-                                                    }
+                                            <Input
+                                                placeholder="Last name"
+                                                value={newName.split('|')[1] || ''}
+                                                onChange={(e) => {
+                                                    const parts = newName.split('|');
+                                                    setNewName(`${parts[0] || ''}|${e.target.value}`);
                                                 }}
-                                                className="h-8 bg-purple-600 hover:bg-purple-700"
-                                            >
-                                                Save
-                                            </Button>
-                                            <Button 
-                                                size="sm" 
-                                                variant="ghost"
-                                                onClick={() => setEditingName(false)}
-                                                className="h-8"
-                                            >
-                                                <X className="w-4 h-4" />
-                                            </Button>
+                                                className={`h-8 ${darkMode ? 'bg-gray-800 border-gray-600' : ''}`}
+                                            />
+                                            <div className="flex gap-2">
+                                                <Button 
+                                                    size="sm" 
+                                                    onClick={async () => {
+                                                        const [firstName, lastName] = newName.split('|');
+                                                        if (firstName?.trim() || lastName?.trim()) {
+                                                            try {
+                                                                await base44.auth.updateMe({ 
+                                                                    first_name: firstName?.trim() || '',
+                                                                    last_name: lastName?.trim() || '',
+                                                                    full_name: `${firstName?.trim() || ''} ${lastName?.trim() || ''}`.trim()
+                                                                });
+                                                                await queryClient.invalidateQueries({ queryKey: ['user'] });
+                                                                await queryClient.refetchQueries({ queryKey: ['user'] });
+                                                                setEditingName(false);
+                                                            } catch (error) {
+                                                                console.error('Failed to update name:', error);
+                                                            }
+                                                        }
+                                                    }}
+                                                    className="flex-1 h-8 bg-purple-600 hover:bg-purple-700"
+                                                >
+                                                    Save
+                                                </Button>
+                                                <Button 
+                                                    size="sm" 
+                                                    variant="ghost"
+                                                    onClick={() => setEditingName(false)}
+                                                    className="h-8"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </Button>
+                                            </div>
                                         </div>
                                     ) : (
                                         <div className="flex items-center justify-between">
                                             <div>
-                                                <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{user?.full_name || 'User'}</p>
+                                                <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                                    {user?.first_name || user?.last_name 
+                                                        ? `${user?.first_name || ''} ${user?.last_name || ''}`.trim()
+                                                        : user?.full_name || 'User'}
+                                                </p>
                                                 <p className={`text-sm flex items-center gap-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                                                     <Mail className="w-3 h-3" />
                                                     {user?.email || 'user@example.com'}
@@ -1437,7 +1461,7 @@ export default function Notes() {
                                                 size="sm"
                                                 variant="ghost"
                                                 onClick={() => {
-                                                    setNewName(user?.full_name || '');
+                                                    setNewName(`${user?.first_name || user?.full_name?.split(' ')[0] || ''}|${user?.last_name || user?.full_name?.split(' ').slice(1).join(' ') || ''}`);
                                                     setEditingName(true);
                                                 }}
                                                 className={`${darkMode ? 'hover:bg-gray-600' : ''}`}
@@ -1503,11 +1527,45 @@ export default function Notes() {
                             </div>
                         </div>
 
+                        {/* Danger Zone */}
+                        <div className={`space-y-3 p-4 rounded-lg border-2 ${darkMode ? 'bg-red-900/10 border-red-500/30' : 'bg-red-50 border-red-200'}`}>
+                            <h3 className={`text-sm font-semibold ${darkMode ? 'text-red-400' : 'text-red-700'}`}>Danger Zone</h3>
+                            
+                            <Button 
+                                onClick={async () => {
+                                    if (confirm('Delete all your notes? This cannot be undone.')) {
+                                        const userNotes = await base44.entities.Note.filter({ created_by: user?.email });
+                                        await Promise.all(userNotes.map(note => base44.entities.Note.delete(note.id)));
+                                        queryClient.invalidateQueries({ queryKey: ['notes'] });
+                                        setToast('All notes deleted');
+                                    }
+                                }}
+                                variant="outline"
+                                className={`w-full ${darkMode ? 'border-red-500/50 text-red-400 hover:bg-red-500/10' : 'border-red-300 text-red-600 hover:bg-red-50'}`}
+                            >
+                                Delete All Data
+                            </Button>
+
+                            <Button 
+                                onClick={async () => {
+                                    if (confirm('Delete your account? This will delete your account and all data. This cannot be undone.')) {
+                                        const userNotes = await base44.entities.Note.filter({ created_by: user?.email });
+                                        await Promise.all(userNotes.map(note => base44.entities.Note.delete(note.id)));
+                                        base44.auth.logout();
+                                    }
+                                }}
+                                variant="outline"
+                                className={`w-full ${darkMode ? 'border-red-500/50 text-red-400 hover:bg-red-500/10' : 'border-red-300 text-red-600 hover:bg-red-50'}`}
+                            >
+                                Delete Account
+                            </Button>
+                        </div>
+
                         {/* Logout Button */}
                         <Button 
                             onClick={() => base44.auth.logout()} 
                             variant="outline"
-                            className={`w-full ${darkMode ? 'border-red-500/50 text-red-400 hover:bg-red-500/10' : 'border-red-300 text-red-600 hover:bg-red-50'}`}
+                            className={`w-full ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
                         >
                             Logout
                         </Button>
