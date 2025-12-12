@@ -952,14 +952,6 @@ export default function Notes() {
                                         >
                                             🔗 Link
                                         </button>
-                                        <label className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center ${
-                                            darkMode 
-                                                ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
-                                                : 'bg-white/60 hover:bg-white/80 border-gray-300'
-                                        }`}>
-                                            {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : '🖼️ Image'}
-                                            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                                        </label>
                                         <div className={`w-px h-8 mx-1 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
                                         <Button
                                             onClick={formatContent}
