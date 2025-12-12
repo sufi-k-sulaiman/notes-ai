@@ -479,6 +479,16 @@ export default function Notes() {
         return (
             <>
             <style>{`
+                /* Touch optimization */
+                * {
+                    -webkit-tap-highlight-color: transparent;
+                    touch-action: manipulation;
+                }
+
+                button, input, textarea, select {
+                    touch-action: manipulation;
+                }
+
                 .notes-editor-container * {
                     font-size: ${getGlobalFontSize()} !important;
                 }
@@ -690,11 +700,12 @@ export default function Notes() {
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && generateAIText()}
-                                        className={`text-sm backdrop-blur-sm border rounded-full pr-28 pl-6 h-12 shadow-sm ${
+                                        className={`text-base backdrop-blur-sm border rounded-full pr-28 pl-6 h-12 shadow-sm ${
                                             darkMode 
                                                 ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
                                                 : 'bg-white/60 border-gray-300'
                                         }`}
+                                        style={{ fontSize: '16px' }}
                                     />
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIText(); }} 
@@ -744,11 +755,12 @@ export default function Notes() {
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && generateAIImage()}
-                                        className={`text-sm backdrop-blur-sm border rounded-full pr-32 pl-6 h-12 shadow-sm ${
+                                        className={`text-base backdrop-blur-sm border rounded-full pr-32 pl-6 h-12 shadow-sm ${
                                             darkMode 
                                                 ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
                                                 : 'bg-white/60 border-gray-300'
                                         }`}
+                                        style={{ fontSize: '16px' }}
                                     />
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIImage(); }} 
@@ -801,11 +813,12 @@ export default function Notes() {
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && generateAICode()}
-                                        className={`text-sm backdrop-blur-sm border rounded-full pr-28 pl-6 h-12 shadow-sm ${
+                                        className={`text-base backdrop-blur-sm border rounded-full pr-28 pl-6 h-12 shadow-sm ${
                                             darkMode 
                                                 ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
                                                 : 'bg-white/60 border-gray-300'
                                         }`}
+                                        style={{ fontSize: '16px' }}
                                     />
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAICode(); }} 
@@ -978,6 +991,7 @@ export default function Notes() {
                                                         ? 'bg-gray-800 border-gray-600 text-white' 
                                                         : ''
                                                 }`}
+                                                style={{ fontSize: '16px' }}
                                                 autoFocus
                                             />
                                             <Button onClick={applyLink} size="sm" className="bg-indigo-600 hover:bg-indigo-700 min-h-[40px]">
@@ -1003,11 +1017,12 @@ export default function Notes() {
                                 placeholder="Note title..."
                                 value={noteTitle}
                                 onChange={e => setNoteTitle(e.target.value)}
-                                className={`text-sm font-semibold border-0 shadow-none focus-visible:ring-0 w-full bg-transparent px-0 ${
+                                className={`text-base font-semibold border-0 shadow-none focus-visible:ring-0 w-full bg-transparent px-0 ${
                                     darkMode 
                                         ? 'text-white placeholder:text-gray-500' 
                                         : 'placeholder:text-gray-400'
                                 }`}
+                                style={{ fontSize: '16px' }}
                             />
                         </div>
 
@@ -1169,6 +1184,7 @@ export default function Notes() {
                                             ? 'bg-gray-800/60 border-gray-700 text-white placeholder:text-gray-500' 
                                             : 'bg-white/60 border-gray-300'
                                     }`}
+                                    style={{ fontSize: '16px' }}
                                 />
                             </div>
                             <div className={`flex items-center backdrop-blur-xl rounded-xl shadow-sm p-1 ${
@@ -1392,7 +1408,8 @@ export default function Notes() {
                                                     const parts = newName.split('|');
                                                     setNewName(`${e.target.value}|${parts[1] || ''}`);
                                                 }}
-                                                className={`h-8 ${darkMode ? 'bg-gray-800 border-gray-600' : ''}`}
+                                                className={`h-10 ${darkMode ? 'bg-gray-800 border-gray-600' : ''}`}
+                                                style={{ fontSize: '16px' }}
                                                 autoFocus
                                             />
                                             <Input
@@ -1402,7 +1419,8 @@ export default function Notes() {
                                                     const parts = newName.split('|');
                                                     setNewName(`${parts[0] || ''}|${e.target.value}`);
                                                 }}
-                                                className={`h-8 ${darkMode ? 'bg-gray-800 border-gray-600' : ''}`}
+                                                className={`h-10 ${darkMode ? 'bg-gray-800 border-gray-600' : ''}`}
+                                                style={{ fontSize: '16px' }}
                                             />
                                             <div className="flex gap-2">
                                                 <Button 
