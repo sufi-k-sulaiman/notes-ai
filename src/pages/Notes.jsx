@@ -1527,7 +1527,7 @@ export default function Notes() {
                             </div>
                         </div>
 
-                        {/* Danger Zone */}
+                        {/* Cannot be undone*/}
                         <div className={`space-y-3 p-4 rounded-lg border-2 ${darkMode ? 'bg-red-900/10 border-red-500/30' : 'bg-red-50 border-red-200'}`}>
                             <h3 className={`text-sm font-semibold ${darkMode ? 'text-red-400' : 'text-red-700'}`}>Danger Zone</h3>
                             
