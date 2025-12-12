@@ -177,6 +177,8 @@ export default function Notes() {
     const [editingName, setEditingName] = useState(false);
     const [newName, setNewName] = useState('');
     const [showDeleteRibbon, setShowDeleteRibbon] = useState(false);
+    const [showDeleteDataRibbon, setShowDeleteDataRibbon] = useState(false);
+    const [showDeleteAccountRibbon, setShowDeleteAccountRibbon] = useState(false);
     const queryClient = useQueryClient();
 
     useEffect(() => {
@@ -1531,31 +1533,78 @@ export default function Notes() {
                         <div className={`space-y-3 p-4 rounded-lg border-2 ${darkMode ? 'bg-red-900/10 border-red-500/30' : 'bg-red-50 border-red-200'}`}>
                             <h3 className={`text-sm font-semibold ${darkMode ? 'text-red-400' : 'text-red-700'}`}>Cannot be undone</h3>
                             
+                            {showDeleteDataRibbon && (
+                                <div className="bg-red-600 text-white p-3 rounded-lg">
+                                    <p className="font-semibold mb-2">Delete all your notes?</p>
+                                    <p className="text-xs text-red-100 mb-3">This will permanently delete all your notes. This cannot be undone.</p>
+                                    <div className="flex gap-2">
+                                        <Button 
+                                            onClick={() => setShowDeleteDataRibbon(false)}
+                                            variant="outline"
+                                            className="flex-1 bg-white/20 hover:bg-white/30 text-white border-white/40"
+                                            size="sm"
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button 
+                                            onClick={async () => {
+                                                const userNotes = await base44.entities.Note.filter({ created_by: user?.email });
+                                                await Promise.all(userNotes.map(note => base44.entities.Note.delete(note.id)));
+                                                queryClient.invalidateQueries({ queryKey: ['notes'] });
+                                                setShowDeleteDataRibbon(false);
+                                                setToast('All notes deleted');
+                                            }}
+                                            className="flex-1 bg-white hover:bg-red-50 text-red-600"
+                                            size="sm"
+                                        >
+                                            Delete All Data
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                            
                             <Button 
-                                onClick={async () => {
-                                    if (confirm('Delete all your notes? This cannot be undone.')) {
-                                        const userNotes = await base44.entities.Note.filter({ created_by: user?.email });
-                                        await Promise.all(userNotes.map(note => base44.entities.Note.delete(note.id)));
-                                        queryClient.invalidateQueries({ queryKey: ['notes'] });
-                                        setToast('All notes deleted');
-                                    }
-                                }}
+                                onClick={() => setShowDeleteDataRibbon(true)}
                                 variant="outline"
                                 className={`w-full ${darkMode ? 'border-red-500/50 text-red-400 hover:bg-red-500/10' : 'border-red-300 text-red-600 hover:bg-red-50'}`}
+                                disabled={showDeleteDataRibbon}
                             >
                                 Delete All Data
                             </Button>
 
+                            {showDeleteAccountRibbon && (
+                                <div className="bg-red-600 text-white p-3 rounded-lg">
+                                    <p className="font-semibold mb-2">Delete your account?</p>
+                                    <p className="text-xs text-red-100 mb-3">This will permanently delete your account and all data. This cannot be undone.</p>
+                                    <div className="flex gap-2">
+                                        <Button 
+                                            onClick={() => setShowDeleteAccountRibbon(false)}
+                                            variant="outline"
+                                            className="flex-1 bg-white/20 hover:bg-white/30 text-white border-white/40"
+                                            size="sm"
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button 
+                                            onClick={async () => {
+                                                const userNotes = await base44.entities.Note.filter({ created_by: user?.email });
+                                                await Promise.all(userNotes.map(note => base44.entities.Note.delete(note.id)));
+                                                base44.auth.logout();
+                                            }}
+                                            className="flex-1 bg-white hover:bg-red-50 text-red-600"
+                                            size="sm"
+                                        >
+                                            Delete Account
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+
                             <Button 
-                                onClick={async () => {
-                                    if (confirm('Delete your account? This will delete your account and all data. This cannot be undone.')) {
-                                        const userNotes = await base44.entities.Note.filter({ created_by: user?.email });
-                                        await Promise.all(userNotes.map(note => base44.entities.Note.delete(note.id)));
-                                        base44.auth.logout();
-                                    }
-                                }}
+                                onClick={() => setShowDeleteAccountRibbon(true)}
                                 variant="outline"
                                 className={`w-full ${darkMode ? 'border-red-500/50 text-red-400 hover:bg-red-500/10' : 'border-red-300 text-red-600 hover:bg-red-50'}`}
+                                disabled={showDeleteAccountRibbon}
                             >
                                 Delete Account
                             </Button>
