@@ -708,7 +708,7 @@ export default function Notes() {
                                         <button
                                             key={style.id}
                                             onClick={() => setSelectedWritingStyle(style.id)}
-                                            className={`px-4 py-2 rounded-lg text-base font-medium transition-all ${
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                                                 selectedWritingStyle === style.id
                                                     ? 'bg-purple-500 text-white'
                                                     : darkMode 
@@ -823,7 +823,7 @@ export default function Notes() {
                                         <button
                                             key={lang}
                                             onClick={() => setSelectedLanguage(lang)}
-                                            className={`px-4 py-2 rounded-md text-base font-semibold transition-all ${
+                                            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
                                                 selectedLanguage === lang
                                                     ? 'bg-emerald-500 text-white'
                                                     : darkMode 
