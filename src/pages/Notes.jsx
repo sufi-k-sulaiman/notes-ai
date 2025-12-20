@@ -979,7 +979,7 @@ export default function Notes() {
                             }`}>
                                 <div className="flex items-center justify-between mb-3">
                                     <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-indigo-400' : 'text-indigo-700'}`}>
-                                        <AlignLeft className={`w-4 h-4 ${darkMode ? 'text-indigo-500' : 'text-indigo-600'}`} /> Text Formatting
+                                        <AlignLeft className={`w-4 h-4 ${darkMode ? 'text-indigo-500' : 'text-indigo-600'}`} /> Format Text
                                     </h3>
                                 </div>
 
