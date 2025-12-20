@@ -725,7 +725,7 @@ export default function Notes() {
                                 <div className="space-y-2">
                                     <div className="relative">
                                         <Textarea
-                                            placeholder="Describe what text"
+                                            placeholder="Enter the subject"
                                             value={aiPrompt}
                                             onChange={e => setAiPrompt(e.target.value)}
                                             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAIText()}
