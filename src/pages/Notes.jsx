@@ -1100,24 +1100,8 @@ export default function Notes() {
                                     )}
 
                                     {/* Color Picker Section */}
-                                    <div className="space-y-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
-                                        <button
-                                            onClick={() => setShowColorPickerSection(!showColorPickerSection)}
-                                            className={`w-full flex items-center justify-between p-3 rounded-lg transition-all ${
-                                                darkMode 
-                                                    ? 'bg-gray-700/60 hover:bg-gray-600' 
-                                                    : 'bg-white/60 hover:bg-white/80'
-                                            }`}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <Palette className={`w-4 h-4 ${darkMode ? 'text-orange-500' : 'text-orange-600'}`} />
-                                                <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Color Picker</span>
-                                            </div>
-                                            <ChevronDown className={`w-4 h-4 transition-transform ${showColorPickerSection ? 'rotate-180' : ''} ${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
-                                        </button>
-
-                                        {showColorPickerSection && (
-                                            <>
+                                    {showColorPickerSection && (
+                                        <div className="space-y-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
                                                 <div className="flex items-center gap-3">
                                                     <div 
                                                         className="w-16 h-16 rounded-2xl border-2 border-gray-300 shadow-sm flex-shrink-0"
@@ -1202,9 +1186,8 @@ export default function Notes() {
                                                         Background
                                                     </button>
                                                 </div>
-                                            </>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
