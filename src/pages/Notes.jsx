@@ -819,14 +819,14 @@ export default function Notes() {
                   map((lang) =>
                   <button
                     key={lang}
-                    onClick={() => setSelectedLanguage(lang)}
-                    className={`px-4 py-2 rounded-md text-base font-semibold transition-all ${
-                    selectedLanguage === lang ?
-                    'bg-emerald-500 text-white' :
-                    darkMode ?
-                    'bg-gray-700/60 text-gray-300 hover:bg-gray-600' :
-                    'bg-white/60 text-gray-700 hover:bg-emerald-100'}`
-                    }>
+                    onClick={() => setSelectedLanguage(lang)} className="bg-white/60 text-gray-700 pr-2 pb-2 pl-2 text-base font-semibold rounded-md transition-all hover:bg-emerald-100">
+
+
+
+
+
+
+
 
                                             {lang}
                                         </button>
