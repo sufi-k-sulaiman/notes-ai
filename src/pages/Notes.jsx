@@ -738,9 +738,9 @@ export default function Notes() {
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIText(); }} 
                                         disabled={aiLoading || !aiPrompt.trim()} 
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full h-12 px-5 text-sm font-medium z-10"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full h-10 px-4 text-sm font-medium z-10"
                                     >
-                                        {aiLoading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Generating...</> : <><Sparkles className="w-4 h-4 mr-1" /> Generate</>}
+                                        {aiLoading ? <><Loader2 className="w-5 h-5 animate-spin mr-1" /> Generating...</> : <><Sparkles className="w-5 h-5 mr-1" /> Generate</>}
                                     </Button>
                                 </div>
                             </div>
@@ -794,9 +794,9 @@ export default function Notes() {
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIImage(); }} 
                                         disabled={aiLoading || !aiPrompt.trim()} 
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white rounded-full h-12 px-5 text-sm font-medium z-10"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white rounded-full h-10 px-4 text-sm font-medium z-10"
                                     >
-                                        {aiLoading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Generating...</> : <><Image className="w-4 h-4 mr-1" /> Generate {imageCount}</>}
+                                        {aiLoading ? <><Loader2 className="w-5 h-5 animate-spin mr-1" /> Generating...</> : <><Image className="w-5 h-5 mr-1" /> Generate {imageCount}</>}
                                     </Button>
                                 </div>
                             </div>
@@ -853,9 +853,9 @@ export default function Notes() {
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAICode(); }} 
                                         disabled={aiLoading || !aiPrompt.trim()} 
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-full h-12 px-5 text-sm font-medium z-10"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-full h-10 px-4 text-sm font-medium z-10"
                                     >
-                                        {aiLoading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Generating...</> : <><Code2 className="w-4 h-4 mr-1" /> Generate</>}
+                                        {aiLoading ? <><Loader2 className="w-5 h-5 animate-spin mr-1" /> Generating...</> : <><Code2 className="w-5 h-5 mr-1" /> Generate</>}
                                     </Button>
                                 </div>
                             </div>
