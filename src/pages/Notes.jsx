@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
@@ -721,17 +722,18 @@ export default function Notes() {
                                 </div>
                 
                                 <div className="relative">
-                                    <Input
+                                    <Textarea
                                         placeholder="Describe what text"
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
-                                        onKeyDown={e => e.key === 'Enter' && generateAIText()}
-                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-28 pl-6 h-20 shadow-sm ${
+                                        onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAIText()}
+                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-28 pl-6 py-4 shadow-sm resize-none ${
                                             darkMode 
                                                 ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
                                                 : 'bg-white/60 border-gray-300'
                                         }`}
-                                        style={{ fontSize: '16px' }}
+                                        style={{ fontSize: '16px', minHeight: '80px' }}
+                                        rows={2}
                                     />
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIText(); }} 
@@ -776,17 +778,18 @@ export default function Notes() {
                                 </div>
 
                                 <div className="relative">
-                                    <Input
+                                    <Textarea
                                         placeholder="Describe the image"
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
-                                        onKeyDown={e => e.key === 'Enter' && generateAIImage()}
-                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-32 pl-6 h-20 shadow-sm ${
+                                        onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAIImage()}
+                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-32 pl-6 py-4 shadow-sm resize-none ${
                                             darkMode 
                                                 ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
                                                 : 'bg-white/60 border-gray-300'
                                         }`}
-                                        style={{ fontSize: '16px' }}
+                                        style={{ fontSize: '16px', minHeight: '80px' }}
+                                        rows={2}
                                     />
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIImage(); }} 
@@ -834,17 +837,18 @@ export default function Notes() {
                                 </div>
 
                                 <div className="relative">
-                                    <Input
+                                    <Textarea
                                         placeholder="Describe the code function"
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
-                                        onKeyDown={e => e.key === 'Enter' && generateAICode()}
-                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-28 pl-6 h-20 shadow-sm ${
+                                        onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAICode()}
+                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-28 pl-6 py-4 shadow-sm resize-none ${
                                             darkMode 
                                                 ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
                                                 : 'bg-white/60 border-gray-300'
                                         }`}
-                                        style={{ fontSize: '16px' }}
+                                        style={{ fontSize: '16px', minHeight: '80px' }}
+                                        rows={2}
                                     />
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAICode(); }} 
