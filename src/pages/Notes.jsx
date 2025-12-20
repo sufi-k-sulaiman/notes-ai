@@ -993,24 +993,6 @@ export default function Notes() {
                                     <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-orange-400' : 'text-orange-700'}`}>
                                         <Palette className={`w-4 h-4 ${darkMode ? 'text-orange-500' : 'text-orange-600'}`} /> Color Picker
                                     </h3>
-                                    <div className="flex gap-2">
-                                        <Button
-                                            onClick={() => setColorPickerMode('text')}
-                                            variant={colorPickerMode === 'text' ? 'default' : 'outline'}
-                                            size="sm"
-                                            className="text-xs"
-                                        >
-                                            Text
-                                        </Button>
-                                        <Button
-                                            onClick={() => setColorPickerMode('background')}
-                                            variant={colorPickerMode === 'background' ? 'default' : 'outline'}
-                                            size="sm"
-                                            className="text-xs"
-                                        >
-                                            Background
-                                        </Button>
-                                    </div>
                                 </div>
 
                                 <div className="space-y-3">
@@ -1069,6 +1051,34 @@ export default function Notes() {
                                                 }
                                             }} 
                                         />
+                                    </div>
+
+                                    {/* Toggle at bottom */}
+                                    <div className="flex gap-1 p-1 rounded-full" style={{ backgroundColor: darkMode ? 'rgba(249, 115, 22, 0.2)' : 'rgba(249, 115, 22, 0.15)' }}>
+                                        <button
+                                            onClick={() => setColorPickerMode('text')}
+                                            className={`flex-1 py-2.5 rounded-full text-sm font-semibold transition-all ${
+                                                colorPickerMode === 'text'
+                                                    ? 'bg-orange-500 text-white shadow-md'
+                                                    : darkMode 
+                                                        ? 'text-gray-300' 
+                                                        : 'text-gray-700'
+                                            }`}
+                                        >
+                                            Text
+                                        </button>
+                                        <button
+                                            onClick={() => setColorPickerMode('background')}
+                                            className={`flex-1 py-2.5 rounded-full text-sm font-semibold transition-all ${
+                                                colorPickerMode === 'background'
+                                                    ? 'bg-orange-500 text-white shadow-md'
+                                                    : darkMode 
+                                                        ? 'text-gray-300' 
+                                                        : 'text-gray-700'
+                                            }`}
+                                        >
+                                            Background
+                                        </button>
                                     </div>
                                 </div>
                             </div>
