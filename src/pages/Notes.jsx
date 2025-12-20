@@ -1047,6 +1047,18 @@ export default function Notes() {
                                         >
                                             🔗 Link
                                         </button>
+                                        <button
+                                            onClick={() => setShowColorPickerSection(!showColorPickerSection)}
+                                            className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                                showColorPickerSection
+                                                    ? 'bg-orange-500 text-white'
+                                                    : darkMode 
+                                                        ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
+                                                        : 'bg-white/60 hover:bg-white/80 border-gray-300'
+                                            }`}
+                                        >
+                                            <Palette className="w-4 h-4 mr-1" /> Color
+                                        </button>
                                         <div className={`w-px h-8 mx-1 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
                                         <Button
                                             onClick={formatContent}
