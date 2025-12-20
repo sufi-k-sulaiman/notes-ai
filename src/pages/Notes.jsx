@@ -1097,7 +1097,6 @@ export default function Notes() {
                                     {/* Color Picker Section */}
                                     {showColorPickerSection && (
                                     <div className="space-y-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
-                                            <>
                                                 <div className="flex items-center gap-3">
                                                     <div 
                                                         className="w-16 h-16 rounded-2xl border-2 border-gray-300 shadow-sm flex-shrink-0"
