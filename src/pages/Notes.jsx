@@ -760,12 +760,21 @@ export default function Notes() {
                                     <select
                                         value={selectedWritingStyle}
                                         onChange={(e) => setSelectedWritingStyle(e.target.value)}
-                                        className={`md:hidden w-full px-4 py-2.5 rounded-2xl text-sm font-medium border transition-all ${
+                                        className={`md:hidden w-full pl-6 pr-12 py-3 rounded-full text-sm font-medium border transition-all ${
                                             darkMode 
                                                 ? 'bg-purple-500 text-white border-purple-400' 
                                                 : 'bg-purple-500 text-white border-purple-400'
                                         }`}
-                                        style={{ fontSize: '14px' }}
+                                        style={{ 
+                                            fontSize: '16px',
+                                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                                            backgroundRepeat: 'no-repeat',
+                                            backgroundPosition: 'right 1rem center',
+                                            backgroundSize: '20px 20px',
+                                            appearance: 'none',
+                                            WebkitAppearance: 'none',
+                                            MozAppearance: 'none'
+                                        }}
                                     >
                                         <option value="persuasive">Persuasive</option>
                                         <option value="technical">Technical</option>
@@ -916,12 +925,21 @@ export default function Notes() {
                                     <select
                                         value={selectedLanguage}
                                         onChange={(e) => setSelectedLanguage(e.target.value)}
-                                        className={`md:hidden w-full px-4 py-2.5 rounded-2xl text-sm font-medium border transition-all ${
+                                        className={`md:hidden w-full pl-6 pr-12 py-3 rounded-full text-sm font-medium border transition-all ${
                                             darkMode 
                                                 ? 'bg-emerald-500 text-white border-emerald-400' 
                                                 : 'bg-emerald-500 text-white border-emerald-400'
                                         }`}
-                                        style={{ fontSize: '14px' }}
+                                        style={{ 
+                                            fontSize: '16px',
+                                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                                            backgroundRepeat: 'no-repeat',
+                                            backgroundPosition: 'right 1rem center',
+                                            backgroundSize: '20px 20px',
+                                            appearance: 'none',
+                                            WebkitAppearance: 'none',
+                                            MozAppearance: 'none'
+                                        }}
                                     >
                                         <option value="JavaScript">JavaScript</option>
                                         <option value="TypeScript">TypeScript</option>
