@@ -681,7 +681,7 @@ export default function Notes() {
                             }`}>
                                 <div className="flex items-center justify-between mb-3">
                                     <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-purple-400' : 'text-purple-700'}`}>
-                                        <Sparkles className={`w-4 h-4 ${darkMode ? 'text-purple-500' : 'text-purple-600'}`} /> Generate AI Text
+                                        <Sparkles className={`w-4 h-4 ${darkMode ? 'text-purple-500' : 'text-purple-600'}`} /> Generate Text
                                     </h3>
                                 </div>
 
