@@ -819,7 +819,7 @@ export default function Notes() {
 
                                 <div className="relative">
                                     <Textarea
-                                        placeholder="Describe the image"
+                                        placeholder="Image description"
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAIImage()}
