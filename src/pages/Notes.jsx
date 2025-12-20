@@ -799,12 +799,13 @@ export default function Notes() {
                                     </h3>
                                 </div>
 
-                                <div className="flex gap-2 mb-3">
+                                {/* Desktop - Buttons above */}
+                                <div className="hidden md:flex gap-2 mb-3">
                                     {[2, 4, 6, 8].map(count => (
                                         <button
                                             key={count}
                                             onClick={() => setImageCount(count)}
-                                            className={`px-3 md:px-5 py-1.5 md:py-2 rounded-lg text-sm md:text-lg font-semibold transition-all ${
+                                            className={`px-5 py-2 rounded-lg text-lg font-semibold transition-all ${
                                                 imageCount === count
                                                     ? 'bg-pink-500 text-white'
                                                     : darkMode 
@@ -817,37 +818,58 @@ export default function Notes() {
                                     ))}
                                 </div>
 
-                                <div className="relative">
-                                    <Textarea
-                                        placeholder="Image description"
-                                        value={aiPrompt}
-                                        onChange={e => setAiPrompt(e.target.value)}
-                                        onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAIImage()}
-                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-32 pl-6 py-4 shadow-sm resize-none ${
-                                            darkMode 
-                                                ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
-                                                : 'bg-white/60 border-gray-300'
-                                        }`}
-                                        style={{ fontSize: '16px', minHeight: '80px' }}
-                                        rows={2}
-                                    />
-                                    <Button 
-                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIImage(); }} 
-                                        disabled={aiLoading || !aiPrompt.trim()} 
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white rounded-full h-10 px-4 md:px-4 text-sm font-medium z-10 min-w-[44px]"
-                                    >
-                                        {aiLoading ? (
-                                            <>
-                                                <Loader2 className="w-7 md:w-5 h-7 md:h-5 animate-spin md:mr-1" />
-                                                <span className="hidden md:inline">Generating...</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Image className="w-7 md:w-5 h-7 md:h-5 md:mr-1" />
-                                                <span className="hidden md:inline">Generate {imageCount}</span>
-                                            </>
-                                        )}
-                                    </Button>
+                                <div className="space-y-2">
+                                    <div className="relative">
+                                        <Textarea
+                                            placeholder="Image description"
+                                            value={aiPrompt}
+                                            onChange={e => setAiPrompt(e.target.value)}
+                                            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAIImage()}
+                                            className={`text-base backdrop-blur-sm border rounded-3xl pr-14 pl-6 py-4 shadow-sm resize-none ${
+                                                darkMode 
+                                                    ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
+                                                    : 'bg-white/60 border-gray-300'
+                                            }`}
+                                            style={{ fontSize: '16px', minHeight: '80px' }}
+                                            rows={2}
+                                        />
+                                        <Button 
+                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIImage(); }} 
+                                            disabled={aiLoading || !aiPrompt.trim()} 
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white rounded-full h-10 px-4 md:px-4 text-sm font-medium z-10 min-w-[44px]"
+                                        >
+                                            {aiLoading ? (
+                                                <>
+                                                    <Loader2 className="w-7 md:w-5 h-7 md:h-5 animate-spin md:mr-1" />
+                                                    <span className="hidden md:inline">Generating...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Image className="w-7 md:w-5 h-7 md:h-5 md:mr-1" />
+                                                    <span className="hidden md:inline">Generate {imageCount}</span>
+                                                </>
+                                            )}
+                                        </Button>
+                                    </div>
+
+                                    {/* Mobile - Toggle below */}
+                                    <div className="md:hidden flex gap-2 p-1 rounded-full" style={{ backgroundColor: darkMode ? 'rgba(147, 51, 234, 0.2)' : 'rgba(236, 72, 153, 0.15)' }}>
+                                        {[2, 4, 6, 8].map(count => (
+                                            <button
+                                                key={count}
+                                                onClick={() => setImageCount(count)}
+                                                className={`flex-1 py-2.5 rounded-full text-base font-semibold transition-all ${
+                                                    imageCount === count
+                                                        ? 'bg-pink-500 text-white shadow-md'
+                                                        : darkMode 
+                                                            ? 'text-gray-300' 
+                                                            : 'text-gray-700'
+                                                }`}
+                                            >
+                                                {count}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         )}
