@@ -708,7 +708,7 @@ export default function Notes() {
                                         <button
                                             key={style.id}
                                             onClick={() => setSelectedWritingStyle(style.id)}
-                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                            className={`px-4 py-2 rounded-lg text-[10px] md:text-sm font-medium transition-all ${
                                                 selectedWritingStyle === style.id
                                                     ? 'bg-purple-500 text-white'
                                                     : darkMode 
@@ -738,9 +738,19 @@ export default function Notes() {
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIText(); }} 
                                         disabled={aiLoading || !aiPrompt.trim()} 
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full h-10 px-4 text-sm font-medium z-10"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full h-10 px-4 md:px-4 text-sm font-medium z-10 min-w-[44px]"
                                     >
-                                        {aiLoading ? <><Loader2 className="w-5 h-5 animate-spin mr-1" /> Generating...</> : <><Sparkles className="w-5 h-5 mr-1" /> Generate</>}
+                                        {aiLoading ? (
+                                            <>
+                                                <Loader2 className="w-7 md:w-5 h-7 md:h-5 animate-spin md:mr-1" />
+                                                <span className="hidden md:inline">Generating...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Sparkles className="w-7 md:w-5 h-7 md:h-5 md:mr-1" />
+                                                <span className="hidden md:inline">Generate</span>
+                                            </>
+                                        )}
                                     </Button>
                                 </div>
                             </div>
@@ -794,9 +804,19 @@ export default function Notes() {
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIImage(); }} 
                                         disabled={aiLoading || !aiPrompt.trim()} 
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white rounded-full h-10 px-4 text-sm font-medium z-10"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white rounded-full h-10 px-4 md:px-4 text-sm font-medium z-10 min-w-[44px]"
                                     >
-                                        {aiLoading ? <><Loader2 className="w-5 h-5 animate-spin mr-1" /> Generating...</> : <><Image className="w-5 h-5 mr-1" /> Generate {imageCount}</>}
+                                        {aiLoading ? (
+                                            <>
+                                                <Loader2 className="w-7 md:w-5 h-7 md:h-5 animate-spin md:mr-1" />
+                                                <span className="hidden md:inline">Generating...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Image className="w-7 md:w-5 h-7 md:h-5 md:mr-1" />
+                                                <span className="hidden md:inline">Generate {imageCount}</span>
+                                            </>
+                                        )}
                                     </Button>
                                 </div>
                             </div>
@@ -823,7 +843,7 @@ export default function Notes() {
                                         <button
                                             key={lang}
                                             onClick={() => setSelectedLanguage(lang)}
-                                            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+                                            className={`px-4 py-2 rounded-md text-[10px] md:text-sm font-semibold transition-all ${
                                                 selectedLanguage === lang
                                                     ? 'bg-emerald-500 text-white'
                                                     : darkMode 
@@ -853,9 +873,19 @@ export default function Notes() {
                                     <Button 
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAICode(); }} 
                                         disabled={aiLoading || !aiPrompt.trim()} 
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-full h-10 px-4 text-sm font-medium z-10"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-full h-10 px-4 md:px-4 text-sm font-medium z-10 min-w-[44px]"
                                     >
-                                        {aiLoading ? <><Loader2 className="w-5 h-5 animate-spin mr-1" /> Generating...</> : <><Code2 className="w-5 h-5 mr-1" /> Generate</>}
+                                        {aiLoading ? (
+                                            <>
+                                                <Loader2 className="w-7 md:w-5 h-7 md:h-5 animate-spin md:mr-1" />
+                                                <span className="hidden md:inline">Generating...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Code2 className="w-7 md:w-5 h-7 md:h-5 md:mr-1" />
+                                                <span className="hidden md:inline">Generate</span>
+                                            </>
+                                        )}
                                     </Button>
                                 </div>
                             </div>
