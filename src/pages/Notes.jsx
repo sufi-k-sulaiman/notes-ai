@@ -148,19 +148,21 @@ export default function Notes() {
 
     const [toast, setToast] = useState(null);
     const [aiLoading, setAiLoading] = useState(false);
+    const [showAiTextModal, setShowAiTextModal] = useState(false);
+    const [showAiImageModal, setShowAiImageModal] = useState(false);
     const [aiPrompt, setAiPrompt] = useState('');
     const [formatLoading, setFormatLoading] = useState(false);
     const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', 'title'
     const [imageCount, setImageCount] = useState(2);
+    const [showAiCodeModal, setShowAiCodeModal] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('javascript');
-    const [selectedAiMode, setSelectedAiMode] = useState('text'); // 'text', 'image', 'code', 'format'
     const [tableRows, setTableRows] = useState(3);
     const [tableCols, setTableCols] = useState(3);
     const [showTablePopover, setShowTablePopover] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [colorPickerMode, setColorPickerMode] = useState('text'); // 'text' or 'background'
+    const [showFormatModal, setShowFormatModal] = useState(true);
     const [showLinkInput, setShowLinkInput] = useState(false);
-    const [showAiDropdown, setShowAiDropdown] = useState(false);
     const [linkUrl, setLinkUrl] = useState('');
     const [uploadingImage, setUploadingImage] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
@@ -202,12 +204,13 @@ export default function Notes() {
         return '18px'; // medium
     };
 
-    const aiModes = [
-        { id: 'text', label: 'AI Text', icon: Sparkles, color: 'from-purple-500 to-indigo-600' },
-        { id: 'image', label: 'AI Image', icon: Image, color: 'from-pink-500 to-rose-600' },
-        { id: 'code', label: 'AI Code', icon: Code2, color: 'from-emerald-500 to-green-600' },
-        { id: 'format', label: 'Format', icon: AlignLeft, color: 'from-indigo-500 to-blue-600' },
-    ];
+    const closeAllTabs = () => {
+        setShowAiTextModal(false);
+        setShowAiImageModal(false);
+        setShowAiCodeModal(false);
+        setShowColorPicker(false);
+        setShowFormatModal(false);
+    };
 
 
 
@@ -321,88 +324,53 @@ export default function Notes() {
 
     const [selectedWritingStyle, setSelectedWritingStyle] = useState('creative');
 
-    const handleAiGenerate = async () => {
+    const generateAIText = async () => {
         if (!aiPrompt.trim()) return;
-        
-        if (selectedAiMode === 'text') {
-            setAiLoading(true);
-            try {
-                const stylePrompts = {
-                    persuasive: 'Write persuasive, compelling content that motivates and convinces readers about',
-                    technical: 'Write technical, precise, and informative content with clear explanations about',
-                    journalistic: 'Write journalistic, factual, and newsworthy content in an objective style about',
-                    creative: 'Write creative, engaging, and imaginative content about',
-                    editorial: 'Write editorial, opinionated content with strong viewpoints about'
-                };
-                
-                const response = await base44.integrations.Core.InvokeLLM({ 
-                    prompt: `${stylePrompts[selectedWritingStyle]}: ${aiPrompt}. Format it nicely with paragraphs.` 
-                });
-                setEditorContent(prev => prev + '<p>' + response.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>');
-                setAiPrompt('');
-            } catch (e) {
-                console.error(e);
-            } finally {
-                setAiLoading(false);
-            }
-        } else if (selectedAiMode === 'image') {
-            setAiLoading(true);
-            try {
-                const promises = Array(imageCount).fill(null).map(() => 
-                    base44.integrations.Core.GenerateImage({ prompt: aiPrompt })
-                );
-                const results = await Promise.all(promises);
-                const imagesHtml = results.map(({ url }) => 
-                    `<img src="${url}" alt="${aiPrompt}" style="max-width: ${imageCount > 2 ? '48%' : '100%'}; border-radius: 8px; margin: 4px;" />`
-                ).join('');
-                setEditorContent(prev => prev + `<p>${imagesHtml}</p>`);
-                setAiPrompt('');
-            } catch (e) {
-                console.error(e);
-            } finally {
-                setAiLoading(false);
-            }
-        } else if (selectedAiMode === 'code') {
-            setAiLoading(true);
-            try {
-                const response = await base44.integrations.Core.InvokeLLM({ 
-                    prompt: `Write ${selectedLanguage} code for: ${aiPrompt}. Return only the code with proper syntax highlighting comments. Be concise and production-ready.` 
-                });
-                const codeBlock = `<pre style="background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 8px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;"><code>${response.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
-                setEditorContent(prev => prev + codeBlock);
-                setAiPrompt('');
-            } catch (e) {
-                console.error(e);
-            } finally {
-                setAiLoading(false);
-            }
-        } else if (selectedAiMode === 'format') {
-            if (!editorContent.trim()) return;
-            setAiLoading(true);
-            try {
-                const plainText = editorContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-                const response = await base44.integrations.Core.InvokeLLM({ 
-                    prompt: `Format the following text into clean, well-structured HTML content. Use <h2> for main titles, <h3> for subtitles, <p> for paragraphs, <ul>/<li> for lists, <strong> for important terms. Keep the original meaning but make it readable:\n\n${plainText}`,
-                    response_json_schema: {
-                        type: "object",
-                        properties: {
-                            formatted_html: { type: "string" }
-                        }
-                    }
-                });
-                if (response?.formatted_html) {
-                    setEditorContent(response.formatted_html);
-                }
-            } catch (e) {
-                console.error(e);
-            } finally {
-                setAiLoading(false);
-            }
+        setAiLoading(true);
+        try {
+            const stylePrompts = {
+                persuasive: 'Write persuasive, compelling content that motivates and convinces readers about',
+                technical: 'Write technical, precise, and informative content with clear explanations about',
+                journalistic: 'Write journalistic, factual, and newsworthy content in an objective style about',
+                creative: 'Write creative, engaging, and imaginative content about',
+                editorial: 'Write editorial, opinionated content with strong viewpoints about'
+            };
+            
+            const response = await base44.integrations.Core.InvokeLLM({ 
+                prompt: `${stylePrompts[selectedWritingStyle]}: ${aiPrompt}. Format it nicely with paragraphs.` 
+            });
+            setEditorContent(prev => prev + '<p>' + response.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>');
+            setShowAiTextModal(false);
+            setAiPrompt('');
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
+    const generateAIImage = async () => {
+        if (!aiPrompt.trim()) return;
+        setAiLoading(true);
+        try {
+            const promises = Array(imageCount).fill(null).map(() => 
+                base44.integrations.Core.GenerateImage({ prompt: aiPrompt })
+            );
+            const results = await Promise.all(promises);
+            const imagesHtml = results.map(({ url }) => 
+                `<img src="${url}" alt="${aiPrompt}" style="max-width: ${imageCount > 2 ? '48%' : '100%'}; border-radius: 8px; margin: 4px;" />`
+            ).join('');
+            setEditorContent(prev => prev + `<p>${imagesHtml}</p>`);
+            setShowAiImageModal(false);
+            setAiPrompt('');
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setAiLoading(false);
         }
     };
 
     const quillRef = React.useRef(null);
-    const currentMode = aiModes.find(m => m.id === selectedAiMode);
 
     const insertTable = () => {
         let tableHtml = '<table style="width: 100%; border-collapse: collapse; margin: 16px 0; border: 2px solid #333;"><tbody>';
@@ -435,7 +403,47 @@ export default function Notes() {
         setShowTablePopover(false);
     };
 
+    const generateAICode = async () => {
+        if (!aiPrompt.trim()) return;
+        setAiLoading(true);
+        try {
+            const response = await base44.integrations.Core.InvokeLLM({ 
+                prompt: `Write ${selectedLanguage} code for: ${aiPrompt}. Return only the code with proper syntax highlighting comments. Be concise and production-ready.` 
+            });
+            const codeBlock = `<pre style="background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 8px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px;"><code>${response.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+            setEditorContent(prev => prev + codeBlock);
+            setShowAiCodeModal(false);
+            setAiPrompt('');
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setAiLoading(false);
+        }
+    };
 
+    const formatContent = async () => {
+        if (!editorContent.trim()) return;
+        setFormatLoading(true);
+        try {
+            const plainText = editorContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+            const response = await base44.integrations.Core.InvokeLLM({ 
+                prompt: `Format the following text into clean, well-structured HTML content. Use <h2> for main titles, <h3> for subtitles, <p> for paragraphs, <ul>/<li> for lists, <strong> for important terms. Keep the original meaning but make it readable:\n\n${plainText}`,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        formatted_html: { type: "string" }
+                    }
+                }
+            });
+            if (response?.formatted_html) {
+                setEditorContent(response.formatted_html);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setFormatLoading(false);
+        }
+    };
 
     const handleAddLink = () => {
         const quill = quillRef.current?.getEditor();
@@ -532,6 +540,81 @@ export default function Notes() {
                                 ? 'border-gray-700 bg-[#0c0f1f]' 
                                 : 'border-white/20 bg-white/10'
                         }`}>
+                            <button 
+                                onClick={() => { closeAllTabs(); setShowFormatModal(true); }} 
+                                className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
+                                    showFormatModal 
+                                        ? darkMode 
+                                            ? 'bg-gray-700/40 backdrop-blur-xl border-b-2 border-indigo-500 text-indigo-400 shadow-md' 
+                                            : 'bg-white/40 backdrop-blur-xl border-b-2 border-indigo-500 text-indigo-700 shadow-md'
+                                        : darkMode 
+                                            ? 'bg-gray-800/10 backdrop-blur-md text-gray-400 hover:bg-gray-700/20' 
+                                            : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <AlignLeft className="w-5 h-5" />
+                                <span className="hidden sm:inline">Format</span>
+                            </button>
+                            <button 
+                                onClick={() => { closeAllTabs(); setShowAiTextModal(true); }} 
+                                className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
+                                    showAiTextModal 
+                                        ? darkMode 
+                                            ? 'bg-gray-700/40 backdrop-blur-xl border-b-2 border-purple-500 text-purple-400 shadow-md' 
+                                            : 'bg-white/40 backdrop-blur-xl border-b-2 border-purple-500 text-purple-700 shadow-md'
+                                        : darkMode 
+                                            ? 'bg-gray-800/10 backdrop-blur-md text-gray-400 hover:bg-gray-700/20' 
+                                            : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Sparkles className="w-5 h-5" />
+                                <span className="hidden sm:inline">Ai Text</span>
+                            </button>
+                            <button 
+                                onClick={() => { closeAllTabs(); setShowAiImageModal(true); }} 
+                                className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
+                                    showAiImageModal 
+                                        ? darkMode 
+                                            ? 'bg-gray-700/40 backdrop-blur-xl border-b-2 border-pink-500 text-pink-400 shadow-md' 
+                                            : 'bg-white/40 backdrop-blur-xl border-b-2 border-pink-500 text-pink-700 shadow-md'
+                                        : darkMode 
+                                            ? 'bg-gray-800/10 backdrop-blur-md text-gray-400 hover:bg-gray-700/20' 
+                                            : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Image className="w-5 h-5" />
+                                <span className="hidden sm:inline">Ai Image</span>
+                            </button>
+                            <button 
+                                onClick={() => { closeAllTabs(); setShowAiCodeModal(true); }} 
+                                className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
+                                    showAiCodeModal 
+                                        ? darkMode 
+                                            ? 'bg-gray-700/40 backdrop-blur-xl border-b-2 border-emerald-500 text-emerald-400 shadow-md' 
+                                            : 'bg-white/40 backdrop-blur-xl border-b-2 border-emerald-500 text-emerald-700 shadow-md'
+                                        : darkMode 
+                                            ? 'bg-gray-800/10 backdrop-blur-md text-gray-400 hover:bg-gray-700/20' 
+                                            : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Code2 className="w-5 h-5" />
+                                <span className="hidden sm:inline">Ai Code</span>
+                            </button>
+                            <button 
+                                onClick={() => { closeAllTabs(); setColorPickerMode('text'); setShowColorPicker(true); }} 
+                                className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
+                                    showColorPicker 
+                                        ? darkMode 
+                                            ? 'bg-gray-700/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-400 shadow-md' 
+                                            : 'bg-white/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-700 shadow-md'
+                                        : darkMode 
+                                            ? 'bg-gray-800/10 backdrop-blur-md text-gray-400 hover:bg-gray-700/20' 
+                                            : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
+                                }`}
+                            >
+                                <Palette className="w-5 h-5" />
+                                <span className="hidden sm:inline">Color</span>
+                            </button>
                             <div className="flex-1" />
                             {selectedNote && (
                                 <Button 
@@ -600,300 +683,8 @@ export default function Notes() {
                             </div>
                         )}
 
-                        <div className={`px-3 md:px-4 py-2 border-b backdrop-blur-xl ${
-                            darkMode 
-                                ? 'border-gray-700/50 bg-[#0c0f1f]' 
-                                : 'border-gray-200/50 bg-white/30'
-                        }`}>
-                            <Input
-                                placeholder="Note title..."
-                                value={noteTitle}
-                                onChange={e => setNoteTitle(e.target.value)}
-                                className={`text-base font-semibold border-0 shadow-none focus-visible:ring-0 w-full bg-transparent px-0 ${
-                                    darkMode 
-                                        ? 'text-white placeholder:text-gray-500' 
-                                        : 'placeholder:text-gray-400'
-                                }`}
-                                style={{ fontSize: '16px' }}
-                            />
-                        </div>
-
-                        {/* Unified AI Input Bar */}
-                        <div className={`px-3 md:px-6 py-4 border-b backdrop-blur-3xl ${
-                            darkMode 
-                                ? 'border-gray-700 bg-[#0c0f1f]' 
-                                : 'border-white/20 bg-white/30'
-                        }`}>
-                            <div className={`relative backdrop-blur-sm border rounded-3xl shadow-lg ${
-                                darkMode 
-                                    ? 'bg-gray-700/40 border-gray-600' 
-                                    : 'bg-white/60 border-gray-300'
-                            }`}>
-                                <textarea
-                                    placeholder={
-                                        selectedAiMode === 'text' ? 'Describe what text to generate...' :
-                                        selectedAiMode === 'image' ? 'Describe the image...' :
-                                        selectedAiMode === 'code' ? 'Describe the code function...' :
-                                        'Your note content will be formatted...'
-                                    }
-                                    value={aiPrompt}
-                                    onChange={e => setAiPrompt(e.target.value)}
-                                    onKeyDown={e => {
-                                        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                                            handleAiGenerate();
-                                        }
-                                    }}
-                                    className={`w-full text-base px-6 py-4 pr-32 bg-transparent border-0 outline-none resize-none ${
-                                        darkMode 
-                                            ? 'text-white placeholder:text-gray-400' 
-                                            : 'text-gray-900 placeholder:text-gray-500'
-                                    }`}
-                                    style={{ fontSize: '16px', minHeight: '80px', maxHeight: '200px' }}
-                                    rows={3}
-                                />
-                                <div className="absolute bottom-4 left-4 flex items-center gap-2">
-                                    <Popover open={showAiDropdown} onOpenChange={setShowAiDropdown}>
-                                        <PopoverTrigger asChild>
-                                            <button className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all border ${
-                                                darkMode 
-                                                    ? 'bg-gray-800/80 hover:bg-gray-800 border-gray-600 text-gray-200' 
-                                                    : 'bg-white/80 hover:bg-white border-gray-300 text-gray-700'
-                                            }`}>
-                                                <currentMode.icon className="w-4 h-4" />
-                                                <span className="text-sm font-medium">{currentMode.label}</span>
-                                                <ChevronDown className="w-4 h-4" />
-                                            </button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className={`w-56 p-2 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
-                                            <div className="space-y-1">
-                                                {aiModes.map(mode => (
-                                                    <button
-                                                        key={mode.id}
-                                                        onClick={() => {
-                                                            setSelectedAiMode(mode.id);
-                                                            setShowAiDropdown(false);
-                                                        }}
-                                                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
-                                                            selectedAiMode === mode.id
-                                                                ? `bg-gradient-to-r ${mode.color} text-white`
-                                                                : darkMode
-                                                                    ? 'hover:bg-gray-700 text-gray-200'
-                                                                    : 'hover:bg-gray-100 text-gray-700'
-                                                        }`}
-                                                    >
-                                                        <mode.icon className="w-5 h-5" />
-                                                        <span className="font-medium">{mode.label}</span>
-                                                    </button>
-                                                ))}
-                                            </div>
-
-                                            {selectedAiMode === 'text' && (
-                                                <div className={`mt-3 pt-3 border-t space-y-1 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                                                    <p className={`text-xs font-semibold px-3 mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Writing Style</p>
-                                                    {['creative', 'persuasive', 'technical', 'journalistic', 'editorial'].map(style => (
-                                                        <button
-                                                            key={style}
-                                                            onClick={() => setSelectedWritingStyle(style)}
-                                                            className={`w-full text-left px-3 py-1.5 rounded-md text-sm capitalize ${
-                                                                selectedWritingStyle === style
-                                                                    ? darkMode ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-700'
-                                                                    : darkMode ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-700'
-                                                            }`}
-                                                        >
-                                                            {style}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            )}
-
-                                            {selectedAiMode === 'image' && (
-                                                <div className={`mt-3 pt-3 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                                                    <p className={`text-xs font-semibold px-3 mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Image Count</p>
-                                                    <div className="flex gap-2 px-2">
-                                                        {[1, 2, 4, 6].map(count => (
-                                                            <button
-                                                                key={count}
-                                                                onClick={() => setImageCount(count)}
-                                                                className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${
-                                                                    imageCount === count
-                                                                        ? 'bg-pink-500 text-white'
-                                                                        : darkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                                }`}
-                                                            >
-                                                                {count}
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {selectedAiMode === 'code' && (
-                                                <div className={`mt-3 pt-3 border-t space-y-1 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                                                    <p className={`text-xs font-semibold px-3 mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Language</p>
-                                                    {['JavaScript', 'Python', 'TypeScript', 'Java', 'Go', 'Rust'].map(lang => (
-                                                        <button
-                                                            key={lang}
-                                                            onClick={() => setSelectedLanguage(lang)}
-                                                            className={`w-full text-left px-3 py-1.5 rounded-md text-sm ${
-                                                                selectedLanguage === lang
-                                                                    ? darkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'
-                                                                    : darkMode ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-700'
-                                                            }`}
-                                                        >
-                                                            {lang}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
-                                <Button 
-                                    onClick={handleAiGenerate} 
-                                    disabled={aiLoading || (selectedAiMode !== 'format' && !aiPrompt.trim())} 
-                                    className={`absolute bottom-4 right-4 bg-gradient-to-r ${currentMode.color} hover:opacity-90 text-white rounded-full h-12 w-12 p-0 shadow-lg z-10 flex items-center justify-center`}
-                                >
-                                    {aiLoading ? (
-                                        <Loader2 className="w-5 h-5 animate-spin" />
-                                    ) : (
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                        </svg>
-                                    )}
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* Formatting Toolbar */}
-                        <div className={`px-3 md:px-6 py-2 border-b backdrop-blur-xl ${
-                            darkMode 
-                                ? 'border-gray-700/50 bg-[#0c0f1f]' 
-                                : 'border-gray-200/50 bg-white/30'
-                        }`}>
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                                <button
-                                    onClick={() => quillRef.current?.getEditor().format('bold', !quillRef.current?.getEditor().getFormat().bold)}
-                                    className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all border min-w-[36px] min-h-[36px] ${
-                                        darkMode 
-                                            ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
-                                            : 'bg-white/60 hover:bg-white/80 border-gray-300'
-                                    }`}
-                                >
-                                    <strong>B</strong>
-                                </button>
-                                <button
-                                    onClick={() => quillRef.current?.getEditor().format('italic', !quillRef.current?.getEditor().getFormat().italic)}
-                                    className={`px-3 py-1.5 rounded-lg text-sm italic transition-all border min-w-[36px] min-h-[36px] ${
-                                        darkMode 
-                                            ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
-                                            : 'bg-white/60 hover:bg-white/80 border-gray-300'
-                                    }`}
-                                >
-                                    I
-                                </button>
-                                <button
-                                    onClick={() => quillRef.current?.getEditor().format('underline', !quillRef.current?.getEditor().getFormat().underline)}
-                                    className={`px-3 py-1.5 rounded-lg text-sm underline transition-all border min-w-[36px] min-h-[36px] ${
-                                        darkMode 
-                                            ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
-                                            : 'bg-white/60 hover:bg-white/80 border-gray-300'
-                                    }`}
-                                >
-                                    U
-                                </button>
-                                <div className={`w-px h-6 mx-1 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
-                                <button
-                                    onClick={() => quillRef.current?.getEditor().format('list', 'bullet')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all border min-w-[36px] min-h-[36px] ${
-                                        darkMode 
-                                            ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
-                                            : 'bg-white/60 hover:bg-white/80 border-gray-300'
-                                    }`}
-                                >
-                                    • List
-                                </button>
-                                <button
-                                    onClick={() => quillRef.current?.getEditor().format('list', 'ordered')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all border min-w-[36px] min-h-[36px] ${
-                                        darkMode 
-                                            ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
-                                            : 'bg-white/60 hover:bg-white/80 border-gray-300'
-                                    }`}
-                                >
-                                    1. List
-                                </button>
-                                <Popover open={showTablePopover} onOpenChange={setShowTablePopover}>
-                                    <PopoverTrigger asChild>
-                                        <button className={`px-3 py-1.5 rounded-lg text-xs transition-all border min-w-[36px] min-h-[36px] flex items-center gap-1 ${
-                                            darkMode 
-                                                ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
-                                                : 'bg-white/60 hover:bg-white/80 border-gray-300'
-                                        }`}>
-                                            <Table className="w-3.5 h-3.5" />
-                                            Table
-                                        </button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className={`w-64 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
-                                        <div className="space-y-3">
-                                            <div>
-                                                <label className={`text-xs font-medium block mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Rows: {tableRows}</label>
-                                                <Slider value={[tableRows]} onValueChange={(v) => setTableRows(v[0])} min={2} max={10} step={1} />
-                                            </div>
-                                            <div>
-                                                <label className={`text-xs font-medium block mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Columns: {tableCols}</label>
-                                                <Slider value={[tableCols]} onValueChange={(v) => setTableCols(v[0])} min={2} max={6} step={1} />
-                                            </div>
-                                            <Button onClick={insertTable} className="w-full">Insert Table</Button>
-                                        </div>
-                                    </PopoverContent>
-                                </Popover>
-                                <button
-                                    onClick={() => { setColorPickerMode('text'); setShowColorPicker(!showColorPicker); }}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all border min-w-[36px] min-h-[36px] flex items-center gap-1 ${
-                                        darkMode 
-                                            ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
-                                            : 'bg-white/60 hover:bg-white/80 border-gray-300'
-                                    }`}
-                                >
-                                    <Palette className="w-3.5 h-3.5" />
-                                    Color
-                                </button>
-                                <label className={`px-3 py-1.5 rounded-lg text-xs transition-all border min-w-[36px] min-h-[36px] cursor-pointer flex items-center gap-1 ${
-                                    darkMode 
-                                        ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
-                                        : 'bg-white/60 hover:bg-white/80 border-gray-300'
-                                }`}>
-                                    <Image className="w-3.5 h-3.5" />
-                                    Upload
-                                    <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploadingImage} />
-                                </label>
-                            </div>
-
-                            {showColorPicker && (
-                                <div className="flex gap-2 flex-wrap mt-3 pt-3 border-t">
-                                    {['#000000', '#dc2626', '#ea580c', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e', '#ffffff'].map(c => (
-                                        <button
-                                            key={c}
-                                            onClick={() => {
-                                                if (quillRef.current) {
-                                                    const quill = quillRef.current.getEditor();
-                                                    if (colorPickerMode === 'text') {
-                                                        quill.format('color', c);
-                                                    } else {
-                                                        quill.format('background', c);
-                                                    }
-                                                }
-                                            }}
-                                            className="w-7 h-7 rounded-lg border-2 border-gray-300 hover:scale-110 transition-transform"
-                                            style={{ backgroundColor: c }}
-                                        />
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Legacy modals cleanup */}
-                        {false && showAiTextModal && (
+                        {/* AI Text Tab */}
+                        {showAiTextModal && (
                             <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
                                 darkMode 
                                     ? 'border-gray-700 bg-[#0c0f1f]' 
@@ -953,7 +744,8 @@ export default function Notes() {
                             </div>
                         )}
 
-                        {false && showAiImageModal && (
+                        {/* AI Image Tab */}
+                        {showAiImageModal && (
                             <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
                                 darkMode 
                                     ? 'border-gray-700 bg-[#0c0f1f]' 
@@ -1007,7 +799,8 @@ export default function Notes() {
                             </div>
                         )}
 
-                        {false && showAiCodeModal && (
+                        {/* AI Code Tab */}
+                        {showAiCodeModal && (
                             <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
                                 darkMode 
                                     ? 'border-gray-700 bg-[#0c0f1f]' 
@@ -1064,7 +857,8 @@ export default function Notes() {
                             </div>
                         )}
 
-                        {false && showColorPicker && (
+                        {/* Color Picker Tab */}
+                        {showColorPicker && (
                             <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
                                 darkMode 
                                     ? 'border-gray-700 bg-[#0c0f1f]' 
@@ -1120,7 +914,8 @@ export default function Notes() {
                             </div>
                         )}
 
-                        {false && showFormatModal && (
+                        {/* Format Tab */}
+                        {showFormatModal && (
                             <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
                                 darkMode 
                                     ? 'border-gray-700 bg-[#0c0f1f]' 
@@ -1239,7 +1034,25 @@ export default function Notes() {
                             </div>
                         )}
 
-                        <div className="relative" style={{ height: 'calc(100vh - 350px)' }}>
+                        <div className={`px-3 md:px-4 py-2 border-b backdrop-blur-xl ${
+                            darkMode 
+                                ? 'border-gray-700/50 bg-[#0c0f1f]' 
+                                : 'border-gray-200/50 bg-white/30'
+                        }`}>
+                            <Input
+                                placeholder="Note title..."
+                                value={noteTitle}
+                                onChange={e => setNoteTitle(e.target.value)}
+                                className={`text-base font-semibold border-0 shadow-none focus-visible:ring-0 w-full bg-transparent px-0 ${
+                                    darkMode 
+                                        ? 'text-white placeholder:text-gray-500' 
+                                        : 'placeholder:text-gray-400'
+                                }`}
+                                style={{ fontSize: '16px' }}
+                            />
+                        </div>
+
+                        <div className="relative" style={{ height: 'calc(100vh - 200px)' }}>
                             <ReactQuill
                                 ref={quillRef}
                                 value={editorContent}
