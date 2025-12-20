@@ -871,7 +871,7 @@ export default function Notes() {
                             }`}>
                                 <div className="flex items-center justify-between mb-3">
                                     <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-emerald-400' : 'text-emerald-700'}`}>
-                                        <Code2 className={`w-4 h-4 ${darkMode ? 'text-emerald-500' : 'text-emerald-600'}`} /> Generate AI Code
+                                        <Code2 className={`w-4 h-4 ${darkMode ? 'text-emerald-500' : 'text-emerald-600'}`} /> Build Code
                                     </h3>
                                 </div>
 
