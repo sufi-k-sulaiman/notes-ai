@@ -1333,7 +1333,7 @@ export default function Notes() {
                                         : "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693a3e794fd471020431f334/7607f2d39_AppIcon.png"
                                     }
                                     alt="Notes AI" 
-                                    className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-lg"
+                                    className="w-12 h-12 md:w-14 md:h-14 rounded-xl"
                                 />
                                 <div>
                                     <h1 className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`} style={{ fontSize: '1.55rem' }}>Notes Ai</h1>
