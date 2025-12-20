@@ -722,17 +722,50 @@ export default function Notes() {
                                     ))}
                                 </div>
 
-                                <div className="relative">
-                                    {/* Mobile - Dropdown in textarea */}
+                                <div className="space-y-2">
+                                    <div className="relative">
+                                        <Textarea
+                                            placeholder="Describe what text"
+                                            value={aiPrompt}
+                                            onChange={e => setAiPrompt(e.target.value)}
+                                            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAIText()}
+                                            className={`text-base backdrop-blur-sm border rounded-3xl pr-14 pl-6 py-4 shadow-sm resize-none ${
+                                                darkMode 
+                                                    ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
+                                                    : 'bg-white/60 border-gray-300'
+                                            }`}
+                                            style={{ fontSize: '16px', minHeight: '80px' }}
+                                            rows={2}
+                                        />
+                                        <Button 
+                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIText(); }} 
+                                            disabled={aiLoading || !aiPrompt.trim()} 
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full h-10 px-4 md:px-4 text-sm font-medium z-10 min-w-[44px]"
+                                        >
+                                            {aiLoading ? (
+                                                <>
+                                                    <Loader2 className="w-7 md:w-5 h-7 md:h-5 animate-spin md:mr-1" />
+                                                    <span className="hidden md:inline">Generating...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Sparkles className="w-7 md:w-5 h-7 md:h-5 md:mr-1" />
+                                                    <span className="hidden md:inline">Generate</span>
+                                                </>
+                                            )}
+                                        </Button>
+                                    </div>
+
+                                    {/* Mobile - Dropdown below textarea */}
                                     <select
                                         value={selectedWritingStyle}
                                         onChange={(e) => setSelectedWritingStyle(e.target.value)}
-                                        className={`md:hidden absolute left-3 top-3 z-20 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                                        className={`md:hidden w-full px-4 py-2.5 rounded-2xl text-sm font-medium border transition-all ${
                                             darkMode 
                                                 ? 'bg-purple-500 text-white border-purple-400' 
                                                 : 'bg-purple-500 text-white border-purple-400'
                                         }`}
-                                        style={{ fontSize: '12px' }}
+                                        style={{ fontSize: '14px' }}
                                     >
                                         <option value="persuasive">Persuasive</option>
                                         <option value="technical">Technical</option>
@@ -740,37 +773,6 @@ export default function Notes() {
                                         <option value="creative">Creative</option>
                                         <option value="editorial">Editorial</option>
                                     </select>
-
-                                    <Textarea
-                                        placeholder="Describe what text"
-                                        value={aiPrompt}
-                                        onChange={e => setAiPrompt(e.target.value)}
-                                        onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAIText()}
-                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-14 pl-6 md:pl-6 pt-12 md:pt-4 pb-4 shadow-sm resize-none ${
-                                            darkMode 
-                                                ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
-                                                : 'bg-white/60 border-gray-300'
-                                        }`}
-                                        style={{ fontSize: '16px', minHeight: '80px' }}
-                                        rows={2}
-                                    />
-                                    <Button 
-                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIText(); }} 
-                                        disabled={aiLoading || !aiPrompt.trim()} 
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full h-10 px-4 md:px-4 text-sm font-medium z-10 min-w-[44px]"
-                                    >
-                                        {aiLoading ? (
-                                            <>
-                                                <Loader2 className="w-7 md:w-5 h-7 md:h-5 animate-spin md:mr-1" />
-                                                <span className="hidden md:inline">Generating...</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Sparkles className="w-7 md:w-5 h-7 md:h-5 md:mr-1" />
-                                                <span className="hidden md:inline">Generate</span>
-                                            </>
-                                        )}
-                                    </Button>
                                 </div>
                             </div>
                         )}
