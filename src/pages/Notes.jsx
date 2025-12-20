@@ -603,21 +603,6 @@ export default function Notes() {
                                 <Code2 className="w-5 h-5" />
                                 <span className="hidden sm:inline">Ai Code</span>
                             </button>
-                            <button 
-                                onClick={() => { closeAllTabs(); setColorPickerMode('text'); setShowColorPicker(true); }} 
-                                className={`flex items-center gap-2 text-base md:text-sm px-3 md:px-4 py-3 md:py-2 rounded-t-lg transition-all min-h-[48px] ${
-                                    showColorPicker 
-                                        ? darkMode 
-                                            ? 'bg-gray-700/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-400 shadow-md' 
-                                            : 'bg-white/40 backdrop-blur-xl border-b-2 border-orange-500 text-orange-700 shadow-md'
-                                        : darkMode 
-                                            ? 'bg-gray-800/10 backdrop-blur-md text-gray-400 hover:bg-gray-700/20' 
-                                            : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
-                                }`}
-                            >
-                                <Palette className="w-5 h-5" />
-                                <span className="hidden sm:inline">Color</span>
-                            </button>
                             <div className="flex-1" />
                             {selectedNote && (
                                 <Button 
