@@ -783,7 +783,7 @@ export default function Notes() {
                             }`}>
                                 <div className="flex items-center justify-between mb-3">
                                     <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-pink-400' : 'text-pink-700'}`}>
-                                        <Image className={`w-4 h-4 ${darkMode ? 'text-pink-500' : 'text-pink-600'}`} /> Generate AI Image
+                                        <Image className={`w-4 h-4 ${darkMode ? 'text-pink-500' : 'text-pink-600'}`} /> Create Images
                                     </h3>
                                 </div>
 
