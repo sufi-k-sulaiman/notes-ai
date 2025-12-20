@@ -774,7 +774,7 @@ export default function Notes() {
                                         <button
                                             key={count}
                                             onClick={() => setImageCount(count)}
-                                            className={`px-5 py-2 rounded-lg text-lg font-semibold transition-all ${
+                                            className={`px-3 md:px-5 py-1.5 md:py-2 rounded-lg text-sm md:text-lg font-semibold transition-all ${
                                                 imageCount === count
                                                     ? 'bg-pink-500 text-white'
                                                     : darkMode 
