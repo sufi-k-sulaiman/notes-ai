@@ -696,8 +696,9 @@ export default function Notes() {
                                         <Sparkles className={`w-4 h-4 ${darkMode ? 'text-purple-500' : 'text-purple-600'}`} /> Generate AI Text
                                     </h3>
                                 </div>
-                                
-                                <div className="flex flex-wrap gap-2 mb-3">
+
+                                {/* Desktop - Buttons */}
+                                <div className="hidden md:flex flex-wrap gap-2 mb-3">
                                     {[
                                         { id: 'persuasive', label: 'Persuasive' },
                                         { id: 'technical', label: 'Technical' },
@@ -708,7 +709,7 @@ export default function Notes() {
                                         <button
                                             key={style.id}
                                             onClick={() => setSelectedWritingStyle(style.id)}
-                                            className={`px-4 py-2 rounded-lg text-[10px] md:text-sm font-medium transition-all ${
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                                                 selectedWritingStyle === style.id
                                                     ? 'bg-purple-500 text-white'
                                                     : darkMode 
@@ -720,14 +721,32 @@ export default function Notes() {
                                         </button>
                                     ))}
                                 </div>
-                
+
                                 <div className="relative">
+                                    {/* Mobile - Dropdown in textarea */}
+                                    <select
+                                        value={selectedWritingStyle}
+                                        onChange={(e) => setSelectedWritingStyle(e.target.value)}
+                                        className={`md:hidden absolute left-3 top-3 z-20 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                                            darkMode 
+                                                ? 'bg-purple-500 text-white border-purple-400' 
+                                                : 'bg-purple-500 text-white border-purple-400'
+                                        }`}
+                                        style={{ fontSize: '12px' }}
+                                    >
+                                        <option value="persuasive">Persuasive</option>
+                                        <option value="technical">Technical</option>
+                                        <option value="journalistic">Journalistic</option>
+                                        <option value="creative">Creative</option>
+                                        <option value="editorial">Editorial</option>
+                                    </select>
+
                                     <Textarea
                                         placeholder="Describe what text"
                                         value={aiPrompt}
                                         onChange={e => setAiPrompt(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAIText()}
-                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-28 pl-6 py-4 shadow-sm resize-none ${
+                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-14 pl-6 md:pl-6 pt-12 md:pt-4 pb-4 shadow-sm resize-none ${
                                             darkMode 
                                                 ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
                                                 : 'bg-white/60 border-gray-300'
