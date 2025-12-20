@@ -555,7 +555,7 @@ export default function Notes() {
                                             : 'bg-white/10 backdrop-blur-md text-gray-600 hover:bg-white/20'
                                 }`}
                             >
-                                <AlignLeft className="w-5 h-5" />
+                                <Palette className="w-5 h-5" />
                                 <span className="hidden sm:inline">Format</span>
                             </button>
                             <button 
@@ -982,107 +982,7 @@ export default function Notes() {
                             </div>
                         )}
 
-                        {/* Color Picker Tab */}
-                        {showColorPicker && (
-                            <div className={`px-3 md:px-4 py-3 border-b backdrop-blur-3xl shadow-inner ${
-                                darkMode 
-                                    ? 'border-gray-700 bg-[#0c0f1f]' 
-                                    : 'border-white/20 bg-white/30'
-                            }`}>
-                                <div className="flex items-center justify-between mb-3">
-                                    <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-orange-400' : 'text-orange-700'}`}>
-                                        <Palette className={`w-4 h-4 ${darkMode ? 'text-orange-500' : 'text-orange-600'}`} /> Color Picker
-                                    </h3>
-                                </div>
 
-                                <div className="space-y-3">
-                                    <div className="flex items-center gap-3">
-                                        <div 
-                                            className="w-16 h-16 rounded-2xl border-2 border-gray-300 shadow-sm flex-shrink-0"
-                                            style={{ backgroundColor: selectedColor }}
-                                        />
-                                        <Input
-                                            value={selectedColor.toUpperCase()}
-                                            onChange={(e) => {
-                                                const val = e.target.value;
-                                                if (/^#[0-9A-Fa-f]{0,6}$/.test(val) || val === '#') {
-                                                    setSelectedColor(val);
-                                                }
-                                            }}
-                                            className={`flex-1 font-mono text-lg ${
-                                                darkMode 
-                                                    ? 'bg-gray-700/60 border-gray-600 text-white' 
-                                                    : 'bg-white/60 border-gray-300'
-                                            }`}
-                                            style={{ fontSize: '16px' }}
-                                        />
-                                    </div>
-
-                                    <div className="relative">
-                                        <style>{`
-                                            .react-colorful {
-                                                width: 100%;
-                                                height: 200px;
-                                            }
-                                            .react-colorful__saturation {
-                                                border-radius: 12px;
-                                                margin-bottom: 12px;
-                                            }
-                                            .react-colorful__hue {
-                                                border-radius: 12px;
-                                                height: 16px;
-                                            }
-                                            .react-colorful__pointer {
-                                                width: 24px;
-                                                height: 24px;
-                                            }
-                                        `}</style>
-                                        <HexColorPicker 
-                                            color={selectedColor} 
-                                            onChange={(color) => {
-                                                setSelectedColor(color);
-                                                if (quillRef.current) {
-                                                    const quill = quillRef.current.getEditor();
-                                                    if (colorPickerMode === 'text') {
-                                                        quill.format('color', color);
-                                                    } else {
-                                                        quill.format('background', color);
-                                                    }
-                                                }
-                                            }} 
-                                        />
-                                    </div>
-
-                                    {/* Toggle at bottom */}
-                                    <div className="flex gap-1 p-1 rounded-full" style={{ backgroundColor: darkMode ? 'rgba(249, 115, 22, 0.2)' : 'rgba(249, 115, 22, 0.15)' }}>
-                                        <button
-                                            onClick={() => setColorPickerMode('text')}
-                                            className={`flex-1 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                                                colorPickerMode === 'text'
-                                                    ? 'bg-orange-500 text-white shadow-md'
-                                                    : darkMode 
-                                                        ? 'text-gray-300' 
-                                                        : 'text-gray-700'
-                                            }`}
-                                        >
-                                            Text
-                                        </button>
-                                        <button
-                                            onClick={() => setColorPickerMode('background')}
-                                            className={`flex-1 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                                                colorPickerMode === 'background'
-                                                    ? 'bg-orange-500 text-white shadow-md'
-                                                    : darkMode 
-                                                        ? 'text-gray-300' 
-                                                        : 'text-gray-700'
-                                            }`}
-                                        >
-                                            Background
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
 
                         {/* Format Tab */}
                         {showFormatModal && (
@@ -1200,6 +1100,99 @@ export default function Notes() {
                                             </Button>
                                         </div>
                                     )}
+
+                                    {/* Color Picker Section */}
+                                    <div className="space-y-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <Palette className={`w-4 h-4 ${darkMode ? 'text-orange-500' : 'text-orange-600'}`} />
+                                            <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Color Picker</span>
+                                        </div>
+
+                                        <div className="flex items-center gap-3">
+                                            <div 
+                                                className="w-16 h-16 rounded-2xl border-2 border-gray-300 shadow-sm flex-shrink-0"
+                                                style={{ backgroundColor: selectedColor }}
+                                            />
+                                            <Input
+                                                value={selectedColor.toUpperCase()}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    if (/^#[0-9A-Fa-f]{0,6}$/.test(val) || val === '#') {
+                                                        setSelectedColor(val);
+                                                    }
+                                                }}
+                                                className={`flex-1 font-mono text-lg ${
+                                                    darkMode 
+                                                        ? 'bg-gray-700/60 border-gray-600 text-white' 
+                                                        : 'bg-white/60 border-gray-300'
+                                                }`}
+                                                style={{ fontSize: '16px' }}
+                                            />
+                                        </div>
+
+                                        <div className="relative">
+                                            <style>{`
+                                                .react-colorful {
+                                                    width: 100%;
+                                                    height: 200px;
+                                                }
+                                                .react-colorful__saturation {
+                                                    border-radius: 12px;
+                                                    margin-bottom: 12px;
+                                                }
+                                                .react-colorful__hue {
+                                                    border-radius: 12px;
+                                                    height: 16px;
+                                                }
+                                                .react-colorful__pointer {
+                                                    width: 24px;
+                                                    height: 24px;
+                                                }
+                                            `}</style>
+                                            <HexColorPicker 
+                                                color={selectedColor} 
+                                                onChange={(color) => {
+                                                    setSelectedColor(color);
+                                                    if (quillRef.current) {
+                                                        const quill = quillRef.current.getEditor();
+                                                        if (colorPickerMode === 'text') {
+                                                            quill.format('color', color);
+                                                        } else {
+                                                            quill.format('background', color);
+                                                        }
+                                                    }
+                                                }} 
+                                            />
+                                        </div>
+
+                                        {/* Toggle at bottom */}
+                                        <div className="flex gap-1 p-1 rounded-full" style={{ backgroundColor: darkMode ? 'rgba(249, 115, 22, 0.2)' : 'rgba(249, 115, 22, 0.15)' }}>
+                                            <button
+                                                onClick={() => setColorPickerMode('text')}
+                                                className={`flex-1 py-2.5 rounded-full text-sm font-semibold transition-all ${
+                                                    colorPickerMode === 'text'
+                                                        ? 'bg-orange-500 text-white shadow-md'
+                                                        : darkMode 
+                                                            ? 'text-gray-300' 
+                                                            : 'text-gray-700'
+                                                }`}
+                                            >
+                                                Text
+                                            </button>
+                                            <button
+                                                onClick={() => setColorPickerMode('background')}
+                                                className={`flex-1 py-2.5 rounded-full text-sm font-semibold transition-all ${
+                                                    colorPickerMode === 'background'
+                                                        ? 'bg-orange-500 text-white shadow-md'
+                                                        : darkMode 
+                                                            ? 'text-gray-300' 
+                                                            : 'text-gray-700'
+                                                }`}
+                                            >
+                                                Background
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
