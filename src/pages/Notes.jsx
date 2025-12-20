@@ -5,6 +5,7 @@ import {
     Clock, FileType, List, Grid3x3, AlignLeft, Table, Code2, ChevronDown, Palette,
     Settings, Moon, Sun, User, Mail
 } from 'lucide-react';
+import { HexColorPicker } from 'react-colorful';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -177,6 +178,7 @@ export default function Notes() {
     });
     const [showDeleteRibbon, setShowDeleteRibbon] = useState(false);
     const [showDeleteDataRibbon, setShowDeleteDataRibbon] = useState(false);
+    const [selectedColor, setSelectedColor] = useState('#000000');
     const queryClient = useQueryClient();
 
     useEffect(() => {
@@ -991,30 +993,6 @@ export default function Notes() {
                                     <h3 className={`text-sm md:text-base font-semibold flex items-center gap-2 ${darkMode ? 'text-orange-400' : 'text-orange-700'}`}>
                                         <Palette className={`w-4 h-4 ${darkMode ? 'text-orange-500' : 'text-orange-600'}`} /> Color Picker
                                     </h3>
-                                </div>
-
-                                <div className="flex items-center gap-3">
-                                    <div className="flex-1">
-                                        <div className="flex gap-2 flex-wrap">
-                                            {['#000000', '#dc2626', '#ea580c', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e', '#ffffff'].map(c => (
-                                                <button
-                                                    key={c}
-                                                    onClick={() => {
-                                                        if (quillRef.current) {
-                                                            const quill = quillRef.current.getEditor();
-                                                            if (colorPickerMode === 'text') {
-                                                                quill.format('color', c);
-                                                            } else {
-                                                                quill.format('background', c);
-                                                            }
-                                                        }
-                                                    }}
-                                                    className="w-8 h-8 rounded-lg border-2 border-gray-300 hover:scale-110 transition-transform"
-                                                    style={{ backgroundColor: c }}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
                                     <div className="flex gap-2">
                                         <Button
                                             onClick={() => setColorPickerMode('text')}
@@ -1032,6 +1010,65 @@ export default function Notes() {
                                         >
                                             Background
                                         </Button>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        <div 
+                                            className="w-16 h-16 rounded-2xl border-2 border-gray-300 shadow-sm flex-shrink-0"
+                                            style={{ backgroundColor: selectedColor }}
+                                        />
+                                        <Input
+                                            value={selectedColor.toUpperCase()}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                if (/^#[0-9A-Fa-f]{0,6}$/.test(val) || val === '#') {
+                                                    setSelectedColor(val);
+                                                }
+                                            }}
+                                            className={`flex-1 font-mono text-lg ${
+                                                darkMode 
+                                                    ? 'bg-gray-700/60 border-gray-600 text-white' 
+                                                    : 'bg-white/60 border-gray-300'
+                                            }`}
+                                            style={{ fontSize: '16px' }}
+                                        />
+                                    </div>
+
+                                    <div className="relative">
+                                        <style>{`
+                                            .react-colorful {
+                                                width: 100%;
+                                                height: 200px;
+                                            }
+                                            .react-colorful__saturation {
+                                                border-radius: 12px;
+                                                margin-bottom: 12px;
+                                            }
+                                            .react-colorful__hue {
+                                                border-radius: 12px;
+                                                height: 16px;
+                                            }
+                                            .react-colorful__pointer {
+                                                width: 24px;
+                                                height: 24px;
+                                            }
+                                        `}</style>
+                                        <HexColorPicker 
+                                            color={selectedColor} 
+                                            onChange={(color) => {
+                                                setSelectedColor(color);
+                                                if (quillRef.current) {
+                                                    const quill = quillRef.current.getEditor();
+                                                    if (colorPickerMode === 'text') {
+                                                        quill.format('color', color);
+                                                    } else {
+                                                        quill.format('background', color);
+                                                    }
+                                                }
+                                            }} 
+                                        />
                                     </div>
                                 </div>
                             </div>
