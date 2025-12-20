@@ -696,9 +696,8 @@ export default function Notes() {
                                         <Sparkles className={`w-4 h-4 ${darkMode ? 'text-purple-500' : 'text-purple-600'}`} /> Generate AI Text
                                     </h3>
                                 </div>
-
-                                {/* Desktop - Buttons */}
-                                <div className="hidden md:flex flex-wrap gap-2 mb-3">
+                                
+                                <div className="flex flex-wrap gap-2 mb-3">
                                     {[
                                         { id: 'persuasive', label: 'Persuasive' },
                                         { id: 'technical', label: 'Technical' },
@@ -709,7 +708,7 @@ export default function Notes() {
                                         <button
                                             key={style.id}
                                             onClick={() => setSelectedWritingStyle(style.id)}
-                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                            className={`px-4 py-2 rounded-lg text-[10px] md:text-sm font-medium transition-all ${
                                                 selectedWritingStyle === style.id
                                                     ? 'bg-purple-500 text-white'
                                                     : darkMode 
@@ -721,58 +720,38 @@ export default function Notes() {
                                         </button>
                                     ))}
                                 </div>
-
-                                <div className="space-y-2">
-                                    <div className="relative">
-                                        <Textarea
-                                            placeholder="Describe what text"
-                                            value={aiPrompt}
-                                            onChange={e => setAiPrompt(e.target.value)}
-                                            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAIText()}
-                                            className={`text-base backdrop-blur-sm border rounded-3xl pr-14 pl-6 py-4 shadow-sm resize-none ${
-                                                darkMode 
-                                                    ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
-                                                    : 'bg-white/60 border-gray-300'
-                                            }`}
-                                            style={{ fontSize: '16px', minHeight: '80px' }}
-                                            rows={2}
-                                        />
-                                        <Button 
-                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIText(); }} 
-                                            disabled={aiLoading || !aiPrompt.trim()} 
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full h-10 px-4 md:px-4 text-sm font-medium z-10 min-w-[44px]"
-                                        >
-                                            {aiLoading ? (
-                                                <>
-                                                    <Loader2 className="w-7 md:w-5 h-7 md:h-5 animate-spin md:mr-1" />
-                                                    <span className="hidden md:inline">Generating...</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Sparkles className="w-7 md:w-5 h-7 md:h-5 md:mr-1" />
-                                                    <span className="hidden md:inline">Generate</span>
-                                                </>
-                                            )}
-                                        </Button>
-                                    </div>
-
-                                    {/* Mobile - Dropdown below textarea */}
-                                    <select
-                                        value={selectedWritingStyle}
-                                        onChange={(e) => setSelectedWritingStyle(e.target.value)}
-                                        className={`md:hidden w-full px-4 py-2.5 rounded-2xl text-sm font-medium border transition-all ${
+                
+                                <div className="relative">
+                                    <Textarea
+                                        placeholder="Describe what text"
+                                        value={aiPrompt}
+                                        onChange={e => setAiPrompt(e.target.value)}
+                                        onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAIText()}
+                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-28 pl-6 py-4 shadow-sm resize-none ${
                                             darkMode 
-                                                ? 'bg-purple-500 text-white border-purple-400' 
-                                                : 'bg-purple-500 text-white border-purple-400'
+                                                ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
+                                                : 'bg-white/60 border-gray-300'
                                         }`}
-                                        style={{ fontSize: '14px' }}
+                                        style={{ fontSize: '16px', minHeight: '80px' }}
+                                        rows={2}
+                                    />
+                                    <Button 
+                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAIText(); }} 
+                                        disabled={aiLoading || !aiPrompt.trim()} 
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full h-10 px-4 md:px-4 text-sm font-medium z-10 min-w-[44px]"
                                     >
-                                        <option value="persuasive">Persuasive</option>
-                                        <option value="technical">Technical</option>
-                                        <option value="journalistic">Journalistic</option>
-                                        <option value="creative">Creative</option>
-                                        <option value="editorial">Editorial</option>
-                                    </select>
+                                        {aiLoading ? (
+                                            <>
+                                                <Loader2 className="w-7 md:w-5 h-7 md:h-5 animate-spin md:mr-1" />
+                                                <span className="hidden md:inline">Generating...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Sparkles className="w-7 md:w-5 h-7 md:h-5 md:mr-1" />
+                                                <span className="hidden md:inline">Generate</span>
+                                            </>
+                                        )}
+                                    </Button>
                                 </div>
                             </div>
                         )}
@@ -855,9 +834,8 @@ export default function Notes() {
                                         <Code2 className={`w-4 h-4 ${darkMode ? 'text-emerald-500' : 'text-emerald-600'}`} /> Generate AI Code
                                     </h3>
                                 </div>
-
-                                {/* Desktop - Buttons */}
-                                <div className="hidden md:flex flex-wrap gap-2 mb-3">
+                                
+                                <div className="flex flex-wrap gap-2 mb-3">
                                     {[
                                         'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#',
                                         'Ruby', 'PHP', 'Go', 'Rust', 'Swift', 'Kotlin'
@@ -865,7 +843,7 @@ export default function Notes() {
                                         <button
                                             key={lang}
                                             onClick={() => setSelectedLanguage(lang)}
-                                            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+                                            className={`px-4 py-2 rounded-md text-[10px] md:text-sm font-semibold transition-all ${
                                                 selectedLanguage === lang
                                                     ? 'bg-emerald-500 text-white'
                                                     : darkMode 
@@ -878,64 +856,37 @@ export default function Notes() {
                                     ))}
                                 </div>
 
-                                <div className="space-y-2">
-                                    <div className="relative">
-                                        <Textarea
-                                            placeholder="Describe the code function"
-                                            value={aiPrompt}
-                                            onChange={e => setAiPrompt(e.target.value)}
-                                            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAICode()}
-                                            className={`text-base backdrop-blur-sm border rounded-3xl pr-14 pl-6 py-4 shadow-sm resize-none ${
-                                                darkMode 
-                                                    ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
-                                                    : 'bg-white/60 border-gray-300'
-                                            }`}
-                                            style={{ fontSize: '16px', minHeight: '80px' }}
-                                            rows={2}
-                                        />
-                                        <Button 
-                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAICode(); }} 
-                                            disabled={aiLoading || !aiPrompt.trim()} 
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-full h-10 px-4 md:px-4 text-sm font-medium z-10 min-w-[44px]"
-                                        >
-                                            {aiLoading ? (
-                                                <>
-                                                    <Loader2 className="w-7 md:w-5 h-7 md:h-5 animate-spin md:mr-1" />
-                                                    <span className="hidden md:inline">Generating...</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Code2 className="w-7 md:w-5 h-7 md:h-5 md:mr-1" />
-                                                    <span className="hidden md:inline">Generate</span>
-                                                </>
-                                            )}
-                                        </Button>
-                                    </div>
-
-                                    {/* Mobile - Dropdown below textarea */}
-                                    <select
-                                        value={selectedLanguage}
-                                        onChange={(e) => setSelectedLanguage(e.target.value)}
-                                        className={`md:hidden w-full px-4 py-2.5 rounded-2xl text-sm font-medium border transition-all ${
+                                <div className="relative">
+                                    <Textarea
+                                        placeholder="Describe the code function"
+                                        value={aiPrompt}
+                                        onChange={e => setAiPrompt(e.target.value)}
+                                        onKeyDown={e => e.key === 'Enter' && !e.shiftKey && generateAICode()}
+                                        className={`text-base backdrop-blur-sm border rounded-3xl pr-28 pl-6 py-4 shadow-sm resize-none ${
                                             darkMode 
-                                                ? 'bg-emerald-500 text-white border-emerald-400' 
-                                                : 'bg-emerald-500 text-white border-emerald-400'
+                                                ? 'bg-gray-700/60 border-gray-600 text-white placeholder:text-gray-400' 
+                                                : 'bg-white/60 border-gray-300'
                                         }`}
-                                        style={{ fontSize: '14px' }}
+                                        style={{ fontSize: '16px', minHeight: '80px' }}
+                                        rows={2}
+                                    />
+                                    <Button 
+                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateAICode(); }} 
+                                        disabled={aiLoading || !aiPrompt.trim()} 
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-full h-10 px-4 md:px-4 text-sm font-medium z-10 min-w-[44px]"
                                     >
-                                        <option value="JavaScript">JavaScript</option>
-                                        <option value="TypeScript">TypeScript</option>
-                                        <option value="Python">Python</option>
-                                        <option value="Java">Java</option>
-                                        <option value="C++">C++</option>
-                                        <option value="C#">C#</option>
-                                        <option value="Ruby">Ruby</option>
-                                        <option value="PHP">PHP</option>
-                                        <option value="Go">Go</option>
-                                        <option value="Rust">Rust</option>
-                                        <option value="Swift">Swift</option>
-                                        <option value="Kotlin">Kotlin</option>
-                                    </select>
+                                        {aiLoading ? (
+                                            <>
+                                                <Loader2 className="w-7 md:w-5 h-7 md:h-5 animate-spin md:mr-1" />
+                                                <span className="hidden md:inline">Generating...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Code2 className="w-7 md:w-5 h-7 md:h-5 md:mr-1" />
+                                                <span className="hidden md:inline">Generate</span>
+                                            </>
+                                        )}
+                                    </Button>
                                 </div>
                             </div>
                         )}
