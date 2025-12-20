@@ -1326,7 +1326,7 @@ export default function Notes() {
                     <div className="mb-4 md:mb-6">
                         {/* Logo and Title */}
                         <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
                                 <img 
                                     src={darkMode 
                                         ? "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693a3e794fd471020431f334/b7a3334f5_AppIcon1.png"
@@ -1336,7 +1336,7 @@ export default function Notes() {
                                     className="w-12 h-12 md:w-14 md:h-14 rounded-xl"
                                 />
                                 <div>
-                                    <h1 className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`} style={{ fontSize: '1.55rem' }}>Notes Ai</h1>
+                                    <h1 className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`} style={{ fontSize: '1.25rem' }}>Notes Ai</h1>
                                     <p className={`text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Text, images and code</p>
                                 </div>
                             </div>
