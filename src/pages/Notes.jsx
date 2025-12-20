@@ -984,10 +984,10 @@ export default function Notes() {
                                 </div>
 
                                 <div className="space-y-3">
-                                    <div className="flex flex-wrap items-center gap-1.5">
+                                    <div className="grid grid-cols-4 gap-1.5">
                                         <button
                                             onClick={() => quillRef.current?.getEditor().format('bold', !quillRef.current?.getEditor().getFormat().bold)}
-                                            className={`px-3.5 py-2.5 rounded-lg text-base font-semibold transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                            className={`px-3.5 py-2.5 rounded-lg text-base font-semibold transition-all border min-h-[44px] flex items-center justify-center ${
                                                 darkMode 
                                                     ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
                                                     : 'bg-white/60 hover:bg-white/80 border-gray-300'
@@ -997,7 +997,7 @@ export default function Notes() {
                                         </button>
                                         <button
                                             onClick={() => quillRef.current?.getEditor().format('italic', !quillRef.current?.getEditor().getFormat().italic)}
-                                            className={`px-3.5 py-2.5 rounded-lg text-base italic transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                            className={`px-3.5 py-2.5 rounded-lg text-base italic transition-all border min-h-[44px] flex items-center justify-center ${
                                                 darkMode 
                                                     ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
                                                     : 'bg-white/60 hover:bg-white/80 border-gray-300'
@@ -1007,7 +1007,7 @@ export default function Notes() {
                                         </button>
                                         <button
                                             onClick={() => quillRef.current?.getEditor().format('underline', !quillRef.current?.getEditor().getFormat().underline)}
-                                            className={`px-3.5 py-2.5 rounded-lg text-base underline transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                            className={`px-3.5 py-2.5 rounded-lg text-base underline transition-all border min-h-[44px] flex items-center justify-center ${
                                                 darkMode 
                                                     ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
                                                     : 'bg-white/60 hover:bg-white/80 border-gray-300'
@@ -1015,10 +1015,19 @@ export default function Notes() {
                                         >
                                             U
                                         </button>
-                                        <div className={`w-px h-8 mx-1 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
+                                        <button
+                                            onClick={() => setShowColorPickerSection(!showColorPickerSection)}
+                                            className={`px-3.5 py-2.5 rounded-lg transition-all border min-h-[44px] flex items-center justify-center ${
+                                                darkMode 
+                                                    ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
+                                                    : 'bg-white/60 hover:bg-white/80 border-gray-300'
+                                            }`}
+                                        >
+                                            <Palette className="w-5 h-5" />
+                                        </button>
                                         <button
                                             onClick={() => quillRef.current?.getEditor().format('list', 'bullet')}
-                                            className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                            className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border min-h-[44px] flex items-center justify-center ${
                                                 darkMode 
                                                     ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
                                                     : 'bg-white/60 hover:bg-white/80 border-gray-300'
@@ -1028,7 +1037,7 @@ export default function Notes() {
                                         </button>
                                         <button
                                             onClick={() => quillRef.current?.getEditor().format('list', 'ordered')}
-                                            className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                            className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border min-h-[44px] flex items-center justify-center ${
                                                 darkMode 
                                                     ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
                                                     : 'bg-white/60 hover:bg-white/80 border-gray-300'
@@ -1036,10 +1045,9 @@ export default function Notes() {
                                         >
                                             1. List
                                         </button>
-                                        <div className={`w-px h-8 mx-1 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
                                         <button
                                             onClick={handleAddLink}
-                                            className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                                            className={`px-3.5 py-2.5 rounded-lg text-sm transition-all border min-h-[44px] flex items-center justify-center ${
                                                 darkMode 
                                                     ? 'bg-gray-700/60 hover:bg-gray-600 border-gray-600 text-gray-200' 
                                                     : 'bg-white/60 hover:bg-white/80 border-gray-300'
@@ -1047,7 +1055,6 @@ export default function Notes() {
                                         >
                                             🔗 Link
                                         </button>
-                                        <div className={`w-px h-8 mx-1 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
                                         <Button
                                             onClick={formatContent}
                                             disabled={formatLoading}
@@ -1088,23 +1095,8 @@ export default function Notes() {
                                     )}
 
                                     {/* Color Picker Section */}
+                                    {showColorPickerSection && (
                                     <div className="space-y-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
-                                        <button
-                                            onClick={() => setShowColorPickerSection(!showColorPickerSection)}
-                                            className={`w-full flex items-center justify-between p-3 rounded-lg transition-all ${
-                                                darkMode 
-                                                    ? 'bg-gray-700/60 hover:bg-gray-600' 
-                                                    : 'bg-white/60 hover:bg-white/80'
-                                            }`}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <Palette className={`w-4 h-4 ${darkMode ? 'text-orange-500' : 'text-orange-600'}`} />
-                                                <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Color Picker</span>
-                                            </div>
-                                            <ChevronDown className={`w-4 h-4 transition-transform ${showColorPickerSection ? 'rotate-180' : ''} ${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
-                                        </button>
-
-                                        {showColorPickerSection && (
                                             <>
                                                 <div className="flex items-center gap-3">
                                                     <div 
@@ -1190,9 +1182,8 @@ export default function Notes() {
                                                         Background
                                                     </button>
                                                 </div>
-                                            </>
-                                        )}
                                     </div>
+                                    )}
                                 </div>
                             </div>
                         )}
