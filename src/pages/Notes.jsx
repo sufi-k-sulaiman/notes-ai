@@ -1676,6 +1676,11 @@ export default function Notes() {
                     </div>
                 </DialogContent>
             </Dialog>
+
+            {/* Footer */}
+            <footer className={`mt-12 py-6 border-t text-center text-sm ${darkMode ? 'border-gray-700/50 text-gray-400' : 'border-gray-200/50 text-gray-600'}`}>
+              <p>© 2026 Developed by <a href="https://sufikhan.com/" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 underline">Sufi K Sulaiman</a>. All rights reserved.</p>
+            </footer>
                 </>);
 
 }
